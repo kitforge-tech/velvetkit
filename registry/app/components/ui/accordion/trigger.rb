@@ -10,8 +10,8 @@ class UI::Accordion::Trigger < UI::Base
 
   def classes
     cn(
-      "group flex w-full items-center gap-3 py-2 text-sm font-medium transition-all hover:underline text-left text-primary",
-      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 rounded",
+      "group flex w-full items-center gap-3 py-2 text-sm font-medium transition-colors hover:underline text-left text-primary",
+      "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1 rounded",
       "disabled:pointer-events-none disabled:opacity-50",
       UI::Base::FOCUS_RING,
       @user_class

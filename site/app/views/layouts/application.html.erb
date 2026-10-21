@@ -36,7 +36,7 @@
 
         <div class="mr-4"><%= render "layouts/navbar_logo" %></div>
 
-        <nav class="hidden items-center gap-1 md:flex">
+        <nav class="hidden items-center gap-1 md:flex" data-focus-scope="header">
           <%= render(UI::Link.new(**header_link_options(:docs, docs_path))) { "Docs" } %>
           <%= render(UI::Link.new(**header_link_options(:components, components_path))) { "Components" } %>
           <%= render(UI::Link.new(**header_link_options(:ai, doc_path("ai")))) do |link| %>

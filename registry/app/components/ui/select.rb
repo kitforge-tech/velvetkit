@@ -76,7 +76,7 @@ class UI::Select < UI::Base
 
   def trigger_classes
     cn(variant_classes(size: @size),
-       { "border-destructive focus-visible:ring-destructive" => @error },
+       { "border-destructive focus:ring-destructive" => @error },
        @user_class)
   end
 

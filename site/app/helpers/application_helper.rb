@@ -68,7 +68,7 @@ module ApplicationHelper
   def nav_link(text, path)
     current = current_page?(path)
     link_to text, path, aria: { current: current ? "page" : nil },
-            class: [ "relative block rounded-md px-3 py-1.5 text-sm transition-colors",
+            class: [ "relative block rounded-md px-3 py-1.5 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1",
                      current ? "bg-primary/10 font-medium text-primary before:absolute before:inset-y-1.5 before:left-0 before:w-0.5 before:rounded-full before:bg-primary dark:bg-primary/20 dark:text-foreground dark:before:bg-[#c9a3f2]" : "text-muted-foreground hover:bg-accent hover:text-foreground" ]
   end
 
