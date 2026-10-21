@@ -1,0 +1,137 @@
+<% content_for :title, "Getting started" %>
+
+<article class="max-w-3xl space-y-12">
+  <header class="space-y-3">
+    <%= render(UI::Breadcrumb.new(size: :sm)) do |bc| %>
+      <% bc.with_item(href: docs_path, text: "Docs") %>
+      <% bc.with_item(href: docs_path, text: "Getting started", current: true) %>
+    <% end %>
+    <h1 class="text-4xl font-bold tracking-tight">Getting started</h1>
+    <p class="text-lg text-muted-foreground">Add VelvetKit to a Rails app and put your first component on a page. It takes about five minutes.</p>
+  </header>
+
+  <%= render(UI::Alert.new(variant: :info)) do |alert| %>
+    <% alert.with_title { "What you need" } %>
+    <% alert.with_description do %>
+      Rails 7.1 or newer, Ruby 3.2 or newer, Tailwind CSS 4, and a JavaScript bundler that compiles TypeScript,
+      such as Bun or esbuild through <code class="font-mono">jsbundling-rails</code>. The Stimulus controllers are <code class="font-mono">.ts</code> files.
+    <% end %>
+  <% end %>
+
+  <div class="flex flex-col gap-4 rounded-xl border border-primary/30 bg-primary/5 p-5 sm:flex-row sm:items-center dark:bg-primary/15">
+    <%= render(UI::Icon.new(name: "bot", size: :lg, class: "shrink-0 text-primary dark:text-fuchsia-300")) %>
+    <div class="flex-1">
+      <p class="font-medium">Working with an agent?</p>
+      <p class="text-sm text-muted-foreground">Give it one prompt and it does every step below, then learns the kit from llms.txt.</p>
+    </div>
+    <%= render(UI::Link.new(href: doc_path("ai"), variant: :default, size: :sm, button_variant: true, class: "shrink-0")) do |link| %>
+      <% link.with_trailing_icon(name: "arrow-right") %>
+      Build with AI
+    <% end %>
+  </div>
+
+  <ol class="relative space-y-12 border-l pl-8">
+    <li class="relative space-y-4">
+      <span class="absolute -left-[2.85rem] grid size-7 place-items-center rounded-full border bg-background text-xs font-semibold">1</span>
+      <h2 id="gem" class="text-xl font-semibold">Add the gem</h2>
+      <p class="text-muted-foreground">VelvetKit only runs generators. Nothing loads from it in production, so it goes in the development group.</p>
+      <%= code_block(%(gem "velvetkit", group: :development), label: "Gemfile") %>
+      <%= code_block("bundle install") %>
+    </li>
+
+    <li class="relative space-y-4">
+      <span class="absolute -left-[2.85rem] grid size-7 place-items-center rounded-full border bg-background text-xs font-semibold">2</span>
+      <h2 id="install" class="text-xl font-semibold">Install</h2>
+      <p class="text-muted-foreground">Choose the module your components will live under. <code class="font-mono text-sm">UI</code> is the default. You can't easily change it later, so <%= link_to "read about namespacing", doc_path("namespacing"), class: "text-primary underline-offset-4 hover:underline" %> if you're unsure.</p>
+      <%= code_block("bin/rails generate velvetkit:install --namespace=UI") %>
+      <%= render(UI::Card.new) do |card| %>
+        <% card.with_header do |header| %>
+          <% header.with_title { "What install does" } %>
+        <% end %>
+        <% card.with_content do %>
+          <ul class="space-y-2.5 text-sm">
+            <% [
+                 [ "file-cog", "Writes", "config/velvetkit.yml", "with your namespace" ],
+                 [ "gem", "Adds", "view_component and tailwind_merge", "to your Gemfile" ],
+                 [ "palette", "Copies", "app/assets/tailwind/velvetkit.css", "the design tokens, and imports it" ],
+                 [ "languages", "Copies", "config/locales/velvetkit.en.yml", "every string the components show" ],
+                 [ "shapes", "Copies", "app/javascript/velvetkit_icons.ts", "the Lucide icons, and imports it" ],
+                 [ "box", "Copies", "the base component", "that every other component builds on" ]
+               ].each do |icon, verb, what, why| %>
+              <li class="flex gap-3">
+                <%= render(UI::Icon.new(name: icon, size: :sm, class: "mt-0.5 text-primary")) %>
+                <span><%= verb %> <code class="rounded bg-muted px-1 py-0.5 font-mono text-xs"><%= what %></code> <span class="text-muted-foreground"><%= why %></span></span>
+              </li>
+            <% end %>
+          </ul>
+        <% end %>
+      <% end %>
+    </li>
+
+    <li class="relative space-y-4">
+      <span class="absolute -left-[2.85rem] grid size-7 place-items-center rounded-full border bg-background text-xs font-semibold">3</span>
+      <h2 id="add" class="text-xl font-semibold">Add components</h2>
+      <p class="text-muted-foreground">Name the components you want. Each one brings the components it renders, so a dialog also brings the button and icon it uses.</p>
+      <%= code_block("bin/rails generate velvetkit:add dialog date_picker") %>
+      <p class="text-muted-foreground">Run it with no names to list all <%= ComponentDoc.names.size %> components, or add <code class="font-mono text-sm">--all</code> to copy every one.</p>
+    </li>
+
+    <li class="relative space-y-4">
+      <span class="absolute -left-[2.85rem] grid size-7 place-items-center rounded-full border bg-background text-xs font-semibold">4</span>
+      <h2 id="use" class="text-xl font-semibold">Render it</h2>
+      <%= code_block(snippet("dialog.html.erb"), label: "app/views/settings/show.html.erb") %>
+      <div class="flex items-center gap-4 rounded-lg border border-dashed p-6">
+        <%= render(UI::Dialog.new) do |dialog| %>
+          <% dialog.with_trigger(variant: :outline) { "Delete account" } %>
+          <% dialog.with_content do |content| %>
+            <% content.with_title { "Delete your account?" } %>
+            <% content.with_description { "This cannot be undone." } %>
+          <% end %>
+        <% end %>
+        <span class="text-sm text-muted-foreground">← that's the real thing. Try it.</span>
+      </div>
+    </li>
+  </ol>
+
+  <section class="space-y-4">
+    <h2 id="options" class="text-2xl font-semibold tracking-tight">Generator options</h2>
+    <%= render(UI::Table.new) do |table| %>
+      <% table.with_head do |head| %>
+        <% head.with_column { "Option" } %>
+        <% head.with_column { "What it does" } %>
+      <% end %>
+      <% [
+           [ "--namespace=Kit", "Use this module instead of the one in config/velvetkit.yml." ],
+           [ "--all", "Add every component." ],
+           [ "--skip-tests", "Don't copy the components' Minitest tests." ],
+           [ "--skip-previews", "Don't copy the Lookbook previews." ],
+           [ "--skip-packages", "Print the npm packages to add instead of installing them." ],
+           [ "--force / --skip", "Overwrite, or keep, files that already exist." ]
+         ].each do |option, text| %>
+        <% table.with_row do |row| %>
+          <% row.with_cell { tag.code(option, class: "font-mono text-xs whitespace-nowrap") } %>
+          <% row.with_cell { text } %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </section>
+
+  <section class="space-y-4">
+    <h2 id="faq" class="text-2xl font-semibold tracking-tight">Questions</h2>
+    <%= render(UI::Accordion.new(type: :single)) do |accordion| %>
+      <% [
+           [ "Can I change a component after adding it?", "Yes, that's the point. It's a file in your app. Change the classes, the arguments or the markup. Its tests are copied too, so they'll tell you what you changed." ],
+           [ "How do I get a newer version of a component?", "Update the gem and run add again with --force. The files are overwritten, so commit first and use git diff to review the changes and keep your own edits." ],
+           [ "Does it work with importmap?", "The Ruby side does. The Stimulus controllers are TypeScript, so they need a bundler such as Bun or esbuild. Importmap can't compile them." ],
+           [ "Why copy the code instead of loading a gem?", "So you never wait on us. You can fix a bug today, style a component to match your brand, or delete what you don't use, all without forking a library." ]
+         ].each_with_index do |(question, answer), index| %>
+        <% accordion.with_item(value: "q#{index}") do |item| %>
+          <% item.with_trigger { question } %>
+          <% item.with_content { tag.p(answer, class: "text-muted-foreground") } %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </section>
+
+  <%= render "docs/pager", previous_page: nil, next_page: [ "Build with AI", doc_path("ai") ] %>
+</article>

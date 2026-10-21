@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title><%= [ content_for(:title), "VelvetKit" ].compact.join(" · ") %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="<%= content_for(:description) || "Accessible ViewComponent UI components for Rails, copied into your app one at a time, with docs your AI agent reads." %>">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= render "layouts/theme_script" %>
+    <link rel="icon" href="/favicon.ico" sizes="48x48">
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
+    <link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="manifest" href="<%= pwa_manifest_path(format: :json) %>">
+    <meta name="theme-color" content="#4D1A7F">
+    <link rel="alternate" type="text/plain" href="<%= llms_path %>" title="llms.txt">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+  </head>
+
+  <body class="min-h-screen antialiased">
+    <header class="sticky top-0 z-30 border-b bg-background/80 backdrop-blur-lg">
+      <div class="mx-auto flex h-14 max-w-6xl items-center gap-2 px-4 sm:px-6">
+        <%= render(UI::Sheet.new(class: "md:hidden")) do |sheet| %>
+          <% sheet.with_trigger(variant: :ghost, size: :icon, aria: { label: "Open the menu" }) do %>
+            <%= render(UI::Icon.new(name: "menu")) %>
+          <% end %>
+          <% sheet.with_content(side: :left, class: "overflow-y-auto") do |content| %>
+            <div class="mb-6"><%= render "layouts/navbar_logo" %></div>
+            <%= render "layouts/nav" %>
+          <% end %>
+        <% end %>
+
+        <div class="mr-4"><%= render "layouts/navbar_logo" %></div>
+
+        <nav class="hidden items-center gap-1 md:flex">
+          <%= render(UI::Link.new(href: docs_path, variant: :ghost, size: :sm, button_variant: true)) { "Docs" } %>
+          <%= render(UI::Link.new(href: components_path, variant: :ghost, size: :sm, button_variant: true)) { "Components" } %>
+          <%= render(UI::Link.new(href: doc_path("ai"), variant: :ghost, size: :sm, button_variant: true)) do |link| %>
+            <% link.with_leading_icon(name: "sparkles", class: "text-primary dark:text-fuchsia-300") %>
+            AI
+          <% end %>
+          <%= render(UI::Link.new(href: "/lookbook", variant: :ghost, size: :sm, button_variant: true)) { "Lookbook" } %>
+        </nav>
+
+        <div class="ml-auto flex items-center gap-2">
+          <%= render(UI::Badge.new(variant: :outline, class: "hidden sm:inline-flex")) { "v#{Velvetkit::VERSION}" } %>
+          <%= render(UI::ThemeToggle.new) %>
+        </div>
+      </div>
+    </header>
+
+    <%= content_for?(:main) ? yield(:main) : yield %>
+
+    <footer class="border-t">
+      <div class="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-10 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+        <div class="space-y-2">
+          <%= render "layouts/logo" %>
+          <p class="text-sm text-muted-foreground">Rails components you own. MIT licensed. v<%= Velvetkit::VERSION %></p>
+        </div>
+        <div class="flex flex-col gap-3 sm:items-end">
+          <%= render "layouts/built_by" %>
+          <p class="flex gap-4 text-xs text-muted-foreground">
+            <%= link_to "llms.txt", llms_path, class: "hover:text-foreground" %>
+            <%= link_to "llms-full.txt", llms_full_path, class: "hover:text-foreground" %>
+            <%= link_to "Lookbook", "/lookbook", class: "hover:text-foreground" %>
+          </p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

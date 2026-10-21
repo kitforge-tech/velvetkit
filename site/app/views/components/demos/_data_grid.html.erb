@@ -1,0 +1,7 @@
+<%# The grid needs a server to page, sort and filter; this page brings one. %>
+<%= render(UI::DataGrid.new(url: demo_rows_path, page_size: 10)) do |grid|
+      grid.column(:roll_number, "Roll no.", width: 110, type: :number)
+      grid.column(:name, "Name")
+      grid.column(:section, "Section")
+      grid.column(:attendance, "Attendance %", width: 140, type: :number)
+    end %>

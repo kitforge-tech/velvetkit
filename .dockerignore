@@ -1,0 +1,12 @@
+# Build context for site/Dockerfile is the repository root.
+/.git/
+/tmp/
+/pkg/
+/test/
+/site/node_modules/
+/site/tmp/
+/site/log/
+/site/storage/
+/site/app/assets/builds/*
+/site/config/master.key
+/site/.env*

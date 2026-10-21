@@ -1,0 +1,121 @@
+<%# The hero: a band of velvet, "made to measure", and a fanned row of fabric
+    swatches. Each swatch is a stitched card holding a live component, tagged
+    with the class an app would get. Hover one and it straightens. %>
+<% swatch = "group/swatch relative w-64 shrink-0 snap-center rounded-2xl bg-card p-6 pt-8 text-card-foreground shadow-xl shadow-black/30 outline-1 outline-dashed -outline-offset-8 outline-foreground/20 transition duration-300 ease-out hover:z-10 hover:-translate-y-3 hover:rotate-0 sm:w-60" %>
+
+<section class="relative isolate overflow-hidden bg-[#1c0a30] text-white">
+  <div aria-hidden="true" class="absolute inset-0 -z-10">
+    <div class="absolute inset-0 bg-[radial-gradient(120%_80%_at_15%_0%,#4D1A7F_0%,transparent_60%),radial-gradient(90%_70%_at_100%_100%,#2e0f52_0%,transparent_65%)]"></div>
+    <div class="absolute -top-24 right-[-10%] size-[36rem] rounded-full bg-fuchsia-500/15 blur-3xl"></div>
+    <%# Fine diagonal weave, the nap of the fabric. %>
+    <div class="absolute inset-0 opacity-[0.07] bg-[repeating-linear-gradient(135deg,white_0_1px,transparent_1px_7px)]"></div>
+  </div>
+
+  <div class="mx-auto max-w-6xl px-4 pt-16 sm:px-6 lg:pt-24">
+    <p class="flex items-center gap-3 font-mono text-xs uppercase tracking-[0.25em] text-white/60">
+      <span class="h-px w-10 bg-[#FFA552]"></span>
+      UI components for Rails
+    </p>
+
+    <h1 class="mt-6 max-w-5xl text-5xl leading-[0.95] font-extrabold tracking-tight text-balance sm:text-7xl lg:text-[6.5rem]">
+      <span class="font-[Instrument_Serif] font-normal italic text-[#FFA552]">Made</span>
+      <span class="font-[Instrument_Serif] font-normal italic">to measure.</span>
+    </h1>
+
+    <div class="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-[1.3fr_1fr] lg:items-end">
+      <p class="max-w-xl text-lg text-pretty text-white/75 sm:text-xl">
+        Pick the pieces, name your namespace, and VelvetKit cuts them into
+        <code class="rounded bg-white/10 px-1.5 py-0.5 font-mono text-[0.85em] text-white">app/</code>
+        as your own code. Your AI agent gets the pattern to follow.
+      </p>
+      <div class="flex flex-wrap gap-3 lg:justify-end">
+        <%= render(UI::Link.new(href: docs_path, variant: :secondary, size: :lg, button_variant: true, class: "bg-white text-[#2e0f52] hover:bg-white/90")) do |link| %>
+          <% link.with_trailing_icon(name: "arrow-right") %>
+          Get started
+        <% end %>
+        <span data-controller="clipboard">
+          <span hidden data-clipboard-target="source"><%= ApplicationHelper::SETUP_PROMPT %></span>
+          <%= render(UI::Button.new(variant: :outline, size: :lg, class: "border-white/25 bg-white/5 text-white hover:bg-white/10 hover:text-white", data: { action: "clipboard#copy" })) do %>
+            <%= render(UI::Icon.new(name: "bot", size: :sm, data: { clipboard_target: "idle" })) %>
+            <%= render(UI::Icon.new(name: "check", size: :sm, class: "hidden text-emerald-300", data: { clipboard_target: "done" })) %>
+            Copy prompt for your agent
+          <% end %>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <%# The swatch rail: fanned on wide screens, a scrolling row on phones. %>
+  <div class="relative mt-16 pb-20 lg:mt-20 lg:pb-24">
+    <div class="mx-auto flex max-w-6xl snap-x snap-mandatory gap-5 overflow-x-auto px-4 pt-6 pb-8 sm:px-6 lg:justify-center lg:gap-0 lg:overflow-visible lg:pb-0 lg:[&>*+*]:-ml-6">
+
+      <div class="<%= swatch %> lg:-rotate-6">
+        <%= render "pages/swatch_tag", text: "UI::Button" %>
+        <div class="flex flex-col gap-2.5">
+          <%= render(UI::Button.new(full_width: true)) { "Save changes" } %>
+          <%= render(UI::Button.new(variant: :outline, full_width: true)) { "Cancel" } %>
+          <%= render(UI::Button.new(variant: :ghost, size: :sm)) do |button| %>
+            <% button.with_leading_icon(name: "download") %>
+            Export
+          <% end %>
+        </div>
+      </div>
+
+      <div class="<%= swatch %> lg:-rotate-2 lg:translate-y-4">
+        <%= render "pages/swatch_tag", text: "UI::Switch" %>
+        <div class="space-y-4">
+          <%= render(UI::Switch.new(name: "hero_alerts", checked: true, label: "Email alerts")) %>
+          <%= render(UI::Switch.new(name: "hero_digest", label: "Weekly digest")) %>
+          <%= render(UI::Checkbox.new(name: "hero_terms", checked: true, label: "I agree")) %>
+        </div>
+      </div>
+
+      <div class="<%= swatch %> lg:rotate-1 lg:-translate-y-2">
+        <%= render "pages/swatch_tag", text: "UI::Input" %>
+        <div class="space-y-3">
+          <%= render(UI::Input.new(label: "Work email", placeholder: "you@acme.com", size: :sm)) %>
+          <%= render(UI::Select.new(name: "hero_role", label: "Role", options: [ "Owner", "Editor", "Viewer" ], size: :sm)) %>
+        </div>
+      </div>
+
+      <div class="<%= swatch %> lg:rotate-3 lg:translate-y-3">
+        <%= render "pages/swatch_tag", text: "UI::Badge" %>
+        <div class="space-y-4">
+          <div class="flex flex-wrap gap-1.5">
+            <%= render(UI::Badge.new) { "New" } %>
+            <%= render(UI::Badge.new(variant: :success)) { "Paid" } %>
+            <%= render(UI::Badge.new(variant: :warning)) { "Due" } %>
+            <%= render(UI::Badge.new(variant: :outline)) { "Draft" } %>
+          </div>
+          <%= render(UI::AvatarGroup.new(size: :sm)) do |group| %>
+            <% group.with_avatar { "AK" } %>
+            <% group.with_avatar { "RM" } %>
+            <% group.with_avatar { "SJ" } %>
+          <% end %>
+          <p class="text-xs text-muted-foreground">3 people can edit</p>
+        </div>
+      </div>
+
+      <div class="<%= swatch %> lg:rotate-6 lg:-translate-y-1">
+        <%= render "pages/swatch_tag", text: "UI::Dialog" %>
+        <div class="space-y-3">
+          <p class="text-sm font-medium">Delete this project?</p>
+          <p class="text-xs text-muted-foreground">It goes for good, with its 214 files.</p>
+          <%= render(UI::Dialog.new) do |dialog| %>
+            <% dialog.with_trigger(variant: :destructive, size: :sm) { "Delete project" } %>
+            <% dialog.with_content(size: :sm) do |content| %>
+              <% content.with_title { "Delete this project?" } %>
+              <% content.with_description { "It goes for good, with its 214 files. This is a real UI::Dialog." } %>
+              <% content.with_footer do %>
+                <%= render(UI::Dialog::Close.new(variant: :outline, class: "static")) { "Keep it" } %>
+                <%= render(UI::Button.new(variant: :destructive)) { "Delete" } %>
+              <% end %>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+
+    </div>
+    <p class="mt-6 text-center text-xs text-white/45">Every swatch is a live component. Try them.</p>
+  </div>
+</section>
