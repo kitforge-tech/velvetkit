@@ -7,7 +7,7 @@ class PagesTest < ActionDispatch::IntegrationTest
   test "home" do
     get root_path
     assert_response :success
-    assert_select "h1", /to measure/
+    assert_select "h1", /Ship Rails UI/
   end
 
   DocsController::PAGES.each_key do |page|
