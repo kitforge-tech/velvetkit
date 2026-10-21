@@ -1,0 +1,21 @@
+<div class="space-y-4">
+  <%= render(UI::Breadcrumb.new(size: :sm)) do |bc| %>
+    <% bc.with_item(href: "#", text: "Billing") %>
+    <% bc.with_item(href: "#", text: "Invoices", current: true) %>
+  <% end %>
+  <div class="overflow-hidden rounded-lg border">
+    <%= render(UI::Table.new) do |table| %>
+      <% table.with_head do |head| %>
+        <% head.with_column { "Invoice" } %>
+        <% head.with_column(align: :end) { "Status" } %>
+      <% end %>
+      <% [ [ "INV-104", :success, "Paid" ], [ "INV-105", :warning, "Due" ], [ "INV-106", :outline, "Draft" ], [ "INV-107", :success, "Paid" ] ].each do |number, variant, status| %>
+        <% table.with_row do |row| %>
+          <% row.with_cell(class: "font-mono text-xs") { number } %>
+          <% row.with_cell(align: :end) { render(UI::Badge.new(variant: variant, size: :sm)) { status } } %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+  <%= render(UI::Pagination.new(pagy: Pagy::Offset.new(count: 48, page: 2, limit: 4)) { |page| "#invoices-page-#{page}" }) %>
+</div>

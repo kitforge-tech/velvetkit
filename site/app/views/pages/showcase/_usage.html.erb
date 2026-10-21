@@ -1,0 +1,24 @@
+<div class="space-y-5">
+  <div class="flex items-center justify-between">
+    <h3 class="font-semibold">Usage</h3>
+    <%= render(UI::Badge.new(variant: :outline, size: :sm)) { "October" } %>
+  </div>
+  <div>
+    <p class="text-3xl font-bold tracking-tight">84,120</p>
+    <p class="text-sm text-muted-foreground">API calls this month</p>
+  </div>
+  <%# A seven-day bar chart made of plain elements. %>
+  <div class="flex h-24 items-end gap-2" role="img" aria-label="Calls per day, rising through the week">
+    <% [ 38, 52, 47, 63, 71, 66, 88 ].each_with_index do |height, i| %>
+      <div class="flex-1 rounded-t-md <%= i == 6 ? "bg-primary" : "bg-primary/25" %>" style="height: <%= height %>%"></div>
+    <% end %>
+  </div>
+  <% [ [ "Storage", 62 ], [ "Seats", 80 ] ].each do |label, percent| %>
+    <div class="space-y-1.5">
+      <div class="flex justify-between text-xs"><span><%= label %></span><span class="text-muted-foreground"><%= percent %>%</span></div>
+      <div class="h-1.5 overflow-hidden rounded-full bg-muted" role="progressbar" aria-label="<%= label %>" aria-valuenow="<%= percent %>" aria-valuemin="0" aria-valuemax="100">
+        <div class="h-full rounded-full bg-primary" style="width: <%= percent %>%"></div>
+      </div>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,29 @@
+<div class="space-y-3">
+  <h3 class="font-semibold">Website relaunch</h3>
+  <%= render(UI::Tabs.new(default_value: "open", variant: :pill, size: :sm)) do |tabs| %>
+    <% tabs.with_list do |list| %>
+      <% list.with_trigger(value: "open") { "Open" } %>
+      <% list.with_trigger(value: "done") { "Done" } %>
+    <% end %>
+    <% tabs.with_panel(value: "open", class: "pt-3") do %>
+      <ul class="space-y-2">
+        <% [ [ "Write the launch post", :warning, "Due Fri" ], [ "Review pricing page", :default, "In review" ],
+             [ "Fix footer links", :outline, "To do" ], [ "Record the demo", :outline, "To do" ] ].each do |task, variant, status| %>
+          <li class="flex items-center justify-between gap-3 rounded-lg border px-3 py-2.5 text-sm">
+            <span class="truncate"><%= task %></span>
+            <%= render(UI::Badge.new(variant: variant, size: :sm)) { status } %>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+    <% tabs.with_panel(value: "done", class: "pt-3") do %>
+      <ul class="space-y-2">
+        <% [ "Pick a domain", "Draft the copy", "Choose the colours" ].each do |task| %>
+          <li class="flex items-center gap-2 rounded-lg border px-3 py-2.5 text-sm text-muted-foreground">
+            <%= render(UI::Icon.new(name: "circle-check", size: :sm, class: "text-emerald-500")) %><span class="line-through"><%= task %></span>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+  <% end %>
+</div>

@@ -1,0 +1,14 @@
+<div class="space-y-4">
+  <div class="flex items-center justify-between">
+    <h3 class="font-semibold">Choose a plan</h3>
+    <%= render(UI::Badge.new(variant: :success, size: :sm)) { "Save 20%" } %>
+  </div>
+  <%= render(UI::RadioGroup.new(name: "showcase_plan", value: "team")) do |group| %>
+    <% group.with_item(value: "free", label: "Free — 1 seat") %>
+    <% group.with_item(value: "team", label: "Team — ₹499 a seat") %>
+    <% group.with_item(value: "business", label: "Business — ₹999 a seat") %>
+  <% end %>
+  <%= render(UI::Select.new(name: "showcase_billing", label: "Billed", options: [ "Monthly", "Yearly" ], selected: "Yearly", size: :sm)) %>
+  <%= render(UI::Button.new(full_width: true)) { "Upgrade to Team" } %>
+  <p class="text-center text-xs text-muted-foreground">Cancel any time.</p>
+</div>
