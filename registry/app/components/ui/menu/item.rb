@@ -7,7 +7,7 @@ class UI::Menu::Item < UI::Base
       "hover:bg-accent hover:text-accent-foreground " \
       "focus:bg-accent focus:text-accent-foreground focus:ring-2 focus:ring-ring focus:ring-offset-1 " \
       "aria-checked:bg-accent aria-checked:text-accent-foreground aria-checked:font-medium " \
-      "data-[disabled]:pointer-events-none data-[disabled]:opacity-50 transition-colors",
+      "data-[disabled]:pointer-events-none data-[disabled]:opacity-50 transition-all",
     variants: {
       variant: {
         default: "",

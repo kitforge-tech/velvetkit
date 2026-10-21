@@ -1,14 +1,14 @@
-<%= render(UI::Table.new(caption: "Grade 8 B — 3 students")) do |table| %>
+<%= render(UI::Table.new(caption: "Invoices this month — 2 open")) do |table| %>
   <% table.with_head do |head| %>
-    <% head.with_column { "Name" } %>
-    <% head.with_column(align: :end) { "Attendance" } %>
+    <% head.with_column { "Invoice" } %>
+    <% head.with_column(align: :end) { "Amount" } %>
   <% end %>
   <% table.with_row(selected: true) do |row| %>
-    <% row.with_cell { "Aditi Rao" } %>
-    <% row.with_cell(align: :end) { "96%" } %>
+    <% row.with_cell { "INV-104" } %>
+    <% row.with_cell(align: :end) { "₹12,400" } %>
   <% end %>
   <% table.with_row do |row| %>
-    <% row.with_cell { "Arjun Nair" } %>
-    <% row.with_cell(align: :end) { "88%" } %>
+    <% row.with_cell { "INV-105" } %>
+    <% row.with_cell(align: :end) { "₹8,250" } %>
   <% end %>
 <% end %>

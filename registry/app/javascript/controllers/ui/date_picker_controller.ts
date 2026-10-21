@@ -5,18 +5,17 @@ import { Controller } from '@hotwired/stimulus';
 // A typed field with a calendar beside it, over a hidden ISO input the form
 // actually submits.
 //
-// Typed first, calendar second, because the field this exists for is date of
-// birth: a clerk with a stack of admission forms types 02/05/2012 in a second,
-// and reaching 2012 by clicking back through a calendar takes a hundred and
-// seventy months. The calendar is for dates you pick rather than know.
+// Typed first, calendar second, because people who know a date type it in a
+// second, and reaching a date years away by clicking back through a calendar
+// takes month after month. The calendar is for dates you pick rather than know.
 //
 // The written order is not decided here. Ruby derives it from
 // date.formats.typed in the locale and passes it in as "DMY" plus a
 // separator, so one locale file governs what the field accepts, what it shows
 // and what the hint says.
 const ISO = /^(\d{4})-(\d{2})-(\d{2})$/;
-// Any of / - . or a space between the parts: a clerk types what is on the
-// form, and being strict about the separator only creates work.
+// Any of / - . or a space between the parts: people type what is in front of
+// them, and being strict about the separator only creates work.
 const PARTS = /^(\d{1,4})[/\-. ](\d{1,4})[/\-. ](\d{1,4})$/;
 
 export default class extends Controller<HTMLElement> {
@@ -40,7 +39,7 @@ export default class extends Controller<HTMLElement> {
 
   connect() {
     // The typed field is the source of truth on load, so a value already on
-    // the record shows in the format the school writes.
+    // the record shows in the locale's written format.
     this.inputTarget.value = this.toTyped(this.hiddenTarget.value);
   }
 

@@ -3,7 +3,7 @@
 class UI::RadioGroup::Item < UI::Base
   variants(
     base: "peer appearance-none shrink-0 rounded-full border border-input bg-background " \
-          "transition-colors " \
+          "transition-all " \
           "checked:bg-primary checked:border-primary " \
           "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1 " \
           "ring-offset-background",

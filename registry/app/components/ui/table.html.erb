@@ -1,4 +1,4 @@
-<%# The wrapper scrolls sideways so a wide roster never breaks the page. %>
+<%# The wrapper scrolls sideways so a wide table never breaks the page. %>
 <div class="relative w-full overflow-x-auto rounded-md border border-border">
   <%= tag.table class: classes, **@html_attrs do %><% if caption.present? %><caption class="mt-4 px-2 text-sm text-muted-foreground text-left"><%= caption %></caption><% end %><%= head %><tbody class="[&_tr:last-child]:border-0"><% if show_empty_state? %><tr><td colspan="<%= column_count %>" class="p-8 text-center text-sm text-muted-foreground"><%= empty_state %></td></tr><% else %><%= rows.map(&:to_s).join.html_safe %><% end %></tbody><% end %>
 </div>

@@ -20,5 +20,10 @@ document.addEventListener("turbo:load", () => {
 
   const area = document.querySelector(`[data-focus-scope="${scope}"]`)
   const link = area && [...area.querySelectorAll("a[href]")].find((a) => a.getAttribute("href") === href)
-  link?.focus({ preventScroll: true })
+  if (!link) return
+
+  // Already drawn on the page before, so it appears whole, not animated again.
+  link.setAttribute("data-focus-carried", "")
+  link.focus({ preventScroll: true })
+  requestAnimationFrame(() => requestAnimationFrame(() => link.removeAttribute("data-focus-carried")))
 })

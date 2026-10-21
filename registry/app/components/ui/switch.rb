@@ -10,7 +10,7 @@ class UI::Switch < UI::Base
   variants(
     base: "absolute inset-0 rounded-full " \
           "bg-input peer-checked:bg-primary " \
-          "transition-colors duration-200 " \
+          "transition-all duration-200 " \
           "peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary " \
           "peer-focus:ring-offset-1 ring-offset-background " \
           "peer-disabled:cursor-not-allowed",

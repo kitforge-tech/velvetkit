@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class UI::NativeSelectPreview < ViewComponent::Preview
-  SECTIONS = [ [ "Grade 8 A", 1 ], [ "Grade 8 B", 2 ], [ "Grade 9 A", 3 ] ].freeze
+  SECTIONS = [ [ "Design", 1 ], [ "Engineering", 2 ], [ "Marketing", 3 ] ].freeze
 
   # @label Playground
   # @param size select { choices: [sm, default, lg] }
@@ -9,8 +9,8 @@ class UI::NativeSelectPreview < ViewComponent::Preview
   # @param required toggle
   # @param disabled toggle
   # @param error toggle
-  def playground(size: :default, label: "Section", required: false, disabled: false, error: false)
-    render(UI::NativeSelect.new(name: "section_id", options: SECTIONS, prompt: "Choose a section",
+  def playground(size: :default, label: "Team", required: false, disabled: false, error: false)
+    render(UI::NativeSelect.new(name: "team_id", options: SECTIONS, prompt: "Choose a team",
                           size: size.to_sym, label: label, required: required,
                           disabled: disabled, error: error))
   end
