@@ -37,3 +37,9 @@ body {
 .vk-code :is(.o, .ow, .p) { color: var(--code-punctuation); }
 .vk-code :is(.gh, .gu, .gs) { font-weight: 600; }
 .vk-code .ge { font-style: italic; }
+
+/* A focus ring carried over from the previous page (focus_carry.js) is
+   already on screen, so it appears whole instead of animating in again. */
+[data-focus-carried] {
+  transition: none !important;
+}

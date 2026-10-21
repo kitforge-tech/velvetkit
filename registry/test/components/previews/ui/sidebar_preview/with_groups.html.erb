@@ -1,9 +1,4 @@
-<% brand = capture do %>
-  <div class="flex items-center gap-2 px-2">
-    <div class="flex h-8 w-8 items-center justify-center rounded bg-primary text-primary-foreground text-xs font-bold">VK</div>
-    <span class="text-sm font-semibold group-data-[collapsible=icon]:hidden">Velvet Kit</span>
-  </div>
-<% end %>
+<% brand = render("ui/sidebar_preview/brand") %>
 
 <% main = capture do %>
   <p class="text-muted-foreground">Two labelled groups sharing one sidebar.</p>

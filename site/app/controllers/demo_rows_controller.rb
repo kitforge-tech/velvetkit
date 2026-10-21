@@ -4,14 +4,14 @@
 class DemoRowsController < ApplicationController
   FIRST = %w[Aditi Arjun Chitra Dev Esha Farhan Gauri Harsh Isha Jai Kavya Lakshmi Manav Nisha Om Priya Rahul Sana Tanvi Vikram].freeze
   LAST = %w[Rao Nair Menon Shah Iyer Reddy Das Kapoor Joshi Pillai].freeze
+  PLANS = %w[Free Team Business Enterprise].freeze
   ROWS = 120.times.map do |i|
-    { roll_number: i + 1, name: "#{FIRST[i % FIRST.size]} #{LAST[(i * 7) % LAST.size]}",
-      section: "Grade #{6 + (i % 5)} #{%w[A B C][i % 3]}", attendance: 72 + (i * 37 % 28) }
+    { id: 1001 + i, name: "#{FIRST[i % FIRST.size]} #{LAST[(i * 7) % LAST.size]}",
+      plan: PLANS[(i * 3) % PLANS.size], seats: 1 + (i * 37 % 60) }
   end.freeze
 
   def index
-    rows = ROWS.select { |row| matches?(row) }
-    rows = sorted(rows)
+    rows = sorted(ROWS.select { |row| matches?(row) })
     first = params[:startRow].to_i
     last = params[:endRow].to_i.clamp(first, first + 100)
     render json: { rows: rows[first...last], total: rows.size }

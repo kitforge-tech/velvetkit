@@ -10,7 +10,7 @@ class ComponentsController < ApplicationController
 
     respond_to do |format|
       format.html
-      format.md { render plain: "# VelvetKit\n\n#{@component.to_markdown}", content_type: "text/markdown" }
+      format.md { render plain: @component.page_markdown, content_type: "text/markdown" }
     end
   end
 end

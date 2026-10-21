@@ -3,8 +3,10 @@
 # UI::DataGrid — a sortable, filterable, server-paged table backed by AG Grid.
 #
 # The grid holds one page at a time and asks the server for the next, sending
-# the sort and filter it wants applied. Paging, sorting and filtering all
-# happen in Postgres — see the GridQuery concern for the other half.
+# the sort and filter it wants applied, so paging, sorting and filtering all
+# happen in the database. The server answers GET `url` with `startRow`,
+# `endRow`, `sortModel` and `filterModel` (both JSON) as params, returning
+# `{ "rows": [...], "total": n }`.
 #
 # Columns are declared in Ruby so the headers, their widths and which of them
 # the server will accept a sort or filter for are decided in one place.
@@ -13,10 +15,10 @@
 # time: a page without a grid never downloads it.
 #
 # Usage:
-#   <%= render(UI::DataGrid.new(url: section_path(@section, format: :json)) do |grid|
-#         grid.column(:roll_number, t(".roll"), width: 110, type: :number)
+#   <%= render(UI::DataGrid.new(url: customers_path(format: :json)) do |grid|
+#         grid.column(:id, t(".id"), width: 90, type: :number)
 #         grid.column(:name, t(".name"))
-#         grid.column(:guardian, t(".guardian"), sortable: false, filterable: false)
+#         grid.column(:owner, t(".owner"), sortable: false, filterable: false)
 #       end) %>
 class UI::DataGrid < UI::Base
   Column = Struct.new(:field, :header, :width, :type, :sortable, :filterable,

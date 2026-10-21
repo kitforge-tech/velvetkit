@@ -3,7 +3,7 @@
 class UI::Tabs::Trigger < UI::Base
   variants(
     base: "inline-flex items-center justify-center gap-2 whitespace-nowrap " \
-          "font-medium transition-colors " \
+          "font-medium transition-all " \
           "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1 " \
           "disabled:pointer-events-none disabled:bg-muted! disabled:text-muted-foreground!",
     variants: {

@@ -2,17 +2,17 @@
 
 class UI::DataGridPreview < ViewComponent::Preview
   # The grid fetches its rows from the server, so a preview needs a real class
-  # list to point at. Lookbook has no tenant, so this shows the markup and the
-  # reserved height rather than a painted grid — see a section page for that.
+  # endpoint to point at, so here it shows the markup and the reserved height.
+  # velvetkit.com's Data grid page has a live one.
   #
   # @label Playground
   # @param page_size number
   def playground(page_size: 15)
-    render(UI::DataGrid.new(url: "/sections/1.json", page_size: page_size.to_i)) do |grid|
-      grid.column(:roll_number, "Roll no.", width: 110, type: :number)
+    render(UI::DataGrid.new(url: "/customers.json", page_size: page_size.to_i)) do |grid|
+      grid.column(:id, "ID", width: 90, type: :number)
       grid.column(:name, "Name")
-      grid.column(:admission_number, "Admission no.")
-      grid.column(:guardian, "Parent", sortable: false, filterable: false)
+      grid.column(:plan, "Plan")
+      grid.column(:owner, "Owner", sortable: false, filterable: false)
     end
   end
 end

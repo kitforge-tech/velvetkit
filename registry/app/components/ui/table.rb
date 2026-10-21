@@ -2,27 +2,27 @@
 
 # UI::Table — a data table.
 #
-# Rosters are long and phones are narrow, so the table is always wrapped in a
+# Lists get long and phones are narrow, so the table is always wrapped in a
 # horizontal scroll container rather than allowed to break the page layout.
 #
 # Usage:
-#   <%= render(UI::Table.new(caption: "Grade 8 B")) do |table| %>
+#   <%= render(UI::Table.new(caption: "Invoices")) do |table| %>
 #     <% table.with_head do |head| %>
-#       <% head.with_column { "Name" } %>
-#       <% head.with_column(align: :end) { "Roll" } %>
+#       <% head.with_column { "Customer" } %>
+#       <% head.with_column(align: :end) { "Amount" } %>
 #     <% end %>
-#     <% @enrollments.each do |enrollment| %>
+#     <% @invoices.each do |invoice| %>
 #       <% table.with_row do |row| %>
-#         <% row.with_cell { enrollment.person.display_name } %>
-#         <% row.with_cell(align: :end) { enrollment.roll_number } %>
+#         <% row.with_cell { invoice.customer.name } %>
+#         <% row.with_cell(align: :end) { number_to_currency(invoice.amount) } %>
 #       <% end %>
 #     <% end %>
-#     <% table.with_empty_state { "No students enrolled yet" } %>
+#     <% table.with_empty_state { "No invoices yet" } %>
 #   <% end %>
 class UI::Table < UI::Base
   renders_one :head, UI::Table::Head
   renders_many :rows, UI::Table::Row
-  # Shown only when there are no rows, so an empty roster reads as empty
+  # Shown only when there are no rows, so an empty table reads as empty
   # rather than as a header with nothing under it.
   renders_one :empty_state
 

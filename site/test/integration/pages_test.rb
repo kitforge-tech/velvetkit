@@ -43,12 +43,12 @@ class PagesTest < ActionDispatch::IntegrationTest
 
   test "data grid demo rows page, sort and filter" do
     get demo_rows_path, params: { startRow: 0, endRow: 5,
-                                  sortModel: [ { colId: "roll_number", sort: "desc" } ].to_json,
-                                  filterModel: { section: { filterType: "text", filter: "grade 6" } }.to_json }
+                                  sortModel: [ { colId: "id", sort: "desc" } ].to_json,
+                                  filterModel: { plan: { filterType: "text", filter: "team" } }.to_json }
     body = response.parsed_body
     assert_equal 5, body["rows"].size
-    assert body["rows"].all? { |row| row["section"].start_with?("Grade 6") }
-    assert_operator body["rows"].first["roll_number"], :>, body["rows"].last["roll_number"]
+    assert body["rows"].all? { |row| row["plan"] == "Team" }
+    assert_operator body["rows"].first["id"], :>, body["rows"].last["id"]
   end
 
   test "favicons and the manifest are linked and served" do

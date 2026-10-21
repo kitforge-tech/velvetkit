@@ -3,10 +3,9 @@
 # UI::DatePicker — a typed date field with a calendar beside it.
 #
 # Three inputs in one: what the user types (DD/MM/YYYY), what the form submits
-# (ISO, hidden), and the calendar. The typed field comes first because the
-# field this exists for is date of birth — a clerk working through admission
-# forms types 02/05/2012 in a second, and reaching 2012 in a calendar means
-# clicking back a hundred and seventy months.
+# (ISO, hidden), and the calendar. The typed field comes first because people
+# who know the date type it in a second: reaching a date years away in a
+# calendar means clicking back month after month.
 #
 # The written format is not decided here. It comes from `date.formats.typed`
 # in the locale, and this component derives the placeholder, the parse order
@@ -14,17 +13,17 @@
 # differently changes what the field accepts, what it shows and what the hint
 # says, together, with nothing hardcoded.
 #
-# Day-first for English, because that is how an Indian school writes a date. A
-# native date input follows the browser's locale instead, which is how the same
-# form reads MM/DD on one machine and DD/MM on another, and how a child born on
-# the 2nd of May is recorded as the 5th of February.
+# The shipped English format is day-first; change `date.formats.typed` for
+# month-first. A native date input follows the browser's locale instead, which
+# is how the same form reads MM/DD on one machine and DD/MM on another, and how
+# the 2nd of May gets recorded as the 5th of February.
 #
 # Cally is ~9 KB gzipped and loaded only when the calendar is first opened, so
 # a form nobody opens a calendar on downloads nothing.
 #
 # Usage:
-#   <%= render(UI::DatePicker.new(form: f, field: :date_of_birth, required: true)) %>
-#   <%= render(UI::DatePicker.new(name: "holiday[date]", value: @date, label: "Date")) %>
+#   <%= render(UI::DatePicker.new(form: f, field: :starts_on, required: true)) %>
+#   <%= render(UI::DatePicker.new(name: "event[date]", value: @date, label: "Date")) %>
 class UI::DatePicker < UI::Base
   def initialize(name: nil, value: nil, form: nil, field: nil, label: nil,
                  required: false, error: false, disabled: false, hint: true,
@@ -35,8 +34,8 @@ class UI::DatePicker < UI::Base
     @field = field
     @label = label
     @required = required
-    # The hint teaches the format, which a clerk filling admission forms
-    # wants and a filter toolbar does not — there the value is already on
+    # The hint teaches the format, which a form field wants and a filter
+    # toolbar does not — there the value is already on
     # screen in the format the hint would describe.
     @hint = hint
     @error = error
@@ -73,7 +72,7 @@ class UI::DatePicker < UI::Base
   def input_classes
     cn(
       "flex w-full rounded-md border border-input bg-background text-foreground",
-      "placeholder:text-muted-foreground transition-colors focus:outline-none",
+      "placeholder:text-muted-foreground transition-all focus:outline-none",
       "focus:ring-2 focus:ring-primary focus:ring-offset-1 ring-offset-background",
       "disabled:cursor-not-allowed disabled:opacity-50 h-9 pl-3 pr-10 py-2 text-sm",
       # aria-invalid rather than a Ruby flag, so a date the user mistypes is

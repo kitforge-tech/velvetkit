@@ -10,9 +10,9 @@ require "securerandom"
 # The open list is drawn by the operating system, so it can't be themed.
 #
 # Usage:
-#   <%= render(UI::NativeSelect.new(form: f, field: :section_id, label: "Section",
-#                                   options: @sections.map { [_1.full_name, _1.id] },
-#                                   prompt: "Choose a section")) %>
+#   <%= render(UI::NativeSelect.new(form: f, field: :team_id, label: "Team",
+#                                   options: @teams.map { [_1.name, _1.id] },
+#                                   prompt: "Choose a team")) %>
 class UI::NativeSelect < UI::Base
   variants(
     base: "flex w-full appearance-none rounded-md border border-input bg-background " \

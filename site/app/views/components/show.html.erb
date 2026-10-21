@@ -15,8 +15,8 @@
       <%= render(UI::Badge.new(variant: :outline, class: "font-mono")) { @component.class_name } %>
     </div>
     <p class="max-w-2xl text-lg text-muted-foreground"><%= @component.description %></p>
-<div data-controller="clipboard" class="flex flex-wrap items-center gap-2">
-  <span hidden data-clipboard-target="source"><%= @component.to_markdown %></span>
+<div data-controller="clipboard" data-clipboard-copied-value="Markdown copied" class="flex flex-wrap items-center gap-2">
+  <span hidden data-clipboard-target="source"><%= @component.page_markdown %></span>
   <%= render(UI::Menu.new) do |menu| %>
     <% menu.with_trigger(variant: :outline, size: :sm) do %>
       <%= render(UI::Icon.new(name: "sparkles", size: :sm, class: "text-primary dark:text-fuchsia-300")) %>
@@ -25,8 +25,7 @@
     <% end %>
     <% menu.with_content(class: "w-56") do |content| %>
       <% content.with_item(data: { action: "clipboard#copy" }) do %>
-        <%= render(UI::Icon.new(name: "copy", size: :sm, data: { clipboard_target: "idle" })) %>
-        <%= render(UI::Icon.new(name: "check", size: :sm, class: "text-emerald-500", hidden: true, data: { clipboard_target: "done" })) %>
+        <%= render(UI::Icon.new(name: "copy", size: :sm)) %>
         Copy as Markdown
       <% end %>
       <% content.with_item(href: component_path(@component, format: :md)) do %>
@@ -40,6 +39,9 @@
       <% end %>
     <% end %>
   <% end %>
+  <%# The menu closes on choosing, so the result shows beside it. %>
+  <span hidden data-clipboard-target="label" class="inline-flex items-center gap-1 rounded-md bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:text-emerald-300"></span>
+  <span class="sr-only" role="status" data-clipboard-target="status"></span>
 </div>
   </header>
 

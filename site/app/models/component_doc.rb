@@ -17,4 +17,9 @@ class ComponentDoc < Velvetkit::Reference
   end
 
   def to_param = name
+
+  # The component as one Markdown page, for agents: named as VelvetKit's so
+  # an AI knows which library it belongs to. Served as .md and copied by
+  # "Copy as Markdown".
+  def page_markdown = "# VelvetKit\n\n#{to_markdown}"
 end

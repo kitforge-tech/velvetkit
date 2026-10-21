@@ -1,0 +1,15 @@
+<%= render(UI::Table.new) do |table| %>
+  <% table.with_head do |head| %>
+    <% head.with_column { "Customer" } %>
+    <% head.with_column { "Plan" } %>
+    <% head.with_column(align: :end) { "Seats" } %>
+  <% end %>
+  <% [ [ "Aditi Rao", "Business", "24" ], [ "Arjun Nair", "Team", "8" ],
+       [ "Chitra Menon", "Free", "1" ] ].each do |name, plan, seats| %>
+    <% table.with_row do |row| %>
+      <% row.with_cell { name } %>
+      <% row.with_cell { plan } %>
+      <% row.with_cell(align: :end) { seats } %>
+    <% end %>
+  <% end %>
+<% end %>
