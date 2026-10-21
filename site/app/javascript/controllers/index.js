@@ -51,3 +51,6 @@ application.register("ui--theme", UI__ThemeController)
 
 import UI__TooltipController from "./ui/tooltip_controller"
 application.register("ui--tooltip", UI__TooltipController)
+
+import UI__SelectController from "./ui/select_controller"
+application.register("ui--select", UI__SelectController)

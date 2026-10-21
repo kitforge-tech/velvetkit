@@ -26,7 +26,7 @@
     <% menu.with_content(class: "w-56") do |content| %>
       <% content.with_item(data: { action: "clipboard#copy" }) do %>
         <%= render(UI::Icon.new(name: "copy", size: :sm, data: { clipboard_target: "idle" })) %>
-        <%= render(UI::Icon.new(name: "check", size: :sm, class: "hidden text-emerald-500", data: { clipboard_target: "done" })) %>
+        <%= render(UI::Icon.new(name: "check", size: :sm, class: "text-emerald-500", hidden: true, data: { clipboard_target: "done" })) %>
         Copy as Markdown
       <% end %>
       <% content.with_item(href: component_path(@component, format: :md)) do %>
