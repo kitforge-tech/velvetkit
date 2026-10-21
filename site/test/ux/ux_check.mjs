@@ -150,6 +150,32 @@ ws.onopen = async () => {
     await sleep(400);
     st = await searchState();
     check("Escape closes search", !st.open);
+
+    // 8. The hero rail: arrows scroll a card at a time and grey out at the ends;
+    //    the focused track scrolls with ← →; the fade only shows where there's more.
+    await send("Page.navigate", { url: `${BASE}/` });
+    await sleep(2500);
+    const rail = () => run(`(() => { const t = document.querySelector('[data-rail-target=track]');
+      return { left: Math.round(t.scrollLeft), prev: document.querySelector('[data-rail-target=previous]').disabled,
+               next: document.querySelector('[data-rail-target=next]').disabled, atStart: t.hasAttribute('data-at-start'),
+               mask: getComputedStyle(t).maskImage || getComputedStyle(t).webkitMaskImage,
+               card: Math.round(t.firstElementChild.getBoundingClientRect().width) }; })()`);
+    let r = await rail();
+    check("rail starts with ‹ disabled and no left fade", r.left === 0 && r.prev && !r.next && r.atStart && !r.mask.startsWith("linear-gradient(to right, rgba(0, 0, 0, 0)"), r.mask.slice(0, 50));
+    await click('[data-rail-target=next]');
+    await sleep(900);
+    const afterNext = await rail();
+    check("› scrolls on by about a card", Math.abs(afterNext.left - (afterNext.card + 20)) <= 24 && !afterNext.prev, `${afterNext.left}px (card ${afterNext.card}px)`);
+    await click('[data-rail-target=previous]');
+    await sleep(900);
+    check("‹ scrolls back", (await rail()).left === 0);
+    await run(`document.querySelector('[data-rail-target=track]').focus()`);
+    await key("ArrowRight", "ArrowRight", 0, 39);
+    await sleep(500);
+    check("the focused rail scrolls with →", (await rail()).left > 0);
+    for (let i = 0; i < 12; i++) { await click('[data-rail-target=next]'); await sleep(450); }
+    r = await rail();
+    check("› greys out at the end", r.next && !r.prev);
   } catch (error) {
     console.log("ERROR", error.message);
     results.push(false);

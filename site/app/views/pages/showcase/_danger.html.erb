@@ -1,0 +1,19 @@
+<div class="space-y-4">
+  <h3 class="font-semibold">Danger zone</h3>
+  <%= render(UI::Alert.new(variant: :destructive)) do |alert| %>
+    <% alert.with_title { "Deleting is permanent" } %>
+    <% alert.with_description { "The project, its 214 files and its history go for good." } %>
+  <% end %>
+  <%= render(UI::Input.new(name: "showcase_confirm", label: "Type the project name", placeholder: "website-relaunch", size: :sm)) %>
+  <%= render(UI::Dialog.new) do |dialog| %>
+    <% dialog.with_trigger(variant: :destructive, class: "w-full") { "Delete project" } %>
+    <% dialog.with_content(size: :sm) do |content| %>
+      <% content.with_title { "Delete website-relaunch?" } %>
+      <% content.with_description { "This can't be undone. This is a real dialog from the kit." } %>
+      <% content.with_footer do %>
+        <%= render(UI::Dialog::Close.new(variant: :outline, class: "static")) { "Keep it" } %>
+        <%= render(UI::Button.new(variant: :destructive)) { "Delete" } %>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>

@@ -1,150 +1,69 @@
-<%# The hero: plain, confident type on the left; on the right a velvet panel
-    holding a flat mosaic of real kit components, labelled like a blueprint,
-    with one spec callout. Nothing here is a picture of UI; all of it is UI. %>
-<section class="relative overflow-hidden border-b">
-  <div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(var(--border)_1px,transparent_1px)] [background-size:22px_22px] [mask-image:linear-gradient(to_right,black,transparent_55%)]"></div>
+<%# The hero: the velvet band, plain confident type, and a rail of real
+    product UI built from the kit, scrolled sideways. Nothing here is a
+    picture of UI; all of it is UI. %>
+<% blocks = {
+     "sign_in" => "UI::Input · UI::PasswordInput", "team" => "UI::Avatar · UI::Badge",
+     "notifications" => "UI::Switch", "plans" => "UI::RadioGroup · UI::Select",
+     "usage" => "UI::Badge", "tasks" => "UI::Tabs · UI::Badge",
+     "schedule" => "UI::DatePicker · UI::Select", "danger" => "UI::Alert · UI::Dialog",
+     "faq" => "UI::Accordion", "records" => "UI::Table · UI::Pagination"
+   } %>
+<section class="relative isolate overflow-hidden bg-[#1c0a30] text-white">
+  <div aria-hidden="true" class="absolute inset-0 -z-10">
+    <div class="absolute inset-0 bg-[radial-gradient(120%_80%_at_15%_0%,#4D1A7F_0%,transparent_60%),radial-gradient(90%_70%_at_100%_100%,#2e0f52_0%,transparent_65%)]"></div>
+    <%# Fine diagonal weave, the nap of the fabric. %>
+    <div class="absolute inset-0 opacity-[0.07] bg-[repeating-linear-gradient(135deg,white_0_1px,transparent_1px_7px)]"></div>
+  </div>
 
-  <div class="mx-auto grid max-w-6xl grid-cols-1 items-center gap-12 px-4 py-14 sm:px-6 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-14 lg:py-20">
+  <div class="mx-auto grid max-w-6xl grid-cols-1 items-end gap-8 px-4 pt-16 sm:px-6 lg:grid-cols-[1.3fr_1fr] lg:pt-20">
     <div>
-      <p class="relative inline-flex items-center px-2.5 py-1 font-mono text-xs text-muted-foreground">
-        <span aria-hidden="true" class="absolute top-0 left-0 size-2 border-t border-l border-foreground/40"></span>
-        <span aria-hidden="true" class="absolute right-0 bottom-0 size-2 border-r border-b border-foreground/40"></span>
+      <p class="relative inline-flex items-center px-2.5 py-1 font-mono text-xs text-white/70">
+        <span aria-hidden="true" class="absolute top-0 left-0 size-2 border-t border-l border-[#FFA552]"></span>
+        <span aria-hidden="true" class="absolute right-0 bottom-0 size-2 border-r border-b border-[#FFA552]"></span>
         Rails 7.1+ · ViewComponent · Tailwind 4
       </p>
-
-      <h1 class="mt-5 text-[2.6rem] leading-[1.04] font-extrabold tracking-tight sm:text-[3rem]">
-        <span class="text-primary dark:text-[#c9a3f2]">Ship Rails UI</span><br>
+      <h1 class="mt-5 text-[2.5rem] leading-[1.05] font-extrabold tracking-tight text-balance sm:text-[3.2rem]">
+        <span class="text-[#d9b8ff]">Ship Rails UI</span><br>
         with components<br>
         you own.
       </h1>
-
-      <p class="mt-6 max-w-lg text-lg text-pretty text-muted-foreground">
-        VelvetKit copies accessible ViewComponents into your app: only the ones you
-        use, under your namespace, with their tests and Lookbook previews. Your AI
-        agent gets a reference to build with them.
+    </div>
+    <div class="space-y-6">
+      <p class="text-lg text-pretty text-white/75">
+        VelvetKit copies accessible ViewComponents into your app: only the ones you use, under your namespace,
+        with their tests and previews. Your AI agent gets a reference to build with them.
       </p>
-
-      <div class="mt-8 flex flex-wrap gap-3">
-        <%= render(UI::Link.new(href: docs_path, variant: :default, size: :lg, button_variant: true)) do |link| %>
+      <div class="flex flex-wrap gap-3">
+        <%= render(UI::Link.new(href: docs_path, variant: :secondary, size: :lg, button_variant: true, class: "bg-white text-[#2e0f52] hover:bg-white/90")) do |link| %>
           <% link.with_trailing_icon(name: "arrow-right") %>
           Get started
         <% end %>
-        <%= render(UI::Link.new(href: components_path, variant: :outline, size: :lg, button_variant: true)) { "Browse #{ComponentDoc.names.size} components" } %>
-      </div>
-
-      <div class="mt-6 max-w-md"><%= code_block("bin/rails generate velvetkit:add dialog") %></div>
-
-      <div class="mt-8 flex flex-wrap items-center gap-x-3.5 gap-y-2 text-[13px] text-muted-foreground">
-        <span class="flex items-center gap-1.5 font-mono text-[10px] tracking-[0.18em] uppercase">
-          <span class="size-1.5 border-t border-l border-primary dark:border-[#FFA552]"></span>Built on
-        </span>
-        <span>ViewComponent</span><span>Tailwind CSS 4</span><span>Stimulus</span><span>Lookbook</span>
+        <%= render(UI::Link.new(href: components_path, variant: :outline, size: :lg, button_variant: true, class: "border-white/25 bg-white/5 text-white hover:bg-white/10 hover:text-white")) { "Browse #{ComponentDoc.names.size} components" } %>
       </div>
     </div>
+  </div>
 
-    <%# The velvet panel. The third column runs off its edge on purpose. %>
-    <div class="relative isolate overflow-hidden rounded-3xl bg-[#1c0a30] p-5 sm:p-7">
-      <div aria-hidden="true" class="absolute inset-0 -z-10">
-        <div class="absolute inset-0 bg-[radial-gradient(120%_80%_at_0%_0%,#4D1A7F_0%,transparent_60%),radial-gradient(90%_70%_at_100%_100%,#2e0f52_0%,transparent_65%)]"></div>
-        <div class="absolute inset-0 opacity-[0.07] bg-[repeating-linear-gradient(135deg,white_0_1px,transparent_1px_7px)]"></div>
-      </div>
-
-      <div class="grid w-[48rem] max-w-none grid-cols-[14.5rem_13.5rem_16rem] gap-5 max-sm:w-full max-sm:grid-cols-1 sm:max-lg:w-[29.5rem] sm:max-lg:grid-cols-[14.5rem_13.5rem]">
-        <%# Column one %>
-        <div class="space-y-5">
-          <div>
-            <%= render "pages/mosaic_label", text: "UI::Card" %>
-            <%= render(UI::Card.new) do |card| %>
-              <% card.with_header do |header| %>
-                <% header.with_title(class: "text-base") { "Invite people" } %>
-                <% header.with_description { "They join as soon as they accept." } %>
-              <% end %>
-              <% card.with_content(class: "space-y-3") do %>
-                <%= render(UI::Input.new(label: "Email", placeholder: "name@example.com", size: :sm)) %>
-                <%= render(UI::Select.new(name: "hero_role", label: "Role", options: [ "Editor", "Viewer", "Admin" ], size: :sm)) %>
-                <%# A Primer-style spec callout on the button. %>
-                <div class="relative pt-2 pb-6">
-                  <div aria-hidden="true" class="pointer-events-none absolute top-0.5 -right-1.5 bottom-4.5 -left-1.5 rounded-lg border border-dashed border-[#FFA552]"></div>
-                  <%= render(UI::Button.new(full_width: true)) { "Send invite" } %>
-                  <span aria-hidden="true" class="absolute bottom-0 left-0 rounded bg-[#FFA552] px-1.5 py-0.5 font-mono text-[10px] leading-none text-[#2e0f52]">UI::Button · h-9</span>
-                </div>
-              <% end %>
-            <% end %>
-          </div>
-          <div>
-            <%= render "pages/mosaic_label", text: "UI::Tabs" %>
-            <div class="rounded-xl border bg-card p-3">
-              <%= render(UI::Tabs.new(default_value: "overview", variant: :pill, size: :sm)) do |tabs| %>
-                <% tabs.with_list do |list| %>
-                  <% list.with_trigger(value: "overview") { "Overview" } %>
-                  <% list.with_trigger(value: "activity") { "Activity" } %>
-                <% end %>
-                <% tabs.with_panel(value: "overview", class: "px-1 pt-2 text-xs text-muted-foreground") { "12 projects, 4 people." } %>
-                <% tabs.with_panel(value: "activity", class: "px-1 pt-2 text-xs text-muted-foreground") { "3 changes today." } %>
-              <% end %>
-            </div>
-          </div>
-        </div>
-
-        <%# Column two %>
-        <div class="space-y-5">
-          <div>
-            <%= render "pages/mosaic_label", text: "UI::Alert" %>
-            <%= render(UI::Alert.new(variant: :success)) do |alert| %>
-              <% alert.with_title { "Deployed" } %>
-              <% alert.with_description { "Version 2.4 is live." } %>
-            <% end %>
-          </div>
-          <div>
-            <%= render "pages/mosaic_label", text: "UI::Switch" %>
-            <div class="flex flex-col items-start gap-3.5 rounded-xl border bg-card p-4">
-              <%= render(UI::Switch.new(name: "hero_email", checked: true, label: "Email")) %>
-              <%= render(UI::Switch.new(name: "hero_push", checked: true, label: "Push")) %>
-              <%= render(UI::Switch.new(name: "hero_digest", label: "Weekly digest")) %>
-            </div>
-          </div>
-          <div>
-            <%= render "pages/mosaic_label", text: "UI::Badge · UI::AvatarGroup" %>
-            <div class="flex items-center justify-between rounded-xl border bg-card p-4">
-              <%= render(UI::AvatarGroup.new(size: :sm)) do |group| %>
-                <% group.with_avatar { "AK" } %>
-                <% group.with_avatar { "RM" } %>
-                <% group.with_avatar { "SJ" } %>
-              <% end %>
-              <%= render(UI::Badge.new(variant: :outline)) { "3 editors" } %>
-            </div>
-          </div>
-        </div>
-
-        <%# Column three: wide screens only, cut by the panel edge. %>
-        <div class="space-y-5 max-lg:hidden">
-          <div>
-            <%= render "pages/mosaic_label", text: "UI::Table" %>
-            <div class="rounded-xl border bg-card">
-              <%= render(UI::Table.new) do |table| %>
-                <% table.with_head do |head| %>
-                  <% head.with_column { "Invoice" } %>
-                  <% head.with_column(align: :end) { "Status" } %>
-                <% end %>
-                <% [ [ "INV-104", :success, "Paid" ], [ "INV-105", :warning, "Due" ], [ "INV-106", :outline, "Draft" ] ].each do |number, variant, status| %>
-                  <% table.with_row do |row| %>
-                    <% row.with_cell(class: "font-mono text-xs") { number } %>
-                    <% row.with_cell(align: :end) { render(UI::Badge.new(variant: variant, size: :sm)) { status } } %>
-                  <% end %>
-                <% end %>
-              <% end %>
-            </div>
-          </div>
-          <div>
-            <%= render "pages/mosaic_label", text: "UI::Checkbox" %>
-            <div class="flex flex-col items-start gap-3 rounded-xl border bg-card p-4">
-              <%= render(UI::Checkbox.new(name: "hero_billing", checked: true, label: "Billing")) %>
-              <%= render(UI::Checkbox.new(name: "hero_reports", checked: true, label: "Reports")) %>
-              <%= render(UI::Checkbox.new(name: "hero_audit", label: "Audit log")) %>
-            </div>
-          </div>
-        </div>
+  <%# The rail: scroll it, swipe it, use the arrows, or focus it and use ← →. %>
+  <div class="relative mt-14 pb-16" data-controller="rail">
+    <div class="mx-auto mb-4 flex max-w-6xl items-center justify-between px-4 sm:px-6">
+      <p class="font-mono text-xs text-white/55"><%= blocks.size %> screens, every one built from the kit and live</p>
+      <div class="flex gap-2">
+        <%= render(UI::Button.new(variant: :outline, size: :icon_sm, aria: { label: "Scroll back" }, class: "border-white/20 bg-white/5 text-white hover:bg-white/15 hover:text-white disabled:opacity-30",
+                                  data: { action: "rail#previous", rail_target: "previous" })) { render(UI::Icon.new(name: "chevron-left", size: :sm)) } %>
+        <%= render(UI::Button.new(variant: :outline, size: :icon_sm, aria: { label: "Scroll on" }, class: "border-white/20 bg-white/5 text-white hover:bg-white/15 hover:text-white disabled:opacity-30",
+                                  data: { action: "rail#next", rail_target: "next" })) { render(UI::Icon.new(name: "chevron-right", size: :sm)) } %>
       </div>
     </div>
+    <ul role="region" aria-label="Screens built from VelvetKit components" tabindex="0"
+        class="flex snap-x snap-mandatory scroll-px-4 gap-5 overflow-x-auto px-4 pt-1 pb-6 [scrollbar-color:rgb(255_255_255/0.25)_transparent] [scrollbar-width:thin] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 sm:scroll-px-6 sm:px-6 lg:scroll-px-[max(1.5rem,calc((100vw-72rem)/2+1.5rem))] lg:px-[max(1.5rem,calc((100vw-72rem)/2+1.5rem))]
+               [mask-image:linear-gradient(to_right,transparent,black_2rem,black_calc(100%-4rem),transparent)]
+               data-[at-start]:[mask-image:linear-gradient(to_right,black_calc(100%-4rem),transparent)]
+               data-[at-end]:[mask-image:linear-gradient(to_right,transparent,black_2rem)]
+               data-[at-start]:data-[at-end]:[mask-image:none]"
+        data-rail-target="track" data-action="scroll->rail#update">
+      <% blocks.each do |name, label| %>
+        <%= render "pages/showcase/block", name: name, label: label %>
+      <% end %>
+    </ul>
   </div>
 </section>
