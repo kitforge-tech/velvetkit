@@ -40,6 +40,13 @@ en:
       next: 'Go to next page'
       next_label: 'Next'
       more: 'More pages'
+    select:
+      placeholder: 'Choose…'
+      search: 'Search'
+      search_label: 'Search the options'
+      no_matches: 'No matches'
+      # Shown on a multiple select once more than two options are ticked.
+      selected: '%{count} selected'
     theme_toggle:
       label: 'Change theme'
       heading: 'Theme'

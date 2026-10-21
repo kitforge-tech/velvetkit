@@ -1,0 +1,6 @@
+<div class="flex max-w-sm flex-col gap-4">
+  <%= render(UI::NativeSelect.new(name: "a", options: UI::NativeSelectPreview::SECTIONS, label: "Default")) %>
+  <%= render(UI::NativeSelect.new(name: "b", options: UI::NativeSelectPreview::SECTIONS, label: "Required", required: true)) %>
+  <%= render(UI::NativeSelect.new(name: "c", options: UI::NativeSelectPreview::SECTIONS, label: "Error", error: true)) %>
+  <%= render(UI::NativeSelect.new(name: "d", options: UI::NativeSelectPreview::SECTIONS, label: "Disabled", disabled: true)) %>
+</div>

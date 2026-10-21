@@ -1,23 +1,45 @@
 # frozen_string_literal: true
 
 class UI::SelectPreview < ViewComponent::Preview
-  SECTIONS = [ [ "Grade 8 A", 1 ], [ "Grade 8 B", 2 ], [ "Grade 9 A", 3 ] ].freeze
+  PLANS = [ [ "Free", "free" ], [ "Team", "team" ], [ "Business", "business" ], [ "Enterprise", "enterprise" ] ].freeze
 
   # @label Playground
   # @param size select { choices: [sm, default, lg] }
-  # @param label text
+  # @param prompt text
   # @param required toggle
-  # @param disabled toggle
   # @param error toggle
-  def playground(size: :default, label: "Section", required: false, disabled: false, error: false)
-    render(UI::Select.new(name: "section_id", options: SECTIONS, prompt: "Choose a section",
-                          size: size.to_sym, label: label, required: required,
-                          disabled: disabled, error: error))
+  # @param disabled toggle
+  # @param searchable toggle
+  # @param multiple toggle
+  def playground(size: :default, prompt: "Choose a plan", required: false, error: false, disabled: false,
+                 searchable: false, multiple: false)
+    render(UI::Select.new(name: "plan", label: "Plan", options: PLANS, prompt: prompt.presence,
+                          size: size.to_sym, required: required, error: error, disabled: disabled,
+                          searchable: searchable, multiple: multiple))
+  end
+
+  # @label Default
+  def default
+    render_with_template
+  end
+
+  # @label States
+  def states
+    render_with_template
   end
 
   # @label Sizes
-  def sizes; render_with_template; end
+  def sizes
+    render_with_template
+  end
 
-  # @label States
-  def states; render_with_template; end
+  # @label Searchable
+  def long_list
+    render_with_template
+  end
+
+  # @label Multiple
+  def multiple
+    render_with_template
+  end
 end

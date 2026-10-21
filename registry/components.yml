@@ -74,8 +74,10 @@ components:
     description: Floating content anchored to a trigger.
   radio_group:
     description: A set of radio buttons.
+  native_select:
+    description: The browser's own select, styled closed; best for phones' system pickers.
   select:
-    description: A native select with label, standalone or with a form builder.
+    description: A styled dropdown with keyboard navigation and type-ahead, posting like a native select.
   sheet:
     description: A panel that slides in from an edge of the screen.
   sidebar:

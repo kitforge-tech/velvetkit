@@ -1,0 +1,6 @@
+<%# Stays open while you tick; past two choices the trigger counts them. %>
+<div class="max-w-xs">
+  <%= render(UI::Select.new(name: "reviewers", label: "Reviewers", prompt: "Add reviewers", multiple: true, searchable: true,
+                            options: [ [ "Asha Kulkarni", 1 ], [ "Ravi Menon", 2 ], [ "Sara Joseph", 3 ], [ "Tomás Ortega", 4 ], [ "Mei Lin", 5 ] ],
+                            selected: [ 1, 2 ])) %>
+</div>

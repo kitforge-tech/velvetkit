@@ -48,8 +48,11 @@ module Velvetkit
       requested.each { |name| fetch(name) }
 
       resolved = []
+      visiting = Set.new
       visit = lambda do |name|
-        next if resolved.include?(name)
+        # A component already placed, or one whose dependencies are being
+        # walked right now: two components may render each other.
+        next if resolved.include?(name) || !visiting.add?(name)
 
         dependencies(name).each(&visit)
         resolved << name
@@ -120,8 +123,15 @@ module Velvetkit
       end
     end
 
+    # Components the files render. Comments don't count: a component's notes
+    # may point at another without needing it.
     def references(files)
-      scan(files, /\bUI::([A-Z][A-Za-z0-9]*)/).map(&:underscore).select { |n| names.include?(n) }.uniq
+      files.flat_map { |file| code(file).scan(/\bUI::([A-Z][A-Za-z0-9]*)/).flatten }
+           .map(&:underscore).select { |n| names.include?(n) }.uniq
+    end
+
+    def code(file)
+      read(file).gsub(/^\s*#.*$/, "").gsub(/<%#.*?%>/m, "")
     end
 
     # `ui--data-grid-url-value` names the data-grid controller; drop trailing

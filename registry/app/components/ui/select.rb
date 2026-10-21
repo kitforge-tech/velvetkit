@@ -2,35 +2,47 @@
 
 require "securerandom"
 
-# UI::Select — a native <select>.
+# UI::Select — a dropdown for choosing one value, or several, styled to match the kit.
 #
-# Deliberately native rather than a custom listbox: on a phone it opens the
-# platform picker, and keyboard navigation, type-ahead and screen-reader
-# behaviour all come for free. A custom control would have to reimplement all
-# of it, and this is a form field in an office tool, not a showcase.
+# The visible part is a WAI-ARIA "select-only combobox": a button with
+# role=combobox and a floating role=listbox. Focus stays on the button while
+# the arrow keys move through the options, as the pattern specifies.
+#
+# The value lives in a visually hidden native <select>. That keeps everything a
+# form already relies on: the field submits under its name, `required` blocks
+# submission, form reset works, the form builder binds it, and anything
+# listening for `change` on it still hears one. The Stimulus controller only
+# mirrors the choice into it.
+#
+# `searchable: true` adds a search box that filters the list; `multiple: true`
+# lets people pick several, posting `name[]` like a native multiple select.
+#
+# UI::NativeSelect is the browser's own control, for when a phone's system
+# picker is the better fit.
 #
 # Usage:
-#   <%= render(UI::Select.new(form: f, field: :section_id, label: "Section",
-#                             options: @sections.map { [_1.full_name, _1.id] },
-#                             prompt: "Choose a section")) %>
+#   <%= render(UI::Select.new(form: f, field: :plan, label: "Plan",
+#                             options: [["Free", "free"], ["Pro", "pro"]],
+#                             prompt: "Choose a plan")) %>
 class UI::Select < UI::Base
   variants(
-    base: "flex w-full appearance-none rounded-md border border-input bg-background " \
-          "text-foreground " \
+    base: "flex w-full items-center justify-between gap-2 rounded-md border border-input bg-background " \
+          "text-left text-foreground shadow-xs " \
           "#{UI::Base::FOCUS_RING} " \
-          "disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-muted!",
+          "aria-expanded:ring-2 aria-expanded:ring-primary aria-expanded:ring-offset-1 " \
+          "disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-muted",
     variants: {
       size: {
-        sm:      "h-8 pl-2.5 pr-8 py-1 text-xs",
-        default: "h-9 pl-3 pr-9 py-2 text-sm",
-        lg:      "h-10 pl-4 pr-10 py-2.5 text-base"
+        sm:      "h-8 px-2.5 text-xs",
+        default: "h-9 px-3 text-sm",
+        lg:      "h-10 px-4 text-base"
       }
     },
     defaults: { size: :default }
   )
 
   def initialize(name: nil, options: [], selected: nil, prompt: nil,
-                 label: nil, size: :default,
+                 label: nil, size: :default, searchable: false, multiple: false,
                  required: false, error: false, disabled: false,
                  form: nil, field: nil,
                  class: nil, **html_attrs)
@@ -40,6 +52,8 @@ class UI::Select < UI::Base
     @prompt     = prompt
     @label      = label
     @size       = size
+    @searchable = searchable
+    @multiple   = multiple
     @required   = required
     @error      = error
     @disabled   = disabled
@@ -47,16 +61,36 @@ class UI::Select < UI::Base
     @field      = field
     @user_class = binding.local_variable_get(:class)
     @html_attrs = html_attrs
-    @select_id  = @html_attrs[:id] || (render_label? ? "ui-select-#{SecureRandom.hex(4)}" : nil)
-    @html_attrs[:id] = @select_id if @select_id
+    @uid        = SecureRandom.hex(4)
   end
 
-  attr_reader :options, :prompt
+  attr_reader :prompt, :size
 
-  def classes
+  def searchable? = @searchable
+  def multiple? = @multiple
+
+  def trigger_id = "ui-select-#{@uid}"
+  def listbox_id = "ui-select-#{@uid}-listbox"
+  def search_id = "ui-select-#{@uid}-search"
+  def option_id(index) = "ui-select-#{@uid}-option-#{index}"
+
+  def trigger_classes
     cn(variant_classes(size: @size),
        { "border-destructive focus:ring-destructive" => @error },
        @user_class)
+  end
+
+  def trigger_options
+    {
+      type: "button",
+      id: trigger_id,
+      class: trigger_classes,
+      role: "combobox",
+      disabled: @disabled,
+      aria: { haspopup: "listbox", expanded: "false", controls: listbox_id, invalid: (@error ? "true" : nil) },
+      data: { "ui--select-target": "trigger",
+              action: "click->ui--select#toggle keydown->ui--select#keydown" }
+    }
   end
 
   def form_field? = @form.present? && @field.present?
@@ -70,7 +104,6 @@ class UI::Select < UI::Base
   end
 
   def label_text
-    return nil unless render_label?
     return @label if @label.is_a?(String) && @label.present?
     return nil unless form_field?
 
@@ -83,27 +116,66 @@ class UI::Select < UI::Base
   end
 
   def label_component
-    UI::Label.new(for: @select_id, required: @required, disabled: @disabled)
+    UI::Label.new(for: trigger_id, required: @required, disabled: @disabled)
   end
 
-  def select_options
-    opts = @html_attrs.dup
-    opts[:class] = classes
-    opts[:name] = @name if @name
-    opts[:disabled] = true if @disabled
-    opts[:required] = true if @required
-    opts[:"aria-invalid"] = "true" if @error
-    opts
+  # Accepts [["Label", value], ...] or a plain list of scalars. A prompt
+  # becomes a first, empty option, as `include_blank` makes it natively;
+  # a multiple select has no "nothing" option, since nothing is unticking.
+  def listbox_options
+    list = @options.map { |option| option.is_a?(Array) ? option : [ option, option ] }
+    prompt.present? && !multiple? ? [ [ prompt, "" ] ] + list : list
   end
 
-  # The form builder derives the name and id itself, so they are dropped here
-  # to avoid overriding the scoped name with a bare one.
-  def form_select_options = select_options.except(:name)
+  # What the field holds now, as strings: the explicit selection, else the
+  # bound attribute, else (single only) whatever a native select shows first.
+  def current_values
+    value = @selected
+    value = @form.object.public_send(@field) if value.nil? && form_field? && @form.object.respond_to?(@field)
+    return Array(value).map(&:to_s) unless value.nil?
 
-  # Accepts [["Label", value], ...] or a plain list of scalars.
-  def normalized_options
-    options.map { |option| option.is_a?(Array) ? option : [ option, option ] }
+    multiple? ? [] : [ listbox_options.first&.last.to_s ]
   end
 
-  def selected?(value) = @selected.present? && @selected.to_s == value.to_s
+  def selected?(value) = current_values.include?(value.to_s)
+
+  def chosen_labels = listbox_options.select { |_, value| selected?(value) && value.to_s != "" }.map(&:first)
+
+  # A multiple select names up to two choices, then counts them.
+  def current_label
+    return chosen_labels.first || prompt unless multiple?
+    return prompt || t("ui.select.placeholder", default: "Choose…") if chosen_labels.empty?
+
+    chosen_labels.size > 2 ? summary.sub("%{count}", chosen_labels.size.to_s) : chosen_labels.join(", ")
+  end
+
+  def placeholder_shown? = chosen_labels.empty?
+
+  # "%{count} selected", left for the controller to fill in as ticks change.
+  def summary = t("ui.select.selected", default: "%{count} selected", count: "%{count}")
+
+  def root_data
+    { controller: "ui--select", "ui--select-multiple-value": multiple?.to_s,
+      "ui--select-summary-value": summary,
+      "ui--select-placeholder-value": prompt || t("ui.select.placeholder", default: "Choose…") }
+  end
+
+  # The hidden native select. Everything the caller passed beyond our own
+  # arguments lands here, so ids and change listeners keep working.
+  def native_options
+    attrs = @html_attrs.dup
+    attrs[:class] = "sr-only"
+    attrs[:tabindex] = -1
+    attrs[:aria] = (attrs[:aria] || {}).merge(hidden: true)
+    attrs[:data] = (attrs[:data] || {}).merge("ui--select-target": "native")
+    attrs[:required] = true if @required
+    attrs[:disabled] = true if @disabled
+    attrs[:multiple] = true if multiple?
+    attrs[:name] = multiple? ? "#{@name}[]" : @name if @name && !form_field?
+    attrs
+  end
+
+  def native_choices
+    listbox_options.map { |label, value| [ label, value ] }
+  end
 end

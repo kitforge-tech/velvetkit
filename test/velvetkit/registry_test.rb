@@ -2,6 +2,8 @@
 
 require "minitest/autorun"
 require "velvetkit"
+require "tmpdir"
+require "fileutils"
 
 class Velvetkit::RegistryTest < Minitest::Test
   def registry = Velvetkit.registry
@@ -46,6 +48,23 @@ class Velvetkit::RegistryTest < Minitest::Test
   def test_resolve_rejects_unknown_components
     error = assert_raises(Velvetkit::Error) { registry.resolve(%w[carousel]) }
     assert_match "carousel", error.message
+  end
+
+  def test_a_component_named_only_in_a_comment_is_not_a_dependency
+    refute_includes registry.dependencies("select"), "native_select"
+    refute_includes registry.dependencies("native_select"), "select"
+  end
+
+  def test_resolve_survives_components_that_render_each_other
+    Dir.mktmpdir do |root|
+      FileUtils.mkdir_p(File.join(root, "app/components/ui"))
+      File.write(File.join(root, "components.yml"), { "components" => { "base" => {}, "a" => {}, "b" => {} } }.to_yaml)
+      File.write(File.join(root, "app/components/ui/base.rb"), "")
+      File.write(File.join(root, "app/components/ui/a.rb"), "UI::B.new")
+      File.write(File.join(root, "app/components/ui/b.rb"), "UI::A.new")
+
+      assert_equal %w[base a b].sort, Velvetkit::Registry.new(root).resolve(%w[a]).sort
+    end
   end
 
   def test_finds_controllers_helpers_and_entry_points
