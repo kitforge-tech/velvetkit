@@ -63,11 +63,31 @@ module ApplicationHelper
     }
   end
 
+  # A sidebar link. The current page gets a velvet bar on its left as well as
+  # a tint, so it stands out while scanning a long list.
   def nav_link(text, path)
     current = current_page?(path)
     link_to text, path, aria: { current: current ? "page" : nil },
-            class: [ "block rounded-md px-3 py-1.5 text-sm transition-colors",
-                     current ? "bg-primary/10 font-medium text-primary dark:text-foreground dark:bg-primary/25" : "text-muted-foreground hover:bg-accent/60 hover:text-foreground" ]
+            class: [ "relative block rounded-md px-3 py-1.5 text-sm transition-colors",
+                     current ? "bg-primary/10 font-medium text-primary before:absolute before:inset-y-1.5 before:left-0 before:w-0.5 before:rounded-full before:bg-primary dark:bg-primary/20 dark:text-foreground dark:before:bg-[#c9a3f2]" : "text-muted-foreground hover:bg-accent hover:text-foreground" ]
+  end
+
+  # Which top-level section the page belongs to, for the header's current link.
+  def section
+    path = request.path
+    return :lookbook if path.start_with?("/lookbook")
+    return :components if path.start_with?("/docs/components")
+    return :ai if path == doc_path("ai")
+    return :docs if path.start_with?("/docs")
+
+    nil
+  end
+
+  # Header links: ghost buttons, the current section filled in.
+  def header_link_options(name, href)
+    current = section == name
+    { href: href, variant: :ghost, size: :sm, button_variant: true, aria: { current: current ? "page" : nil },
+      class: current ? "bg-accent text-foreground" : "text-muted-foreground hover:text-foreground" }
   end
 
   # The namespace typed into the playground, or the error it raises.

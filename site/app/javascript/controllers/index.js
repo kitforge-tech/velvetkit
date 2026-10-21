@@ -10,6 +10,9 @@ application.register("clipboard", ClipboardController)
 import FilterController from "./filter_controller"
 application.register("filter", FilterController)
 
+import SidebarScrollController from "./sidebar_scroll_controller"
+application.register("sidebar-scroll", SidebarScrollController)
+
 import ThemePlaygroundController from "./theme_playground_controller"
 application.register("theme-playground", ThemePlaygroundController)
 

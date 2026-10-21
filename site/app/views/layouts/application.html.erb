@@ -37,13 +37,13 @@
         <div class="mr-4"><%= render "layouts/navbar_logo" %></div>
 
         <nav class="hidden items-center gap-1 md:flex">
-          <%= render(UI::Link.new(href: docs_path, variant: :ghost, size: :sm, button_variant: true)) { "Docs" } %>
-          <%= render(UI::Link.new(href: components_path, variant: :ghost, size: :sm, button_variant: true)) { "Components" } %>
-          <%= render(UI::Link.new(href: doc_path("ai"), variant: :ghost, size: :sm, button_variant: true)) do |link| %>
+          <%= render(UI::Link.new(**header_link_options(:docs, docs_path))) { "Docs" } %>
+          <%= render(UI::Link.new(**header_link_options(:components, components_path))) { "Components" } %>
+          <%= render(UI::Link.new(**header_link_options(:ai, doc_path("ai")))) do |link| %>
             <% link.with_leading_icon(name: "sparkles", class: "text-primary dark:text-fuchsia-300") %>
             AI
           <% end %>
-          <%= render(UI::Link.new(href: "/lookbook", variant: :ghost, size: :sm, button_variant: true)) { "Lookbook" } %>
+          <%= render(UI::Link.new(**header_link_options(:lookbook, "/lookbook"))) { "Lookbook" } %>
         </nav>
 
         <div class="ml-auto flex items-center gap-2">
