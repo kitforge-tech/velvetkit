@@ -1,0 +1,11 @@
+<%= render(UI::Dialog.new) do |dialog| %>
+  <% dialog.with_trigger(variant: :outline) { "Open dialog" } %>
+  <% dialog.with_content(show_close: false) do |content| %>
+    <% content.with_title { "No close button" } %>
+    <% content.with_description { "This dialog hides the default close button. Users must interact with the footer actions to dismiss it." } %>
+    <% content.with_footer do %>
+      <%= render(UI::Dialog::Close.new(variant: :outline, class: "static")) { "Dismiss" } %>
+      <%= render(UI::Button.new) { "Continue" } %>
+    <% end %>
+  <% end %>
+<% end %>

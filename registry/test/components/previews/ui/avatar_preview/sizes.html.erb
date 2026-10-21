@@ -1,0 +1,8 @@
+<div class="flex flex-wrap items-center gap-6">
+  <% { sm: 24, default: 40, lg: 48, xl: 64 }.each do |size, px| %>
+    <div class="flex flex-col items-center gap-2">
+      <%= render(UI::Avatar.new(size: size)) { "JD" } %>
+      <span class="text-xs text-muted-foreground"><%= size %> (<%= px %>px)</span>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,17 @@
+<div class="flex flex-wrap items-center gap-3">
+  <%= render(UI::Button.new(variant: :default, size: :icon)) do |btn|
+        btn.with_leading_icon(name: "menu")
+      end %>
+  <%= render(UI::Button.new(variant: :outline, size: :icon)) do |btn|
+        btn.with_leading_icon(name: "user")
+      end %>
+  <%= render(UI::Button.new(variant: :secondary, size: :icon)) do |btn|
+        btn.with_leading_icon(name: "panel-left")
+      end %>
+  <%= render(UI::Button.new(variant: :ghost, size: :icon)) do |btn|
+        btn.with_leading_icon(name: "x")
+      end %>
+  <%= render(UI::Button.new(variant: :destructive, size: :icon)) do |btn|
+        btn.with_leading_icon(name: "x")
+      end %>
+</div>

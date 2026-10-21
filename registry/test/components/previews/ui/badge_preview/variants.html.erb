@@ -1,0 +1,8 @@
+<div class="flex flex-wrap items-center gap-3">
+  <%= render(UI::Badge.new(variant: :default)) { "Default" } %>
+  <%= render(UI::Badge.new(variant: :secondary)) { "Secondary" } %>
+  <%= render(UI::Badge.new(variant: :destructive)) { "Destructive" } %>
+  <%= render(UI::Badge.new(variant: :outline)) { "Outline" } %>
+  <%= render(UI::Badge.new(variant: :success)) { "Success" } %>
+  <%= render(UI::Badge.new(variant: :warning)) { "Warning" } %>
+</div>

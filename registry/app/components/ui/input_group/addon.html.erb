@@ -1,0 +1,6 @@
+<%# frozen_string_literal: true %>
+<div role="group" data-slot="input-group-addon" data-align="<%= @align %>" class="<%= classes %>" <%= tag.attributes(@html_attrs) %>>
+  <%= icon if icon %>
+  <%= icon_button if icon_button %>
+  <%= content %>
+</div>

@@ -1,0 +1,9 @@
+<%= tag.div(**wrapper_options) do %><%= render(UI::Menu.new) do |menu| %>
+  <% menu.with_trigger(**trigger_options) do %><%= render(UI::Icon.new(name: "sun", size: :sm, class: sun_classes)) %><%= render(UI::Icon.new(name: "moon", size: :sm, class: moon_classes)) %><% end %>
+  <% menu.with_menu_content(align: :end, class: "w-40") do |content| %>
+    <% content.with_label(t("ui.theme_toggle.heading", default: "Theme")) %>
+    <% OPTIONS.each do |option| %>
+      <% content.with_item(**option_options(option)) do %><%= render(UI::Icon.new(name: option[:icon], size: :sm)) %><span><%= t("ui.theme_toggle.options.#{option[:key]}", default: option[:key].capitalize) %></span><%= render(UI::Icon.new(name: "check", size: :sm, class: "ml-auto hidden group-aria-checked:block")) %><% end %>
+    <% end %>
+  <% end %>
+<% end %><% end %>

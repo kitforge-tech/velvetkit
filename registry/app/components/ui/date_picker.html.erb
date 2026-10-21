@@ -1,0 +1,67 @@
+<div class="<%= classes %>" data-controller="ui--date-picker"
+     data-ui--date-picker-module-url-value="<%= helpers.asset_path('cally.js') %>"
+     data-ui--date-picker-order-value="<%= part_order %>"
+     data-ui--date-picker-separator-value="<%= separator %>"
+     data-action="click@window->ui--date-picker#closeOnOutsideClick keydown@window->ui--date-picker#closeOnEscape"
+     <%= tag.attributes(@html_attrs) %>>
+  <% if render_label? %>
+    <label for="<%= input_id %>" class="mb-1.5 block text-sm font-medium text-foreground">
+      <%= label_text %><% if @required %><span class="ml-0.5 text-destructive">*</span><% end %>
+    </label>
+  <% end %>
+
+  <div class="relative">
+    <%# What the user types. Not name'd: it is never submitted, so a
+        half-typed date cannot reach the server. %>
+    <input type="text" id="<%= input_id %>" inputmode="numeric" autocomplete="off"
+           placeholder="<%= placeholder %>" class="<%= input_classes %>"
+           value="<%= typed_value %>"
+           <%= "required" if @required %> <%= "disabled" if @disabled %>
+           <%= "aria-describedby=\"#{input_id}-hint\"".html_safe if render_hint? %>
+           data-ui--date-picker-target="input"
+           data-action="input->ui--date-picker#typed">
+
+    <%# What the form submits. %>
+    <input type="hidden" name="<%= field_name %>" value="<%= iso_value %>"
+           data-ui--date-picker-target="hidden">
+
+    <button type="button" aria-haspopup="dialog" aria-expanded="false"
+            aria-controls="<%= panel_id %>"
+            aria-label="<%= t("ui.date_picker.open") %>"
+            class="absolute inset-y-0 right-0 flex w-9 items-center justify-center rounded-r-md text-muted-foreground hover:text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+            <%= "disabled" if @disabled %>
+            data-ui--date-picker-target="toggle"
+            data-action="ui--date-picker#toggle">
+      <%= render(UI::Icon.new(name: "calendar", class: "size-4")) %>
+    </button>
+  </div>
+
+  <% if render_hint? %>
+    <p id="<%= input_id %>-hint" class="mt-1 text-xs text-muted-foreground">
+      <%= t("ui.date_picker.hint", pattern: placeholder) %>
+    </p>
+  <% end %>
+
+  <div id="<%= panel_id %>" role="dialog" hidden
+       class="absolute z-30 mt-1 rounded-md border bg-popover p-3 text-popover-foreground shadow-md"
+       data-ui--date-picker-target="panel">
+    <%# calendar-select-year is why this library was chosen: reaching 2012 for
+        a date of birth is one click, not a hundred and seventy. %>
+    <%= tag.send(:"calendar-date",
+                 safe_join([
+                   tag.button(render(UI::Icon.new(name: "chevron-left", class: "size-4")),
+                              type: "button", slot: "previous", aria: { label: t("ui.date_picker.previous") },
+                              class: "inline-flex size-7 items-center justify-center rounded-md hover:bg-accent hover:text-accent-foreground"),
+                   tag.button(render(UI::Icon.new(name: "chevron-right", class: "size-4")),
+                              type: "button", slot: "next", aria: { label: t("ui.date_picker.next") },
+                              class: "inline-flex size-7 items-center justify-center rounded-md hover:bg-accent hover:text-accent-foreground"),
+                   tag.div(safe_join([ tag.send(:"calendar-select-month"), tag.send(:"calendar-select-year") ]),
+                           class: "mb-2 flex items-center gap-2"),
+                   tag.send(:"calendar-month")
+                 ]),
+                 locale: I18n.locale == :en ? "en-IN" : I18n.locale.to_s,
+                 "first-day-of-week": 1, min: @min, max: @max,
+                 data: { "ui--date-picker-target": "calendar",
+                         action: "change->ui--date-picker#picked" }) %>
+  </div>
+</div>

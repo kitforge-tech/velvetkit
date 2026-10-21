@@ -1,0 +1,24 @@
+<% body = content %>
+<%= tag.dialog(**html_options) do %>
+  <%= tag.div(class: panel_classes, data: { state: "closed", "ui--dialog-part": "panel" }) do %>
+    <% if show_close? %>
+      <%= render(UI::Sheet::Close.new) %>
+    <% end %>
+    <% if title? || description? %>
+      <header class="flex flex-col space-y-1.5 text-center sm:text-left">
+        <% if title? %>
+          <%= tag.h2(title_html, id: title_id, class: "text-lg font-semibold leading-none tracking-tight") %>
+        <% end %>
+        <% if description? %>
+          <%= tag.p(description_html, id: description_id, class: "text-sm text-muted-foreground") %>
+        <% end %>
+      </header>
+    <% end %>
+    <% if body.present? %>
+      <div class="overflow-y-auto flex-1 min-h-0 <%= title? || description? ? 'mt-4' : '' %>"><%= body %></div>
+    <% end %>
+    <% if footer? %>
+      <footer class="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end"><%= footer_html %></footer>
+    <% end %>
+  <% end %>
+<% end %>

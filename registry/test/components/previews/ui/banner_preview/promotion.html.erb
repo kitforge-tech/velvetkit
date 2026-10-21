@@ -1,0 +1,9 @@
+<div class="space-y-4 max-w-2xl">
+  <%= render(UI::Banner.new(variant: :promotion)) do |banner| %>
+    <% banner.with_title { "Now available: Advanced Analytics" } %>
+    Unlock powerful insights with our new analytics dashboard. Free for Pro plan users until June 30.
+    <% banner.with_action do %>
+      <a href="#" class="inline-flex items-center text-sm font-medium text-primary hover:underline">Upgrade now →</a>
+    <% end %>
+  <% end %>
+</div>

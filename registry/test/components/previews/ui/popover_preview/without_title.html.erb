@@ -1,0 +1,9 @@
+<%= render(UI::Popover.new) do |popover| %>
+  <% popover.with_trigger { "Open Popover" } %>
+  <% popover.with_content do %>
+    <p>This popover has no title, just content. Perfect for simple messages or actions.</p>
+    <div class="mt-2">
+      <%= render(UI::Button.new(size: :sm)) { "Take Action" } %>
+    </div>
+  <% end %>
+<% end %>

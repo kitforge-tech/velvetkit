@@ -1,0 +1,17 @@
+<%= render(UI::Popover.new) do |popover| %>
+  <% popover.with_trigger { "Open Rich Popover" } %>
+  <% popover.with_content(show_close: true) do |content| %>
+    <% content.with_title { "User Profile" } %>
+    <div class="flex items-center gap-3 mb-3">
+      <%= render(UI::Avatar.new(src: nil, fallback: "JD")) %>
+      <div>
+        <p class="font-medium">John Doe</p>
+        <p class="text-sm text-muted-foreground">john@example.com</p>
+      </div>
+    </div>
+    <div class="flex gap-2">
+      <%= render(UI::Button.new(size: :sm)) { "View Profile" } %>
+      <%= render(UI::Button.new(variant: :outline, size: :sm)) { "Settings" } %>
+    </div>
+  <% end %>
+<% end %>

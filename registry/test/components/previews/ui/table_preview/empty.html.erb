@@ -1,0 +1,8 @@
+<%# An empty roster should say so rather than show a bare header. %>
+<%= render(UI::Table.new) do |table| %>
+  <% table.with_head do |head| %>
+    <% head.with_column { "Name" } %>
+    <% head.with_column(align: :end) { "Roll" } %>
+  <% end %>
+  <% table.with_empty_state { "No students enrolled yet" } %>
+<% end %>

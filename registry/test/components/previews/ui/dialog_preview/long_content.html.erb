@@ -1,0 +1,16 @@
+<%= render(UI::Dialog.new) do |dialog| %>
+  <% dialog.with_trigger(variant: :secondary) { "Open policy dialog" } %>
+  <% dialog.with_content(size: :lg) do |content| %>
+    <% content.with_title { "Usage policy" } %>
+    <% content.with_description { "Long-form modal content should remain readable and keep actions pinned at the end." } %>
+    <div class="space-y-4 text-sm leading-6 text-muted-foreground">
+      <p>Dialogs are best reserved for focused tasks, decisions, or short forms.</p>
+      <p>Because the component uses the native dialog element, focus is moved into the modal and restored to the opener when it closes.</p>
+      <p>The content element is portaled under <code>body</code> at runtime so the backdrop and stacking context stay predictable.</p>
+    </div>
+    <% content.with_footer do %>
+      <%= render(UI::Dialog::Close.new(variant: :outline, class: "static")) { "Close" } %>
+      <%= render(UI::Button.new(variant: :secondary)) { "Acknowledge" } %>
+    <% end %>
+  <% end %>
+<% end %>

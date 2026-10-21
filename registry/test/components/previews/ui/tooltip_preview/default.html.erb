@@ -1,0 +1,8 @@
+<%= render(UI::Tooltip.new) do |tooltip| %>
+  <% tooltip.with_trigger do %>
+    <%= tag.button("Hover me", class: "px-4 py-2 bg-primary text-primary-foreground rounded-md") %>
+  <% end %>
+  <% tooltip.with_content do %>
+    Add to library
+  <% end %>
+<% end %>

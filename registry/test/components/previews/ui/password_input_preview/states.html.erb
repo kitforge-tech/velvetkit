@@ -1,0 +1,19 @@
+<%# Click the eye to toggle masking — driven by the ui--password-visibility controller. %>
+<div class="flex max-w-sm flex-col gap-6">
+  <div class="flex flex-col gap-2">
+    <span class="text-xs text-muted-foreground">Default</span>
+    <%= render(UI::PasswordInput.new(name: "password_default", placeholder: "Enter your password")) %>
+  </div>
+  <div class="flex flex-col gap-2">
+    <span class="text-xs text-muted-foreground">Required</span>
+    <%= render(UI::PasswordInput.new(name: "password_required", required: true)) %>
+  </div>
+  <div class="flex flex-col gap-2">
+    <span class="text-xs text-muted-foreground">Error</span>
+    <%= render(UI::PasswordInput.new(name: "password_error", error: true)) %>
+  </div>
+  <div class="flex flex-col gap-2">
+    <span class="text-xs text-muted-foreground">Disabled</span>
+    <%= render(UI::PasswordInput.new(name: "password_disabled", disabled: true)) %>
+  </div>
+</div>

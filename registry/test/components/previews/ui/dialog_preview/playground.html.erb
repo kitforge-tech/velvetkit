@@ -1,0 +1,12 @@
+<%= render(UI::Dialog.new) do |dialog| %>
+  <% dialog.with_trigger(variant: @trigger_variant) { "Open dialog" } %>
+  <% dialog.with_content(size: @size, show_close: @show_close) do |content| %>
+    <% content.with_title { "Edit profile" } %>
+    <% content.with_description { "Make changes to your profile here. Click save when you're done." } %>
+    <% content.with_footer do %>
+      <%= render(UI::Dialog::Close.new(variant: :outline)) { "Cancel" } %>
+      <%= render(UI::Button.new) { "Save changes" } %>
+    <% end %>
+    Dialog body content lives here.
+  <% end %>
+<% end %>

@@ -1,0 +1,10 @@
+<div class="flex flex-col gap-4 max-w-sm">
+  <%= render(UI::Input.new(label: "Email", placeholder: "you@example.com")) %>
+  <%= render(UI::Input.new(label: "Password", type: :password, placeholder: "Enter password")) %>
+  <%= render(UI::Input.new(label: "Required field", required: true, placeholder: "Cannot be blank")) %>
+  <%= render(UI::Input.new(label: "Required + error", required: true, error: true, variant: :error, placeholder: "Invalid value")) %>
+  <%= render(UI::Input.new(label: "Disabled", disabled: true, placeholder: "Locked")) %>
+  <%= render(UI::Input.new(label: "Small label", label_size: :sm, placeholder: "Small")) %>
+  <%= render(UI::Input.new(label: "Large label", label_size: :lg, placeholder: "Large")) %>
+  <%= render(UI::Input.new(label: "Semibold label", label_weight: :semibold, placeholder: "Bolder label")) %>
+</div>

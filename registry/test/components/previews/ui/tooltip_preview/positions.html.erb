@@ -1,0 +1,34 @@
+<div class="flex flex-wrap gap-8 p-8">
+  <%= render(UI::Tooltip.new) do |tooltip| %>
+    <% tooltip.with_trigger do %>
+      <%= tag.button("Top", class: "px-4 py-2 bg-primary text-primary-foreground rounded-md") %>
+    <% end %>
+    <% tooltip.with_content(side: :top) do %>
+      Tooltip on top
+    <% end %>
+  <% end %>
+  <%= render(UI::Tooltip.new) do |tooltip| %>
+    <% tooltip.with_trigger do %>
+      <%= tag.button("Right", class: "px-4 py-2 bg-primary text-primary-foreground rounded-md") %>
+    <% end %>
+    <% tooltip.with_content(side: :right) do %>
+      Tooltip on right
+    <% end %>
+  <% end %>
+  <%= render(UI::Tooltip.new) do |tooltip| %>
+    <% tooltip.with_trigger do %>
+      <%= tag.button("Bottom", class: "px-4 py-2 bg-primary text-primary-foreground rounded-md") %>
+    <% end %>
+    <% tooltip.with_content(side: :bottom) do %>
+      Tooltip on bottom
+    <% end %>
+  <% end %>
+  <%= render(UI::Tooltip.new) do |tooltip| %>
+    <% tooltip.with_trigger do %>
+      <%= tag.button("Left", class: "px-4 py-2 bg-primary text-primary-foreground rounded-md") %>
+    <% end %>
+    <% tooltip.with_content(side: :left) do %>
+      Tooltip on left
+    <% end %>
+  <% end %>
+</div>

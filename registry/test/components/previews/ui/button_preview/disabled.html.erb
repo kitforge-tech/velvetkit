@@ -1,0 +1,39 @@
+<div class="flex flex-col gap-6">
+  <div>
+    <p class="text-xs text-muted-foreground mb-2">All variants — disabled</p>
+    <div class="flex flex-wrap items-center gap-3">
+      <%= render(UI::Button.new(variant: :default,     disabled: true)) { "Default" } %>
+      <%= render(UI::Button.new(variant: :destructive, disabled: true)) { "Destructive" } %>
+      <%= render(UI::Button.new(variant: :outline,     disabled: true)) { "Outline" } %>
+      <%= render(UI::Button.new(variant: :secondary,   disabled: true)) { "Secondary" } %>
+      <%= render(UI::Button.new(variant: :ghost,       disabled: true)) { "Ghost" } %>
+      <%= render(UI::Button.new(variant: :link,        disabled: true)) { "Link" } %>
+    </div>
+  </div>
+
+  <div>
+    <p class="text-xs text-muted-foreground mb-2">Disabled with icons</p>
+    <div class="flex flex-wrap items-center gap-3">
+      <%= render(UI::Button.new(disabled: true)) do |btn|
+            btn.with_leading_icon(name: "lock")
+            "Locked"
+          end %>
+      <%= render(UI::Button.new(variant: :outline, disabled: true)) do |btn|
+            btn.with_trailing_icon(name: "arrow-right")
+            "Continue"
+          end %>
+      <%= render(UI::Button.new(variant: :destructive, size: :icon, disabled: true)) do |btn|
+            btn.with_leading_icon(name: "x")
+          end %>
+    </div>
+  </div>
+
+  <div>
+    <p class="text-xs text-muted-foreground mb-2">Loading auto-disables (cursor-not-allowed shows on hover)</p>
+    <div class="flex flex-wrap items-center gap-3">
+      <%= render(UI::Button.new(loading: true)) { "Saving" } %>
+      <%= render(UI::Button.new(variant: :destructive, loading: true)) { "Deleting" } %>
+      <%= render(UI::Button.new(variant: :outline, loading: true)) { "Loading" } %>
+    </div>
+  </div>
+</div>

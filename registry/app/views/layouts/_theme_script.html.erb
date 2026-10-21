@@ -1,0 +1,19 @@
+<%# Resolves the stored theme and sets `.dark` on <html> BEFORE first paint.
+    The JS bundle is loaded as a deferred module, so it runs after paint —
+    without this blocking script every page flashes light before going dark.
+    Mirrors the resolution logic in controllers/ui/theme_controller.ts.
+    Render it inside <head> with render "layouts/theme_script". %>
+<%= javascript_tag nonce: true do %>
+  (function () {
+    try {
+      var stored = null;
+      try { stored = localStorage.getItem('ui-theme'); } catch (e) {}
+      var pref = stored === 'light' || stored === 'dark' ? stored : 'system';
+      var dark = pref === 'dark' ||
+        (pref === 'system' &&
+         window.matchMedia('(prefers-color-scheme: dark)').matches);
+      document.documentElement.classList.toggle('dark', dark);
+      document.documentElement.dataset.theme = pref;
+    } catch (e) {}
+  })();
+<% end %>

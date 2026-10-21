@@ -1,0 +1,7 @@
+<div class="flex flex-col gap-4">
+  <%= render(UI::Switch.new(name: "unchecked", label: "Off")) %>
+  <%= render(UI::Switch.new(name: "checked", checked: true, label: "On")) %>
+  <%= render(UI::Switch.new(name: "disabled_off", disabled: true, label: "Disabled off")) %>
+  <%= render(UI::Switch.new(name: "disabled_on", checked: true, disabled: true, label: "Disabled on")) %>
+  <%= render(UI::Switch.new(name: "no_label")) %>
+</div>

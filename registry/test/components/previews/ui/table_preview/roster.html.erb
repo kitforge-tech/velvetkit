@@ -1,0 +1,15 @@
+<%= render(UI::Table.new) do |table| %>
+  <% table.with_head do |head| %>
+    <% head.with_column { "Name" } %>
+    <% head.with_column { "Admission no." } %>
+    <% head.with_column(align: :end) { "Roll" } %>
+  <% end %>
+  <% [["Aditi Rao", "2026/041", "12"], ["Arjun Nair", "2026/042", "13"],
+      ["Chitra Menon", "2026/043", "14"]].each do |name, admission, roll| %>
+    <% table.with_row do |row| %>
+      <% row.with_cell { name } %>
+      <% row.with_cell { admission } %>
+      <% row.with_cell(align: :end) { roll } %>
+    <% end %>
+  <% end %>
+<% end %>

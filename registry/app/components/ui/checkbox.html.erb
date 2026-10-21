@@ -1,0 +1,18 @@
+<% if label.present? %>
+  <%= tag.label for: @id, class: wrapper_classes do %>
+    <%= tag.span class: "relative inline-flex" do %>
+      <% if form_field? %><%= form_check_box %><% else %><%= tag.input(**input_options) %><% end %>
+      <%= tag.span class: overlay_classes do %>
+        <%= render(UI::Icon.new(name: "check", size: icon_size, class: "stroke-[3]", aria: { hidden: true })) %>
+      <% end %>
+    <% end %>
+    <%= tag.span class: label_text_classes do %><%= label %><% if required? %><%= tag.span(" *", class: "text-destructive ml-0.5") %><% end %><% end %>
+  <% end %>
+<% else %>
+  <%= tag.span class: "relative inline-flex" do %>
+    <% if form_field? %><%= form_check_box %><% else %><%= tag.input(**input_options) %><% end %>
+    <%= tag.span class: overlay_classes do %>
+      <%= render(UI::Icon.new(name: "check", size: icon_size, class: "stroke-[3]", aria: { hidden: true })) %>
+    <% end %>
+  <% end %>
+<% end %>

@@ -1,0 +1,6 @@
+<div class="flex max-w-sm flex-col gap-4">
+  <% %i[sm default lg].each do |size| %>
+    <%= render(UI::Select.new(name: "s_#{size}", options: UI::SelectPreview::SECTIONS,
+                              prompt: "Choose a section", size: size, label: size.to_s)) %>
+  <% end %>
+</div>

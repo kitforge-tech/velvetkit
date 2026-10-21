@@ -1,0 +1,12 @@
+<div class="space-y-4 max-w-2xl">
+  <%= render(UI::Banner.new(variant: :introduction)) do |banner| %>
+    <% banner.with_illustration do %>
+      <img src="https://placehold.co/64x64/7c3aed/white?text=VK" alt="" class="h-16 w-16 rounded-lg" />
+    <% end %>
+    <% banner.with_title { "Introducing Velvet Kit" } %>
+    A modern component library for Rails. Build beautiful interfaces faster with pre-built, accessible components.
+    <% banner.with_action do %>
+      <a href="#" class="inline-flex items-center text-sm font-medium text-primary hover:underline">View docs →</a>
+    <% end %>
+  <% end %>
+</div>

@@ -1,0 +1,10 @@
+<%= tag.div class: classes, data: { controller: "ui--banner", slot: "banner" }.merge(@html_attrs[:data] || {}), **@html_attrs.except(:data) do %><% if illustration? %>
+    <div class="shrink-0"><%= illustration %></div>
+  <% end %>
+  <% if leading_icon? %>
+    <%= leading_icon %>
+  <% end %>
+  <div class="flex-1 min-w-0"><% if title? %><%= title %><% end %><% if content.present? %>
+      <p class="text-sm text-foreground/80"><%= content %></p>
+    <% end %><% if action? %><%= action %><% end %></div>
+  <% if dismissible? %><%= render(UI::Button.new(variant: :ghost, size: :icon_sm, class: "absolute top-3 right-3 text-muted-foreground hover:text-foreground", data: { action: "click->ui--banner#dismiss" }, aria: { label: "Dismiss" })) do |btn| %><% btn.with_leading_icon(name: @dismiss_icon) %><% end %><% end %><% end %>

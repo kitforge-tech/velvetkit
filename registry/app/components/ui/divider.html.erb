@@ -1,0 +1,9 @@
+<% if label.present? %>
+  <%= tag.div class: wrapper_classes, **@html_attrs do %>
+    <%= tag.hr class: classes %>
+    <%= tag.span label, class: label_classes %>
+    <%= tag.hr class: classes %>
+  <% end %>
+<% else %>
+  <%= tag.hr class: classes, **@html_attrs %>
+<% end %>
