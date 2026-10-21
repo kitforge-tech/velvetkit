@@ -1,7 +1,7 @@
 <% content_for :main do %>
   <div class="mx-auto flex max-w-6xl gap-12 px-4 py-8 sm:px-6 md:py-12">
     <aside class="hidden w-52 shrink-0 md:block">
-      <div class="sticky top-20 h-[calc(100vh-6rem)] overflow-y-auto overscroll-contain pb-8" data-controller="sidebar-scroll">
+      <div class="sticky top-20 h-[calc(100vh-6rem)] overflow-y-auto overscroll-contain pb-8" data-controller="sidebar-scroll" data-focus-scope="sidebar">
         <%= render "layouts/nav" %>
       </div>
     </aside>

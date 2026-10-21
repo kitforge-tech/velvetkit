@@ -10,7 +10,7 @@ class UI::InputGroup::Field < UI::Input
     "flex-1 w-full h-9 px-3 py-2 text-sm rounded-md text-foreground " \
     "placeholder:text-muted-foreground " \
     "border-0! bg-transparent shadow-none! " \
-    "outline-none! focus-visible:outline-none! focus-visible:outline-none! focus-visible:ring-0! " \
+    "outline-none! focus:outline-none! focus:outline-none! focus:ring-0! " \
     "dark:bg-transparent " \
     "disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-muted/50"
 

@@ -5,9 +5,9 @@ class UI::Menu::Item < UI::Base
     base:
       "relative flex cursor-default select-none items-center gap-2 rounded w-full px-2 py-1 text-sm whitespace-nowrap border-0 bg-transparent outline-none transition-colors " \
       "hover:bg-accent hover:text-accent-foreground " \
-      "focus:bg-accent focus:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 " \
+      "focus:bg-accent focus:text-accent-foreground focus:ring-2 focus:ring-ring focus:ring-offset-1 " \
       "aria-checked:bg-accent aria-checked:text-accent-foreground aria-checked:font-medium " \
-      "data-[disabled]:pointer-events-none data-[disabled]:opacity-50 transition-all",
+      "data-[disabled]:pointer-events-none data-[disabled]:opacity-50 transition-colors",
     variants: {
       variant: {
         default: "",

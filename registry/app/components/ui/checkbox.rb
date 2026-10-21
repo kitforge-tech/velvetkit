@@ -5,9 +5,9 @@ class UI::Checkbox < UI::Base
 
   variants(
     base: "peer appearance-none shrink-0 border border-input bg-background " \
-          "transition-all " \
+          "transition-colors " \
           "checked:bg-primary checked:border-primary " \
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 " \
+          "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1 " \
           "ring-offset-background",
     variants: {
       size: {
@@ -107,7 +107,7 @@ class UI::Checkbox < UI::Base
   def classes
     cn(
       variant_classes(size: @size),
-      { "border-destructive aria-invalid:focus-visible:ring-destructive" => @error },
+      { "border-destructive aria-invalid:focus:ring-destructive" => @error },
       @user_class
     )
   end

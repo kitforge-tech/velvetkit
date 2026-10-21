@@ -5,12 +5,12 @@ require "tailwind_merge"
 module UI; end
 
 class UI::Base < ViewComponent::Base
-  # Shared focus-ring utility — Tailwind expansion of the legacy `.vl-ring`
-  # helper. Components include this in their variant `base:` string so all
-  # interactive UI:: components share the same focus treatment without a
-  # custom CSS class.
-  FOCUS_RING = "transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary " \
-               "focus-visible:ring-offset-1 ring-offset-background"
+  # Shared focus ring, VelvetKit's signature: every interactive UI:: component
+  # includes it in its variant `base:` string. It shows on click as well as on
+  # Tab, and it is drawn at once rather than transitioned (only colours ease):
+  # an animated ring caught mid-way by a page change looked half drawn.
+  FOCUS_RING = "transition-colors focus:outline-none focus:ring-2 focus:ring-primary " \
+               "focus:ring-offset-1 ring-offset-background"
 
   class_attribute :variant_config,
                   instance_writer: false,

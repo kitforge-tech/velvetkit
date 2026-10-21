@@ -21,7 +21,7 @@ class UI::Button < UI::Base
     variants: {
       variant: {
         default:     "bg-primary text-primary-foreground hover:bg-primary/90",
-        destructive: "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive",
+        destructive: "bg-destructive text-white hover:bg-destructive/90 focus:ring-destructive",
         outline:     "border border-input bg-background hover:bg-accent hover:text-accent-foreground " \
                      "disabled:border-input!",
         secondary:   "bg-secondary text-secondary-foreground hover:bg-secondary/80",

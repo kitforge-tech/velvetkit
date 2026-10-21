@@ -2,7 +2,7 @@
 
 class UI::Badge < UI::Base
   variants(
-    base: "inline-flex items-center justify-center gap-1 rounded-full font-medium whitespace-nowrap border border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1",
+    base: "inline-flex items-center justify-center gap-1 rounded-full font-medium whitespace-nowrap border border-transparent transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1",
     variants: {
       variant: {
         default:     "bg-primary text-primary-foreground hover:bg-primary/80",

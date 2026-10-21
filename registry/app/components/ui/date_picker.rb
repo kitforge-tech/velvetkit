@@ -73,8 +73,8 @@ class UI::DatePicker < UI::Base
   def input_classes
     cn(
       "flex w-full rounded-md border border-input bg-background text-foreground",
-      "placeholder:text-muted-foreground transition-all focus-visible:outline-none",
-      "focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 ring-offset-background",
+      "placeholder:text-muted-foreground transition-colors focus:outline-none",
+      "focus:ring-2 focus:ring-primary focus:ring-offset-1 ring-offset-background",
       "disabled:cursor-not-allowed disabled:opacity-50 h-9 pl-3 pr-10 py-2 text-sm",
       # aria-invalid rather than a Ruby flag, so a date the user mistypes is
       # marked without a round trip.
