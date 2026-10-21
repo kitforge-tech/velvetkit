@@ -6,87 +6,9 @@ class UI::SelectTest < ViewComponent::TestCase
   def setup_fixtures(*); end
   def teardown_fixtures(*); end
 
-  SECTIONS = [ [ "Grade 8 A", 1 ], [ "Grade 8 B", 2 ] ].freeze
+  SECTIONS = [ [ "Grade 8 A", 1 ], [ "Grade 8 B", 2 ], [ "Grade 9 A", 3 ] ].freeze
 
-  def test_renders_a_native_select_with_options
-    render_inline(UI::Select.new(name: "enrollment[section_id]", options: SECTIONS))
-    assert_selector "select[name='enrollment[section_id]']"
-    assert_selector "select option", count: 2
-    assert_selector "select option[value='2']", text: "Grade 8 B"
-  end
-
-  # Native rather than a custom listbox: it gets the platform picker on a
-  # phone, keyboard support and screen-reader behaviour for free.
-  def test_accepts_a_plain_array_of_strings
-    render_inline(UI::Select.new(name: "board", options: %w[cbse icse]))
-    assert_selector "option[value='cbse']", text: "cbse"
-  end
-
-  def test_marks_the_selected_option
-    render_inline(UI::Select.new(name: "s", options: SECTIONS, selected: 2))
-    assert_equal "selected", page.find("option[value='2']")[:selected]
-    assert_nil page.find("option[value='1']")[:selected]
-  end
-
-  # Without a prompt a select silently submits its first option, so a required
-  # choice looks already-made.
-  def test_prompt_renders_a_blank_first_option
-    render_inline(UI::Select.new(name: "s", options: SECTIONS, prompt: "Choose a section"))
-    first = page.all("option").first
-    assert_equal "", first[:value]
-    assert_equal "Choose a section", first.text
-  end
-
-  def test_label_is_associated_with_the_select
-    render_inline(UI::Select.new(name: "s", options: SECTIONS, label: "Section"))
-    assert_equal page.find("label")[:for], page.find("select")[:id]
-    assert_selector "label", text: "Section"
-  end
-
-  def test_no_label_element_without_one
-    render_inline(UI::Select.new(name: "s", options: SECTIONS))
-    assert_no_selector "label"
-  end
-
-  def test_required_and_disabled_pass_through
-    render_inline(UI::Select.new(name: "s", options: SECTIONS, required: true, disabled: true))
-    select = page.find("select", visible: :all)
-    assert select[:required].present?
-    assert select[:disabled].present?
-  end
-
-  def test_error_state_marks_the_select_invalid
-    render_inline(UI::Select.new(name: "s", options: SECTIONS, error: true))
-    assert_equal "true", page.find("select")[:"aria-invalid"]
-    assert_includes page.find("select")[:class].split, "border-destructive"
-  end
-
-  def test_sizes_change_the_control_height
-    render_inline(UI::Select.new(name: "s", options: SECTIONS, size: :sm))
-    assert_includes page.find("select")[:class].split, "h-8"
-  end
-
-  def test_user_class_overrides_default_via_tailwind_merge
-    render_inline(UI::Select.new(name: "s", options: SECTIONS, class: "h-20"))
-    classes = page.find("select")[:class].split
-    assert_includes classes, "h-20"
-    refute_includes classes, "h-9"
-  end
-
-  def test_html_attrs_pass_through
-    render_inline(UI::Select.new(name: "s", options: SECTIONS, id: "sec", data: { test_id: "x" }))
-    assert_selector "select#sec[data-test-id='x']"
-  end
-
-  # --- form binding ---
-  #
-  # The label alone is not enough: a bound select must also render a scoped
-  # name, or the form submits nothing for the field.
-
-  # A plain object rather than a tenant-scoped model: the component only needs
-  # something the form builder can name fields against.
   Enrolment = Struct.new(:section_id) do
-    def self.human_attribute_name(name, *) = name.to_s.humanize
     def to_model = self
     def model_name = ActiveModel::Name.new(self.class, nil, "Enrollment")
     def persisted? = false
@@ -96,23 +18,164 @@ class UI::SelectTest < ViewComponent::TestCase
     ActionView::Helpers::FormBuilder.new(:enrollment, record, vc_test_controller.view_context, {})
   end
 
-  def test_form_binding_scopes_the_field_name
-    render_inline(UI::Select.new(form: form_builder_for, field: :section_id,
-                                 options: SECTIONS))
-    assert_selector "select[name='enrollment[section_id]']"
+  def trigger = page.find("button[role='combobox']")
+  def listbox = page.find("[role='listbox']", visible: :all)
+  def native = page.find("select", visible: :all)
+
+  # --- the visible control (WAI-ARIA select-only combobox) ---------------
+
+  def test_trigger_is_a_collapsed_combobox_controlling_the_listbox
+    render_inline(UI::Select.new(name: "section", options: SECTIONS))
+    assert_equal "button", trigger[:type]
+    assert_equal "listbox", trigger["aria-haspopup"]
+    assert_equal "false", trigger["aria-expanded"]
+    assert_equal listbox[:id], trigger["aria-controls"]
+    assert page.find("[data-ui--select-target='panel']", visible: :all)[:hidden], "the panel starts closed"
   end
 
-  def test_form_binding_derives_the_label_and_associates_it
-    render_inline(UI::Select.new(form: form_builder_for, field: :section_id,
-                                 options: SECTIONS))
-    assert_selector "label"
-    assert_equal page.find("label")[:for], page.find("select")[:id]
+  def test_each_option_is_an_aria_option_carrying_its_value
+    render_inline(UI::Select.new(name: "section", options: SECTIONS))
+    options = page.all("[role='option']", visible: :all)
+    assert_equal [ "1", "2", "3" ], options.map { _1["data-value"] }
+    assert_equal [ "Grade 8 A", "Grade 8 B", "Grade 9 A" ], options.map { _1.text(:all).strip }
   end
 
-  def test_form_binding_still_renders_the_prompt_and_selection
-    render_inline(UI::Select.new(form: form_builder_for, field: :section_id,
-                                 options: SECTIONS, prompt: "Choose", selected: 2))
-    assert_equal "", page.all("option").first[:value]
-    assert_equal "selected", page.find("option[value='2']")[:selected]
+  def test_selected_option_is_marked_and_shown_on_the_trigger
+    render_inline(UI::Select.new(name: "section", options: SECTIONS, selected: 2))
+    assert_equal "true", page.find("[role='option'][data-value='2']", visible: :all)["aria-selected"]
+    assert_equal "false", page.find("[role='option'][data-value='1']", visible: :all)["aria-selected"]
+    assert_includes trigger.text, "Grade 8 B"
+  end
+
+  def test_prompt_shows_when_nothing_is_selected_and_clears_the_value
+    render_inline(UI::Select.new(name: "section", options: SECTIONS, prompt: "Choose a section"))
+    assert_includes trigger.text, "Choose a section"
+    assert_selector "[role='option'][data-value='']", text: "Choose a section", visible: :all
+  end
+
+  def test_without_a_prompt_the_first_option_shows_as_a_native_select_would
+    render_inline(UI::Select.new(name: "section", options: SECTIONS))
+    assert_includes trigger.text, "Grade 8 A"
+  end
+
+  def test_plain_values_are_their_own_labels
+    render_inline(UI::Select.new(name: "role", options: %w[Admin Editor], selected: "Editor"))
+    assert_includes trigger.text, "Editor"
+    assert_selector "[role='option'][data-value='Admin']", visible: :all
+  end
+
+  # --- the value, carried by a hidden native select ------------------------
+
+  def test_a_hidden_native_select_carries_the_name_value_and_options
+    render_inline(UI::Select.new(name: "section", options: SECTIONS, selected: 3))
+    assert_equal "section", native[:name]
+    assert_equal "-1", native[:tabindex]
+    assert_equal "true", native["aria-hidden"]
+    assert_includes native[:class], "sr-only"
+    assert_selector "select option[value='3'][selected]", visible: :all
+  end
+
+  def test_required_and_disabled_reach_the_native_select_and_the_trigger
+    render_inline(UI::Select.new(name: "section", options: SECTIONS, required: true, disabled: true))
+    assert native[:required]
+    assert native[:disabled]
+    assert trigger[:disabled]
+  end
+
+  def test_extra_attributes_stay_on_the_native_select_so_change_listeners_keep_working
+    render_inline(UI::Select.new(name: "section", options: SECTIONS, id: "section-picker", data: { action: "change->filters#apply" }))
+    assert_equal "section-picker", native[:id]
+    assert_equal "change->filters#apply", native["data-action"]
+  end
+
+  # --- label, states, sizes ---------------------------------------------
+
+  def test_label_is_associated_with_the_trigger
+    render_inline(UI::Select.new(name: "section", options: SECTIONS, label: "Section"))
+    assert_equal trigger[:id], page.find("label")[:for]
+  end
+
+  def test_error_marks_the_trigger_invalid
+    render_inline(UI::Select.new(name: "section", options: SECTIONS, error: true))
+    assert_equal "true", trigger["aria-invalid"]
+    assert_includes trigger[:class], "border-destructive"
+  end
+
+  def test_sizes
+    { sm: "h-8", default: "h-9", lg: "h-10" }.each do |size, height|
+      render_inline(UI::Select.new(name: "s", options: SECTIONS, size: size))
+      assert_includes trigger[:class].split, height
+    end
+  end
+
+  def test_user_class_goes_on_the_trigger
+    render_inline(UI::Select.new(name: "s", options: SECTIONS, class: "w-48"))
+    assert_includes trigger[:class].split, "w-48"
+  end
+
+  def test_wires_the_stimulus_controller
+    render_inline(UI::Select.new(name: "s", options: SECTIONS))
+    assert_selector "[data-controller='ui--select']"
+    assert_equal "trigger", trigger["data-ui--select-target"]
+    assert_equal "listbox", listbox["data-ui--select-target"]
+    assert_equal "native", native["data-ui--select-target"]
+  end
+
+  # --- form builder --------------------------------------------------------
+
+  def test_form_binding_scopes_the_name_and_reads_the_value
+    render_inline(UI::Select.new(form: form_builder_for(Enrolment.new(2)), field: :section_id, options: SECTIONS))
+    assert_equal "enrollment[section_id]", native[:name]
+    assert_includes trigger.text, "Grade 8 B"
+    assert_equal "true", page.find("[role='option'][data-value='2']", visible: :all)["aria-selected"]
+  end
+
+  def test_form_binding_derives_the_label
+    render_inline(UI::Select.new(form: form_builder_for, field: :section_id, options: SECTIONS))
+    assert_selector "label", text: "Section"
+  end
+  # --- searchable ------------------------------------------------------------
+
+  def test_searchable_adds_a_search_box_that_controls_the_listbox
+    render_inline(UI::Select.new(name: "s", options: SECTIONS, searchable: true))
+    search = page.find("input[type='search']", visible: :all)
+    assert_equal "search", search["data-ui--select-target"]
+    assert_equal listbox[:id], search["aria-controls"]
+    assert_equal "Search", search[:placeholder]
+    assert_selector "[data-ui--select-target='empty']", text: "No matches", visible: :all
+  end
+
+  def test_not_searchable_by_default
+    render_inline(UI::Select.new(name: "s", options: SECTIONS))
+    assert_no_selector "input[type='search']", visible: :all
+  end
+
+  # --- multiple --------------------------------------------------------------
+
+  def test_multiple_marks_every_chosen_option_and_posts_an_array
+    render_inline(UI::Select.new(name: "tags", options: SECTIONS, multiple: true, selected: [ 1, 3 ]))
+    assert_equal "true", listbox["aria-multiselectable"]
+    assert native[:multiple]
+    assert_equal "tags[]", native[:name]
+    assert_equal %w[true false true], page.all("[role='option']", visible: :all).map { _1["aria-selected"] }
+    assert_includes trigger.text, "Grade 8 A, Grade 9 A"
+  end
+
+  def test_multiple_summarises_more_than_two_choices
+    render_inline(UI::Select.new(name: "tags", options: SECTIONS, multiple: true, selected: [ 1, 2, 3 ]))
+    assert_includes trigger.text, "3 selected"
+  end
+
+  def test_multiple_with_nothing_chosen_shows_the_prompt_and_offers_no_blank_option
+    render_inline(UI::Select.new(name: "tags", options: SECTIONS, multiple: true, prompt: "Pick sections"))
+    assert_includes trigger.text, "Pick sections"
+    assert_no_selector "[role='option'][data-value='']", visible: :all
+  end
+
+  def test_multiple_hands_the_summary_wording_to_the_controller
+    render_inline(UI::Select.new(name: "tags", options: SECTIONS, multiple: true))
+    root = page.find("[data-controller='ui--select']")
+    assert_equal "true", root["data-ui--select-multiple-value"]
+    assert_equal "%{count} selected", root["data-ui--select-summary-value"]
   end
 end

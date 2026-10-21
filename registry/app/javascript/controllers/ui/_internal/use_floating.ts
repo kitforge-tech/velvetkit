@@ -17,6 +17,8 @@ interface UseFloatingOptions {
   flip?: boolean;
   shift?: boolean;
   arrow?: HTMLElement | null;
+  /** 'fixed' escapes scrolling or clipped ancestors, such as a drawer. */
+  strategy?: 'absolute' | 'fixed';
 }
 
 interface UseFloatingReturn {
@@ -46,6 +48,7 @@ export function useFloating(
     flip: enableFlip = true,
     shift: enableShift = true,
     arrow: arrowElement,
+    strategy = 'absolute',
   } = options;
 
   const middleware: Middleware[] = [];
@@ -69,12 +72,13 @@ export function useFloating(
   const cleanup = autoUpdate(reference, floating, () => {
     computePosition(reference, floating, {
       placement,
+      strategy,
       middleware,
     }).then(({ x, y, placement: finalPlacement, middlewareData }) => {
       Object.assign(floating.style, {
         left: `${x}px`,
         top: `${y}px`,
-        position: 'absolute',
+        position: strategy,
       });
 
       // Position arrow if present

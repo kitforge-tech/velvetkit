@@ -4,7 +4,10 @@
 
 - First release of the component library.
 - `velvetkit:install` and `velvetkit:add` generators, with a configurable namespace.
-- 38 components, their Stimulus controllers, tests and Lookbook previews.
+- 39 components, their Stimulus controllers, tests and Lookbook previews.
+- `Select` is a styled dropdown (listbox, keyboard, type-ahead), with
+  `searchable:` and `multiple:`; it posts through a hidden native select, so
+  forms work unchanged. The browser's own control is now `NativeSelect`.
 - `velvetkit:add --all`, and support for cssbundling-rails Tailwind entry points.
 - Docs site for velvetkit.com in `site/`, built from the registry.
 - `velvetkit:ai`, run by `install` and kept current by `add`: `docs/velvetkit.md`,
