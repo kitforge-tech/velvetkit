@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title><%= [ content_for(:title), "VelvetKit" ].compact.join(" · ") %></title>
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="description" content="<%= content_for(:description) || "Accessible ViewComponent UI components for Rails, copied into your app one at a time, with docs your AI agent reads." %>">
+    <%= render "layouts/seo" %>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= render "layouts/theme_script" %>
@@ -13,7 +13,6 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <link rel="manifest" href="<%= pwa_manifest_path(format: :json) %>">
     <meta name="theme-color" content="#4D1A7F">
-    <link rel="alternate" type="text/plain" href="<%= llms_path %>" title="llms.txt">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">

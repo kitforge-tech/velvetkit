@@ -7,7 +7,7 @@ class SearchIndex
     "getting_started" => [ "Install the gem, set it up and add your first component.", "install gemfile bundle generator setup add render requirements" ],
     "ai" => [ "Give coding agents the kit's context: llms.txt, docs/velvetkit.md and a Claude Code skill.", "ai agent claude cursor codex copilot llms prompt skill agents.md markdown" ],
     "namespacing" => [ "Put the components under any module, like Kit:: or Admin::.", "namespace module ui kit rename acronym inflection zeitwerk" ],
-    "theming" => [ "Colour tokens, corner radius and dark mode.", "theme tokens colour color primary radius dark mode css tailwind velvet" ],
+    "theming" => [ "Colour tokens, corner radius and dark mode: retheme every component from one file.", "theme tokens colour color primary radius dark mode css tailwind velvet" ],
     "lookbook" => [ "Browse every preview, and run Lookbook in your app.", "lookbook preview previews playground storybook" ]
   }.freeze
 

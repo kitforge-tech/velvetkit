@@ -1,6 +1,9 @@
 Rails.application.routes.draw do
   root "pages#home"
 
+  get "sitemap.xml", to: "discovery#sitemap", as: :sitemap, format: false
+  get "robots.txt", to: "discovery#robots", as: :robots, format: false
+
   # For AI agents: https://llmstxt.org
   get "llms.txt", to: "llms#index", as: :llms, format: false
   get "llms-full.txt", to: "llms#full", as: :llms_full, format: false
