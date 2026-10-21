@@ -43,55 +43,54 @@
 </div>
   </header>
 
-  <section class="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_18rem]">
-    <div class="space-y-3">
-      <h2 id="install" class="text-xl font-semibold">Add it</h2>
+  <%# How to add it and what comes along, in one panel. %>
+  <section id="install" class="overflow-hidden rounded-xl border bg-card">
+    <div class="border-b p-4 sm:p-5">
       <%= code_block(@component.add_command) %>
     </div>
-    <%= render(UI::Card.new) do |card| %>
-      <% card.with_header do |header| %>
-        <% header.with_title(class: "text-base") { "Comes with" } %>
-      <% end %>
-      <% card.with_content(class: "space-y-4 text-sm") do %>
-        <div>
-          <p class="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">Components</p>
-          <div class="flex flex-wrap gap-1.5">
-            <% if @component.dependencies.any? %>
-              <% @component.dependencies.each do |dependency| %>
-                <%= link_to component_path(dependency) do %>
-                  <%= render(UI::Badge.new(variant: :secondary, class: "hover:bg-primary hover:text-primary-foreground transition-colors")) { dependency.humanize } %>
-                <% end %>
+    <dl class="grid grid-cols-1 divide-y text-sm sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+      <div class="space-y-2 p-4 sm:p-5">
+        <dt class="text-xs font-medium tracking-wide text-muted-foreground uppercase">Also adds</dt>
+        <dd class="flex flex-wrap gap-1.5">
+          <% if @component.dependencies.any? %>
+            <% @component.dependencies.each do |dependency| %>
+              <%= link_to component_path(dependency), class: "rounded-full" do %>
+                <%= render(UI::Badge.new(variant: :secondary, class: "hover:bg-primary hover:text-primary-foreground transition-colors")) { dependency.humanize } %>
               <% end %>
-            <% else %>
-              <span class="text-muted-foreground">None, it stands alone</span>
             <% end %>
-          </div>
-        </div>
-        <% if @component.stimulus_controllers.any? %>
-          <div>
-            <p class="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">Stimulus</p>
-            <div class="flex flex-wrap gap-1.5">
-              <% @component.stimulus_controllers.each do |controller| %>
-                <%= render(UI::Badge.new(variant: :outline, class: "font-mono")) { controller } %>
-              <% end %>
-            </div>
-          </div>
-        <% end %>
-        <% if @component.packages.any? || @component.gems.any? %>
-          <div>
-            <p class="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">Installs</p>
-            <div class="flex flex-wrap gap-1.5">
-              <% @component.packages.each do |package| %>
-                <%= render(UI::Badge.new(variant: :outline)) do |badge| %><% badge.with_leading_icon(name: "package") %><%= package %><% end %>
-              <% end %>
-              <% @component.gems.each do |gem_name| %>
-                <%= render(UI::Badge.new(variant: :outline)) do |badge| %><% badge.with_leading_icon(name: "gem") %><%= gem_name %><% end %>
-              <% end %>
-            </div>
-          </div>
-        <% end %>
-      <% end %>
-    <% end %>
+          <% else %>
+            <span class="text-muted-foreground">Nothing else</span>
+          <% end %>
+        </dd>
+      </div>
+      <div class="space-y-2 p-4 sm:p-5">
+        <dt class="text-xs font-medium tracking-wide text-muted-foreground uppercase">Stimulus</dt>
+        <dd class="flex flex-wrap gap-1.5">
+          <% if @component.stimulus_controllers.any? %>
+            <% @component.stimulus_controllers.each do |controller| %>
+              <%= render(UI::Badge.new(variant: :outline, class: "font-mono")) { controller } %>
+            <% end %>
+          <% else %>
+            <span class="text-muted-foreground">None, it's server-rendered</span>
+          <% end %>
+        </dd>
+      </div>
+      <div class="space-y-2 p-4 sm:p-5">
+        <dt class="text-xs font-medium tracking-wide text-muted-foreground uppercase">Installs</dt>
+        <dd class="flex flex-wrap gap-1.5">
+          <% if (@component.packages + @component.gems).any? %>
+            <% @component.packages.each do |package| %>
+              <%= render(UI::Badge.new(variant: :outline)) do |badge| %><% badge.with_leading_icon(name: "package") %><%= package %><% end %>
+            <% end %>
+            <% @component.gems.each do |gem_name| %>
+              <%= render(UI::Badge.new(variant: :outline)) do |badge| %><% badge.with_leading_icon(name: "gem") %><%= gem_name %><% end %>
+            <% end %>
+          <% else %>
+            <span class="text-muted-foreground">Nothing</span>
+          <% end %>
+        </dd>
+      </div>
+    </dl>
   </section>
 
 <% if lookup_context.exists?(@component.name, [ "components/demos" ], true) %>
