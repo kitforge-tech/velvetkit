@@ -27,8 +27,8 @@ class UI::BreadcrumbTest < ViewComponent::TestCase
 
   def simple_items
     [
-      { href: "/groups", text: "GitLab.org" },
-      { href: "/groups/gitlab", text: "GitLab" },
+      { href: "/groups", text: "Workspace" },
+      { href: "/groups/website", text: "Website" },
       { href: "/issues", text: "Issues" }
     ]
   end
@@ -56,15 +56,15 @@ class UI::BreadcrumbTest < ViewComponent::TestCase
     render_breadcrumb(simple_items)
     links = page.all("nav ol a")
     assert_equal 3, links.size
-    assert_equal "GitLab.org", links[0].text.strip
-    assert_equal "GitLab", links[1].text.strip
+    assert_equal "Workspace", links[0].text.strip
+    assert_equal "Website", links[1].text.strip
   end
 
   def test_links_have_href
     render_breadcrumb(simple_items)
     links = page.all("nav ol a")
     assert_equal "/groups", links[0][:href]
-    assert_equal "/groups/gitlab", links[1][:href]
+    assert_equal "/groups/website", links[1][:href]
     assert_equal "/issues", links[2][:href]
   end
 
@@ -125,7 +125,7 @@ class UI::BreadcrumbTest < ViewComponent::TestCase
 
   def test_item_with_avatar
     items = [
-      { href: "/groups/gitlab", text: "GitLab", avatar_src: "/avatar.png" },
+      { href: "/groups/website", text: "Website", avatar_src: "/avatar.png" },
       { href: "/issues", text: "Issues" }
     ]
     render_breadcrumb(items)
@@ -155,7 +155,7 @@ class UI::BreadcrumbTest < ViewComponent::TestCase
     render_breadcrumb(simple_items)
     first_li = page.all("nav ol li").first
     assert_equal "/groups", first_li["data-breadcrumb-href"]
-    assert_equal "GitLab.org", first_li["data-breadcrumb-text"]
+    assert_equal "Workspace", first_li["data-breadcrumb-text"]
   end
 
   def test_last_item_has_data_last_attribute

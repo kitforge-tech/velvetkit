@@ -3,9 +3,9 @@
   <%= render(UI::Accordion.new(type: :single)) do |accordion| %>
     <% faqs = [
       { q: "How do I reset my password?", a: "Go to Settings &gt; Security and click 'Change Password'. You'll need to enter your current password and your new password." },
-      { q: "Can I import data from another system?", a: "Yes, Northwind supports CSV and JSON imports. Go to Admin &gt; Data Import and follow the wizard to map your fields." },
-      { q: "What integrations are available?", a: "We integrate with Google Classroom, Microsoft Teams, Canvas, Moodle, and many more through our API." },
-      { q: "Is there a mobile app?", a: "Yes! Northwind is available on iOS and Android. Download from the App Store or Google Play." },
+      { q: "Can I import data from another system?", a: "Yes, we import CSV and JSON files. Go to Admin &gt; Data Import and follow the wizard to map your fields." },
+      { q: "What integrations are available?", a: "Most tools connect through our API and webhooks, and the integrations page lists ready-made ones." },
+      { q: "Is there a mobile app?", a: "Yes, for iOS and Android. Search for it in your phone's app store." },
       { q: "How do I contact support?", a: 'Email us at support@example.com or use the live chat widget in the bottom-right corner of your dashboard.' }
     ] %>
     <% faqs.each_with_index do |faq, i| %>

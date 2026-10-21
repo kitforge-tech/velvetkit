@@ -1,21 +1,21 @@
 <div class="max-w-md">
   <%= render(UI::Accordion.new(type: :single, default_value: "item-1")) do |accordion| %>
     <% accordion.with_item(value: "item-1") do |item| %>
-      <% item.with_trigger { "What is Northwind?" } %>
+      <% item.with_trigger { "What is a workspace?" } %>
       <% item.with_content do %>
-        <p class="text-muted-foreground">Northwind is a comprehensive education management platform that helps schools, teachers, students, and parents collaborate effectively.</p>
+        <p class="text-muted-foreground">A workspace holds your team, projects and billing in one place. Everyone you invite sees the same projects.</p>
       <% end %>
     <% end %>
     <% accordion.with_item(value: "item-2") do |item| %>
       <% item.with_trigger { "How do I get started?" } %>
       <% item.with_content do %>
-        <p class="text-muted-foreground">Sign up for an account, create your school profile, and start adding teachers and students. Our onboarding wizard guides you through each step.</p>
+        <p class="text-muted-foreground">Create an account, name your workspace and invite your team. A short setup guide walks you through each step.</p>
       <% end %>
     <% end %>
     <% accordion.with_item(value: "item-3") do |item| %>
       <% item.with_trigger { "Is my data secure?" } %>
       <% item.with_content do %>
-        <p class="text-muted-foreground">Yes. We use industry-standard encryption and comply with FERPA and GDPR regulations to ensure your data is protected.</p>
+        <p class="text-muted-foreground">Yes. We use industry-standard encryption and follow GDPR to ensure your data is protected.</p>
       <% end %>
     <% end %>
   <% end %>

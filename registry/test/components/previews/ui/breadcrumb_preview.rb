@@ -5,8 +5,8 @@ class UI::BreadcrumbPreview < ViewComponent::Preview
   # @param size select { choices: [sm, md] }
   def playground(size: :sm)
     render(UI::Breadcrumb.new(size: size.to_sym)) do |bc|
-      bc.with_item(href: "#", text: "GitLab.org")
-      bc.with_item(href: "#", text: "GitLab")
+      bc.with_item(href: "#", text: "Workspace")
+      bc.with_item(href: "#", text: "Website")
       bc.with_item(href: "#", text: "Issues")
       bc.with_item(href: "#", text: "#1234")
     end
@@ -28,11 +28,11 @@ class UI::BreadcrumbPreview < ViewComponent::Preview
   # Auto-ellipsis with collapse_at: :middle. Keeps first and last segments.
   def collapsed_middle
     render(UI::Breadcrumb.new(max_items: 3, collapse_at: :middle)) do |bc|
-      bc.with_item(href: "#", text: "HashiCorp")
+      bc.with_item(href: "#", text: "Handbook")
       bc.with_item(href: "#", text: "Docs")
       bc.with_item(href: "#", text: "API")
-      bc.with_item(href: "#", text: "Terraform")
-      bc.with_item(href: "#", text: "AWS Providers")
+      bc.with_item(href: "#", text: "Platform")
+      bc.with_item(href: "#", text: "Cloud providers")
     end
   end
 
