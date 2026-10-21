@@ -29,4 +29,13 @@ class UI::Card::ContentTest < ViewComponent::TestCase
     render_inline(UI::Card::Content.new(id: "my-content", data: { test_id: "c" })) { "x" }
     assert_selector "div#my-content[data-test-id='c']"
   end
+
+  # Content sits flush under a header, but needs its own top padding when it
+  # is the first thing in the card.
+  def test_content_first_in_a_card_gets_top_padding
+    render_inline(UI::Card::Content.new) { "Body" }
+    classes = page.find("div")[:class].split
+    assert_includes classes, "pt-0"
+    assert_includes classes, "first:pt-6"
+  end
 end

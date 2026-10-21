@@ -7,7 +7,7 @@ class UI::Checkbox < UI::Base
     base: "peer appearance-none shrink-0 border border-input bg-background " \
           "transition-all " \
           "checked:bg-primary checked:border-primary " \
-          "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1 " \
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 " \
           "ring-offset-background",
     variants: {
       size: {

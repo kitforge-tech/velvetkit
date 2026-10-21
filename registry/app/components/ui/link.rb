@@ -14,7 +14,7 @@ class UI::Link < UI::Base
       variant: {
         link:        "text-primary underline-offset-4 hover:underline",
         default:     "bg-primary text-primary-foreground hover:bg-primary/90",
-        destructive: "bg-destructive text-white hover:bg-destructive/90 focus:ring-destructive",
+        destructive: "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive",
         outline:     "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
         secondary:   "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost:       "hover:bg-accent hover:text-accent-foreground"

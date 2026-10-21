@@ -56,4 +56,14 @@ class UI::DividerTest < ViewComponent::TestCase
     assert_includes classes, "gap-4"
     assert_includes classes, "flex"
   end
+
+  def test_labelled_rules_share_the_row_instead_of_each_taking_it_all
+    render_inline(UI::Divider.new(label: "OR"))
+    rules = page.all("hr")
+    assert_equal 2, rules.size
+    rules.each do |rule|
+      assert_includes rule[:class].split, "flex-1"
+      refute_includes rule[:class].split, "w-full"
+    end
+  end
 end

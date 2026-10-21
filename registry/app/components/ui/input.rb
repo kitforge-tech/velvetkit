@@ -17,7 +17,7 @@ class UI::Input < UI::Base
       },
       variant: {
         default:    "",
-        error:      "border-destructive focus:ring-destructive",
+        error:      "border-destructive focus-visible:ring-destructive",
         with_label: ""
       }
     },
