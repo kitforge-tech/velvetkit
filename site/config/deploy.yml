@@ -26,6 +26,7 @@ env:
 
 builder:
   arch: amd64
-  # The image needs the gem and registry next to the site; see site/Dockerfile.
+  # The image needs the gem and registry, so it builds from the repository
+  # root with the Dockerfile there (shared with Dokploy).
   context: ..
-  dockerfile: Dockerfile
+  dockerfile: ../Dockerfile
