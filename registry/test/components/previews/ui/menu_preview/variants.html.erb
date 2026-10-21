@@ -1,0 +1,218 @@
+<div class="flex flex-wrap gap-8 p-8">
+  <div>
+    <h3 class="text-sm font-medium mb-3">Default trigger</h3>
+    <%= render(UI::Menu.new) do |menu| %>
+      <% menu.with_trigger { "Open Menu" } %>
+      <% menu.with_content do |content| %>
+        <% content.with_item("Profile") %>
+        <% content.with_item("Settings") %>
+      <% end %>
+    <% end %>
+  </div>
+  <div>
+    <h3 class="text-sm font-medium mb-3">Icon trigger</h3>
+    <%= render(UI::Menu.new) do |menu| %>
+      <% menu.with_trigger(variant: :outline, size: :icon) do %>
+        <%= render(UI::Icon.new(name: "ellipsis-vertical", size: :sm)) %>
+      <% end %>
+      <% menu.with_content do |content| %>
+        <% content.with_item("Edit") %>
+        <% content.with_item("Delete", variant: :destructive) %>
+      <% end %>
+    <% end %>
+  </div>
+  <div>
+    <h3 class="text-sm font-medium mb-3">Items with icons</h3>
+    <%= render(UI::Menu.new) do |menu| %>
+      <% menu.with_trigger { "Actions" } %>
+      <% menu.with_content do |content| %>
+        <% content.with_label("Account") %>
+        <% content.with_item do %>
+          <%= render(UI::Icon.new(name: "user", size: :sm)) %>
+          Profile
+        <% end %>
+        <% content.with_item do %>
+          <%= render(UI::Icon.new(name: "credit-card", size: :sm)) %>
+          Billing
+        <% end %>
+        <% content.with_item do %>
+          <%= render(UI::Icon.new(name: "settings", size: :sm)) %>
+          Settings
+        <% end %>
+        <% content.with_divider %>
+        <% content.with_label("Team") %>
+        <% content.with_item do %>
+          <%= render(UI::Icon.new(name: "users", size: :sm)) %>
+          Invite users
+        <% end %>
+        <% content.with_item do %>
+          <%= render(UI::Icon.new(name: "plus", size: :sm)) %>
+          New team
+        <% end %>
+        <% content.with_divider %>
+        <% content.with_item do %>
+          <%= render(UI::Icon.new(name: "git-branch", size: :sm)) %>
+          Repository
+        <% end %>
+        <% content.with_item do %>
+          <%= render(UI::Icon.new(name: "life-buoy", size: :sm)) %>
+          Support
+        <% end %>
+        <% content.with_item(disabled: true) do %>
+          <%= render(UI::Icon.new(name: "cloud", size: :sm)) %>
+          API
+        <% end %>
+        <% content.with_divider %>
+        <% content.with_item(variant: :destructive) do %>
+          <%= render(UI::Icon.new(name: "log-out", size: :sm)) %>
+          Log out
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+  <div>
+    <h3 class="text-sm font-medium mb-3">With links</h3>
+    <%= render(UI::Menu.new) do |menu| %>
+      <% menu.with_trigger { "Navigation" } %>
+      <% menu.with_content do |content| %>
+        <% content.with_item("Dashboard", href: "/dashboard") %>
+        <% content.with_item("Profile", href: "/profile") %>
+      <% end %>
+    <% end %>
+  </div>
+  <div>
+    <h3 class="text-sm font-medium mb-3">Disabled item</h3>
+    <%= render(UI::Menu.new) do |menu| %>
+      <% menu.with_trigger { "Options" } %>
+      <% menu.with_content do |content| %>
+        <% content.with_item("Enabled") %>
+        <% content.with_item("Disabled", disabled: true) %>
+      <% end %>
+    <% end %>
+  </div>
+</div>
+<div class="w-full">
+  <h3 class="text-sm font-medium mb-6">Positions</h3>
+  <div class="flex flex-wrap gap-12 p-8 border rounded-lg bg-muted/30 items-center justify-center">
+    <div class="text-center">
+      <p class="text-xs text-muted-foreground mb-2">bottom-start</p>
+      <%= render(UI::Menu.new) do |menu| %>
+        <% menu.with_trigger { "Open" } %>
+        <% menu.with_content(side: :bottom, align: :start) do |content| %>
+          <% content.with_item("Item 1") %>
+          <% content.with_item("Item 2") %>
+        <% end %>
+      <% end %>
+    </div>
+    <div class="text-center">
+      <p class="text-xs text-muted-foreground mb-2">bottom-center</p>
+      <%= render(UI::Menu.new) do |menu| %>
+        <% menu.with_trigger { "Open" } %>
+        <% menu.with_content(side: :bottom, align: :center) do |content| %>
+          <% content.with_item("Item 1") %>
+          <% content.with_item("Item 2") %>
+        <% end %>
+      <% end %>
+    </div>
+    <div class="text-center">
+      <p class="text-xs text-muted-foreground mb-2">bottom-end</p>
+      <%= render(UI::Menu.new) do |menu| %>
+        <% menu.with_trigger { "Open" } %>
+        <% menu.with_content(side: :bottom, align: :end) do |content| %>
+          <% content.with_item("Item 1") %>
+          <% content.with_item("Item 2") %>
+        <% end %>
+      <% end %>
+    </div>
+    <div class="text-center">
+      <p class="text-xs text-muted-foreground mb-2">top-start</p>
+      <%= render(UI::Menu.new) do |menu| %>
+        <% menu.with_trigger { "Open" } %>
+        <% menu.with_content(side: :top, align: :start) do |content| %>
+          <% content.with_item("Item 1") %>
+          <% content.with_item("Item 2") %>
+        <% end %>
+      <% end %>
+    </div>
+    <div class="text-center">
+      <p class="text-xs text-muted-foreground mb-2">top-center</p>
+      <%= render(UI::Menu.new) do |menu| %>
+        <% menu.with_trigger { "Open" } %>
+        <% menu.with_content(side: :top, align: :center) do |content| %>
+          <% content.with_item("Item 1") %>
+          <% content.with_item("Item 2") %>
+        <% end %>
+      <% end %>
+    </div>
+    <div class="text-center">
+      <p class="text-xs text-muted-foreground mb-2">top-end</p>
+      <%= render(UI::Menu.new) do |menu| %>
+        <% menu.with_trigger { "Open" } %>
+        <% menu.with_content(side: :top, align: :end) do |content| %>
+          <% content.with_item("Item 1") %>
+          <% content.with_item("Item 2") %>
+        <% end %>
+      <% end %>
+    </div>
+    <div class="text-center">
+      <p class="text-xs text-muted-foreground mb-2">left-start</p>
+      <%= render(UI::Menu.new) do |menu| %>
+        <% menu.with_trigger { "Open" } %>
+        <% menu.with_content(side: :left, align: :start) do |content| %>
+          <% content.with_item("Item 1") %>
+          <% content.with_item("Item 2") %>
+        <% end %>
+      <% end %>
+    </div>
+    <div class="text-center">
+      <p class="text-xs text-muted-foreground mb-2">left-center</p>
+      <%= render(UI::Menu.new) do |menu| %>
+        <% menu.with_trigger { "Open" } %>
+        <% menu.with_content(side: :left, align: :center) do |content| %>
+          <% content.with_item("Item 1") %>
+          <% content.with_item("Item 2") %>
+        <% end %>
+      <% end %>
+    </div>
+    <div class="text-center">
+      <p class="text-xs text-muted-foreground mb-2">left-end</p>
+      <%= render(UI::Menu.new) do |menu| %>
+        <% menu.with_trigger { "Open" } %>
+        <% menu.with_content(side: :left, align: :end) do |content| %>
+          <% content.with_item("Item 1") %>
+          <% content.with_item("Item 2") %>
+        <% end %>
+      <% end %>
+    </div>
+    <div class="text-center">
+      <p class="text-xs text-muted-foreground mb-2">right-start</p>
+      <%= render(UI::Menu.new) do |menu| %>
+        <% menu.with_trigger { "Open" } %>
+        <% menu.with_content(side: :right, align: :start) do |content| %>
+          <% content.with_item("Item 1") %>
+          <% content.with_item("Item 2") %>
+        <% end %>
+      <% end %>
+    </div>
+    <div class="text-center">
+      <p class="text-xs text-muted-foreground mb-2">right-center</p>
+      <%= render(UI::Menu.new) do |menu| %>
+        <% menu.with_trigger { "Open" } %>
+        <% menu.with_content(side: :right, align: :center) do |content| %>
+          <% content.with_item("Item 1") %>
+          <% content.with_item("Item 2") %>
+        <% end %>
+      <% end %>
+    </div>
+    <div class="text-center">
+      <p class="text-xs text-muted-foreground mb-2">right-end</p>
+      <%= render(UI::Menu.new) do |menu| %>
+        <% menu.with_trigger { "Open" } %>
+        <% menu.with_content(side: :right, align: :end) do |content| %>
+          <% content.with_item("Item 1") %>
+          <% content.with_item("Item 2") %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>

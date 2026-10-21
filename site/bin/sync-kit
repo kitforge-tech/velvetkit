@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Installs VelvetKit into this app from ../registry, the way any app gets it.
+# The copied files are gitignored: the registry is the only source.
+set -e
+cd "$(dirname "$0")/.."
+
+bin/rails generate velvetkit:install --namespace=UI --force --skip-tests --skip-packages --skip-ai --quiet
+bin/rails generate velvetkit:add --all --force --skip-tests --skip-previews --skip-packages --quiet

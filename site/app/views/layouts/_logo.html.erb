@@ -1,0 +1,5 @@
+<%# The full VelvetKit logo, in the version that suits the current theme. %>
+<%= link_to root_path, class: "flex shrink-0 items-center", aria: { label: "VelvetKit home" } do %>
+  <%= image_tag "logos/full-logo-light-sm.png", alt: "VelvetKit", width: 132, height: 32, class: "h-7 w-auto dark:hidden" %>
+  <%= image_tag "logos/full-logo-dark-sm.png", alt: "VelvetKit", width: 132, height: 32, class: "hidden h-7 w-auto dark:block" %>
+<% end %>

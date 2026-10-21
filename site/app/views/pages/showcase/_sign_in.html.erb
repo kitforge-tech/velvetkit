@@ -1,0 +1,15 @@
+<div class="space-y-4">
+  <div>
+    <h3 class="font-semibold">Welcome back</h3>
+    <p class="text-sm text-muted-foreground">Sign in to your workspace.</p>
+  </div>
+  <%= render(UI::Input.new(name: "showcase_email", label: "Email", placeholder: "you@example.com", size: :sm)) %>
+  <%= render(UI::PasswordInput.new(name: "showcase_password", label: "Password", placeholder: "••••••••")) %>
+  <%= render(UI::Checkbox.new(name: "showcase_remember", checked: true, label: "Keep me signed in")) %>
+  <%= render(UI::Button.new(full_width: true)) { "Sign in" } %>
+  <%= render(UI::Divider.new(label: "or")) %>
+  <%= render(UI::Button.new(variant: :outline, full_width: true)) do |button| %>
+    <% button.with_leading_icon(name: "key-round") %>
+    Continue with SSO
+  <% end %>
+</div>

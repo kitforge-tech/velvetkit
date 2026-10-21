@@ -1,0 +1,45 @@
+@import "tailwindcss";
+@import "../tailwind/velvetkit.css";
+
+/* The site's copy of the kit is gitignored (bin/sync-kit makes it), and
+   Tailwind skips gitignored files, so scan the registry it is copied from:
+   the components, their controllers, and the preview templates the docs
+   render live. */
+@source "../../../../registry/app";
+@source "../../../../registry/test/components/previews";
+
+body {
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Rouge syntax highlighting, for code blocks (always on a dark ground).
+ * Velvet for keywords and tags, the logo's orange for strings and ERB tags,
+ * fuchsia for symbols and attributes. Every colour clears 7:1 on zinc-950. */
+.vk-code {
+  --code-keyword: oklch(0.8 0.13 301.6);
+  --code-string: oklch(0.84 0.11 62);
+  --code-symbol: oklch(0.83 0.11 330);
+  --code-constant: oklch(0.92 0.06 301.6);
+  --code-function: oklch(0.86 0.08 205);
+  --code-comment: oklch(0.62 0.02 301.6);
+  --code-erb: oklch(0.78 0.14 55);
+  --code-punctuation: oklch(0.7 0.01 286);
+}
+
+.vk-code :is(.k, .kd, .kn, .kp, .kr, .kv, .kc, .kt, .nt, .gh, .gu) { color: var(--code-keyword); }
+.vk-code :is(.s, .s1, .s2, .sb, .sc, .sd, .se, .sh, .sr, .sx, .dl, .m, .mi, .mf, .mh, .mo) { color: var(--code-string); }
+.vk-code :is(.ss, .na, .nl) { color: var(--code-symbol); }
+.vk-code :is(.no, .nc, .nn, .ne) { color: var(--code-constant); font-weight: 500; }
+.vk-code :is(.nf, .fm, .nb, .bp, .nv, .vi, .vc, .vg) { color: var(--code-function); }
+.vk-code :is(.si) { color: var(--code-keyword); }
+.vk-code :is(.c, .c1, .cm, .cs, .ch, .cd) { color: var(--code-comment); font-style: italic; }
+.vk-code :is(.cp) { color: var(--code-erb); font-weight: 500; }
+.vk-code :is(.o, .ow, .p) { color: var(--code-punctuation); }
+.vk-code :is(.gh, .gu, .gs) { font-weight: 600; }
+.vk-code .ge { font-style: italic; }
+
+/* A focus ring carried over from the previous page (focus_carry.js) is
+   already on screen, so it appears whole instead of animating in again. */
+[data-focus-carried] {
+  transition: none !important;
+}

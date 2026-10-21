@@ -1,0 +1,12 @@
+<div class="flex flex-wrap items-center gap-3">
+  <%= render(UI::Button.new(variant: :default)) do |btn|
+        btn.with_leading_icon(name: "lock")
+        btn.with_trailing_icon(name: "arrow-right")
+        "Sign in"
+      end %>
+  <%= render(UI::Button.new(variant: :outline, size: :lg)) do |btn|
+        btn.with_leading_icon(name: "eye")
+        btn.with_trailing_icon(name: "chevrons-up-down")
+        "Preview options"
+      end %>
+</div>

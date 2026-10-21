@@ -1,0 +1,95 @@
+<% content_for :title, "Theming and dark mode" %>
+
+<article class="max-w-3xl space-y-12">
+  <header class="space-y-3">
+    <%= render(UI::Breadcrumb.new(size: :sm)) do |bc| %>
+      <% bc.with_item(href: docs_path, text: "Docs") %>
+      <% bc.with_item(href: doc_path("theming"), text: "Theming", current: true) %>
+    <% end %>
+    <h1 class="text-4xl font-bold tracking-tight">Theming and dark mode</h1>
+    <p class="text-lg text-muted-foreground">Components never name a colour. They use tokens such as <code class="font-mono text-base">bg-primary</code> and <code class="font-mono text-base">rounded-md</code>, so to retheme you change the token values, not the components.</p>
+  </header>
+
+  <section class="space-y-4" data-controller="theme-playground">
+    <div class="flex items-center gap-3">
+      <h2 id="playground" class="text-2xl font-semibold tracking-tight">Make it yours</h2>
+      <%= render(UI::Badge.new(variant: :secondary)) { "Live" } %>
+    </div>
+    <p class="text-muted-foreground">Move the sliders. Only the tokens change, and every component below follows.</p>
+
+    <div class="grid grid-cols-1 gap-6 rounded-xl border p-6 sm:grid-cols-2">
+      <label class="space-y-2">
+        <span class="flex justify-between text-sm font-medium">Primary hue <span class="font-mono text-muted-foreground" data-theme-playground-target="hueValue"></span></span>
+        <input type="range" min="0" max="360" value="255" class="w-full accent-primary" data-theme-playground-target="hue" data-action="input->theme-playground#update">
+      </label>
+      <label class="space-y-2">
+        <span class="flex justify-between text-sm font-medium">Corner radius <span class="font-mono text-muted-foreground" data-theme-playground-target="radiusValue"></span></span>
+        <input type="range" min="0" max="150" value="65" class="w-full accent-primary" data-theme-playground-target="radius" data-action="input->theme-playground#update">
+      </label>
+    </div>
+
+    <div class="space-y-5 rounded-xl border bg-card p-6" data-theme-playground-target="stage">
+      <div class="flex flex-wrap items-center gap-3">
+        <%= render(UI::Button.new) { "Save changes" } %>
+        <%= render(UI::Button.new(variant: :outline)) { "Cancel" } %>
+        <%= render(UI::Button.new(variant: :secondary)) do |button| %>
+          <% button.with_leading_icon(name: "download") %>
+          Export
+        <% end %>
+        <%= render(UI::Badge.new) { "New" } %>
+        <%= render(UI::Badge.new(variant: :outline)) { "Draft" } %>
+      </div>
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <%= render(UI::Input.new(label: "Email", placeholder: "you@example.com")) %>
+        <%= render(UI::Select.new(label: "Role", options: [ "Admin", "Editor", "Viewer" ])) %>
+      </div>
+      <div class="flex flex-wrap items-center gap-6">
+        <%= render(UI::Switch.new(name: "playground_switch", checked: true, label: "Notifications")) %>
+        <%= render(UI::Checkbox.new(name: "playground_check", checked: true, label: "Remember me")) %>
+      </div>
+      <%= render(UI::Tabs.new(default_value: "overview")) do |tabs| %>
+        <% tabs.with_list do |list| %>
+          <% list.with_trigger(value: "overview") { "Overview" } %>
+          <% list.with_trigger(value: "activity") { "Activity" } %>
+        <% end %>
+        <% tabs.with_panel(value: "overview", class: "pt-3 text-sm text-muted-foreground") { "The active tab underline is the primary colour too." } %>
+        <% tabs.with_panel(value: "activity", class: "pt-3 text-sm text-muted-foreground") { "Nothing new." } %>
+      <% end %>
+    </div>
+
+    <p class="text-sm text-muted-foreground">Paste this at the end of <code class="font-mono">velvetkit.css</code> to keep it:</p>
+    <div class="relative overflow-hidden rounded-lg border bg-zinc-950 text-zinc-100 dark:bg-zinc-900">
+      <pre class="overflow-x-auto p-4 text-[13px] leading-relaxed"><code data-theme-playground-target="css"></code></pre>
+    </div>
+  </section>
+
+  <section class="space-y-4">
+    <h2 id="tokens" class="text-2xl font-semibold tracking-tight">The colour tokens</h2>
+    <p class="text-muted-foreground">They're defined in <code class="font-mono text-sm">app/assets/tailwind/velvetkit.css</code>, once for light and once under <code class="font-mono text-sm">.dark</code>. Switch the theme at the top of the page to see both sets.</p>
+    <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+      <% %w[background foreground primary primary-foreground secondary muted muted-foreground accent destructive border input card popover sidebar].each do |token| %>
+        <div class="flex items-center gap-3 rounded-lg border p-2.5">
+          <span class="size-9 shrink-0 rounded-md border shadow-inner" style="background: var(--<%= token %>)"></span>
+          <code class="truncate font-mono text-xs">--<%= token %></code>
+        </div>
+      <% end %>
+    </div>
+  </section>
+
+  <section class="space-y-4">
+    <h2 id="dark-mode" class="text-2xl font-semibold tracking-tight">Dark mode</h2>
+    <p>Dark mode is on when <code class="font-mono text-sm">&lt;html&gt;</code> has the <code class="font-mono text-sm">dark</code> class. Add the <%= link_to "theme toggle", component_path("theme_toggle"), class: "text-primary underline-offset-4 hover:underline" %> to let people choose light, dark or system, and render its script in your layout's <code class="font-mono text-sm">&lt;head&gt;</code> so the page doesn't flash light before it goes dark:</p>
+    <%= code_block(snippet("theme_script.html.erb"), label: "app/views/layouts/application.html.erb") %>
+    <div class="flex items-center gap-4 rounded-lg border border-dashed p-6">
+      <%= render(UI::ThemeToggle.new) %>
+      <span class="text-sm text-muted-foreground">This toggle is the same one as in the header.</span>
+    </div>
+  </section>
+
+  <section class="space-y-4">
+    <h2 id="fonts" class="text-2xl font-semibold tracking-tight">Fonts</h2>
+    <p class="text-muted-foreground">The kit doesn't choose a typeface, so components use your body font. This site uses Inter.</p>
+  </section>
+
+  <%= render "docs/pager", previous_page: [ "Namespacing", doc_path("namespacing") ], next_page: [ "Lookbook", doc_path("lookbook") ] %>
+</article>

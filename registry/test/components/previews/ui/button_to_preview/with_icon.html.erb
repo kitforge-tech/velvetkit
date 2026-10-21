@@ -1,0 +1,11 @@
+<%# Icon slots render here, unlike the Velvet component this replaces. %>
+<div class="flex flex-wrap items-center gap-3">
+  <%= render(UI::ButtonTo.new("#", variant: :outline)) do |button| %>
+    <% button.with_leading_icon(name: "mail") %>
+    Sign in with email
+  <% end %>
+  <%= render(UI::ButtonTo.new("#")) do |button| %>
+    <% button.with_trailing_icon(name: "arrow-right") %>
+    Continue
+  <% end %>
+</div>

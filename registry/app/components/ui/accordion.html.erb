@@ -1,0 +1,7 @@
+<%= tag.div(class: root_classes,
+            data: {
+              controller: "ui--accordion",
+              "ui--accordion-type-value": @type,
+              "ui--accordion-values-value": initial_values
+            }.merge(@html_attrs[:data] || {}),
+            **@html_attrs.except(:data)) do %><% items.each do |item| %><%= item %><% end %><% end %>

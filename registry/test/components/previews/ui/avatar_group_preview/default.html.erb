@@ -1,0 +1,11 @@
+<div class="space-y-8">
+  <div>
+    <p class="text-sm text-muted-foreground mb-3">4 avatars, overlapping with ring separation</p>
+    <%= render(UI::AvatarGroup.new) do |group| %>
+      <% group.with_avatar { "JD" } %>
+      <% group.with_avatar { "AS" } %>
+      <% group.with_avatar { "RM" } %>
+      <% group.with_avatar { "BK" } %>
+    <% end %>
+  </div>
+</div>

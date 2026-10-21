@@ -1,0 +1,166 @@
+<% content_for :title, @component.title %>
+<% content_for :description, "#{@component.description} Add it to a Rails app with velvetkit:add; live examples, arguments and slots." %>
+<% content_for :head_links, tag.link(rel: "alternate", type: "text/markdown", href: site_url(component_path(@component, format: :md)), title: "#{@component.title} as Markdown") %>
+<% names = ComponentDoc.names %>
+<% index = names.index(@component.name) %>
+
+<article class="space-y-12">
+  <header class="space-y-4">
+    <%= render(UI::Breadcrumb.new(size: :sm)) do |bc| %>
+      <% bc.with_item(href: docs_path, text: "Docs") %>
+      <% bc.with_item(href: components_path, text: "Components") %>
+      <% bc.with_item(href: component_path(@component), text: @component.title, current: true) %>
+    <% end %>
+    <div class="flex flex-wrap items-center gap-3">
+      <h1 class="text-4xl font-bold tracking-tight"><%= @component.title %></h1>
+      <%= render(UI::Badge.new(variant: :outline, class: "font-mono")) { @component.class_name } %>
+    </div>
+    <p class="max-w-2xl text-lg text-muted-foreground"><%= @component.description %></p>
+<div data-controller="clipboard" data-clipboard-copied-value="Markdown copied" class="flex flex-wrap items-center gap-2">
+  <span hidden data-clipboard-target="source"><%= @component.page_markdown %></span>
+  <%= render(UI::Menu.new) do |menu| %>
+    <% menu.with_trigger(variant: :outline, size: :sm) do %>
+      <%= render(UI::Icon.new(name: "sparkles", size: :sm, class: "text-primary dark:text-fuchsia-300")) %>
+      Ask AI
+      <%= render(UI::Icon.new(name: "chevron-down", size: :xs)) %>
+    <% end %>
+    <% menu.with_content(class: "w-56") do |content| %>
+      <% content.with_item(data: { action: "clipboard#copy" }) do %>
+        <%= render(UI::Icon.new(name: "copy", size: :sm)) %>
+        Copy as Markdown
+      <% end %>
+      <% content.with_item(href: component_path(@component, format: :md)) do %>
+        <%= render(UI::Icon.new(name: "file-text", size: :sm)) %>View as Markdown
+      <% end %>
+      <% content.with_divider %>
+      <% ask_ai_links(component_url(@component, format: :md), @component.title).each do |assistant, url| %>
+        <% content.with_item(href: url, target: "_blank", rel: "noopener") do %>
+          <%= render(UI::Icon.new(name: "external-link", size: :sm)) %>Open in <%= assistant %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+  <%# The menu closes on choosing, so the result shows beside it. %>
+  <span hidden data-clipboard-target="label" class="inline-flex items-center gap-1 rounded-md bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:text-emerald-300"></span>
+  <span class="sr-only" role="status" data-clipboard-target="status"></span>
+</div>
+  </header>
+
+  <%# How to add it and what comes along, in one panel. %>
+  <section id="install" class="overflow-hidden rounded-xl border bg-card">
+    <div class="border-b p-4 sm:p-5">
+      <%= code_block(@component.add_command) %>
+    </div>
+    <dl class="grid grid-cols-1 divide-y text-sm sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+      <div class="space-y-2 p-4 sm:p-5">
+        <dt class="text-xs font-medium tracking-wide text-muted-foreground uppercase">Also adds</dt>
+        <dd class="flex flex-wrap gap-1.5">
+          <% if @component.dependencies.any? %>
+            <% @component.dependencies.each do |dependency| %>
+              <%= link_to component_path(dependency), class: "rounded-full" do %>
+                <%= render(UI::Badge.new(variant: :secondary, class: "hover:bg-primary hover:text-primary-foreground transition-colors")) { dependency.humanize } %>
+              <% end %>
+            <% end %>
+          <% else %>
+            <span class="text-muted-foreground">Nothing else</span>
+          <% end %>
+        </dd>
+      </div>
+      <div class="space-y-2 p-4 sm:p-5">
+        <dt class="text-xs font-medium tracking-wide text-muted-foreground uppercase">Stimulus</dt>
+        <dd class="flex flex-wrap gap-1.5">
+          <% if @component.stimulus_controllers.any? %>
+            <% @component.stimulus_controllers.each do |controller| %>
+              <%= render(UI::Badge.new(variant: :outline, class: "font-mono")) { controller } %>
+            <% end %>
+          <% else %>
+            <span class="text-muted-foreground">None, it's server-rendered</span>
+          <% end %>
+        </dd>
+      </div>
+      <div class="space-y-2 p-4 sm:p-5">
+        <dt class="text-xs font-medium tracking-wide text-muted-foreground uppercase">Installs</dt>
+        <dd class="flex flex-wrap gap-1.5">
+          <% if (@component.packages + @component.gems).any? %>
+            <% @component.packages.each do |package| %>
+              <%= render(UI::Badge.new(variant: :outline)) do |badge| %><% badge.with_leading_icon(name: "package") %><%= package %><% end %>
+            <% end %>
+            <% @component.gems.each do |gem_name| %>
+              <%= render(UI::Badge.new(variant: :outline)) do |badge| %><% badge.with_leading_icon(name: "gem") %><%= gem_name %><% end %>
+            <% end %>
+          <% else %>
+            <span class="text-muted-foreground">Nothing</span>
+          <% end %>
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+<% if lookup_context.exists?(@component.name, [ "components/demos" ], true) %>
+  <section class="space-y-4">
+    <div class="flex items-center gap-3">
+      <h2 id="demo" class="text-2xl font-semibold tracking-tight">Live demo</h2>
+      <%= render(UI::Badge.new(variant: :secondary)) { "Talks to a server" } %>
+    </div>
+    <p class="text-muted-foreground">Sort a column, or filter one from its menu. Each change asks this site for a fresh page of 120 sample rows.</p>
+    <%= render "components/demos/#{@component.name}" %>
+  </section>
+<% end %>
+
+  <% if @component.examples.any? %>
+    <section class="space-y-8">
+      <h2 id="examples" class="text-2xl font-semibold tracking-tight">Examples</h2>
+      <% @component.examples.each do |example| %>
+        <div class="space-y-3" id="<%= example.key.dasherize %>">
+          <h3 class="font-medium"><%= example.title %></h3>
+          <%= render(UI::Tabs.new(default_value: "preview", size: :sm)) do |tabs| %>
+            <% tabs.with_list do |list| %>
+              <% list.with_trigger(value: "preview") do |trigger| %><% trigger.with_leading_icon(name: "eye") %>Preview<% end %>
+              <% list.with_trigger(value: "code") do |trigger| %><% trigger.with_leading_icon(name: "code") %>Code<% end %>
+            <% end %>
+            <% tabs.with_panel(value: "preview", class: "pt-3") do %>
+              <div class="relative min-h-40 rounded-xl border bg-[radial-gradient(var(--border)_1px,transparent_1px)] [background-size:16px_16px] p-6 sm:p-10">
+                <%= render inline: example.source %>
+              </div>
+            <% end %>
+            <% tabs.with_panel(value: "code", class: "pt-3") do %>
+              <%= code_block(example.source, label: "#{example.key}.html.erb") %>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+    </section>
+  <% end %>
+
+  <% if @component.signature || @component.slots.any? %>
+    <section class="space-y-4">
+      <h2 id="api" class="text-2xl font-semibold tracking-tight">API</h2>
+      <% if @component.signature %>
+        <%= code_block(@component.signature, label: "Arguments", language: "ruby") %>
+      <% end %>
+      <% if @component.slots.any? %>
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="text-sm text-muted-foreground">Slots:</span>
+          <% @component.slots.each do |slot| %>
+            <%= render(UI::Badge.new(variant: :secondary, class: "font-mono")) { slot } %>
+          <% end %>
+        </div>
+      <% end %>
+    </section>
+  <% end %>
+
+  <% if @component.notes %>
+    <section class="space-y-4">
+      <h2 id="notes" class="text-2xl font-semibold tracking-tight">Notes</h2>
+      <%= render(UI::Card.new) do |card| %>
+        <% card.with_content(class: "pt-6") do %>
+          <div class="whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground"><%= @component.notes %></div>
+        <% end %>
+      <% end %>
+    </section>
+  <% end %>
+
+  <%= render "docs/pager",
+             previous_page: index.positive? ? [ names[index - 1].humanize, component_path(names[index - 1]) ] : [ "All components", components_path ],
+             next_page: names[index + 1] && [ names[index + 1].humanize, component_path(names[index + 1]) ] %>
+</article>

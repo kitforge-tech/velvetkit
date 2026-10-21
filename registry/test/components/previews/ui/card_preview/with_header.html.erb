@@ -1,0 +1,11 @@
+<div class="max-w-sm">
+  <%= render(UI::Card.new) do |card| %>
+    <% card.with_header do |header| %>
+      <% header.with_title { "Notifications" } %>
+      <% header.with_description { "Configure how you receive notifications." } %>
+    <% end %>
+    <% card.with_content do %>
+      <p class="text-sm text-muted-foreground">Card with a header containing a title and description.</p>
+    <% end %>
+  <% end %>
+</div>

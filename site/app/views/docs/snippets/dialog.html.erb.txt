@@ -1,0 +1,7 @@
+<%= render(UI::Dialog.new) do |dialog| %>
+  <% dialog.with_trigger(variant: :outline) { "Delete account" } %>
+  <% dialog.with_content do |content| %>
+    <% content.with_title { "Delete your account?" } %>
+    <% content.with_description { "This cannot be undone." } %>
+  <% end %>
+<% end %>

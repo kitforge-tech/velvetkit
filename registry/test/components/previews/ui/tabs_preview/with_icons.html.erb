@@ -1,0 +1,34 @@
+<div class="max-w-lg">
+  <%= render(UI::Tabs.new(default_value: "profile")) do |tabs| %>
+    <% tabs.with_list do |list| %>
+      <% list.with_trigger(value: "profile") do |trigger| %>
+        <% trigger.with_leading_icon(name: "user") %>
+        Profile
+      <% end %>
+      <% list.with_trigger(value: "security") do |trigger| %>
+        <% trigger.with_leading_icon(name: "lock") %>
+        Security
+      <% end %>
+      <% list.with_trigger(value: "settings") do |trigger| %>
+        <% trigger.with_leading_icon(name: "panel-left") %>
+        Settings
+      <% end %>
+      <% list.with_trigger(value: "verified", disabled: true) do |trigger| %>
+        <% trigger.with_leading_icon(name: "badge-check") %>
+        Verified
+      <% end %>
+    <% end %>
+    <% tabs.with_panel(value: "profile") do %>
+      <p class="text-sm text-muted-foreground">Your profile information.</p>
+    <% end %>
+    <% tabs.with_panel(value: "security") do %>
+      <p class="text-sm text-muted-foreground">Security settings.</p>
+    <% end %>
+    <% tabs.with_panel(value: "settings") do %>
+      <p class="text-sm text-muted-foreground">Application settings.</p>
+    <% end %>
+    <% tabs.with_panel(value: "verified") do %>
+      <p class="text-sm text-muted-foreground">Verification status.</p>
+    <% end %>
+  <% end %>
+</div>

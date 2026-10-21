@@ -1,0 +1,2 @@
+<%# frozen_string_literal: true %>
+<%= tag.label(**html_options) do %><%= content %><% if @required %><%= tag.span(" *", class: "text-destructive ml-0.5") %><% end %><% end %>

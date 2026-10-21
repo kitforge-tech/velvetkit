@@ -1,0 +1,96 @@
+<% content_for :title, "Namespacing" %>
+<% namespace, error = playground_namespace(params[:namespace]) %>
+
+<article class="max-w-3xl space-y-12">
+  <header class="space-y-3">
+    <%= render(UI::Breadcrumb.new(size: :sm)) do |bc| %>
+      <% bc.with_item(href: docs_path, text: "Docs") %>
+      <% bc.with_item(href: doc_path("namespacing"), text: "Namespacing", current: true) %>
+    <% end %>
+    <h1 class="text-4xl font-bold tracking-tight">Namespacing</h1>
+    <p class="text-lg text-muted-foreground">Components go under one module of your choice. Pick a name that won't clash with your own code.</p>
+  </header>
+
+  <section class="space-y-4">
+    <p>Every component is written once, against <code class="font-mono text-sm">UI</code>. The generators rewrite each file as they copy it, so a namespace changes more than the class names:</p>
+    <%= render(UI::Table.new) do |table| %>
+      <% table.with_head do |head| %>
+        <% head.with_column { "In VelvetKit" } %>
+        <% head.with_column { "In your app, with Kit" } %>
+      <% end %>
+      <% [
+           [ "UI::Button", "Kit::Button" ],
+           [ "app/components/ui/", "app/components/kit/" ],
+           [ %(data-controller="ui--menu"), %(data-controller="kit--menu") ],
+           [ %(t("ui.dialog.close_label")), %(t("kit.dialog.close_label")) ],
+           [ %("ui-dialog-\#{id}"), %("kit-dialog-\#{id}") ]
+         ].each do |from, to| %>
+        <% table.with_row do |row| %>
+          <% row.with_cell { tag.code(from, class: "font-mono text-xs text-muted-foreground") } %>
+          <% row.with_cell { tag.code(to, class: "font-mono text-xs") } %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </section>
+
+  <section class="space-y-4">
+    <div class="flex items-center gap-3">
+      <h2 id="playground" class="text-2xl font-semibold tracking-tight">Try it</h2>
+      <%= render(UI::Badge.new(variant: :secondary)) { "Live" } %>
+    </div>
+    <p class="text-muted-foreground">Type a module name. These are real component files, rewritten by the same code the generator runs.</p>
+
+    <%= form_with url: doc_path("namespacing"), method: :get, data: { turbo_frame: "rewrite", controller: "autosubmit", turbo_action: "replace" } do %>
+      <%= render(UI::InputGroup.new(class: "max-w-sm")) do |group| %>
+        <% group.with_addon(align: "inline-start") { |addon| addon.with_icon(name: "tag") } %>
+        <% group.with_field(name: "namespace", value: params[:namespace] || "Kit", placeholder: "Kit", autocomplete: "off",
+                            aria: { label: "Namespace" }, data: { action: "input->autosubmit#submit" }) %>
+      <% end %>
+    <% end %>
+
+    <%= turbo_frame_tag "rewrite" do %>
+      <% if error %>
+        <%= render(UI::Alert.new(variant: :destructive)) do |alert| %>
+          <% alert.with_title { "That won't work as a namespace" } %>
+          <% alert.with_description { "Use a single Ruby constant name, starting with a capital letter: UI, Kit, Admin or VelvetKit." } %>
+        <% end %>
+      <% else %>
+        <div class="space-y-4">
+          <div class="flex flex-wrap gap-2 text-sm">
+            <%= render(UI::Badge.new(variant: :outline)) { "Folder: #{namespace.path}/" } %>
+            <%= render(UI::Badge.new(variant: :outline)) { "Stimulus: #{namespace.dom}--" } %>
+            <%= render(UI::Badge.new(variant: :outline)) { "Translations: #{namespace.path}." } %>
+            <% if namespace.acronym? %>
+              <%= render(UI::Badge.new(variant: :warning)) { "Needs an acronym inflection" } %>
+            <% end %>
+          </div>
+          <%= render(UI::Tabs.new(default_value: "0")) do |tabs| %>
+            <% tabs.with_list do |list| %>
+              <% ApplicationHelper::PLAYGROUND_FILES.each_with_index do |file, index| %>
+                <% list.with_trigger(value: index.to_s) { File.basename(file) } %>
+              <% end %>
+            <% end %>
+            <% ApplicationHelper::PLAYGROUND_FILES.each_with_index do |file, index| %>
+              <% path, source = rewritten(namespace, file) %>
+              <% tabs.with_panel(value: index.to_s, class: "pt-4") do %>
+                <%= code_block(source, label: path) %>
+              <% end %>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
+  </section>
+
+  <section class="space-y-4">
+    <h2 id="acronyms" class="text-2xl font-semibold tracking-tight">All-capital names</h2>
+    <p>Rails reads <code class="font-mono text-sm">app/components/ui</code> as <code class="font-mono text-sm">Ui</code>, not <code class="font-mono text-sm">UI</code>. For names like that, <code class="font-mono text-sm">install</code> adds an inflection so Zeitwerk finds your classes:</p>
+    <%= code_block(snippet("inflections.rb"), label: "config/initializers/inflections.rb") %>
+    <%= render(UI::Alert.new(variant: :warning)) do |alert| %>
+      <% alert.with_title { "Choose once" } %>
+      <% alert.with_description { "To change the namespace later, rename the folder and every UI:: reference yourself, or delete the components and add them again under the new name." } %>
+    <% end %>
+  </section>
+
+  <%= render "docs/pager", previous_page: [ "Build with AI", doc_path("ai") ], next_page: [ "Theming and dark mode", doc_path("theming") ] %>
+</article>

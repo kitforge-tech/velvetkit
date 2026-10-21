@@ -1,0 +1,8 @@
+<div class="max-w-2xl">
+  <%= render(UI::Breadcrumb.new(size: :sm)) do |bc| %>
+    <% bc.with_item(href: "#", text: "Workspace") %>
+    <% bc.with_item(href: "#", text: "Website") %>
+    <% bc.with_item(href: "#", text: "Issues") %>
+    <% bc.with_item(href: "#", text: "#1234") %>
+  <% end %>
+</div>

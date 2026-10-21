@@ -1,0 +1,7 @@
+<%= render(UI::Button.new(**button_options)) do %>
+  <% if content.present? %>
+    <%= content %>
+  <% else %>
+    <%= render(UI::Icon.new(name: :x, size: :sm)) %>
+  <% end %>
+<% end %>

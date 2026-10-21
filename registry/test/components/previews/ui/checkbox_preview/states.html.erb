@@ -1,0 +1,22 @@
+<div class="flex flex-col gap-4">
+  <div class="flex items-center gap-4">
+    <%= render(UI::Checkbox.new(name: "unchecked")) %>
+    <span class="text-sm text-muted-foreground">Unchecked</span>
+  </div>
+  <div class="flex items-center gap-4">
+    <%= render(UI::Checkbox.new(name: "checked", checked: true)) %>
+    <span class="text-sm text-muted-foreground">Checked</span>
+  </div>
+  <div class="flex items-center gap-4">
+    <%= render(UI::Checkbox.new(name: "disabled", disabled: true)) %>
+    <span class="text-sm text-muted-foreground">Disabled</span>
+  </div>
+  <div class="flex items-center gap-4">
+    <%= render(UI::Checkbox.new(name: "disabled-checked", disabled: true, checked: true)) %>
+    <span class="text-sm text-muted-foreground">Disabled + Checked</span>
+  </div>
+  <div class="flex items-center gap-4">
+    <%= render(UI::Checkbox.new(name: "error", error: true)) %>
+    <span class="text-sm text-destructive">Error</span>
+  </div>
+</div>

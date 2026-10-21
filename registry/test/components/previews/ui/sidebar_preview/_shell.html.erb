@@ -1,0 +1,60 @@
+<%# Shared chrome for every UI::Sidebar preview: the framed viewport, the
+    wrapper that carries the Stimulus controller, the sidebar itself and the
+    inset content area. Each scenario supplies only what makes it different —
+    its nav groups, an optional brand block and its main content — so this
+    scaffold is defined once instead of copied into every template.
+
+    Locals:
+      sidebar_id:  id on the <aside>; the trigger points aria-controls at it
+      collapsible: :none or :icon
+      state:       :expanded or :collapsed
+      groups:      [{ label:, items: [{ icon:, text:, active:, icon_class: }] }]
+      brand:       captured markup for the sidebar header (optional)
+      title:       text shown beside the trigger
+      main:        captured markup for the content area
+%>
+<% sidebar_id  = local_assigns.fetch(:sidebar_id, "preview-sidebar") %>
+<% collapsible = local_assigns.fetch(:collapsible, :none) %>
+<% state       = local_assigns.fetch(:state, :expanded) %>
+<% groups      = local_assigns.fetch(:groups, []) %>
+<% title       = local_assigns.fetch(:title, "Dashboard") %>
+
+<%# transform-gpu makes this frame a containing block, so the sidebar's
+    `position: fixed` inner panel resolves against the frame instead of
+    escaping to the browser viewport. Without it the sidebar renders outside
+    the preview box. %>
+<div class="relative h-[600px] overflow-hidden rounded-lg border transform-gpu">
+  <%= render(UI::Sidebar::Wrapper.new(min_height: :full)) do %>
+    <%= render(UI::Sidebar.new(id: sidebar_id, collapsible: collapsible, state: state)) do |sidebar| %>
+      <% if local_assigns[:brand].present? %>
+        <% sidebar.with_sidebar_header { local_assigns[:brand] } %>
+      <% end %>
+      <% sidebar.with_sidebar_content do |content| %>
+        <% groups.each do |group_data| %>
+          <% content.with_sidebar_group do |group| %>
+            <% group.with_label(group_data[:label]) %>
+            <% group.with_menu do |menu| %>
+              <% Array(group_data[:items]).each do |nav| %>
+                <% menu.with_menu_item do |item| %>
+                  <% item.with_menu_button("#", active: nav[:active].present?) do %>
+                    <%= render(UI::Icon.new(name: nav[:icon], size: :sm, class: nav[:icon_class])) %>
+                    <span><%= nav[:text] %></span>
+                  <% end %>
+                <% end %>
+              <% end %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <%= render(UI::Sidebar::Inset.new) do %>
+      <%# Height is fixed: the header must not resize when the sidebar collapses. %>
+      <header class="flex h-14 shrink-0 items-center gap-2 border-b px-4">
+        <%= render(UI::Sidebar::Trigger.new(sidebar_id: sidebar_id)) %>
+        <span class="text-sm font-medium"><%= title %></span>
+      </header>
+      <div class="p-6"><%= local_assigns[:main] %></div>
+    <% end %>
+  <% end %>
+</div>

@@ -1,0 +1,11 @@
+<article class="max-w-2xl space-y-4">
+  <%= render(UI::Typography::H2.new) { "Release notes" } %>
+  <%= render(UI::Typography::Lead.new) { "This month's update makes reports faster to build and easier to share." } %>
+  <%= render(UI::Typography::H3.new) { "What changed" } %>
+  <%= render(UI::Text.new) do %>
+    Reports now load in under a second, and you can share one with a link. Owners can still limit sharing from
+    <%= render(UI::Typography::Code.new) { "Settings › Sharing" } %>.
+  <% end %>
+  <%= render(UI::Typography::Blockquote.new) { "We asked for faster reports and got them the same month." } %>
+  <%= render(UI::Typography::Muted.new) { "Published 21 October" } %>
+</article>

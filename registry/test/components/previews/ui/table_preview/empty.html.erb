@@ -1,0 +1,8 @@
+<%# An empty table should say so rather than show a bare header. %>
+<%= render(UI::Table.new) do |table| %>
+  <% table.with_head do |head| %>
+    <% head.with_column { "Customer" } %>
+    <% head.with_column(align: :end) { "Amount" } %>
+  <% end %>
+  <% table.with_empty_state { "No invoices yet" } %>
+<% end %>

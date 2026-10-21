@@ -1,0 +1,40 @@
+<%# Header search: ⌘K, Ctrl+K or / opens it. Built from the kit's Dialog. %>
+<%= render(UI::Dialog.new) do |dialog| %>
+  <% dialog.with_trigger(variant: :outline, size: :sm, aria: { label: "Search the docs", keyshortcuts: "Meta+K Control+K /" }, data: { search_trigger: "" },
+                         class: "w-9 justify-center px-0 font-normal text-muted-foreground sm:w-56 sm:justify-between sm:px-3") do %>
+    <span class="flex items-center gap-2">
+      <%= render(UI::Icon.new(name: "search", size: :sm)) %>
+      <span class="hidden sm:inline">Search docs…</span>
+    </span>
+    <kbd class="hidden rounded border bg-muted px-1.5 font-mono text-[10px] text-muted-foreground sm:inline">⌘K</kbd>
+  <% end %>
+  <% dialog.with_content(size: :lg, show_close: false, aria: { label: "Search the docs" }, class: "p-0 sm:mt-[12vh] sm:self-start") do %>
+    <div data-controller="search" class="flex max-h-[min(70vh,32rem)] flex-col">
+      <div class="flex items-center gap-3 border-b px-4">
+        <%= render(UI::Icon.new(name: "search", size: :sm, class: "shrink-0 text-muted-foreground")) %>
+        <input type="search" autofocus autocomplete="off" spellcheck="false" placeholder="Search components and guides"
+               role="combobox" aria-expanded="true" aria-controls="search-results" aria-autocomplete="list" aria-label="Search the docs"
+               class="h-12 w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground [&::-webkit-search-cancel-button]:hidden"
+               data-search-target="input" data-action="input->search#filter keydown->search#keydown">
+        <kbd class="rounded border bg-muted px-1.5 font-mono text-[10px] text-muted-foreground">Esc</kbd>
+      </div>
+      <div id="search-results" role="listbox" aria-label="Results" class="flex flex-col overflow-y-auto p-2">
+        <% SearchIndex.entries.group_by(&:group).each do |group, entries| %>
+          <div class="flex flex-col" data-search-target="group">
+            <p class="px-2 pt-2 pb-1 text-xs font-medium text-muted-foreground"><%= group %></p>
+            <% entries.each_with_index do |entry, index| %>
+              <%= link_to entry.url, id: "search-#{group.parameterize}-#{index}", role: "option", aria: { selected: "false" },
+                          class: "flex flex-col gap-0.5 rounded-md px-2 py-2 text-sm outline-none aria-selected:bg-accent aria-selected:text-accent-foreground",
+                          data: { search_target: "result", search_text: "#{entry.title} #{entry.description} #{entry.keywords}".downcase,
+                                  search_title: entry.title.downcase, action: "mousemove->search#hover" } do %>
+                <span class="font-medium"><%= entry.title %></span>
+                <span class="line-clamp-1 text-xs text-muted-foreground"><%= entry.description %></span>
+              <% end %>
+            <% end %>
+          </div>
+        <% end %>
+        <p hidden data-search-target="empty" class="px-2 py-8 text-center text-sm text-muted-foreground">No matches. Try a component name, like “dialog”.</p>
+      </div>
+    </div>
+  <% end %>
+<% end %>

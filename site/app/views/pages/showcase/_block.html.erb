@@ -1,0 +1,11 @@
+<%# One block in the hero rail: a blueprint label and a card of real UI.
+    Cards size to their content and stretch to the tallest in the rail; no
+    clipping, so a date picker or select can open inside one. %>
+<li class="flex w-[19rem] shrink-0 snap-start flex-col sm:w-[20rem]">
+  <p class="mb-2 flex items-center gap-1.5 font-mono text-[10px] tracking-[0.18em] text-white/55 uppercase">
+    <span class="size-1.5 border-t border-l border-[#FFA552]"></span><%= label %>
+  </p>
+  <div class="flex-1 rounded-2xl border bg-card p-5 text-card-foreground shadow-xl shadow-black/25">
+    <%= render "pages/showcase/#{name}" %>
+  </div>
+</li>

@@ -1,0 +1,47 @@
+<%# Every semantic token side by side. The fastest way to review both themes:
+    flip the toggle and check nothing goes muddy or illegible. %>
+<% pairs = [
+     ["background", "foreground"], ["card", "card-foreground"],
+     ["popover", "popover-foreground"], ["primary", "primary-foreground"],
+     ["secondary", "secondary-foreground"], ["muted", "muted-foreground"],
+     ["accent", "accent-foreground"], ["sidebar", "sidebar-foreground"],
+     ["sidebar-accent", "sidebar-accent-foreground"]
+   ] %>
+<div class="flex flex-col gap-6">
+  <div class="flex items-center gap-3">
+    <%= render(UI::ThemeToggle.new) %>
+    <%= render(UI::Typography::Muted.new) { "Flip the theme, then scan for anything unreadable." } %>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+    <% pairs.each do |bg, fg| %>
+      <div class="rounded-md border p-4" style="background: var(--<%= bg %>); color: var(--<%= fg %>);">
+        <div class="text-sm font-medium">--<%= bg %></div>
+        <div class="text-xs opacity-80">--<%= fg %></div>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="flex flex-wrap items-center gap-3">
+    <%= render(UI::Button.new) { "Primary" } %>
+    <%= render(UI::Button.new(variant: :secondary)) { "Secondary" } %>
+    <%= render(UI::Button.new(variant: :outline)) { "Outline" } %>
+    <%= render(UI::Button.new(variant: :ghost)) { "Ghost" } %>
+    <%= render(UI::Button.new(variant: :destructive)) { "Destructive" } %>
+  </div>
+
+  <div class="flex flex-wrap items-center gap-3">
+    <% %i[default secondary destructive outline success warning].each do |v| %>
+      <%= render(UI::Badge.new(variant: v)) { v.to_s.capitalize } %>
+    <% end %>
+  </div>
+
+  <div class="flex flex-col gap-3 max-w-md">
+    <% %i[default destructive warning success info].each do |v| %>
+      <%= render(UI::Alert.new(variant: v)) do |alert| %>
+        <% alert.with_title { v.to_s.capitalize } %>
+        <% alert.with_description { "How the #{v} alert reads in this theme." } %>
+      <% end %>
+    <% end %>
+  </div>
+</div>

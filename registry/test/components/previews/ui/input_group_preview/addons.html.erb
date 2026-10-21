@@ -1,0 +1,29 @@
+<%# Gallery of all addon configurations %>
+<div class="flex flex-col gap-4 max-w-sm">
+  <%# Icon prefix %>
+  <%= render(UI::InputGroup.new) do |g| %>
+    <%= g.with_addon(align: "inline-start") { |a| a.with_icon(name: "mail") } %>
+    <%= g.with_field(type: :email, placeholder: "Email") %>
+  <% end %>
+  <%# Text prefix %>
+  <%= render(UI::InputGroup.new) do |g| %>
+    <%= g.with_addon(align: "inline-start") { "https://" } %>
+    <%= g.with_field(placeholder: "yoursite.com") %>
+  <% end %>
+  <%# Icon suffix %>
+  <%= render(UI::InputGroup.new) do |g| %>
+    <%= g.with_field(placeholder: "Search…") %>
+    <%= g.with_addon(align: "inline-end") { |a| a.with_icon(name: "search") } %>
+  <% end %>
+  <%# Both sides %>
+  <%= render(UI::InputGroup.new) do |g| %>
+    <%= g.with_addon(align: "inline-start") { "$" } %>
+    <%= g.with_field(type: :number, placeholder: "0.00") %>
+    <%= g.with_addon(align: "inline-end") { "USD" } %>
+  <% end %>
+  <%# Error state %>
+  <%= render(UI::InputGroup.new) do |g| %>
+    <%= g.with_addon(align: "inline-start") { |a| a.with_icon(name: "mail") } %>
+    <%= g.with_field(type: :email, placeholder: "Invalid email", error: true) %>
+  <% end %>
+</div>

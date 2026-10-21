@@ -1,0 +1,12 @@
+<%# Playground template for UI::InputGroupPreview %>
+<div class="max-w-sm">
+  <%= render(UI::InputGroup.new) do |g| %>
+    <% if left_icon %>
+      <%= g.with_addon(align: "inline-start") { render(UI::Icon.new(name: icon_name)) } %>
+    <% end %>
+    <%= g.with_field(type: :email, placeholder: "you@example.com", error: error, disabled: disabled) %>
+    <% if right_icon %>
+      <%= g.with_addon(align: "inline-end") { render(UI::Icon.new(name: icon_name)) } %>
+    <% end %>
+  <% end %>
+</div>

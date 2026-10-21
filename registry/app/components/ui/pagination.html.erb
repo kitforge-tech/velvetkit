@@ -1,0 +1,30 @@
+<div class="flex w-full flex-col items-center gap-2 sm:flex-row sm:justify-between">
+  <p class="text-sm text-muted-foreground whitespace-nowrap"><%= summary %></p>
+  <%= tag.nav aria: { label: label }, class: classes, **@html_attrs do %>
+    <ul class="flex flex-row items-center gap-1">
+      <li>
+        <% if previous_page %>
+          <%= render(UI::Link.new(href: url_for_page(previous_page), button_variant: true, class: "gap-1 px-2.5", aria: { label: t("ui.pagination.previous", default: "Go to previous page") })) do %><%= render(UI::Icon.new(name: "chevron-left", size: :sm)) %><span class="hidden sm:inline"><%= t("ui.pagination.previous_label", default: "Previous") %></span><% end %>
+        <% else %>
+          <span class="inline-flex items-center gap-1 px-2.5 py-2 text-sm text-muted-foreground opacity-50"><%= render(UI::Icon.new(name: "chevron-left", size: :sm)) %><span class="hidden sm:inline"><%= t("ui.pagination.previous_label", default: "Previous") %></span></span>
+        <% end %>
+      </li>
+      <% series.each do |page| %>
+        <li>
+          <% if page == UI::Pagination::GAP %>
+            <span class="flex size-9 items-center justify-center text-muted-foreground" aria-hidden="true">&hellip;<span class="sr-only"><%= t("ui.pagination.more", default: "More pages") %></span></span>
+          <% else %>
+            <%= render(UI::Link.new(href: url_for_page(page), button_variant: true, class: current?(page) ? "size-9 border border-input bg-background" : "size-9", aria: current?(page) ? { current: "page" } : {})) { page.to_s } %>
+          <% end %>
+        </li>
+      <% end %>
+      <li>
+        <% if next_page %>
+          <%= render(UI::Link.new(href: url_for_page(next_page), button_variant: true, class: "gap-1 px-2.5", aria: { label: t("ui.pagination.next", default: "Go to next page") })) do %><span class="hidden sm:inline"><%= t("ui.pagination.next_label", default: "Next") %></span><%= render(UI::Icon.new(name: "chevron-right", size: :sm)) %><% end %>
+        <% else %>
+          <span class="inline-flex items-center gap-1 px-2.5 py-2 text-sm text-muted-foreground opacity-50"><span class="hidden sm:inline"><%= t("ui.pagination.next_label", default: "Next") %></span><%= render(UI::Icon.new(name: "chevron-right", size: :sm)) %></span>
+        <% end %>
+      </li>
+    </ul>
+  <% end %>
+</div>

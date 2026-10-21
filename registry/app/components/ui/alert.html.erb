@@ -1,0 +1,16 @@
+<%= tag.div role: "alert", aria: { live: "assertive", atomic: "true" }, class: classes, data: { controller: ("ui--alert" if dismissible?) }.compact, **@html_attrs do %>
+  <% if icon? %>
+    <%= icon %>
+  <% elsif default_icon_name %>
+    <%= render(UI::Icon.new(name: default_icon_name, size: :sm, class: "shrink-0", aria: { hidden: true })) %>
+  <% end %>
+  <div class="flex flex-col gap-1 min-w-0 flex-1">
+    <% if title? %><%= title %><% end %>
+    <% if description? %><%= description %><% end %>
+  </div>
+  <% if dismissible? %>
+    <%= render(UI::Button.new(variant: :ghost, size: :icon_sm, class: "shrink-0 -mr-1 -mt-1", aria: { label: t("ui.alert.close_label", default: "Close alert") }, data: { action: "click->ui--alert#dismiss" })) do %>
+      <%= render(UI::Icon.new(name: :x, size: :sm)) %>
+    <% end %>
+  <% end %>
+<% end %>

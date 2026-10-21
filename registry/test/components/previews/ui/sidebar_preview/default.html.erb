@@ -1,0 +1,17 @@
+<% brand = render("ui/sidebar_preview/brand") %>
+
+<% main = capture do %>
+  <p class="text-muted-foreground">Main content area next to the sidebar.</p>
+<% end %>
+
+<%= render "ui/sidebar_preview/shell",
+      sidebar_id: "preview-sidebar-default",
+      brand: brand,
+      main: main,
+      groups: [
+        { label: "Applications", items: [
+          { icon: "layout-dashboard", text: "Dashboard", active: true, icon_class: "stroke-orange-500" },
+          { icon: "users",           text: "Team",                icon_class: "stroke-purple-500" },
+          { icon: "file-text",       text: "Reports" }
+        ] }
+      ] %>

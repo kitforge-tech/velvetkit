@@ -1,0 +1,6 @@
+<div class="max-w-xl space-y-6">
+  <%= render(UI::Text.new) do %>
+    Run <%= render(UI::Typography::Code.new) { "bin/rails generate velvetkit:add dialog" } %> to add a dialog.
+  <% end %>
+  <%= render(UI::Typography::Blockquote.new) { "Good components disappear: you notice the work, not the widgets." } %>
+</div>

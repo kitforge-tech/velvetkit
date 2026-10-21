@@ -1,0 +1,11 @@
+<%= render(UI::Dialog.new) do |dialog| %>
+  <% dialog.with_trigger(variant: :destructive) { "Delete project" } %>
+  <% dialog.with_content(size: :sm) do |content| %>
+    <% content.with_title { "Delete this project?" } %>
+    <% content.with_description { "This action cannot be undone. All project data will be removed permanently." } %>
+    <% content.with_footer do %>
+      <%= render(UI::Dialog::Close.new(variant: :outline, class: "static")) { "Cancel" } %>
+      <%= render(UI::Button.new(variant: :destructive)) { "Delete" } %>
+    <% end %>
+  <% end %>
+<% end %>

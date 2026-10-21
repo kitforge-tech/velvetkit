@@ -1,0 +1,60 @@
+<%= tag.div(class: "relative w-full", data: root_data) do %>
+  <% if render_label? %>
+    <div class="mb-2"><%= render(label_component) { label_text } %></div>
+  <% end %>
+
+  <%= tag.button(**trigger_options) do %>
+    <span data-ui--select-target="value" class="<%= placeholder_shown? ? "text-muted-foreground" : "" %> truncate"><%= current_label %></span>
+    <%= render(UI::Icon.new(name: "chevrons-up-down", size: :sm, class: "shrink-0 text-muted-foreground")) %>
+  <% end %>
+
+  <%= tag.div(hidden: true, data: { "ui--select-target": "panel", state: "closed" },
+              class: "z-50 min-w-32 overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md " \
+                     "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95") do %>
+    <% if searchable? %>
+      <div class="flex items-center gap-2 border-b px-3 py-2">
+        <%= render(UI::Icon.new(name: "search", size: :sm, class: "shrink-0 text-muted-foreground")) %>
+        <%= tag.input(type: "search", id: search_id, autocomplete: "off",
+                      placeholder: t("ui.select.search", default: "Search"),
+                      class: "w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground [&::-webkit-search-cancel-button]:hidden",
+                      aria: { label: t("ui.select.search_label", default: "Search the options"), controls: listbox_id, autocomplete: "list", expanded: "true" },
+                      role: "combobox",
+                      data: { "ui--select-target": "search",
+                              action: "input->ui--select#filter keydown->ui--select#keydown" }) %>
+      </div>
+    <% end %>
+
+    <%= tag.div(id: listbox_id, role: "listbox", tabindex: -1,
+                aria: { labelledby: (render_label? ? trigger_id : nil), multiselectable: (multiple? ? "true" : nil) },
+                data: { "ui--select-target": "listbox", action: "mousedown->ui--select#keepFocus" },
+                class: "max-h-64 overflow-y-auto p-1") do %>
+      <% listbox_options.each_with_index do |(label, value), index| %>
+        <%= tag.div(id: option_id(index), role: "option", aria: { selected: selected?(value).to_s },
+                    data: { value: value, "ui--select-target": "option",
+                            action: "click->ui--select#choose mousemove->ui--select#hover" },
+                    class: "relative flex cursor-default select-none items-center rounded-sm py-1.5 pr-8 pl-2 #{size == :sm ? "text-xs" : "text-sm"} " \
+                           "outline-none data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground aria-selected:font-medium " \
+                           "#{value.to_s.empty? ? "text-muted-foreground" : ""}") do %>
+          <span class="truncate"><%= label %></span>
+          <span class="absolute right-2 flex size-4 items-center justify-center text-primary dark:text-foreground" data-ui--select-target="check" <%= "hidden" unless selected?(value) %>>
+            <%= render(UI::Icon.new(name: "check", size: :sm)) %>
+          </span>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <% if searchable? %>
+      <p hidden data-ui--select-target="empty" class="px-3 py-3 text-sm text-muted-foreground"><%= t("ui.select.no_matches", default: "No matches") %></p>
+    <% end %>
+  <% end %>
+
+  <% if form_field? %>
+    <%= @form.select(@field, native_choices, { selected: current_values }, native_options) %>
+  <% else %>
+    <%= tag.select(**native_options) do %>
+      <% native_choices.each do |label, value| %>
+        <%= tag.option(label, value: value, selected: selected?(value)) %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

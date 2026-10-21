@@ -1,0 +1,10 @@
+<%= tag.li class: "inline-flex items-center gap-1.5", data: data_attrs do %>
+  <%= render(UI::Link.new(href: @href, variant: :link, size: :sm, truncate: !effective_current?, class: link_classes, **link_options)) do %>
+    <% if @avatar_src %>
+      <%= render(UI::Avatar.new(size: :xxs, class: "rounded border")) do |avatar| %>
+        <% avatar.with_image(src: @avatar_src, alt: "") %>
+      <% end %>
+    <% end %>
+    <%= @text %>
+  <% end %>
+<% end %>

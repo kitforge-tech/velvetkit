@@ -1,0 +1,5 @@
+<div class="flex max-w-xs flex-col gap-5">
+  <% %i[sm default lg].each do |size| %>
+    <%= render(UI::Select.new(name: "size_#{size}", label: size.to_s, size: size, options: %w[Daily Weekly Monthly], selected: "Weekly")) %>
+  <% end %>
+</div>

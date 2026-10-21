@@ -1,0 +1,8 @@
+<div class="flex flex-wrap items-center gap-6">
+  <% { default: "bg-muted", primary: "bg-primary", destructive: "bg-destructive", amber: "bg-amber-500", emerald: "bg-emerald-500", purple: "bg-purple-500", sky: "bg-sky-500" }.each do |color, label| %>
+    <div class="flex flex-col items-center gap-2">
+      <%= render(UI::Avatar.new(color: color)) { "JD" } %>
+      <span class="text-xs text-muted-foreground"><%= color %></span>
+    </div>
+  <% end %>
+</div>

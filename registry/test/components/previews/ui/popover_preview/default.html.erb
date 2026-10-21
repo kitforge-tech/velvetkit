@@ -1,0 +1,7 @@
+<%= render(UI::Popover.new) do |popover| %>
+  <% popover.with_trigger(variant: :default) { "Open Popover" } %>
+  <% popover.with_content do |content| %>
+    <% content.with_title { "Popover Title" } %>
+    <p>This is a simple popover with a title and some content.</p>
+  <% end %>
+<% end %>

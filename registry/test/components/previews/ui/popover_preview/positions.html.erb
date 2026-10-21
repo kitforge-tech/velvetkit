@@ -1,0 +1,30 @@
+<div class="flex flex-wrap gap-8 p-8 items-center justify-center">
+  <%= render(UI::Popover.new) do |popover| %>
+    <% popover.with_trigger { "Top" } %>
+    <% popover.with_content(side: :top) do |content| %>
+      <% content.with_title { "Top Position" } %>
+      This popover appears above the trigger.
+    <% end %>
+  <% end %>
+  <%= render(UI::Popover.new) do |popover| %>
+    <% popover.with_trigger { "Right" } %>
+    <% popover.with_content(side: :right) do |content| %>
+      <% content.with_title { "Right Position" } %>
+      This popover appears to the right.
+    <% end %>
+  <% end %>
+  <%= render(UI::Popover.new) do |popover| %>
+    <% popover.with_trigger { "Bottom" } %>
+    <% popover.with_content(side: :bottom) do |content| %>
+      <% content.with_title { "Bottom Position" } %>
+      This popover appears below the trigger.
+    <% end %>
+  <% end %>
+  <%= render(UI::Popover.new) do |popover| %>
+    <% popover.with_trigger { "Left" } %>
+    <% popover.with_content(side: :left) do |content| %>
+      <% content.with_title { "Left Position" } %>
+      This popover appears to the left.
+    <% end %>
+  <% end %>
+</div>

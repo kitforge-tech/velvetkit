@@ -1,0 +1,13 @@
+<div class="space-y-2">
+  <h3 class="font-semibold">Questions</h3>
+  <%= render(UI::Accordion.new(type: :single, default_value: "q0")) do |accordion| %>
+    <% [ [ "Can I change plans later?", "Yes. Upgrades apply at once; downgrades at the end of the month." ],
+         [ "Do you offer refunds?", "Within 14 days, no questions asked." ],
+         [ "Is my data exported?", "Any time, as CSV or JSON, from Settings." ] ].each_with_index do |(question, answer), i| %>
+      <% accordion.with_item(value: "q#{i}") do |item| %>
+        <% item.with_trigger { question } %>
+        <% item.with_content { tag.p(answer, class: "text-sm text-muted-foreground") } %>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>

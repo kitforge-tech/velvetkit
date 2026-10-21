@@ -1,0 +1,23 @@
+<%= tag.li class: "inline-flex items-center", data: { breadcrumb_target: "ellipsis" } do %>
+  <%= render(UI::Popover.new) do |popover| %>
+    <% popover.with_trigger(variant: :ghost, size: :icon_sm, aria: { label: t("ui.breadcrumb.ellipsis_label", default: "More breadcrumb pages") }) do %>
+      <%= render(UI::Icon.new(name: :ellipsis, size: :sm)) %>
+    <% end %>
+    <% popover.with_content(side: :bottom, align: :start, class: "w-auto min-w-0 p-1") do %>
+      <ul class="flex flex-col gap-0.5" aria-label="<%= t("ui.breadcrumb.collapsed_pages_label", default: "Collapsed breadcrumb pages") %>">
+        <% @items.each do |item| %>
+          <li>
+            <%= render(UI::Link.new(href: item.href, class: cn("justify-start rounded-sm px-3 py-1.5 font-normal", size_text_class))) do %>
+              <% if item.avatar_src %>
+                <%= render(UI::Avatar.new(size: :xxs, shape: :rounded)) do |avatar| %>
+                  <% avatar.with_image(src: item.avatar_src, alt: "") %>
+                <% end %>
+              <% end %>
+              <%= item.text %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+  <% end %>
+<% end %>

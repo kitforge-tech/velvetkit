@@ -1,0 +1,12 @@
+# The Dockerfile builds from the repository root (Dokploy and Kamal both).
+/.git/
+/tmp/
+/pkg/
+/test/
+/site/node_modules/
+/site/tmp/
+/site/log/
+/site/storage/
+/site/app/assets/builds/*
+/site/config/master.key
+/site/.env*

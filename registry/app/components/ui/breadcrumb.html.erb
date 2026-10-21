@@ -1,0 +1,30 @@
+<%= tag.nav aria: { label: t("ui.breadcrumb.label", default: "Breadcrumb") }, class: classes, **@html_attrs do %>
+  <ol class="flex flex-wrap items-center gap-1.5 break-words sm:gap-2.5">
+    <% visible = visible_items %>
+    <% hidden = hidden_items %>
+    <% prefix = visible[0...-1] %>
+    <% current = visible.last %>
+    <%# START: ellipsis before visible items %>
+    <% if hidden.any? && @collapse_at == :start %>
+      <%= render(UI::Breadcrumb::AutoEllipsis.new(items: hidden, size: @size)) %>
+      <li role="presentation"><%= tag.span class: separator_classes, aria: { hidden: true } do %>/<% end %></li>
+    <% end %>
+    <%# Prefix items with separators %>
+    <% prefix.each do |item| %>
+      <%= item %>
+      <li role="presentation"><%= tag.span class: separator_classes, aria: { hidden: true } do %>/<% end %></li>
+    <% end %>
+    <%# MIDDLE / END: ellipsis before current page %>
+    <% if hidden.any? && %i[middle end].include?(@collapse_at) %>
+      <%= render(UI::Breadcrumb::AutoEllipsis.new(items: hidden, size: @size)) %>
+      <li role="presentation"><%= tag.span class: separator_classes, aria: { hidden: true } do %>/<% end %></li>
+    <% end %>
+    <%# Current page (always last, never truncated) %>
+    <%= current %>
+    <%# Legacy explicit ellipsis support (deprecated) %>
+    <% if ellipsis? && !has_items? %>
+      <%= ellipsis %>
+    <% end %>
+    <%= content %>
+  </ol>
+<% end %>
