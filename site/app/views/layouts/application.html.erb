@@ -47,6 +47,7 @@
         </nav>
 
         <div class="ml-auto flex items-center gap-2">
+          <%= render "layouts/search" %>
           <%= render(UI::Badge.new(variant: :outline, class: "hidden sm:inline-flex")) { "v#{Velvetkit::VERSION}" } %>
           <%= render(UI::ThemeToggle.new) %>
         </div>

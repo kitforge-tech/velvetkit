@@ -95,6 +95,61 @@ ws.onopen = async () => {
     await sleep(250);
     const refused = await run(`(() => { const b = document.querySelector('${block}'); return { label: b.querySelector('[data-clipboard-target=label]').textContent, selected: String(window.getSelection()) }; })()`);
     check("refused clipboard selects the text and explains", refused.selected === "bin/rails generate velvetkit:add dialog" && refused.label.includes("copy"), refused.label);
+    // 7. Search: ⌘K and / open it, typing ranks title matches first, Enter goes.
+    await send("Page.navigate", { url: `${BASE}/docs` });
+    await sleep(2500);
+    const key = async (key, code, modifiers = 0, vk = 0) => {
+    await send("Input.dispatchKeyEvent", { type: "keyDown", key, code, modifiers, windowsVirtualKeyCode: vk });
+    await send("Input.dispatchKeyEvent", { type: "keyUp", key, code, modifiers, windowsVirtualKeyCode: vk });
+    };
+    const searchState = () => run(`(() => { const d = document.querySelector('dialog[aria-label="Search the docs"]'); const i = d.querySelector('input');
+    const byOrder = (a, b) => (a.style.order || 0) - (b.style.order || 0);
+    const vis = [...d.querySelectorAll('[data-search-target=group]:not([hidden])')].sort(byOrder)
+      .flatMap(g => [...g.querySelectorAll('[role=option]:not([hidden])')].sort(byOrder));
+    return { open: d.open, focused: document.activeElement === i, first: vis[0]?.querySelector('span')?.textContent, count: vis.length,
+           selected: d.querySelector('[role=option][aria-selected=true] span')?.textContent, empty: !d.querySelector('[data-search-target=empty]').hidden }; })()`);
+    await key("k", "KeyK", 4, 75);
+    await sleep(400);
+    let st = await searchState();
+    check("⌘K opens search with the cursor in it", st.open && st.focused);
+    await send("Input.insertText", { text: "date" });
+    await sleep(150);
+    st = await searchState();
+    check("typing ranks the matching component first", st.first === "Date picker" && st.selected === "Date picker", `${st.first}, ${st.count} shown`);
+    await key("Enter", "Enter", 0, 13);
+    // Wait for the visit rather than a fixed time: a cold page renders slowly in development.
+    for (let i = 0; i < 40 && (await run("location.pathname")) !== "/docs/components/date_picker"; i++) await sleep(200);
+    check("Enter opens the result", (await run("location.pathname")) === "/docs/components/date_picker");
+    await sleep(800);
+    await key("k", "KeyK", 4, 75);
+    await sleep(400);
+    await run(`document.querySelector('dialog[aria-label="Search the docs"] input').value = ""`);
+    await send("Input.insertText", { text: "select" });
+    await sleep(150);
+    st = await searchState();
+    check("a title starting with the query ranks first", st.first === "Select", String(st.first));
+    await key("ArrowDown", "ArrowDown", 0, 40);
+    st = await searchState();
+    check("↓ moves to the next result", st.selected && st.selected !== "Select", String(st.selected));
+    await run(`document.querySelector('dialog[aria-label="Search the docs"] input').value = ""`);
+    await send("Input.insertText", { text: "se" });
+    await sleep(150);
+    st = await searchState();
+    check("a strong component match outranks a weak guide match", st.first === "Select" && st.selected === "Select", `${st.first} first, ${st.selected} selected`);
+    await key("Escape", "Escape", 0, 27);
+    await sleep(400);
+    await key("/", "Slash", 0, 191);
+    await sleep(400);
+    st = await searchState();
+    check("/ opens search too", st.open && st.focused);
+    await send("Input.insertText", { text: "zzzzq" });
+    await sleep(150);
+    st = await searchState();
+    check("no matches says so", st.empty && st.count === 0);
+    await key("Escape", "Escape", 0, 27);
+    await sleep(400);
+    st = await searchState();
+    check("Escape closes search", !st.open);
   } catch (error) {
     console.log("ERROR", error.message);
     results.push(false);
