@@ -69,4 +69,10 @@ class PagesTest < ActionDispatch::IntegrationTest
     get docs_path
     assert_select ".vk-code span.s2", text: '"velvetkit"' # the Gemfile line is Ruby
   end
+
+  test "header search lists every guide and component" do
+    get root_path
+    DocsController::PAGES.each_value { |title| assert_select "[role=option]", text: /#{Regexp.escape(title)}/ }
+    ComponentDoc.all.each { |component| assert_select "[role=option][href=?]", component_path(component) }
+  end
 end
