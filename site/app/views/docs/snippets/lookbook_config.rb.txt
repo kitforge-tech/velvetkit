@@ -1,0 +1,2 @@
+# config/environments/development.rb
+config.view_component.previews.default_layout = "component_preview"

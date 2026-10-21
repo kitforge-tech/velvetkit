@@ -1,0 +1,16 @@
+<nav class="flex items-center justify-between gap-4 border-t pt-8" aria-label="Pages">
+  <% if previous_page %>
+    <%= render(UI::Link.new(href: previous_page.last, variant: :outline, button_variant: true)) do |link| %>
+      <% link.with_leading_icon(name: "arrow-left") %>
+      <%= previous_page.first %>
+    <% end %>
+  <% else %>
+    <span></span>
+  <% end %>
+  <% if next_page %>
+    <%= render(UI::Link.new(href: next_page.last, variant: :outline, button_variant: true)) do |link| %>
+      <% link.with_trailing_icon(name: "arrow-right") %>
+      <%= next_page.first %>
+    <% end %>
+  <% end %>
+</nav>

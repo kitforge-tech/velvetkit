@@ -1,0 +1,13 @@
+class UI::BadgePreview < ViewComponent::Preview
+  # @label Playground
+  # @param text text
+  # @param variant select { choices: [default, secondary, outline, success] }
+  def playground(text: "New", variant: :default)
+    render(UI::Badge.new(variant: variant.to_sym)) { text }
+  end
+
+  # @label Variants
+  def variants
+    render_with_template # renders badge_preview/variants.html.erb
+  end
+end

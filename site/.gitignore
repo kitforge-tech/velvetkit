@@ -1,0 +1,23 @@
+
+# Copied in from ../registry by bin/sync-kit.
+/app/components/ui/
+/app/javascript/controllers/ui/
+/app/javascript/ag_grid.ts
+/app/javascript/cally.ts
+/app/javascript/velvetkit_icons.ts
+/app/assets/tailwind/
+/app/views/layouts/_theme_script.html.erb
+/config/locales/velvetkit.en.yml
+/config/velvetkit.yml
+/node_modules/
+/app/assets/builds/*
+!/app/assets/builds/.keep
+
+# Secrets.
+/config/master.key
+/.env*
+
+# Runtime files.
+/log/*
+/tmp/*
+/storage/*
