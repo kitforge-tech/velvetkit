@@ -1,4 +1,4 @@
-# Build context for site/Dockerfile is the repository root.
+# The Dockerfile builds from the repository root (Dokploy and Kamal both).
 /.git/
 /tmp/
 /pkg/

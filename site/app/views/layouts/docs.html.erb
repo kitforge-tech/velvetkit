@@ -10,4 +10,14 @@
     </main>
   </div>
 <% end %>
+<%# Search engines read each docs page as an article in a breadcrumb trail. %>
+<% content_for :og_type, "article" %>
+<% if @component %>
+  <% content_for :structured_data, article_structured_data(@component.title, [ [ "Docs", docs_path ], [ "Components", components_path ], [ @component.title, component_path(@component) ] ]) %>
+<% elsif @page %>
+  <% content_for :description, SearchIndex::GUIDES.dig(@page, 0) unless content_for?(:description) %>
+  <% content_for :structured_data, article_structured_data(DocsController::PAGES[@page], [ [ "Docs", docs_path ], [ DocsController::PAGES[@page], request.path ] ]) %>
+<% elsif @components %>
+  <% content_for :structured_data, article_structured_data("Components", [ [ "Docs", docs_path ], [ "Components", components_path ] ]) %>
+<% end %>
 <%= render template: "layouts/application" %>

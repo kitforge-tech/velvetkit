@@ -30,6 +30,10 @@ module Site
 
     # Component pages render the registry's preview templates, and some of
     # those read constants from their preview class (UI::SelectPreview::SECTIONS).
+    # The public address, for canonical links, share cards, the sitemap and
+    # robots.txt. Set SITE_URL where it differs (a staging host).
+    config.x.site_url = ENV.fetch("SITE_URL", "https://velvetkit.com")
+
     previews = File.join(Velvetkit.registry.root, "test/components/previews")
     config.autoload_paths << previews
 
