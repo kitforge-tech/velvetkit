@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>VelvetKit preview</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= render "layouts/theme_script" %>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <%= stylesheet_link_tag "application" %>
+    <%= javascript_include_tag "application", type: "module" %>
+  </head>
+  <body class="min-h-screen bg-background p-6 text-foreground">
+    <%= yield %>
+  </body>
+</html>

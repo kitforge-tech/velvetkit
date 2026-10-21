@@ -1,0 +1,57 @@
+<% content_for :title, "Components" %>
+<% content_for :description, "Every VelvetKit component for Rails: #{ComponentDoc.names.size} accessible ViewComponents, each with live examples and the code to add it." %>
+
+<div class="space-y-8" data-controller="filter">
+  <header class="space-y-3">
+    <%= render(UI::Breadcrumb.new(size: :sm)) do |bc| %>
+      <% bc.with_item(href: docs_path, text: "Docs") %>
+      <% bc.with_item(href: components_path, text: "Components", current: true) %>
+    <% end %>
+    <h1 class="text-4xl font-bold tracking-tight">Components</h1>
+    <p class="max-w-2xl text-lg text-muted-foreground"><%= @components.size %> components, each with live examples and the exact list of what <code class="font-mono text-base">velvetkit:add</code> copies.</p>
+  </header>
+
+  <div class="flex flex-wrap items-center gap-3">
+    <%= render(UI::InputGroup.new(class: "w-full max-w-sm")) do |group| %>
+      <% group.with_addon(align: "inline-start") { |addon| addon.with_icon(name: "search") } %>
+      <% group.with_field(type: :search, placeholder: "Find a component", aria: { label: "Find a component" },
+                          data: { action: "input->filter#filter" }) %>
+    <% end %>
+    <%= render(UI::Text.new(size: :sm, tone: :muted)) do %>
+      Showing <span data-filter-target="count"><%= @components.size %></span>
+    <% end %>
+  </div>
+
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <% @components.each do |component| %>
+      <%= link_to component_path(component), class: "group block rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                  data: { filter_target: "item", filter_text: "#{component.name} #{component.title} #{component.description}".downcase } do %>
+        <%= render(UI::Card.new(class: "h-full transition-all group-hover:-translate-y-0.5 group-hover:border-primary/50 group-hover:shadow-md")) do |card| %>
+          <% card.with_header do |header| %>
+            <div class="flex items-center justify-between gap-2">
+              <% header.with_title { component.title } %>
+              <%= render(UI::Icon.new(name: "arrow-up-right", size: :sm, class: "text-muted-foreground transition-colors group-hover:text-primary")) %>
+            </div>
+            <% header.with_description { component.description } %>
+          <% end %>
+          <% card.with_content(class: "flex flex-wrap gap-1.5") do %>
+            <% if component.stimulus_controllers.any? %>
+              <%= render(UI::Badge.new(variant: :secondary, size: :sm)) { "Stimulus" } %>
+            <% end %>
+            <% component.packages.each do |package| %>
+              <%= render(UI::Badge.new(variant: :outline, size: :sm)) { package } %>
+            <% end %>
+            <%= render(UI::Badge.new(variant: :outline, size: :sm)) { pluralize(component.examples.size, "example") } %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div data-filter-target="empty" hidden>
+    <%= render(UI::Alert.new) do |alert| %>
+      <% alert.with_title { "No components match" } %>
+      <% alert.with_description { "Try a shorter word, like “date” or “menu”." } %>
+    <% end %>
+  </div>
+</div>

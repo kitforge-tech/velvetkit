@@ -1,0 +1,8 @@
+<%= render(UI::Popover.new) do |popover| %>
+  <% popover.with_trigger { "Open Popover" } %>
+  <% popover.with_content(show_close: true) do |content| %>
+    <% content.with_title { "With Close Button" } %>
+    <p>This popover has a close button in the top-right corner.</p>
+    <p>You can also close it by clicking outside, pressing Escape, or tabbing away.</p>
+  <% end %>
+<% end %>

@@ -1,0 +1,3 @@
+<%= tag.div(class: root_classes,
+            data: { controller: "ui--tabs", "ui--tabs-active-value": (initial_value || "") }.merge(@html_attrs[:data] || {}),
+            **@html_attrs.except(:data)) do %><%= list %><% panels.each do |panel| %><%= panel %><% end %><% end %>

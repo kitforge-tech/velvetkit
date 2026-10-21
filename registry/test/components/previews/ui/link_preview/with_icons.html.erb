@@ -1,0 +1,11 @@
+<div class="flex flex-wrap items-center gap-4">
+  <%= render(UI::Link.new(href: "#", variant: :link)) do |link| %>
+    <% link.with_leading_icon(name: :info) %>
+    Learn more
+  <% end %>
+
+  <%= render(UI::Link.new(href: "#", variant: :default)) do |link| %>
+    <% link.with_trailing_icon(name: "arrow-right") %>
+    Continue
+  <% end %>
+</div>

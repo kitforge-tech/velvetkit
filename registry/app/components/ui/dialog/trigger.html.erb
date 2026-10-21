@@ -1,0 +1,5 @@
+<% if @as == :button %>
+  <%= render(UI::Button.new(**button_options)) do %><%= content %><% end %>
+<% else %>
+  <%= tag.public_send(@as, **html_options) do %><%= content %><% end %>
+<% end %>

@@ -1,0 +1,12 @@
+<div class="flex flex-wrap items-center gap-3">
+  <%= render(UI::Button.new(loading: true)) { "Saving" } %>
+  <%= render(UI::Button.new(variant: :outline, loading: true)) do |btn|
+        btn.with_leading_icon(name: "lock")
+        "Authenticating"
+      end %>
+  <%= render(UI::Button.new(variant: :destructive, loading: true)) do |btn|
+        btn.with_trailing_icon(name: "arrow-right")
+        "Deleting"
+      end %>
+  <%= render(UI::Button.new(variant: :default, size: :icon, loading: true)) %>
+</div>

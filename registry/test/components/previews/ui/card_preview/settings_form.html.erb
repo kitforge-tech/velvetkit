@@ -1,0 +1,25 @@
+<div class="max-w-sm">
+  <%= render(UI::Card.new) do |card| %>
+    <% card.with_header do |header| %>
+      <% header.with_title { "Account Settings" } %>
+      <% header.with_description { "Update your account preferences." } %>
+    <% end %>
+    <% card.with_content do %>
+      <div class="space-y-4">
+        <div class="space-y-2">
+          <%= render(UI::Label.new(for: "name")) { "Display Name" } %>
+          <%= render(UI::Input.new(id: "name", placeholder: "Enter your name")) %>
+        </div>
+        <div class="space-y-2">
+          <%= render(UI::Label.new(for: "username")) { "Username" } %>
+          <%= render(UI::Input.new(id: "username", placeholder: "@username")) %>
+        </div>
+      </div>
+    <% end %>
+    <% card.with_footer do %>
+      <div class="flex gap-2">
+        <%= render(UI::Button.new(variant: :primary, size: :sm)) { "Save Changes" } %>
+      </div>
+    <% end %>
+  <% end %>
+</div>

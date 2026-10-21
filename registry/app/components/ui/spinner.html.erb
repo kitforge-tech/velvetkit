@@ -1,0 +1,1 @@
+<%= tag.span role: "status", aria: { live: "polite" }, class: "inline-flex items-center" do %><span class="sr-only"><%= @label || t("ui.spinner.label", default: "Loading") %></span><%= render(icon) %><% end %>

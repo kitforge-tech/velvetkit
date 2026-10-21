@@ -1,0 +1,1 @@
+<%= tag.span class: classes, data: { slot: "avatar" }.merge((@html_attrs[:data] || {}).except(:slot)), **@html_attrs.except(:data), **a11y_attrs do %><% if image? %><%= image %><% end %><% if fallback? %><%= fallback %><% elsif content.present? %><span class="flex h-full w-full items-center justify-center font-medium" aria-hidden="true"><%= content %></span><% end %><% end %>

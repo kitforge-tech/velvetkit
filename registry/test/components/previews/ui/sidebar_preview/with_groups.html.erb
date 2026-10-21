@@ -1,0 +1,22 @@
+<% brand = render("ui/sidebar_preview/brand") %>
+
+<% main = capture do %>
+  <p class="text-muted-foreground">Two labelled groups sharing one sidebar.</p>
+<% end %>
+
+<%= render "ui/sidebar_preview/shell",
+      sidebar_id: "preview-sidebar-groups",
+      brand: brand,
+      main: main,
+      groups: [
+        { label: "Navigation", items: [
+          { icon: "home",             text: "Home", active: true },
+          { icon: "layout-dashboard", text: "Dashboard" },
+          { icon: "mail",             text: "Messages" }
+        ] },
+        { label: "Settings", items: [
+          { icon: "settings", text: "General" },
+          { icon: "shield",   text: "Security" },
+          { icon: "bell",     text: "Notifications" }
+        ] }
+      ] %>

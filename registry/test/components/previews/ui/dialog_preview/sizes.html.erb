@@ -1,0 +1,46 @@
+<div class="flex flex-wrap gap-4">
+  <%= render(UI::Dialog.new) do |dialog| %>
+    <% dialog.with_trigger(variant: :outline, size: :sm) { "Open sm" } %>
+    <% dialog.with_content(size: :sm) do |content| %>
+      <% content.with_title { "Small dialog" } %>
+      <% content.with_description { "This is the smallest dialog size, great for confirmations." } %>
+      <% content.with_footer do %>
+        <%= render(UI::Dialog::Close.new(variant: :outline, class: "static")) { "Cancel" } %>
+        <%= render(UI::Button.new(size: :sm)) { "Confirm" } %>
+      <% end %>
+    <% end %>
+  <% end %>
+  <%= render(UI::Dialog.new) do |dialog| %>
+    <% dialog.with_trigger(variant: :outline) { "Open default" } %>
+    <% dialog.with_content do |content| %>
+      <% content.with_title { "Default dialog" } %>
+      <% content.with_description { "This is the default dialog size for most use cases." } %>
+      <% content.with_footer do %>
+        <%= render(UI::Dialog::Close.new(variant: :outline, class: "static")) { "Cancel" } %>
+        <%= render(UI::Button.new) { "Confirm" } %>
+      <% end %>
+    <% end %>
+  <% end %>
+  <%= render(UI::Dialog.new) do |dialog| %>
+    <% dialog.with_trigger(variant: :outline) { "Open lg" } %>
+    <% dialog.with_content(size: :lg) do |content| %>
+      <% content.with_title { "Large dialog" } %>
+      <% content.with_description { "This is a large dialog, useful for forms and detailed content." } %>
+      <% content.with_footer do %>
+        <%= render(UI::Dialog::Close.new(variant: :outline, class: "static")) { "Cancel" } %>
+        <%= render(UI::Button.new) { "Confirm" } %>
+      <% end %>
+    <% end %>
+  <% end %>
+  <%= render(UI::Dialog.new) do |dialog| %>
+    <% dialog.with_trigger(variant: :outline) { "Open xl" } %>
+    <% dialog.with_content(size: :xl) do |content| %>
+      <% content.with_title { "Extra large dialog" } %>
+      <% content.with_description { "This is the largest dialog size, ideal for complex workflows." } %>
+      <% content.with_footer do %>
+        <%= render(UI::Dialog::Close.new(variant: :outline, class: "static")) { "Cancel" } %>
+        <%= render(UI::Button.new) { "Confirm" } %>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>

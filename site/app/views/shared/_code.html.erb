@@ -1,0 +1,18 @@
+<div class="group relative overflow-hidden rounded-lg border bg-zinc-950 text-zinc-100 dark:bg-zinc-900" data-controller="clipboard">
+  <% if label %>
+    <div class="flex items-center gap-2 border-b border-white/10 px-4 py-2 text-xs text-zinc-400">
+      <%= render(UI::Icon.new(name: "file-code", size: :xs)) %><%= label %>
+    </div>
+  <% end %>
+  <pre class="<%= wrap ? "whitespace-pre-wrap" : "overflow-x-auto" %> p-4 pr-14 text-[13px] leading-relaxed"><code class="vk-code" data-clipboard-target="source"><%= html %></code></pre>
+  <div class="absolute right-2 <%= label ? "top-1" : "top-2" %> flex items-center gap-2">
+    <span hidden data-clipboard-target="label" class="rounded-md bg-emerald-500/15 px-2 py-0.5 text-xs font-medium text-emerald-300"></span>
+    <%= render(UI::Button.new(variant: :ghost, size: :icon_sm, aria: { label: "Copy code" },
+                              class: "bg-zinc-950/80 text-zinc-400 hover:bg-white/10 hover:text-white sm:opacity-0 sm:group-hover:opacity-100 sm:group-data-[copied]:opacity-100 focus:opacity-100",
+                              data: { action: "clipboard#copy" })) do %>
+      <%= render(UI::Icon.new(name: "copy", size: :sm, data: { clipboard_target: "idle" })) %>
+      <%= render(UI::Icon.new(name: "check", size: :sm, class: "text-emerald-400", hidden: true, data: { clipboard_target: "done" })) %>
+    <% end %>
+  </div>
+  <span class="sr-only" role="status" data-clipboard-target="status"></span>
+</div>

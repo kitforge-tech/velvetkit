@@ -1,0 +1,16 @@
+<div class="space-y-4">
+  <div>
+    <h3 class="font-semibold">Notifications</h3>
+    <p class="text-sm text-muted-foreground">Choose what reaches you.</p>
+  </div>
+  <% [ [ "Mentions", "When someone @-mentions you.", true ], [ "Weekly digest", "A summary every Monday.", true ],
+       [ "Product news", "New features, now and then.", false ], [ "Billing", "Invoices and receipts.", true ] ].each_with_index do |(title, text, on), i| %>
+    <div class="flex items-start justify-between gap-4 rounded-lg border p-3">
+      <div>
+        <p class="text-sm font-medium"><%= title %></p>
+        <p class="text-xs text-muted-foreground"><%= text %></p>
+      </div>
+      <%= render(UI::Switch.new(name: "showcase_notify_#{i}", checked: on, aria: { label: title })) %>
+    </div>
+  <% end %>
+</div>

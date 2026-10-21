@@ -1,0 +1,11 @@
+<%= render(UI::Sheet.new) do |sheet| %>
+  <% sheet.with_trigger { "Open right sheet" } %>
+  <% sheet.with_content(side: :right) do |content| %>
+    <% content.with_title { "Notifications" } %>
+    <% content.with_description { "Manage your notification preferences." } %>
+    <div class="space-y-3 text-sm text-muted-foreground">
+      <p>Right sheets work well for settings and secondary tasks.</p>
+      <p>They reuse the dialog controller but anchor the panel to a side.</p>
+    </div>
+  <% end %>
+<% end %>

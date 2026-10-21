@@ -1,0 +1,12 @@
+<div class="flex flex-col gap-4 max-w-lg">
+  <%= render(UI::Alert.new) do |alert| %>
+    <% alert.with_icon(name: "badge-check") %>
+    <% alert.with_title { "Custom icon" } %>
+    <% alert.with_description { "Uses a custom badge-check icon instead of default." } %>
+  <% end %>
+  <%= render(UI::Alert.new(variant: :success)) do |alert| %>
+    <% alert.with_icon(name: "circle-check", class: "text-emerald-600") %>
+    <% alert.with_title { "Custom colored icon" } %>
+    <% alert.with_description { "Icon color overridden via class prop." } %>
+  <% end %>
+</div>

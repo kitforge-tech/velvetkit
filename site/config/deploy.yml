@@ -1,0 +1,32 @@
+# Deploys the docs to velvetkit.com. Run from site/: bin/kamal deploy
+#
+# Fill in the two TODOs (server address, container registry) before the
+# first deploy, and point velvetkit.com's DNS at the server.
+service: velvetkit-site
+image: TODO-registry-user/velvetkit-site
+
+servers:
+  web:
+    - TODO.server.ip.address
+
+proxy:
+  ssl: true
+  hosts:
+    - velvetkit.com
+    - www.velvetkit.com
+
+registry:
+  username: TODO-registry-user
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+env:
+  secret:
+    - RAILS_MASTER_KEY
+
+builder:
+  arch: amd64
+  # The image needs the gem and registry, so it builds from the repository
+  # root with the Dockerfile there (shared with Dokploy).
+  context: ..
+  dockerfile: ../Dockerfile

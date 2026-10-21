@@ -1,0 +1,5 @@
+<%# frozen_string_literal: true %>
+<div data-slot="input-group" role="group" class="<%= wrapper_classes %>" <%= tag.attributes(@html_attrs) %>>
+  <% addons.each do |addon| %><%= addon %><% end %>
+  <%= field %>
+</div>

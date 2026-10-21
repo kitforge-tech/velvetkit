@@ -1,0 +1,14 @@
+<div class="flex flex-wrap items-center gap-3">
+  <%= render(UI::Badge.new) do |badge| %>
+    <% badge.with_leading_icon(name: "badge-check") %>
+    Verified
+  <% end %>
+  <%= render(UI::Badge.new(variant: :success)) do |badge| %>
+    <% badge.with_leading_icon(name: "circle-check") %>
+    42
+  <% end %>
+  <%= render(UI::Badge.new(variant: :warning)) do |badge| %>
+    <% badge.with_leading_icon(name: "circle-alert") %>
+    Pending
+  <% end %>
+</div>

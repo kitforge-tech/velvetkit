@@ -1,0 +1,9 @@
+<%# Dimensions land on the <img> itself, not on a wrapper. %>
+<div class="flex flex-wrap items-end gap-6">
+  <% ["48px", "96px", "160px"].each do |w| %>
+    <div class="flex flex-col items-center gap-2">
+      <%= render(UI::Image.new(src: "/icon.png", rounded: :md, width: w)) %>
+      <span class="text-xs text-muted-foreground">width: <%= w %></span>
+    </div>
+  <% end %>
+</div>

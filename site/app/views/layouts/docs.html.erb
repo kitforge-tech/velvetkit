@@ -1,0 +1,23 @@
+<% content_for :main do %>
+  <div class="mx-auto flex max-w-6xl gap-12 px-4 py-8 sm:px-6 md:py-12">
+    <aside class="hidden w-52 shrink-0 md:block">
+      <div class="sticky top-20 -mx-1.5 h-[calc(100vh-6rem)] overflow-y-auto overscroll-contain px-1.5 pt-1 pb-8" data-controller="sidebar-scroll" data-focus-scope="sidebar">
+        <%= render "layouts/nav" %>
+      </div>
+    </aside>
+    <main class="min-w-0 flex-1">
+      <%= yield %>
+    </main>
+  </div>
+<% end %>
+<%# Search engines read each docs page as an article in a breadcrumb trail. %>
+<% content_for :og_type, "article" %>
+<% if @component %>
+  <% content_for :structured_data, article_structured_data(@component.title, [ [ "Docs", docs_path ], [ "Components", components_path ], [ @component.title, component_path(@component) ] ]) %>
+<% elsif @page %>
+  <% content_for :description, SearchIndex::GUIDES.dig(@page, 0) unless content_for?(:description) %>
+  <% content_for :structured_data, article_structured_data(DocsController::PAGES[@page], [ [ "Docs", docs_path ], [ DocsController::PAGES[@page], request.path ] ]) %>
+<% elsif @components %>
+  <% content_for :structured_data, article_structured_data("Components", [ [ "Docs", docs_path ], [ "Components", components_path ] ]) %>
+<% end %>
+<%= render template: "layouts/application" %>

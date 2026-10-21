@@ -1,0 +1,15 @@
+<% examples = {
+     "First page" => [240, 1],
+     "Middle" => [240, 5],
+     "Last page" => [240, 10],
+     "Long range, collapsed" => [2500, 50],
+     "Single page (renders nothing)" => [10, 1]
+   } %>
+<div class="flex flex-col gap-8">
+  <% examples.each do |label, (count, page)| %>
+    <div class="flex flex-col gap-2">
+      <span class="text-xs text-muted-foreground"><%= label %></span>
+      <%= render(UI::Pagination.new(pagy: Pagy::Offset.new(count: count, page: page, limit: 25))) %>
+    </div>
+  <% end %>
+</div>

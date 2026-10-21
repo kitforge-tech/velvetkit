@@ -1,0 +1,12 @@
+<%= render(UI::Sheet.new) do |sheet| %>
+  <% sheet.with_trigger(variant: :secondary) { "Open bottom sheet" } %>
+  <% sheet.with_content(side: :bottom) do |content| %>
+    <% content.with_title { "Mobile actions" } %>
+    <% content.with_description { "Bottom sheets are suited to mobile-friendly action lists." } %>
+    <% content.with_footer do %>
+      <%= render(UI::Sheet::Close.new(variant: :outline)) { "Dismiss" } %>
+      <%= render(UI::Button.new) { "Continue" } %>
+    <% end %>
+    <p class="text-sm text-muted-foreground">This panel anchors to the bottom edge with a capped height.</p>
+  <% end %>
+<% end %>

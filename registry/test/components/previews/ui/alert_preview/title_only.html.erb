@@ -1,0 +1,12 @@
+<div class="flex flex-col gap-4 max-w-lg">
+  <%= render(UI::Alert.new) do |alert| %>
+    <% alert.with_title { "Title only, no description" } %>
+  <% end %>
+  <%= render(UI::Alert.new(variant: :info)) do |alert| %>
+    <% alert.with_title { "Info with custom icon" } %>
+  <% end %>
+  <%= render(UI::Alert.new(variant: :warning)) do |alert| %>
+    <% alert.with_icon(name: "circle-alert") %>
+    <% alert.with_title { "Warning with custom icon, title only" } %>
+  <% end %>
+</div>

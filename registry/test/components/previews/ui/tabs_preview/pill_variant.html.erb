@@ -1,0 +1,18 @@
+<div class="max-w-lg">
+  <%= render(UI::Tabs.new(variant: :pill, default_value: "general")) do |tabs| %>
+    <% tabs.with_list do |list| %>
+      <% list.with_trigger(value: "general") { "General" } %>
+      <% list.with_trigger(value: "security") { "Security" } %>
+      <% list.with_trigger(value: "notifications") { "Notifications" } %>
+    <% end %>
+    <% tabs.with_panel(value: "general") do %>
+      <p class="text-sm text-muted-foreground">General settings for your application.</p>
+    <% end %>
+    <% tabs.with_panel(value: "security") do %>
+      <p class="text-sm text-muted-foreground">Security and privacy settings.</p>
+    <% end %>
+    <% tabs.with_panel(value: "notifications") do %>
+      <p class="text-sm text-muted-foreground">Notification preferences.</p>
+    <% end %>
+  <% end %>
+</div>

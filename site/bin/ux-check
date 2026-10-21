@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Runs test/ux/ux_check.mjs in headless Chrome against a running site.
+#   bin/ux-check                                  # site on localhost:3000
+#   UX_BASE_URL=http://localhost:3311 bin/ux-check
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+chrome="${CHROME:-}"
+for candidate in "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" google-chrome chromium chromium-browser; do
+  [ -n "$chrome" ] && break
+  if [ -x "$candidate" ] || command -v "$candidate" >/dev/null 2>&1; then chrome="$candidate"; fi
+done
+[ -n "$chrome" ] || { echo "No Chrome found; set CHROME=/path/to/chrome" >&2; exit 1; }
+
+profile="$(mktemp -d)"
+port=9333
+"$chrome" --headless=new --disable-gpu --remote-debugging-port=$port --user-data-dir="$profile" about:blank >/dev/null 2>&1 &
+chrome_pid=$!
+trap 'kill $chrome_pid 2>/dev/null; rm -rf "$profile"' EXIT
+
+for _ in $(seq 1 50); do
+  curl -s "http://localhost:$port/json/list" >/dev/null 2>&1 && break
+  sleep 0.2
+done
+ws="$(curl -s "http://localhost:$port/json/list" | node -e 'let d="";process.stdin.on("data",c=>d+=c).on("end",()=>console.log(JSON.parse(d).find(t=>t.type==="page").webSocketDebuggerUrl))')"
+
+node test/ux/ux_check.mjs "$ws"

@@ -1,0 +1,9 @@
+<form class="space-y-4 border rounded-md p-6 max-w-sm" action="#" method="post">
+  <fieldset class="space-y-3">
+    <legend class="text-sm font-medium mb-2">Notification preferences</legend>
+    <%= render(UI::Checkbox.new(name: "prefs[email]", checked: true, label: "Email notifications")) %>
+    <%= render(UI::Checkbox.new(name: "prefs[push]", label: "Push notifications")) %>
+    <%= render(UI::Checkbox.new(name: "prefs[sms]", disabled: true, label: "SMS (unavailable)")) %>
+  </fieldset>
+  <%= render(UI::Button.new(type: :submit)) { "Save preferences" } %>
+</form>

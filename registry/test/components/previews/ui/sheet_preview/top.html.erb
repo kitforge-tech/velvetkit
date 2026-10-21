@@ -1,0 +1,8 @@
+<%= render(UI::Sheet.new) do |sheet| %>
+  <% sheet.with_trigger(variant: :outline) { "Open top sheet" } %>
+  <% sheet.with_content(side: :top) do |content| %>
+    <% content.with_title { "Command palette" } %>
+    <% content.with_description { "Quick actions and navigation in a compact top sheet." } %>
+    <%= render(UI::Input.new(type: :search, placeholder: "Search commands")) %>
+  <% end %>
+<% end %>

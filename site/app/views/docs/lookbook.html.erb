@@ -1,0 +1,70 @@
+<% content_for :title, "Lookbook" %>
+
+<article class="max-w-3xl space-y-12">
+  <header class="space-y-3">
+    <%= render(UI::Breadcrumb.new(size: :sm)) do |bc| %>
+      <% bc.with_item(href: docs_path, text: "Docs") %>
+      <% bc.with_item(href: doc_path("lookbook"), text: "Lookbook", current: true) %>
+    <% end %>
+    <h1 class="text-4xl font-bold tracking-tight">Lookbook</h1>
+    <p class="text-lg text-muted-foreground">Every component comes with <a class="text-primary underline-offset-4 hover:underline dark:text-fuchsia-300" href="https://lookbook.build" target="_blank" rel="noopener">Lookbook</a> previews: each variant and state, plus a playground where you change the arguments and watch it update.</p>
+  </header>
+
+  <div class="relative overflow-hidden rounded-2xl bg-[#1c0a30] p-8 text-white">
+    <div aria-hidden="true" class="absolute inset-0 bg-[radial-gradient(100%_120%_at_0%_0%,#4D1A7F_0%,transparent_70%)]"></div>
+    <div class="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h2 class="text-xl font-semibold">Browse every preview</h2>
+        <p class="mt-1 text-white/70">This site's Lookbook runs on the registry, so it shows exactly what you'd copy.</p>
+      </div>
+      <%= render(UI::Link.new(href: "/lookbook", variant: :secondary, size: :lg, button_variant: true, class: "shrink-0 bg-white text-[#2e0f52] hover:bg-white/90")) do |link| %>
+        <% link.with_trailing_icon(name: "arrow-up-right") %>
+        Open Lookbook
+      <% end %>
+    </div>
+  </div>
+
+  <section class="space-y-4">
+    <h2 id="what-you-get" class="text-2xl font-semibold tracking-tight">What you get</h2>
+    <p><code class="font-mono text-sm">velvetkit:add</code> copies each component's previews to <code class="font-mono text-sm">test/components/previews/ui/</code>, renamed into your namespace like everything else.</p>
+    <ul class="space-y-2 text-sm">
+      <li class="flex gap-3"><%= render(UI::Icon.new(name: "check", size: :sm, class: "mt-0.5 text-primary dark:text-fuchsia-300")) %><span>A preview that shows components you haven't added is skipped, and <code class="font-mono">add</code> tells you which ones it needs.</span></li>
+      <li class="flex gap-3"><%= render(UI::Icon.new(name: "check", size: :sm, class: "mt-0.5 text-primary dark:text-fuchsia-300")) %><span>Leave them out with <code class="font-mono">--skip-previews</code>.</span></li>
+      <li class="flex gap-3"><%= render(UI::Icon.new(name: "check", size: :sm, class: "mt-0.5 text-primary dark:text-fuchsia-300")) %><span>The same templates are the examples on this site and in your agent's <code class="font-mono">docs/velvetkit.md</code>, so improving a preview improves all three.</span></li>
+    </ul>
+  </section>
+
+  <section class="space-y-4">
+    <h2 id="setup" class="text-2xl font-semibold tracking-tight">Run it in your app</h2>
+    <ol class="space-y-6">
+      <li class="space-y-3">
+        <p><span class="font-medium">1. Add the gem</span> <span class="text-muted-foreground">to the development group.</span></p>
+        <%= code_block(snippet("lookbook_gemfile.rb"), label: "Gemfile") %>
+      </li>
+      <li class="space-y-3">
+        <p><span class="font-medium">2. Mount it</span> <span class="text-muted-foreground">for development only.</span></p>
+        <%= code_block(snippet("lookbook_routes.rb"), label: "config/routes.rb") %>
+      </li>
+      <li class="space-y-3">
+        <p><span class="font-medium">3. Give previews your styles and scripts.</span> <span class="text-muted-foreground">Previews render inside a layout, so it needs your CSS, your JavaScript (for the Stimulus controllers) and the theme script.</span></p>
+        <%= code_block(snippet("lookbook_layout.html.erb"), label: "app/views/layouts/component_preview.html.erb") %>
+        <%= code_block(snippet("lookbook_config.rb"), label: "config/environments/development.rb") %>
+      </li>
+      <li class="space-y-3">
+        <p><span class="font-medium">4. Open it</span> <span class="text-muted-foreground">at <code class="font-mono text-sm">http://localhost:3000/lookbook</code>.</span></p>
+      </li>
+    </ol>
+  </section>
+
+  <section class="space-y-4">
+    <h2 id="writing" class="text-2xl font-semibold tracking-tight">Writing a preview</h2>
+    <p>A preview is a class with one method per scenario. <code class="font-mono text-sm">@param</code> tags turn arguments into controls; <code class="font-mono text-sm">render_with_template</code> renders an ERB file named after the method.</p>
+    <%= code_block(snippet("preview_class.rb"), label: "test/components/previews/ui/badge_preview.rb") %>
+    <%= render(UI::Alert.new(variant: :info)) do |alert| %>
+      <% alert.with_title { "Prefer templates for examples" } %>
+      <% alert.with_description { "A template is plain ERB, so it reads well as an example. These are the ones this site and docs/velvetkit.md show. Playgrounds stay in Lookbook, because they need its controls." } %>
+    <% end %>
+  </section>
+
+  <%= render "docs/pager", previous_page: [ "Theming and dark mode", doc_path("theming") ], next_page: [ "Components", components_path ] %>
+</article>

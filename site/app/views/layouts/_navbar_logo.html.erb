@@ -1,0 +1,5 @@
+<%# The navbar's logo carries "by KitForge"; the footer uses the plain one. %>
+<%= link_to root_path, class: "flex shrink-0 items-center", aria: { label: "VelvetKit by KitForge, home" } do %>
+  <%= image_tag "logos/full-logo-light-navbar-sm.png", alt: "VelvetKit by KitForge", width: 150, height: 36, class: "h-9 w-auto dark:hidden" %>
+  <%= image_tag "logos/full-logo-dark-navbar-sm.png", alt: "VelvetKit by KitForge", width: 150, height: 36, class: "hidden h-9 w-auto dark:block" %>
+<% end %>

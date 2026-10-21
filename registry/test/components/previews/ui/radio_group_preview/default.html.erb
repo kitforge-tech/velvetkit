@@ -1,0 +1,10 @@
+<div class="space-y-6">
+  <div>
+    <h3 class="text-sm font-medium mb-2 text-muted-foreground">Default</h3>
+    <%= render(UI::RadioGroup.new(name: "default_plan", value: "free")) do |rg| %>
+      <% rg.with_item(value: "free", label: "Free plan") %>
+      <% rg.with_item(value: "pro", label: "Pro plan — $9/mo") %>
+      <% rg.with_item(value: "enterprise", label: "Enterprise — Contact us") %>
+    <% end %>
+  </div>
+</div>

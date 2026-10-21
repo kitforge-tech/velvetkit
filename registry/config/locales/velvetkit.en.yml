@@ -1,0 +1,56 @@
+# Strings rendered by VelvetKit components. Translate by copying this file
+# to velvetkit.<locale>.yml and changing the values, never the keys.
+en:
+  date:
+    formats:
+      # How DatePicker writes and reads a date: its placeholder, parse order
+      # and separator all come from this one string. Change it per locale.
+      typed: "%d/%m/%Y"
+  ui:
+    date_picker:
+      open: 'Open the calendar'
+      # `format` is a reserved I18n interpolation key, hence `pattern`.
+      hint: 'Type the date as %{pattern}, or use the calendar'
+      previous: 'Previous month'
+      next: 'Next month'
+    data_grid:
+      empty: 'Nothing to show'
+    breadcrumb:
+      label: 'Breadcrumb'
+      ellipsis_label: 'More breadcrumb pages'
+      collapsed_pages_label: 'Collapsed breadcrumb pages'
+    alert:
+      close_label: 'Close alert'
+    button:
+      loading: 'Loading, please wait'
+    spinner:
+      label: 'Loading'
+    dialog:
+      close_label: 'Close'
+    password_input:
+      show: 'Show password'
+      hide: 'Hide password'
+    sidebar:
+      toggle: 'Toggle sidebar'
+    pagination:
+      label: 'Pages'
+      summary: 'Showing %{from}–%{to} of %{count}'
+      previous: 'Go to previous page'
+      previous_label: 'Previous'
+      next: 'Go to next page'
+      next_label: 'Next'
+      more: 'More pages'
+    select:
+      placeholder: 'Choose…'
+      search: 'Search'
+      search_label: 'Search the options'
+      no_matches: 'No matches'
+      # Shown on a multiple select once more than two options are ticked.
+      selected: '%{count} selected'
+    theme_toggle:
+      label: 'Change theme'
+      heading: 'Theme'
+      options:
+        light: 'Light'
+        dark: 'Dark'
+        system: 'System'

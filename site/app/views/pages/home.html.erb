@@ -1,0 +1,85 @@
+<% content_for :title, "Rails UI components you own" %>
+<% content_for :structured_data do %>
+  <%= json_ld("@type" => "SoftwareApplication", "name" => "VelvetKit", "url" => site_url,
+              "description" => SeoHelper::DEFAULT_DESCRIPTION, "applicationCategory" => "DeveloperApplication",
+              "operatingSystem" => "Ruby on Rails", "softwareVersion" => Velvetkit::VERSION, "license" => "https://opensource.org/licenses/MIT",
+              "offers" => { "@type" => "Offer", "price" => "0", "priceCurrency" => "USD" },
+              "author" => { "@type" => "Organization", "name" => "KitForge", "url" => "https://kitforge.tech" }) %>
+  <%= json_ld("@type" => "WebSite", "name" => "VelvetKit", "url" => site_url) %>
+<% end %>
+
+<%= render "pages/hero" %>
+
+<section class="border-b">
+  <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-10 gap-y-3 px-4 py-6 text-sm text-muted-foreground sm:px-6">
+    <span class="font-medium text-foreground">Written for agents too</span>
+    <% [ [ "file-text", "llms.txt", llms_path ], [ "book-open", "A reference in your repo", doc_path("ai") ], [ "terminal", "Claude Code skill", doc_path("ai") ], [ "files", "Markdown for every page", component_path("dialog", format: :md) ] ].each do |icon, text, path| %>
+      <%= link_to path, class: "inline-flex items-center gap-2 hover:text-foreground" do %>
+        <%= render(UI::Icon.new(name: icon, size: :sm, class: "text-primary dark:text-fuchsia-300")) %><%= text %>
+      <% end %>
+    <% end %>
+  </div>
+</section>
+
+<section class="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+  <div class="max-w-2xl">
+    <p class="text-sm font-semibold text-primary dark:text-fuchsia-300">How it works</p>
+    <h2 class="mt-2 text-3xl font-bold tracking-tight">Three commands, then it's your code</h2>
+    <p class="mt-3 text-muted-foreground">There's no runtime dependency to upgrade around. Once a component is copied, you, or your agent, change it like anything else in <code class="font-mono text-sm">app/</code>.</p>
+  </div>
+
+  <ol class="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
+    <% [
+         [ "package", "Add the gem", "It only runs generators, so it lives in the development group.", %(gem "velvetkit", group: :development) ],
+         [ "settings-2", "Install once", "Sets your namespace, adds the design tokens, and writes the reference for your agent.", "bin/rails g velvetkit:install" ],
+         [ "blocks", "Add what you need", "Each component brings the ones it uses. The agent reference updates itself.", "bin/rails g velvetkit:add dialog" ]
+       ].each_with_index do |(icon, title, text, command), index| %>
+      <li class="relative flex flex-col gap-4 rounded-xl border bg-card p-6">
+        <div class="flex items-center gap-3">
+          <span class="grid size-9 place-items-center rounded-lg bg-primary/10 text-primary dark:bg-primary/25 dark:text-fuchsia-200"><%= render(UI::Icon.new(name: icon, size: :sm)) %></span>
+          <span class="font-mono text-xs text-muted-foreground">0<%= index + 1 %></span>
+        </div>
+        <div>
+          <h3 class="font-semibold"><%= title %></h3>
+          <p class="mt-1 text-sm text-muted-foreground"><%= text %></p>
+        </div>
+        <div class="mt-auto"><%= code_block(command) %></div>
+      </li>
+    <% end %>
+  </ol>
+</section>
+
+<section class="border-y bg-muted/40">
+  <div class="mx-auto grid max-w-6xl grid-cols-1 gap-6 px-4 py-20 sm:px-6 md:grid-cols-2 lg:grid-cols-4">
+    <% [
+         [ "scissors", "Only what you use", "Ask for a date picker and you get the date picker and its icon. Nothing else lands in your app." ],
+         [ "tag", "Your namespace", "UI::, Kit::, Admin:: or anything else. Classes, folders, Stimulus ids and translation keys all follow." ],
+         [ "bot", "Agents know it", "Your repo gets a reference of exactly what's installed, with working examples, in your namespace." ],
+         [ "accessibility", "Accessible by default", "Native dialog, real labels, keyboard menus and tabs, and colours that pass AA in both themes." ]
+       ].each do |icon, title, text| %>
+      <%= render(UI::Card.new(class: "transition-shadow hover:shadow-md")) do |card| %>
+        <% card.with_content(class: "space-y-3 pt-6") do %>
+          <%= render(UI::Icon.new(name: icon, size: :lg, class: "text-primary dark:text-fuchsia-300")) %>
+          <h3 class="font-semibold"><%= title %></h3>
+          <p class="text-sm text-muted-foreground"><%= text %></p>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+</section>
+
+<section class="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+  <div class="relative overflow-hidden rounded-2xl bg-[#1c0a30] px-6 py-14 text-center text-white sm:px-12">
+    <div aria-hidden="true" class="absolute inset-0 bg-[radial-gradient(80%_100%_at_50%_0%,#4D1A7F_0%,transparent_70%)]"></div>
+    <div class="relative">
+      <h2 class="text-3xl font-bold tracking-tight"><%= ComponentDoc.names.size %> components, each with live examples</h2>
+      <p class="mx-auto mt-3 max-w-xl text-white/70">Every page shows the code, exactly what <code class="font-mono text-sm">add</code> copies, and a Markdown version for your agent.</p>
+      <div class="mx-auto mt-8 flex max-w-3xl flex-wrap justify-center gap-2">
+        <% ComponentDoc.all.each do |component| %>
+          <%= link_to component.title, component_path(component),
+                      class: "rounded-full border border-white/15 bg-white/5 px-3 py-1 text-sm text-white/85 transition-colors hover:border-fuchsia-300 hover:bg-white/10 hover:text-white" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</section>

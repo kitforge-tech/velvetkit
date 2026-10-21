@@ -1,0 +1,6 @@
+<div class="flex max-w-xs flex-col gap-5">
+  <%= render(UI::Select.new(name: "a", label: "Selected", options: %w[Viewer Editor Admin], selected: "Editor")) %>
+  <%= render(UI::Select.new(name: "b", label: "Required", options: %w[Viewer Editor Admin], prompt: "Choose a role", required: true)) %>
+  <%= render(UI::Select.new(name: "c", label: "With an error", options: %w[Viewer Editor Admin], prompt: "Choose a role", error: true)) %>
+  <%= render(UI::Select.new(name: "d", label: "Disabled", options: %w[Viewer Editor Admin], selected: "Viewer", disabled: true)) %>
+</div>

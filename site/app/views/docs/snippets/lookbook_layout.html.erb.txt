@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <%= render "layouts/theme_script" %>
+    <%= stylesheet_link_tag "application" %>
+    <%= javascript_include_tag "application", type: "module" %>
+  </head>
+  <body class="bg-background p-6 text-foreground">
+    <%= yield %>
+  </body>
+</html>

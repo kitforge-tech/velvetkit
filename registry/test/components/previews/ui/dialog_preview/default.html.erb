@@ -1,0 +1,15 @@
+<%= render(UI::Dialog.new) do |dialog| %>
+  <% dialog.with_trigger(variant: :outline) { "Open dialog" } %>
+  <% dialog.with_content do |content| %>
+    <% content.with_title { "Edit profile" } %>
+    <% content.with_description { "Make changes to your profile here. Click save when you're done." } %>
+    <% content.with_footer do %>
+      <%= render(UI::Dialog::Close.new(variant: :outline, class: "static")) { "Cancel" } %>
+      <%= render(UI::Button.new) { "Save changes" } %>
+    <% end %>
+    <div class="grid gap-3">
+      <%= render(UI::Input.new(type: :text, value: "Rain Root")) %>
+      <%= render(UI::Input.new(type: :email, value: "rainroot@example.com")) %>
+    </div>
+  <% end %>
+<% end %>

@@ -1,0 +1,12 @@
+<div class="space-y-4">
+  <div>
+    <h3 class="font-semibold">Schedule a post</h3>
+    <p class="text-sm text-muted-foreground">It goes out at the time you pick.</p>
+  </div>
+  <%= render(UI::DatePicker.new(name: "showcase_date", label: "Date", value: Date.new(2026, 11, 3), hint: false)) %>
+  <%= render(UI::Select.new(name: "showcase_time_zone", label: "Time zone", searchable: true, selected: "Kolkata",
+                            options: %w[Auckland Berlin Chicago Dubai Kolkata London New\ York Paris Singapore Sydney Tokyo Toronto])) %>
+  <%= render(UI::Select.new(name: "showcase_channels", label: "Channels", multiple: true, selected: %w[Blog Newsletter],
+                            options: %w[Blog Newsletter Social Changelog])) %>
+  <%= render(UI::Button.new(full_width: true)) { "Schedule" } %>
+</div>

@@ -1,0 +1,113 @@
+<% content_for :title, "Build with AI" %>
+<% kit = Velvetkit::Namespace.new("Kit") %>
+<% reference = Velvetkit.agent_guide(%w[dialog], namespace: kit) %>
+
+<article class="max-w-3xl space-y-12">
+  <header class="space-y-3">
+    <%= render(UI::Breadcrumb.new(size: :sm)) do |bc| %>
+      <% bc.with_item(href: docs_path, text: "Docs") %>
+      <% bc.with_item(href: doc_path("ai"), text: "Build with AI", current: true) %>
+    <% end %>
+    <h1 class="text-4xl font-bold tracking-tight">Build with AI</h1>
+    <p class="text-lg text-muted-foreground">Most UI is written by an agent now. VelvetKit gives it the context to use your components correctly, so it doesn't invent new ones.</p>
+  </header>
+
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+    <% [
+         [ "bot", "Your agent installs it", "One prompt sets the kit up and teaches the agent where to read.", "#install" ],
+         [ "folder-git-2", "A reference in your repo", "docs/velvetkit.md: what's installed, in your namespace.", "#in-your-repo" ],
+         [ "globe", "Docs agents can read", "llms.txt, and Markdown for every page.", "#on-the-web" ]
+       ].each do |icon, title, text, anchor| %>
+      <%= link_to anchor, class: "group block rounded-xl" do %>
+        <%= render(UI::Card.new(class: "h-full transition-all group-hover:border-primary/50 group-hover:shadow-md")) do |card| %>
+          <% card.with_content(class: "space-y-2 pt-6") do %>
+            <%= render(UI::Icon.new(name: icon, size: :lg, class: "text-primary dark:text-fuchsia-300")) %>
+            <h2 class="font-semibold"><%= title %></h2>
+            <p class="text-sm text-muted-foreground"><%= text %></p>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <section class="space-y-4">
+    <h2 id="install" class="text-2xl font-semibold tracking-tight">Let your agent install it</h2>
+    <p>Paste this into Claude Code, Cursor, Codex or any agent working in your Rails app:</p>
+    <%= code_block(ApplicationHelper::SETUP_PROMPT, label: "Prompt", wrap: true) %>
+    <p class="text-sm text-muted-foreground">It runs the same commands as <%= link_to "Getting started", docs_path, class: "text-primary underline-offset-4 hover:underline dark:text-fuchsia-300" %>, then reads <code class="font-mono">llms.txt</code> to learn what the kit has.</p>
+  </section>
+
+  <section class="space-y-4">
+    <h2 id="in-your-repo" class="text-2xl font-semibold tracking-tight">In your repo</h2>
+    <p><code class="font-mono text-sm">velvetkit:install</code> writes three files, so an agent finds the kit without being told:</p>
+    <%= render(UI::Table.new) do |table| %>
+      <% table.with_head do |head| %>
+        <% head.with_column { "File" } %>
+        <% head.with_column { "Read by" } %>
+        <% head.with_column { "What's in it" } %>
+      <% end %>
+      <% [
+           [ "docs/velvetkit.md", "Any agent", "The rules for building UI with the kit, then every installed component: arguments, slots, notes and working examples." ],
+           [ ".claude/skills/velvetkit/SKILL.md", "Claude Code", "A skill that loads when Claude writes views, and points it at docs/velvetkit.md." ],
+           [ "AGENTS.md", "Codex, Cursor, Copilot, …", "A short section pointing at docs/velvetkit.md. Your own notes are kept." ]
+         ].each do |file, reader, text| %>
+        <% table.with_row do |row| %>
+          <% row.with_cell { tag.code(file, class: "font-mono text-xs whitespace-nowrap") } %>
+          <% row.with_cell(class: "whitespace-nowrap") { reader } %>
+          <% row.with_cell(class: "text-muted-foreground") { text } %>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <%= render(UI::Alert.new(variant: :info)) do |alert| %>
+      <% alert.with_title { "It stays current" } %>
+      <% alert.with_description do %>
+        Every <code class="font-mono">velvetkit:add</code> rewrites the reference to match what's installed. To regenerate it by hand, run
+        <code class="font-mono">bin/rails generate velvetkit:ai</code>. To leave it out, install with <code class="font-mono">--skip-ai</code>.
+      <% end %>
+    <% end %>
+
+    <p>Here's the start of it for an app using the <code class="font-mono text-sm">Kit</code> namespace with a dialog installed. Nothing on it says <code class="font-mono text-sm">UI::</code>, so the agent writes the code your app runs.</p>
+    <div class="max-h-[28rem] overflow-y-auto rounded-lg">
+      <%= code_block(reference.lines.first(60).join + "\n…", label: "docs/velvetkit.md") %>
+    </div>
+  </section>
+
+  <section class="space-y-4">
+    <h2 id="on-the-web" class="text-2xl font-semibold tracking-tight">On the web</h2>
+    <p>Everything on this site is also published as plain text for agents:</p>
+    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+      <% [
+           [ "file-text", "llms.txt", llms_path, "An index of the docs and components, in the llmstxt.org format." ],
+           [ "files", "llms-full.txt", llms_full_path, "Setup, rules and every component with examples, in one file." ],
+           [ "file-code", "Any component as Markdown", component_path("dialog", format: :md), "Add .md to a component's address, like /docs/components/dialog.md." ],
+           [ "clipboard-copy", "Copy for AI", component_path("dialog"), "On every component page: copy its Markdown, or open it in Claude or ChatGPT." ]
+         ].each do |icon, title, path, text| %>
+        <%= link_to path, class: "group flex gap-3 rounded-lg border p-4 transition-colors hover:border-primary/50" do %>
+          <%= render(UI::Icon.new(name: icon, size: :sm, class: "mt-0.5 text-primary dark:text-fuchsia-300")) %>
+          <span>
+            <span class="block font-medium group-hover:text-primary dark:group-hover:text-fuchsia-200"><%= title %></span>
+            <span class="block text-sm text-muted-foreground"><%= text %></span>
+          </span>
+        <% end %>
+      <% end %>
+    </div>
+  </section>
+
+  <section class="space-y-4">
+    <h2 id="prompts" class="text-2xl font-semibold tracking-tight">Prompts that work</h2>
+    <p class="text-muted-foreground">Name the outcome and let the reference supply the components. A few that go well:</p>
+    <div class="space-y-3">
+      <% [
+           "Build a settings page for notifications with our UI components. Read docs/velvetkit.md first.",
+           "Before deleting a project, ask for confirmation in a dialog. Use the kit's dialog, adding it with velvetkit:add if it isn't installed.",
+           "Our event form needs a date field. Add the date picker from VelvetKit and use it there.",
+           "Change the primary colour to #0F766E everywhere. Change the tokens in velvetkit.css, not the components."
+         ].each do |prompt| %>
+        <%= code_block(prompt, wrap: true) %>
+      <% end %>
+    </div>
+  </section>
+
+  <%= render "docs/pager", previous_page: [ "Getting started", docs_path ], next_page: [ "Namespacing", doc_path("namespacing") ] %>
+</article>

@@ -1,0 +1,5 @@
+<%# Searchable: open it and type to filter. Arrow keys and Enter work from the search box. %>
+<div class="max-w-xs">
+  <%= render(UI::Select.new(name: "time_zone", label: "Time zone", prompt: "Choose a time zone", searchable: true,
+                            options: %w[Auckland Bangkok Berlin Cairo Chicago Dubai Honolulu Istanbul Jakarta Kolkata Lagos Lima London Madrid Mexico\ City Moscow Nairobi New\ York Paris Santiago Seoul Singapore Sydney Tokyo Toronto])) %>
+</div>
