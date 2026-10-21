@@ -1,0 +1,42 @@
+<div class="max-w-lg border rounded-lg p-6">
+  <h2 class="text-lg font-semibold mb-4">Settings</h2>
+  <%= render(UI::Tabs.new(variant: :line, default_value: "account")) do |tabs| %>
+    <% tabs.with_list do |list| %>
+      <% list.with_trigger(value: "account") { "Account" } %>
+      <% list.with_trigger(value: "password") { "Password" } %>
+      <% list.with_trigger(value: "billing") { "Billing" } %>
+    <% end %>
+    <% tabs.with_panel(value: "account") do %>
+      <div class="space-y-4 mt-4">
+        <div>
+          <%= label_tag :name, "Name", class: "block text-sm font-medium mb-1" %>
+          <%= text_field_tag :name, "", class: "w-full px-3 py-2 border rounded-md text-sm" %>
+        </div>
+        <div>
+          <%= label_tag :email, "Email", class: "block text-sm font-medium mb-1" %>
+          <%= email_field_tag :email, "", class: "w-full px-3 py-2 border rounded-md text-sm" %>
+        </div>
+        <%= render(UI::Button.new) { "Save Changes" } %>
+      </div>
+    <% end %>
+    <% tabs.with_panel(value: "password") do %>
+      <div class="space-y-4 mt-4">
+        <div>
+          <%= label_tag :current, "Current Password", class: "block text-sm font-medium mb-1" %>
+          <%= password_field_tag :current, "", class: "w-full px-3 py-2 border rounded-md text-sm" %>
+        </div>
+        <div>
+          <%= label_tag :new, "New Password", class: "block text-sm font-medium mb-1" %>
+          <%= password_field_tag :new, "", class: "w-full px-3 py-2 border rounded-md text-sm" %>
+        </div>
+        <%= render(UI::Button.new) { "Update Password" } %>
+      </div>
+    <% end %>
+    <% tabs.with_panel(value: "billing") do %>
+      <div class="space-y-4 mt-4">
+        <p class="text-sm text-muted-foreground">Manage your billing information and subscription.</p>
+        <%= render(UI::Button.new(variant: :outline)) { "View Invoices" } %>
+      </div>
+    <% end %>
+  <% end %>
+</div>

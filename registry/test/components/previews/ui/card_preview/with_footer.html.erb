@@ -1,0 +1,13 @@
+<div class="max-w-sm">
+  <%= render(UI::Card.new) do |card| %>
+    <% card.with_content do %>
+      <p class="text-sm text-muted-foreground">Card with body content and a footer containing actions.</p>
+    <% end %>
+    <% card.with_footer do %>
+      <div class="flex gap-2">
+        <%= render(UI::Button.new(variant: :primary, size: :sm)) { "Save" } %>
+        <%= render(UI::Button.new(variant: :outline, size: :sm)) { "Cancel" } %>
+      </div>
+    <% end %>
+  <% end %>
+</div>

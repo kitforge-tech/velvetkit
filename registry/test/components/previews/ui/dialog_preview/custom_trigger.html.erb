@@ -1,0 +1,16 @@
+<%= render(UI::Dialog.new) do |dialog| %>
+  <% dialog.with_trigger(as_child: true, variant: :ghost) do %>
+    <a href="#dialog-demo" class="inline-flex items-center gap-2 text-sm font-medium underline underline-offset-4">
+      Review release notes
+      <%= render(UI::Icon.new(name: "arrow-right", size: :sm)) %>
+    </a>
+  <% end %>
+  <% dialog.with_content do |content| %>
+    <% content.with_title { "Release notes" } %>
+    <% content.with_description { "A custom trigger can adopt the dialog semantics without rendering a nested button." } %>
+    <div class="space-y-2 text-sm text-muted-foreground">
+      <p>Dialog trigger attributes are merged into the anchor element.</p>
+      <p>The trigger keeps its own classes while inheriting the chosen button variant tokens.</p>
+    </div>
+  <% end %>
+<% end %>

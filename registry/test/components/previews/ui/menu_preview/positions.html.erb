@@ -1,0 +1,122 @@
+<div class="flex flex-wrap gap-12 p-8 border rounded-lg bg-muted/30 items-center justify-center">
+  <div class="text-center">
+    <p class="text-xs text-muted-foreground mb-2">bottom-start</p>
+    <%= render(UI::Menu.new) do |menu| %>
+      <% menu.with_trigger { "Open" } %>
+      <% menu.with_content(side: :bottom, align: :start) do |content| %>
+        <% content.with_item("Item 1") %>
+        <% content.with_item("Item 2") %>
+      <% end %>
+    <% end %>
+  </div>
+  <div class="text-center">
+    <p class="text-xs text-muted-foreground mb-2">bottom-center</p>
+    <%= render(UI::Menu.new) do |menu| %>
+      <% menu.with_trigger { "Open" } %>
+      <% menu.with_content(side: :bottom, align: :center) do |content| %>
+        <% content.with_item("Item 1") %>
+        <% content.with_item("Item 2") %>
+      <% end %>
+    <% end %>
+  </div>
+  <div class="text-center">
+    <p class="text-xs text-muted-foreground mb-2">bottom-end</p>
+    <%= render(UI::Menu.new) do |menu| %>
+      <% menu.with_trigger { "Open" } %>
+      <% menu.with_content(side: :bottom, align: :end) do |content| %>
+        <% content.with_item("Item 1") %>
+        <% content.with_item("Item 2") %>
+      <% end %>
+    <% end %>
+  </div>
+  <div class="text-center">
+    <p class="text-xs text-muted-foreground mb-2">top-start</p>
+    <%= render(UI::Menu.new) do |menu| %>
+      <% menu.with_trigger { "Open" } %>
+      <% menu.with_content(side: :top, align: :start) do |content| %>
+        <% content.with_item("Item 1") %>
+        <% content.with_item("Item 2") %>
+      <% end %>
+    <% end %>
+  </div>
+  <div class="text-center">
+    <p class="text-xs text-muted-foreground mb-2">top-center</p>
+    <%= render(UI::Menu.new) do |menu| %>
+      <% menu.with_trigger { "Open" } %>
+      <% menu.with_content(side: :top, align: :center) do |content| %>
+        <% content.with_item("Item 1") %>
+        <% content.with_item("Item 2") %>
+      <% end %>
+    <% end %>
+  </div>
+  <div class="text-center">
+    <p class="text-xs text-muted-foreground mb-2">top-end</p>
+    <%= render(UI::Menu.new) do |menu| %>
+      <% menu.with_trigger { "Open" } %>
+      <% menu.with_content(side: :top, align: :end) do |content| %>
+        <% content.with_item("Item 1") %>
+        <% content.with_item("Item 2") %>
+      <% end %>
+    <% end %>
+  </div>
+  <div class="text-center">
+    <p class="text-xs text-muted-foreground mb-2">left-start</p>
+    <%= render(UI::Menu.new) do |menu| %>
+      <% menu.with_trigger { "Open" } %>
+      <% menu.with_content(side: :left, align: :start) do |content| %>
+        <% content.with_item("Item 1") %>
+        <% content.with_item("Item 2") %>
+      <% end %>
+    <% end %>
+  </div>
+  <div class="text-center">
+    <p class="text-xs text-muted-foreground mb-2">left-center</p>
+    <%= render(UI::Menu.new) do |menu| %>
+      <% menu.with_trigger { "Open" } %>
+      <% menu.with_content(side: :left, align: :center) do |content| %>
+        <% content.with_item("Item 1") %>
+        <% content.with_item("Item 2") %>
+      <% end %>
+    <% end %>
+  </div>
+  <div class="text-center">
+    <p class="text-xs text-muted-foreground mb-2">left-end</p>
+    <%= render(UI::Menu.new) do |menu| %>
+      <% menu.with_trigger { "Open" } %>
+      <% menu.with_content(side: :left, align: :end) do |content| %>
+        <% content.with_item("Item 1") %>
+        <% content.with_item("Item 2") %>
+      <% end %>
+    <% end %>
+  </div>
+  <div class="text-center">
+    <p class="text-xs text-muted-foreground mb-2">right-start</p>
+    <%= render(UI::Menu.new) do |menu| %>
+      <% menu.with_trigger { "Open" } %>
+      <% menu.with_content(side: :right, align: :start) do |content| %>
+        <% content.with_item("Item 1") %>
+        <% content.with_item("Item 2") %>
+      <% end %>
+    <% end %>
+  </div>
+  <div class="text-center">
+    <p class="text-xs text-muted-foreground mb-2">right-center</p>
+    <%= render(UI::Menu.new) do |menu| %>
+      <% menu.with_trigger { "Open" } %>
+      <% menu.with_content(side: :right, align: :center) do |content| %>
+        <% content.with_item("Item 1") %>
+        <% content.with_item("Item 2") %>
+      <% end %>
+    <% end %>
+  </div>
+  <div class="text-center">
+    <p class="text-xs text-muted-foreground mb-2">right-end</p>
+    <%= render(UI::Menu.new) do |menu| %>
+      <% menu.with_trigger { "Open" } %>
+      <% menu.with_content(side: :right, align: :end) do |content| %>
+        <% content.with_item("Item 1") %>
+        <% content.with_item("Item 2") %>
+      <% end %>
+    <% end %>
+  </div>
+</div>

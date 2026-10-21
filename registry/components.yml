@@ -1,0 +1,100 @@
+# The VelvetKit catalog.
+#
+# Only what the source files cannot say lives here. Which files make up a
+# component, which other components it renders, and which Stimulus controllers
+# and npm packages it needs are all read from the files themselves by
+# Velvetkit::Registry, so they cannot drift out of date.
+
+# Versions of the npm packages the components import.
+packages:
+  "@floating-ui/dom": "^1.7.4"
+  "@hotwired/stimulus": "^3.2.2"
+  ag-grid-community: "^36.1.0"
+  cally: "^0.9.2"
+  lucide: "^0.545.0"
+  tw-animate-css: "^1.4.0"
+
+# Versions of the gems a component needs beyond view_component and tailwind_merge.
+gems:
+  pagy: "~> 43.0"
+
+components:
+  accordion:
+    description: Sections that expand and collapse, one at a time or several.
+  alert:
+    description: A highlighted message, optionally dismissible.
+  avatar:
+    description: A person's picture, with initials when there is none.
+  avatar_group:
+    description: Overlapping avatars with a "+N" count for the rest.
+  badge:
+    description: A small status label.
+  banner:
+    description: A dismissible strip across the top of a page.
+  base:
+    description: The base class every component inherits — variants and class merging.
+  breadcrumb:
+    description: The path to the current page, collapsing long trails.
+  button:
+    description: Buttons in every variant and size, with icons and a loading state.
+  button_to:
+    description: A button that submits a one-off form, like Rails' button_to.
+  card:
+    description: A bordered container with header, content and footer.
+  checkbox:
+    description: A checkbox with label, standalone or bound to a form builder.
+  data_grid:
+    description: A sortable, filterable, server-paged table on AG Grid.
+  date_picker:
+    description: A typed date field with a calendar, on Cally.
+  dialog:
+    description: A modal dialog on the native <dialog> element.
+  divider:
+    description: A horizontal or vertical rule, optionally labelled.
+  icon:
+    description: A Lucide icon.
+  image:
+    description: An image with consistent sizing and corner radius.
+  input:
+    description: A text field with label, hint and error, standalone or with a form builder.
+  input_group:
+    description: A text field with addons before or after it.
+  label:
+    description: A form label with a required marker.
+  link:
+    description: A link styled as text or as a button.
+  menu:
+    description: A dropdown menu with keyboard navigation.
+  pagination:
+    description: Page links for a long list, from a Pagy object.
+    gems: [pagy]
+  password_input:
+    description: A password field with a show/hide toggle.
+  popover:
+    description: Floating content anchored to a trigger.
+  radio_group:
+    description: A set of radio buttons.
+  select:
+    description: A native select with label, standalone or with a form builder.
+  sheet:
+    description: A panel that slides in from an edge of the screen.
+  sidebar:
+    description: A collapsible application sidebar with groups and menus.
+  spinner:
+    description: A loading indicator.
+  switch:
+    description: An on/off toggle.
+  table:
+    description: A styled table with header, rows and caption.
+  tabs:
+    description: Tabbed panels with keyboard navigation.
+  text:
+    description: Body text in set sizes, weights and tones.
+  theme_toggle:
+    description: A light/dark/system theme switcher.
+    files:
+      - app/views/layouts/_theme_script.html.erb
+  tooltip:
+    description: A hint shown on hover and focus.
+  typography:
+    description: Headings, lead, muted, code and blockquote text styles.

@@ -1,0 +1,7 @@
+<div class="flex flex-col gap-3 max-w-sm">
+  <%= render(UI::Input.new(placeholder: "Default")) %>
+  <%= render(UI::Input.new(placeholder: "With value", value: "hello@example.com")) %>
+  <%= render(UI::Input.new(placeholder: "Error state", variant: :error, error: true)) %>
+  <%= render(UI::Input.new(placeholder: "Disabled", disabled: true)) %>
+  <%= render(UI::Input.new(type: :password, placeholder: "Password")) %>
+</div>

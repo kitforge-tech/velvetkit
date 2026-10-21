@@ -1,0 +1,22 @@
+<% brand = capture do %>
+  <div class="flex items-center gap-2 px-2">
+    <div class="flex h-8 w-8 items-center justify-center rounded bg-primary text-primary-foreground text-xs font-bold">E1</div>
+    <span class="text-sm font-semibold group-data-[collapsible=icon]:hidden">Northwind</span>
+  </div>
+<% end %>
+
+<% main = capture do %>
+  <p class="text-muted-foreground">Main content area next to the sidebar.</p>
+<% end %>
+
+<%= render "ui/sidebar_preview/shell",
+      sidebar_id: "preview-sidebar-default",
+      brand: brand,
+      main: main,
+      groups: [
+        { label: "Applications", items: [
+          { icon: "layout-dashboard", text: "Dashboard", active: true, icon_class: "stroke-orange-500" },
+          { icon: "users",           text: "Students",                icon_class: "stroke-purple-500" },
+          { icon: "book-open",       text: "Courses" }
+        ] }
+      ] %>

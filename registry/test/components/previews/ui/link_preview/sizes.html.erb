@@ -1,0 +1,5 @@
+<div class="flex flex-wrap items-center gap-3">
+  <%= render(UI::Link.new(href: "#", variant: :default, size: :sm, button_variant: true)) { "Small" } %>
+  <%= render(UI::Link.new(href: "#", variant: :default, size: :default, button_variant: true)) { "Default" } %>
+  <%= render(UI::Link.new(href: "#", variant: :default, size: :lg, button_variant: true)) { "Large" } %>
+</div>

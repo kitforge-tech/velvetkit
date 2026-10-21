@@ -1,0 +1,8 @@
+<%= render(UI::Tooltip.new) do |tooltip| %>
+  <% tooltip.with_trigger do %>
+    <%= tag.button("Save Changes", class: "px-4 py-2 bg-primary text-primary-foreground rounded-md") %>
+  <% end %>
+  <% tooltip.with_content do %>
+    Save your changes to the document
+  <% end %>
+<% end %>

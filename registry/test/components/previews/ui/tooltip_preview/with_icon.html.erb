@@ -1,0 +1,10 @@
+<%= render(UI::Tooltip.new) do |tooltip| %>
+  <% tooltip.with_trigger do %>
+    <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-muted hover:bg-muted/80 cursor-pointer">
+      <%= render(UI::Icon.new(name: :info, size: :sm)) %>
+    </span>
+  <% end %>
+  <% tooltip.with_content do %>
+    More information about this feature
+  <% end %>
+<% end %>

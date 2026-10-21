@@ -1,0 +1,5 @@
+<div class="flex flex-wrap items-center gap-3">
+  <% %i[default destructive outline secondary ghost link].each do |v| %>
+    <%= render(UI::ButtonTo.new("#", variant: v)) { v.to_s.capitalize } %>
+  <% end %>
+</div>

@@ -1,0 +1,8 @@
+<div class="flex flex-wrap items-center gap-3">
+  <%= render(UI::ButtonTo.new("#")) { "Default" } %>
+  <%= render(UI::ButtonTo.new("#", loading: true)) { "Loading" } %>
+  <%= render(UI::ButtonTo.new("#", disabled: true)) { "Disabled" } %>
+</div>
+<div class="mt-6 max-w-xs">
+  <%= render(UI::ButtonTo.new("#", variant: :outline, full_width: true, form_class: "w-full")) { "Full width" } %>
+</div>

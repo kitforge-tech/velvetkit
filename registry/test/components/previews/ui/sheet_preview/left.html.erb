@@ -1,0 +1,10 @@
+<%= render(UI::Sheet.new) do |sheet| %>
+  <% sheet.with_trigger(variant: :secondary) { "Open left sheet" } %>
+  <% sheet.with_content(side: :left) do |content| %>
+    <% content.with_title { "Project filters" } %>
+    <% content.with_description { "Filter and refine your current project list." } %>
+    <div class="space-y-3 text-sm text-muted-foreground">
+      <p>Left sheets are useful for navigation and faceted filtering.</p>
+    </div>
+  <% end %>
+<% end %>

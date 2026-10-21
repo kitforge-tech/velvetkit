@@ -1,0 +1,12 @@
+<%= tag.div(**html_options) do %>
+  <% if show_close? %>
+    <%= render(UI::Button.new(variant: :ghost, size: :icon_sm, class: "absolute right-1 top-1", data: { action: "click->ui--popover#close" }, aria: { label: "Close" })) do %>
+      <%= render(UI::Icon.new(name: :x, size: :sm)) %>
+    <% end %>
+  <% end %>
+  <% if title? %>
+    <%= tag.h3(id: title_id, class: "font-semibold leading-none tracking-tight mb-2") do %><%= title %><% end %>
+  <% end %>
+  <%= content %>
+  <%= tag.div(class: arrow_classes, data: { "ui--popover-target": "arrow", side: @side }) %>
+<% end %>

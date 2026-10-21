@@ -1,0 +1,13 @@
+<%= render(UI::Dialog.new) do |dialog| %>
+  <% dialog.with_trigger(variant: :outline) { "Open dialog" } %>
+  <% dialog.with_content do %>
+    <div class="space-y-3 text-sm text-muted-foreground">
+      <p>This dialog has no title or description header.</p>
+      <p>Use this pattern when the content speaks for itself or when you want a cleaner, minimal modal.</p>
+    </div>
+    <div class="mt-4 flex justify-end gap-2">
+      <%= render(UI::Dialog::Close.new(variant: :outline, class: "static")) { "Close" } %>
+      <%= render(UI::Button.new) { "Okay" } %>
+    </div>
+  <% end %>
+<% end %>

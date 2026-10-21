@@ -1,0 +1,18 @@
+<div class="flex flex-col gap-4 max-w-lg">
+  <%= render(UI::Alert.new(variant: :info)) do |alert| %>
+    <% alert.with_title { "Did you know?" } %>
+    <% alert.with_description { "Check out the <a class='underline font-medium' href='/docs'>documentation</a> for more details.".html_safe } %>
+  <% end %>
+  <%= render(UI::Alert.new(variant: :success)) do |alert| %>
+    <% alert.with_title { "Profile updated" } %>
+    <% alert.with_description { "Your changes were saved. <a class='underline font-medium' href='/settings'>View your profile</a> to confirm.".html_safe } %>
+  <% end %>
+  <%= render(UI::Alert.new(variant: :warning)) do |alert| %>
+    <% alert.with_title { "Action required" } %>
+    <% alert.with_description { "Please <a class='underline font-medium' href='/verify'>verify your email</a> before continuing.".html_safe } %>
+  <% end %>
+  <%= render(UI::Alert.new(variant: :destructive)) do |alert| %>
+    <% alert.with_title { "Payment failed" } %>
+    <% alert.with_description { "Your card was declined. <a class='underline font-medium' href='/billing'>Update payment method</a> to retry.".html_safe } %>
+  <% end %>
+</div>

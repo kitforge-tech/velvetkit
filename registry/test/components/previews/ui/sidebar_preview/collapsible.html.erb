@@ -1,0 +1,60 @@
+<% brand = capture do %>
+  <div class="flex items-center gap-2 px-2">
+    <div class="flex h-8 w-8 items-center justify-center rounded bg-primary text-primary-foreground text-xs font-bold shrink-0">A</div>
+    <span class="text-sm font-semibold group-data-[collapsible=icon]:hidden">Acme Inc</span>
+  </div>
+<% end %>
+
+<% main = capture do %>
+  <div class="space-y-6">
+    <div>
+      <h2 class="text-lg font-semibold mb-2">Collapsible Sidebar</h2>
+      <p class="text-sm text-muted-foreground">Click the toggle button to collapse the sidebar to icon-only mode. State is persisted in localStorage.</p>
+    </div>
+    <%= render(UI::Tabs.new(default_value: "overview")) do |tabs| %>
+      <% tabs.with_list do |list| %>
+        <% list.with_trigger(value: "overview") { "Overview" } %>
+        <% list.with_trigger(value: "analytics") { "Analytics" } %>
+        <% list.with_trigger(value: "reports") { "Reports" } %>
+      <% end %>
+      <% tabs.with_panel(value: "overview") do %>
+        <div class="space-y-3">
+          <p class="text-sm text-muted-foreground">Project overview with key metrics and recent activity.</p>
+          <%= render(UI::Menu.new) do |menu| %>
+            <% menu.with_trigger(variant: :outline, size: :sm) { "Actions" } %>
+            <% menu.with_content do |content| %>
+              <% content.with_label("Options") %>
+              <% content.with_item("Edit project") %>
+              <% content.with_item("Share") %>
+              <% content.with_divider %>
+              <% content.with_item("Delete", variant: :destructive) %>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+      <% tabs.with_panel(value: "analytics") do %>
+        <p class="text-sm text-muted-foreground">Traffic and conversion analytics over the last 30 days.</p>
+      <% end %>
+      <% tabs.with_panel(value: "reports") do %>
+        <p class="text-sm text-muted-foreground">Generated reports and scheduled exports.</p>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
+
+<%= render "ui/sidebar_preview/shell",
+      sidebar_id: "preview-sidebar-collapsible",
+      collapsible: :icon,
+      brand: brand,
+      main: main,
+      groups: [
+        { label: "Platform", items: [
+          { icon: "layout-dashboard", text: "Dashboard", active: true },
+          { icon: "bar-chart-3",      text: "Analytics" },
+          { icon: "folder-kanban",    text: "Projects" }
+        ] },
+        { label: "Account", items: [
+          { icon: "user",        text: "Profile" },
+          { icon: "credit-card", text: "Billing" }
+        ] }
+      ] %>

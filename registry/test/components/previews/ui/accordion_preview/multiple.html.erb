@@ -1,0 +1,27 @@
+<div class="max-w-md">
+  <%= render(UI::Accordion.new(type: :multiple, default_value: ["item-1", "item-3"])) do |accordion| %>
+    <% accordion.with_item(value: "item-1") do |item| %>
+      <% item.with_trigger { "Features" } %>
+      <% item.with_content do %>
+        <ul class="list-disc list-inside text-sm text-muted-foreground space-y-1">
+          <li>Student management</li>
+          <li>Attendance tracking</li>
+          <li>Grade reporting</li>
+          <li>Parent communication</li>
+        </ul>
+      <% end %>
+    <% end %>
+    <% accordion.with_item(value: "item-2") do |item| %>
+      <% item.with_trigger { "Pricing" } %>
+      <% item.with_content do %>
+        <p class="text-sm text-muted-foreground">We offer flexible pricing plans for schools of all sizes. Contact our sales team for a custom quote.</p>
+      <% end %>
+    <% end %>
+    <% accordion.with_item(value: "item-3") do |item| %>
+      <% item.with_trigger { "Support" } %>
+      <% item.with_content do %>
+        <p class="text-sm text-muted-foreground">24/7 support via email and chat. Premium plans include dedicated account managers and phone support.</p>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>

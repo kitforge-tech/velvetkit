@@ -1,0 +1,6 @@
+<div class="flex max-w-sm flex-col gap-4">
+  <%= render(UI::Select.new(name: "a", options: UI::SelectPreview::SECTIONS, label: "Default")) %>
+  <%= render(UI::Select.new(name: "b", options: UI::SelectPreview::SECTIONS, label: "Required", required: true)) %>
+  <%= render(UI::Select.new(name: "c", options: UI::SelectPreview::SECTIONS, label: "Error", error: true)) %>
+  <%= render(UI::Select.new(name: "d", options: UI::SelectPreview::SECTIONS, label: "Disabled", disabled: true)) %>
+</div>

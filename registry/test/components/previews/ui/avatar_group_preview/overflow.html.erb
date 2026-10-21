@@ -1,0 +1,23 @@
+<div class="space-y-8">
+  <div>
+    <p class="text-sm text-muted-foreground mb-3">max=3 with 6 total → shows 3 + "+3"</p>
+    <%= render(UI::AvatarGroup.new(max: 3)) do |group| %>
+      <% group.with_avatar { "JD" } %>
+      <% group.with_avatar { "AS" } %>
+      <% group.with_avatar { "RM" } %>
+      <% group.with_avatar { "BK" } %>
+      <% group.with_avatar { "CD" } %>
+      <% group.with_avatar { "PK" } %>
+    <% end %>
+  </div>
+  <div>
+    <p class="text-sm text-muted-foreground mb-3">max=2 with 5 total → shows 2 + "+3"</p>
+    <%= render(UI::AvatarGroup.new(max: 2, size: :sm)) do |group| %>
+      <% group.with_avatar { "JD" } %>
+      <% group.with_avatar { "AS" } %>
+      <% group.with_avatar { "RM" } %>
+      <% group.with_avatar { "BK" } %>
+      <% group.with_avatar { "CD" } %>
+    <% end %>
+  </div>
+</div>

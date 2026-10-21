@@ -1,0 +1,12 @@
+<div class="space-y-8">
+  <div>
+    <p class="text-sm text-muted-foreground mb-3">Small avatars stacked (size: :sm)</p>
+    <%= render(UI::AvatarGroup.new(size: :sm)) do |group| %>
+      <% group.with_avatar { "JD" } %>
+      <% group.with_avatar { "AS" } %>
+      <% group.with_avatar { "RM" } %>
+      <% group.with_avatar { "BK" } %>
+      <% group.with_avatar { "CD" } %>
+    <% end %>
+  </div>
+</div>

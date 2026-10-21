@@ -1,0 +1,10 @@
+<div class="flex flex-wrap items-end gap-6">
+  <% { sm: 24, default: 40, lg: 48 }.each do |size, px| %>
+    <div class="flex flex-col items-center gap-2">
+      <%= render(UI::Avatar.new(size: size)) do |avatar| %>
+        <% avatar.with_image(src: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=96&h=96&fit=crop&crop=face", alt: "User") %>
+      <% end %>
+      <span class="text-xs text-muted-foreground"><%= size %> (<%= px %>px)</span>
+    </div>
+  <% end %>
+</div>
