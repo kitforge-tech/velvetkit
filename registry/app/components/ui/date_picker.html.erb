@@ -28,7 +28,7 @@
     <button type="button" aria-haspopup="dialog" aria-expanded="false"
             aria-controls="<%= panel_id %>"
             aria-label="<%= t("ui.date_picker.open") %>"
-            class="absolute inset-y-0 right-0 flex w-9 items-center justify-center rounded-r-md text-muted-foreground hover:text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+            class="absolute inset-y-0 right-0 flex w-9 items-center justify-center rounded-r-md text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             <%= "disabled" if @disabled %>
             data-ui--date-picker-target="toggle"
             data-action="ui--date-picker#toggle">
@@ -47,16 +47,19 @@
        data-ui--date-picker-target="panel">
     <%# calendar-select-year is why this library was chosen: reaching 2012 for
         a date of birth is one click, not a hundred and seventy. %>
+    <%# Cally puts each arrow inside its own button, so ours are icons with
+        words for screen readers; the month and year selects fill its heading
+        slot, between the arrows. %>
     <%= tag.send(:"calendar-date",
                  safe_join([
-                   tag.button(render(UI::Icon.new(name: "chevron-left", class: "size-4")),
-                              type: "button", slot: "previous", aria: { label: t("ui.date_picker.previous") },
-                              class: "inline-flex size-7 items-center justify-center rounded-md hover:bg-accent hover:text-accent-foreground"),
-                   tag.button(render(UI::Icon.new(name: "chevron-right", class: "size-4")),
-                              type: "button", slot: "next", aria: { label: t("ui.date_picker.next") },
-                              class: "inline-flex size-7 items-center justify-center rounded-md hover:bg-accent hover:text-accent-foreground"),
+                   tag.span(safe_join([ render(UI::Icon.new(name: "chevron-left", size: :sm)),
+                                        tag.span(t("ui.date_picker.previous"), class: "sr-only") ]),
+                            slot: "previous", class: "inline-flex"),
+                   tag.span(safe_join([ render(UI::Icon.new(name: "chevron-right", size: :sm)),
+                                        tag.span(t("ui.date_picker.next"), class: "sr-only") ]),
+                            slot: "next", class: "inline-flex"),
                    tag.div(safe_join([ tag.send(:"calendar-select-month"), tag.send(:"calendar-select-year") ]),
-                           class: "mb-2 flex items-center gap-2"),
+                           slot: "heading", class: "flex items-center gap-1.5"),
                    tag.send(:"calendar-month")
                  ]),
                  locale: I18n.locale == :en ? "en-IN" : I18n.locale.to_s,

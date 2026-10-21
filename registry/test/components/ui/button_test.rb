@@ -23,8 +23,8 @@ class UI::ButtonTest < ViewComponent::TestCase
     assert_includes classes, "bg-destructive"
     refute_includes classes, "bg-primary"
     # destructive variant overrides the default focus ring color
-    assert_includes classes, "focus:ring-destructive"
-    refute_includes classes, "focus:ring-primary"
+    assert_includes classes, "focus-visible:ring-destructive"
+    refute_includes classes, "focus-visible:ring-primary"
   end
 
   def test_renders_outline_variant

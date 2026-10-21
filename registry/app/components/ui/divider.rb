@@ -25,6 +25,12 @@ class UI::Divider < UI::Base
     cn(variant_classes(orientation: @orientation), @user_class)
   end
 
+  # Beside a label each rule takes half the leftover space; `w-full` on both
+  # pushed the label and the second rule out of the row.
+  def rule_classes
+    cn(classes, "w-auto flex-1")
+  end
+
   def wrapper_classes
     cn("flex items-center gap-3", @user_class) if label.present?
   end

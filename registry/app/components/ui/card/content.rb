@@ -7,6 +7,6 @@ class UI::Card::Content < UI::Base
   end
 
   def classes
-    cn("p-6 pt-0", @user_class)
+    cn("p-6 pt-0 first:pt-6", @user_class)
   end
 end

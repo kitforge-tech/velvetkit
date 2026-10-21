@@ -9,8 +9,8 @@ class UI::Base < ViewComponent::Base
   # helper. Components include this in their variant `base:` string so all
   # interactive UI:: components share the same focus treatment without a
   # custom CSS class.
-  FOCUS_RING = "transition-all focus:outline-none focus:ring-2 focus:ring-primary " \
-               "focus:ring-offset-1 ring-offset-background"
+  FOCUS_RING = "transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary " \
+               "focus-visible:ring-offset-1 ring-offset-background"
 
   class_attribute :variant_config,
                   instance_writer: false,

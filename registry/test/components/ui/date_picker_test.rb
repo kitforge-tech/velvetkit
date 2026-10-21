@@ -144,4 +144,25 @@ class UI::DatePickerTest < ViewComponent::TestCase
     assert_equal "false", button["aria-expanded"]
     assert_equal I18n.t("ui.date_picker.open"), button["aria-label"]
   end
+
+  # --- the calendar header ---------------------------------------------------
+
+  # Month and year sit in Cally's heading slot, between the arrows, rather
+  # than under a second, duplicate heading.
+  def test_month_and_year_selects_fill_the_calendar_heading
+    render_picker
+    heading = page.find("calendar-date [slot='heading']", visible: :all)
+    assert heading.has_css?("calendar-select-month", visible: :all)
+    assert heading.has_css?("calendar-select-year", visible: :all)
+  end
+
+  # Cally wraps the arrows in its own buttons, so ours must not be buttons.
+  def test_arrows_are_labelled_icons_not_nested_buttons
+    render_picker
+    [ [ "previous", "ui.date_picker.previous" ], [ "next", "ui.date_picker.next" ] ].each do |slot, key|
+      arrow = page.find("calendar-date [slot='#{slot}']", visible: :all)
+      refute_equal "button", arrow.tag_name
+      assert_includes arrow.text(:all), I18n.t(key)
+    end
+  end
 end

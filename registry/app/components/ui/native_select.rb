@@ -55,7 +55,7 @@ class UI::NativeSelect < UI::Base
 
   def classes
     cn(variant_classes(size: @size),
-       { "border-destructive focus:ring-destructive" => @error },
+       { "border-destructive focus-visible:ring-destructive" => @error },
        @user_class)
   end
 
