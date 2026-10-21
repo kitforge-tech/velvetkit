@@ -3,7 +3,7 @@
     <h3 class="text-sm font-medium mb-2">Slot API — ellipsis at end</h3>
     <%= render(UI::Breadcrumb.new(size: :sm)) do |bc| %>
       <% bc.with_item(href: "#", text: "Projects") %>
-      <% bc.with_item(href: "#", text: "Northwind",  avatar_src: "/icon.png") %>
+      <% bc.with_item(href: "#", text: "Website",  avatar_src: "/icon.png") %>
       <% bc.with_ellipsis do %>
         <%= render(UI::Link.new(href: "#", class: "justify-start rounded-sm px-3 py-1.5 text-sm font-normal text-popover-foreground hover:bg-accent hover:text-accent-foreground hover:no-underline w-full")) { "Settings" } %>
         <%= render(UI::Link.new(href: "#", class: "justify-start rounded-sm px-3 py-1.5 text-sm font-normal text-popover-foreground hover:bg-accent hover:text-accent-foreground hover:no-underline w-full")) { "Members" } %>
@@ -17,17 +17,17 @@
     <%= render(UI::Breadcrumb.new(size: :sm)) do %>
       <%= render(UI::Breadcrumb::List.new) do %>
         <%= render(UI::Breadcrumb::Item.new) do %>
-          <%= render(UI::Link.new(href: "#", class: "text-xs text-muted-foreground max-w-32 truncate font-normal justify-start rounded-sm")) { "HashiCorp" } %>
+          <%= render(UI::Link.new(href: "#", class: "text-xs text-muted-foreground max-w-32 truncate font-normal justify-start rounded-sm")) { "Handbook" } %>
         <% end %>
         <%= render(UI::Breadcrumb::Separator.new) %>
         <%= render(UI::Breadcrumb::Ellipsis.new) do %>
           <%= render(UI::Link.new(href: "#", class: "justify-start rounded-sm px-3 py-1.5 text-sm font-normal text-popover-foreground hover:bg-accent hover:text-accent-foreground hover:no-underline w-full")) { "Docs" } %>
           <%= render(UI::Link.new(href: "#", class: "justify-start rounded-sm px-3 py-1.5 text-sm font-normal text-popover-foreground hover:bg-accent hover:text-accent-foreground hover:no-underline w-full")) { "API" } %>
-          <%= render(UI::Link.new(href: "#", class: "justify-start rounded-sm px-3 py-1.5 text-sm font-normal text-popover-foreground hover:bg-accent hover:text-accent-foreground hover:no-underline w-full")) { "Terraform" } %>
+          <%= render(UI::Link.new(href: "#", class: "justify-start rounded-sm px-3 py-1.5 text-sm font-normal text-popover-foreground hover:bg-accent hover:text-accent-foreground hover:no-underline w-full")) { "Platform" } %>
         <% end %>
         <%= render(UI::Breadcrumb::Separator.new) %>
         <%= render(UI::Breadcrumb::Item.new) do %>
-          <%= render(UI::Link.new(href: "#", class: "text-xs text-foreground font-normal justify-start rounded-sm", aria: { current: "page" })) { "AWS Providers" } %>
+          <%= render(UI::Link.new(href: "#", class: "text-xs text-foreground font-normal justify-start rounded-sm", aria: { current: "page" })) { "Cloud providers" } %>
         <% end %>
       <% end %>
     <% end %>
