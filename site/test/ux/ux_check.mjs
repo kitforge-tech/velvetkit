@@ -24,6 +24,10 @@ const check = (name, ok, detail = "") => { results.push(ok); console.log(`${ok ?
 const center = (sel) => run(`(() => { const e = document.querySelector(${JSON.stringify(sel)}); if (!e) return null; const r = e.getBoundingClientRect(); return [r.x + r.width / 2, r.y + r.height / 2]; })()`);
 const mouse = async (type, [x, y]) => send("Input.dispatchMouseEvent", { type, x, y, button: "left", clickCount: 1 });
 const click = async (sel) => { const p = await center(sel); if (!p) throw new Error("not found " + sel); await send("Input.dispatchMouseEvent", { type: "mouseMoved", x: p[0], y: p[1] }); await mouse("mousePressed", p); await mouse("mouseReleased", p); };
+const key = async (key, code, modifiers = 0, vk = 0) => {
+  await send("Input.dispatchKeyEvent", { type: "keyDown", key, code, modifiers, windowsVirtualKeyCode: vk });
+  await send("Input.dispatchKeyEvent", { type: "keyUp", key, code, modifiers, windowsVirtualKeyCode: vk });
+};
 // Spread of the outermost ring shadow, in px (0 when none).
 const spread = (sel) => run(`(() => { const m = [...getComputedStyle(document.querySelector(${JSON.stringify(sel)}) || document.activeElement).boxShadow.matchAll(/0px 0px 0px ([\\d.]+)px/g)].map(x => +x[1]); return m.length ? Math.max(...m) : 0; })()`);
 
@@ -50,19 +54,17 @@ ws.onopen = async () => {
     const after = await spread(header);
     check("ring carried to the new page", carried.url === "/docs/components" && carried.text === "Components" && after >= 3, `${carried.text} on ${carried.url}, ${after}px`);
 
-    // 3. A sidebar ring isn't clipped by the scroll area.
+    // 3. Sidebar links carry no ring: a click leaves just the current-page
+    //    style, and Tab marks the link with a background instead.
     const sidebarLink = '[data-focus-scope="sidebar"] a[href="/docs/components/button"]';
     await click(sidebarLink);
     await sleep(2000);
-    const room = await run(`(() => { const box = document.querySelector('[data-focus-scope="sidebar"]'); const s = getComputedStyle(box); const b = box.getBoundingClientRect(); const a = document.activeElement.getBoundingClientRect();
-      return { left: Math.round(a.left - (b.left + parseFloat(s.paddingLeft) - 6)), right: Math.round(b.right - a.right), ringOn: document.activeElement.textContent.trim() }; })()`);
-    check("sidebar ring has room on both sides", room.left >= 3 && room.right >= 3, `${room.left}px left, ${room.right}px right of '${room.ringOn}'`);
-    // The ring sits inside the link, links don't touch, and the bar steps aside.
-    const sidebarRing = await run(`(() => { const a = document.activeElement; const next = a.nextElementSibling;
-      return { inset: getComputedStyle(a).boxShadow.includes('inset'), gap: next ? Math.round(next.getBoundingClientRect().top - a.getBoundingClientRect().bottom) : 2,
-               bar: getComputedStyle(a, '::before').display }; })()`);
-    check("sidebar ring is inset, with a gap to the next link", sidebarRing.inset && sidebarRing.gap >= 2, `inset ${sidebarRing.inset}, gap ${sidebarRing.gap}px`);
-    check("the active bar steps aside for the ring", sidebarRing.bar === "none", sidebarRing.bar);
+    const clicked = await run(`(() => { const a = document.activeElement; return { text: a.textContent.trim(), shadow: getComputedStyle(a).boxShadow, outline: getComputedStyle(a).outlineStyle }; })()`);
+    check("a clicked sidebar link has no ring", clicked.shadow === "none" && clicked.outline === "none", `${clicked.text}: ${clicked.shadow}`);
+    await key("Tab", "Tab", 0, 9);
+    await sleep(300);
+    const tabbed = await run(`(() => { const a = document.activeElement; return { text: a.textContent.trim(), shadow: getComputedStyle(a).boxShadow, bg: getComputedStyle(a).backgroundColor }; })()`);
+    check("Tab marks the next sidebar link without a ring", tabbed.shadow === "none" && tabbed.bg !== "rgba(0, 0, 0, 0)", `${tabbed.text}: ${tabbed.bg}`);
 
     // 4. Copy a code block: clipboard, icon, label, announcement, reset.
     await send("Page.navigate", { url: `${BASE}/docs/components/dialog` });
@@ -119,10 +121,6 @@ ws.onopen = async () => {
     // 7. Search: ⌘K and / open it, typing ranks title matches first, Enter goes.
     await send("Page.navigate", { url: `${BASE}/docs` });
     await sleep(2500);
-    const key = async (key, code, modifiers = 0, vk = 0) => {
-    await send("Input.dispatchKeyEvent", { type: "keyDown", key, code, modifiers, windowsVirtualKeyCode: vk });
-    await send("Input.dispatchKeyEvent", { type: "keyUp", key, code, modifiers, windowsVirtualKeyCode: vk });
-    };
     const searchState = () => run(`(() => { const d = document.querySelector('dialog[aria-label="Search the docs"]'); const i = d.querySelector('input');
     const byOrder = (a, b) => (a.style.order || 0) - (b.style.order || 0);
     const vis = [...d.querySelectorAll('[data-search-target=group]:not([hidden])')].sort(byOrder)
@@ -242,6 +240,31 @@ ws.onopen = async () => {
       const r = h.parentElement.getBoundingClientRect();
       return { inMain: !!h.closest('main'), left: Math.round(r.left - main.left), right: Math.round(main.right - r.right) }; })()`);
     check("the Menu page's Positions example stays inside the page", menu.inMain && menu.left >= 0 && menu.right >= 0, JSON.stringify(menu));
+
+    // 14. A popover's arrow is the outline stepping out to a point, on every
+    //     side: borders on its two outer edges only, its centre on the edge.
+    await send("Page.navigate", { url: `${BASE}/docs/components/popover` });
+    await sleep(2500);
+    for (const side of ["Top", "Right", "Bottom", "Left"]) {
+      await run(`(() => { const b = [...document.querySelectorAll('main button')].find(b => b.textContent.trim() === '${side}'); b.scrollIntoView({ block: 'center' }); b.setAttribute('data-test-popover', ''); })()`);
+      await sleep(300);
+      await click("[data-test-popover]");
+      await sleep(400);
+      const arrow = await run(`(() => { const t = document.querySelector('[data-test-popover]'); const c = t.closest('[data-controller~="ui--popover"]').querySelector('[role=dialog]');
+        const a = c.querySelector('[data-ui--popover-target=arrow]'); const s = getComputedStyle(a); const ar = a.getBoundingClientRect(); const cr = c.getBoundingClientRect();
+        const edges = ['Top', 'Right', 'Bottom', 'Left'].filter(e => parseFloat(s['border' + e + 'Width']) > 0).map(e => e[0].toLowerCase()).join('');
+        const mid = { x: (ar.left + ar.right) / 2, y: (ar.top + ar.bottom) / 2 };
+        const off = Math.round(Math.min(Math.abs(mid.y - cr.top), Math.abs(mid.y - cr.bottom), Math.abs(mid.x - cr.left), Math.abs(mid.x - cr.right)));
+        t.removeAttribute('data-test-popover'); return { side: a.dataset.side, edges, off }; })()`);
+      const want = { top: "rb", bottom: "tl", left: "tr", right: "bl" }[arrow.side];
+      check(`popover arrow (${side}) borders only its point and sits on the edge`, arrow.edges === want && arrow.off <= 1, JSON.stringify(arrow));
+      if (process.env.UX_SHOTS) {
+        const shot = await send("Page.captureScreenshot", { format: "png" });
+        (await import("node:fs")).writeFileSync(`${process.env.UX_SHOTS}/popover-${side.toLowerCase()}.png`, Buffer.from(shot.result.data, "base64"));
+      }
+      await key("Escape", "Escape", 0, 27);
+      await sleep(300);
+    }
   } catch (error) {
     console.log("ERROR", error.message);
     results.push(false);
