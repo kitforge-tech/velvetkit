@@ -196,29 +196,20 @@ class UI::Popover::ContentTest < ViewComponent::TestCase
     assert_equal "top", arrow[:"data-side"]
   end
 
-  def test_arrow_has_base_border_classes
-    # Arrow has base border-t border-l (points down) with conditional overrides
+  # The arrow is a square turned 45°. Only the two edges that make its outer
+  # point carry a border; the inner two sit over the popover and stay bare,
+  # or they show as a line inside the popover.
+  def test_arrow_borders_only_its_outer_point_on_every_side
     render_inline(UI::Popover.new) do |popover|
       popover.with_trigger { "Trigger" }
       popover.with_content { "Content" }
     end
-    arrow = page.find("[data-ui--popover-target='arrow']", visible: false)
-    classes = arrow[:class]
-    # Base classes
-    assert classes.include?("border-t"), "Expected border-t in arrow classes"
-    assert classes.include?("border-l"), "Expected border-l in arrow classes"
-    # Conditional override classes for all sides are present
-    assert classes.include?("data-[side=bottom]:border-t-0"), "Expected data-[side=bottom]:border-t-0"
-    assert classes.include?("data-[side=bottom]:border-l-0"), "Expected data-[side=bottom]:border-l-0"
-    assert classes.include?("data-[side=bottom]:border-b"), "Expected data-[side=bottom]:border-b"
-    assert classes.include?("data-[side=bottom]:border-r"), "Expected data-[side=bottom]:border-r"
-    assert classes.include?("data-[side=left]:border-t-0"), "Expected data-[side=left]:border-t-0"
-    assert classes.include?("data-[side=left]:border-l-0"), "Expected data-[side=left]:border-l-0"
-    assert classes.include?("data-[side=left]:border-b"), "Expected data-[side=left]:border-b"
-    assert classes.include?("data-[side=right]:border-t-0"), "Expected data-[side=right]:border-t-0"
-    assert classes.include?("data-[side=right]:border-l-0"), "Expected data-[side=right]:border-l-0"
-    assert classes.include?("data-[side=right]:border-t"), "Expected data-[side=right]:border-t"
-    assert classes.include?("data-[side=right]:border-r"), "Expected data-[side=right]:border-r"
+    classes = page.find("[data-ui--popover-target='arrow']", visible: false)[:class].split
+    { top: %w[r b], bottom: %w[l t], left: %w[t r], right: %w[b l] }.each do |side, edges|
+      shown = classes.filter_map { |c| c[/\Adata-\[side=#{side}\]:border-([trbl])\z/, 1] }
+      assert_equal edges.sort, shown.sort, "side=#{side}"
+    end
+    refute(classes.any? { |c| c.match?(/\Aborder-[trbl]\z/) }, "no border outside a side variant")
   end
 
   def test_arrow_side_matches_content_side
