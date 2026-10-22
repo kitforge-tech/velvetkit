@@ -57,6 +57,12 @@ ws.onopen = async () => {
     const room = await run(`(() => { const box = document.querySelector('[data-focus-scope="sidebar"]'); const s = getComputedStyle(box); const b = box.getBoundingClientRect(); const a = document.activeElement.getBoundingClientRect();
       return { left: Math.round(a.left - (b.left + parseFloat(s.paddingLeft) - 6)), right: Math.round(b.right - a.right), ringOn: document.activeElement.textContent.trim() }; })()`);
     check("sidebar ring has room on both sides", room.left >= 3 && room.right >= 3, `${room.left}px left, ${room.right}px right of '${room.ringOn}'`);
+    // The ring sits inside the link, links don't touch, and the bar steps aside.
+    const sidebarRing = await run(`(() => { const a = document.activeElement; const next = a.nextElementSibling;
+      return { inset: getComputedStyle(a).boxShadow.includes('inset'), gap: next ? Math.round(next.getBoundingClientRect().top - a.getBoundingClientRect().bottom) : 2,
+               bar: getComputedStyle(a, '::before').display }; })()`);
+    check("sidebar ring is inset, with a gap to the next link", sidebarRing.inset && sidebarRing.gap >= 2, `inset ${sidebarRing.inset}, gap ${sidebarRing.gap}px`);
+    check("the active bar steps aside for the ring", sidebarRing.bar === "none", sidebarRing.bar);
 
     // 4. Copy a code block: clipboard, icon, label, announcement, reset.
     await send("Page.navigate", { url: `${BASE}/docs/components/dialog` });
@@ -72,22 +78,37 @@ ws.onopen = async () => {
                buttonVisible: getComputedStyle(b.querySelector('button')).opacity }; })()`);
     check("copy puts the command on the clipboard", copied.clip === "bin/rails generate velvetkit:add dialog", JSON.stringify(copied.clip));
     check("copy swaps the icon for a tick", copied.tick && !copied.copyIcon);
-    check("copy shows a 'Copied' label", copied.label === "Copied", String(copied.label));
+    check("copy shows a 'Copied' tooltip", copied.label === "Copied", String(copied.label));
+    // The tooltip sits above the button, solid, not over the code; the button
+    // lines up with the first line of code.
+    const geometry = await run(`(() => { const b = document.querySelector('${block}'); const tip = b.querySelector('[role=tooltip]').getBoundingClientRect();
+      const btn = b.querySelector('button').getBoundingClientRect(); const code = b.querySelector('pre').getBoundingClientRect();
+      const lineHeight = parseFloat(getComputedStyle(b.querySelector('pre')).lineHeight); const firstLine = code.top + parseFloat(getComputedStyle(b.querySelector('pre')).paddingTop) + lineHeight / 2;
+      return { above: Math.round(btn.top - tip.bottom), centred: Math.abs((tip.left + tip.right) / 2 - (btn.left + btn.right) / 2) < 2,
+               solid: getComputedStyle(b.querySelector('[role=tooltip]')).backgroundColor, offFromLine: Math.round(Math.abs((btn.top + btn.bottom) / 2 - firstLine)) }; })()`);
+    check("tooltip sits just above the button, centred", geometry.above >= 4 && geometry.above <= 12 && geometry.centred, `${geometry.above}px above`);
+    check("tooltip is solid", !geometry.solid.includes("/ 0") && !geometry.solid.endsWith(", 0)") && geometry.solid !== "rgba(0, 0, 0, 0)", geometry.solid);
+    check("copy button lines up with the first line of code", geometry.offFromLine <= 2, `${geometry.offFromLine}px off`);
     check("copy is announced to screen readers", copied.status === "Copied");
     check("button stays visible while showing the result", copied.buttonVisible === "1", `opacity ${copied.buttonVisible}`);
     await sleep(2000);
     const reset = await run(`(() => { const b = document.querySelector('${block}'); return { tick: !b.querySelector('[data-clipboard-target=done]').hasAttribute('hidden'), label: !b.querySelector('[data-clipboard-target=label]').hasAttribute('hidden') }; })()`);
     check("copy feedback clears after a moment", !reset.tick && !reset.label);
 
-    // 5. Ask AI > Copy as Markdown, with the menu closing.
+    // 5. Ask AI > Copy as Markdown: the item itself shows the tick and "Copied".
     await click('[data-controller="clipboard"] [data-ui--menu-target="trigger"], [data-controller="clipboard"] button[aria-haspopup]');
     await sleep(300);
     await run(`(() => { const item = [...document.querySelectorAll('[role=menuitem]')].find(i => i.textContent.includes('Copy as Markdown')); item.setAttribute('data-test-copy', ''); })()`);
     await click("[data-test-copy]");
     await sleep(300);
-    const md = await run(`(async () => { const l = [...document.querySelectorAll('[data-clipboard-target=label]')].find(e => !e.hasAttribute('hidden')); return { clip: (await navigator.clipboard.readText()).slice(0, 30), label: l && l.textContent }; })()`);
+    const md = await run(`(async () => { const item = document.querySelector('[data-test-copy]');
+      const shown = (sel) => { const e = item.querySelector(sel); return e && !e.hasAttribute('hidden'); };
+      return { clip: (await navigator.clipboard.readText()).slice(0, 30), text: item.innerText.trim(), tick: shown('[data-clipboard-target=done]'),
+               icon: shown('[data-clipboard-target=idle]'), menuOpen: getComputedStyle(item).display !== 'none' && item.offsetParent !== null }; })()`);
     check("Ask AI copies the Markdown", md.clip.startsWith("# VelvetKit"), JSON.stringify(md.clip));
-    check("Ask AI says it copied, beside the menu", md.label === "Markdown copied", String(md.label));
+    check("the item shows a tick and 'Copied' in place of the copy icon", md.tick && !md.icon && md.text === "Copied" && md.menuOpen, `'${md.text}'`);
+    await sleep(2000);
+    check("the item goes back to 'Copy as Markdown'", (await run(`document.querySelector('[data-test-copy]').innerText.trim()`)) === "Copy as Markdown");
 
     // 6. If the clipboard is refused, the text is selected and the label says how to copy.
     await run(`navigator.clipboard.writeText = () => Promise.reject(new Error('denied'))`);
@@ -176,6 +197,51 @@ ws.onopen = async () => {
     for (let i = 0; i < 12; i++) { await click('[data-rail-target=next]'); await sleep(450); }
     r = await rail();
     check("› greys out at the end", r.next && !r.prev);
+
+    // 9. With no saved choice the theme follows the system, and says so.
+    await run(`localStorage.clear()`);
+    await send("Page.reload");
+    await sleep(2500);
+    const theme = await run(`(() => { const m = document.querySelector('header svg.lucide-monitor, header [data-lucide=monitor]');
+      return { pref: document.documentElement.dataset.theme, monitor: !!m && m.getBoundingClientRect().width > 0 }; })()`);
+    check("theme follows the system by default, with the monitor icon", theme.pref === "system" && theme.monitor, JSON.stringify(theme));
+
+    // 10. A hero switch flips with a real click, and its knob stays white in dark.
+    await run(`(() => { const t = document.querySelector('[data-rail-target=track]'); const card = [...t.children].find(c => c.textContent.includes('Notifications'));
+      t.scrollLeft = card.offsetLeft - t.offsetLeft; card.querySelector('label:has(input[role=switch])').setAttribute('data-test-switch', ''); })()`);
+    await sleep(500);
+    const switchOn = () => run(`document.querySelector('[data-test-switch] input').checked`);
+    const before = await switchOn();
+    await click("[data-test-switch] > span");
+    await sleep(300);
+    check("a hero switch flips on click", (await switchOn()) !== before);
+    await send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-color-scheme", value: "dark" }] });
+    await sleep(300);
+    const knob = await run(`(() => { const k = document.querySelector('[data-test-switch] span[class*=translate-x]'); return getComputedStyle(k).backgroundColor; })()`);
+    check("the knob is white in dark mode", /^(rgb\(255, 255, 255\)|oklch\(1 0 0\)|color\(srgb 1 1 1\))/.test(knob), knob);
+    await send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-color-scheme", value: "light" }] });
+
+    // 11. The records card's pagination fits its card without overlapping.
+    const pages = await run(`(() => { const nav = [...document.querySelectorAll('[data-rail-target=track] nav[aria-label]')].pop();
+      const card = [...document.querySelector('[data-rail-target=track]').children].find(c => c.contains(nav)).getBoundingClientRect(); const ul = nav.querySelector('ul').getBoundingClientRect();
+      const summary = [...nav.parentElement.querySelectorAll('*')].find(e => /Showing/.test(e.textContent) && e.children.length === 0).getBoundingClientRect();
+      const overlap = !(summary.bottom <= ul.top || ul.bottom <= summary.top || summary.right <= ul.left || ul.right <= summary.left);
+      return { overlap, inside: ul.left >= card.left && ul.right <= card.right && summary.right <= card.right }; })()`);
+    check("hero pagination doesn't overlap and fits its card", !pages.overlap && pages.inside, JSON.stringify(pages));
+
+    // 12. The collapsed sidebar keeps its mark square.
+    await send("Page.navigate", { url: `${BASE}/docs/components/sidebar` });
+    await sleep(2500);
+    const mark = await run(`(() => { const img = [...document.querySelectorAll('[data-collapsible=icon] img[src*=mark]')].find(i => i.getBoundingClientRect().width > 0); const r = img.getBoundingClientRect(); return [Math.round(r.width), Math.round(r.height)]; })()`);
+    check("the collapsed sidebar's mark isn't squashed", mark[0] === 28 && mark[1] === 28, mark.join("×"));
+
+    // 13. The Menu page's examples stay inside the page.
+    await send("Page.navigate", { url: `${BASE}/docs/components/menu` });
+    await sleep(2500);
+    const menu = await run(`(() => { const main = document.querySelector('main').getBoundingClientRect(); const h = [...document.querySelectorAll('h3')].find(e => e.textContent.trim() === 'Positions');
+      const r = h.parentElement.getBoundingClientRect();
+      return { inMain: !!h.closest('main'), left: Math.round(r.left - main.left), right: Math.round(main.right - r.right) }; })()`);
+    check("the Menu page's Positions example stays inside the page", menu.inMain && menu.left >= 0 && menu.right >= 0, JSON.stringify(menu));
   } catch (error) {
     console.log("ERROR", error.message);
     results.push(false);

@@ -82,7 +82,7 @@ class UI::Switch < UI::Base
   def thumb_classes
     cn(
       "pointer-events-none absolute left-0.5 top-0.5",
-      "rounded-full bg-background shadow-sm",
+      "rounded-full bg-white shadow-sm",
       "transition-transform",
       THUMB_TRANSLATE[@size],
       {

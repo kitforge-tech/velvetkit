@@ -64,12 +64,14 @@ module ApplicationHelper
   end
 
   # A sidebar link. The current page gets a velvet bar on its left as well as
-  # a tint, so it stands out while scanning a long list.
+  # a tint, so it stands out while scanning a long list. The focus ring sits
+  # inside the link, so a hovered neighbour can never overlap it, and takes
+  # the bar's place rather than doubling it.
   def nav_link(text, path)
     current = current_page?(path)
     link_to text, path, aria: { current: current ? "page" : nil },
-            class: [ "relative block rounded-md px-3 py-1.5 text-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1",
-                     current ? "bg-primary/10 font-medium text-primary before:absolute before:inset-y-1.5 before:left-0 before:w-0.5 before:rounded-full before:bg-primary dark:bg-primary/20 dark:text-foreground dark:before:bg-[#c9a3f2]" : "text-muted-foreground hover:bg-accent hover:text-foreground" ]
+            class: [ "relative block rounded-md px-3 py-1.5 text-sm transition-all focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary",
+                     current ? "bg-primary/10 font-medium text-primary focus:before:hidden before:absolute before:inset-y-1.5 before:left-0 before:w-0.5 before:rounded-full before:bg-primary dark:bg-primary/20 dark:text-foreground dark:before:bg-[#c9a3f2]" : "text-muted-foreground hover:bg-accent hover:text-foreground" ]
   end
 
   # Which top-level section the page belongs to, for the header's current link.
