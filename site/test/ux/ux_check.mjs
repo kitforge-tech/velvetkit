@@ -196,13 +196,16 @@ ws.onopen = async () => {
     r = await rail();
     check("› greys out at the end", r.next && !r.prev);
 
-    // 9. With no saved choice the theme follows the system, and says so.
+    // 9. With no saved choice the page is light, even on a dark OS, and the
+    //    toggle shows the sun.
+    await send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-color-scheme", value: "dark" }] });
     await run(`localStorage.clear()`);
     await send("Page.reload");
     await sleep(2500);
-    const theme = await run(`(() => { const m = document.querySelector('header svg.lucide-monitor, header [data-lucide=monitor]');
-      return { pref: document.documentElement.dataset.theme, monitor: !!m && m.getBoundingClientRect().width > 0 }; })()`);
-    check("theme follows the system by default, with the monitor icon", theme.pref === "system" && theme.monitor, JSON.stringify(theme));
+    const theme = await run(`(() => { const shown = (n) => { const m = document.querySelector('header svg.lucide-' + n); return !!m && m.getBoundingClientRect().width > 0; };
+      return { pref: document.documentElement.dataset.theme, dark: document.documentElement.classList.contains('dark'), sun: shown('sun'), monitor: shown('monitor') }; })()`);
+    check("theme is light by default, even on a dark OS, with the sun icon", theme.pref === "light" && !theme.dark && theme.sun && !theme.monitor, JSON.stringify(theme));
+    await send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-color-scheme", value: "light" }] });
 
     // 10. A hero switch flips with a real click, and its knob stays white in dark.
     await run(`(() => { const t = document.querySelector('[data-rail-target=track]'); const card = [...t.children].find(c => c.textContent.includes('Notifications'));
@@ -213,11 +216,11 @@ ws.onopen = async () => {
     await click("[data-test-switch] > span");
     await sleep(300);
     check("a hero switch flips on click", (await switchOn()) !== before);
-    await send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-color-scheme", value: "dark" }] });
+    await run(`document.documentElement.classList.add('dark')`);
     await sleep(300);
-    const knob = await run(`(() => { const k = document.querySelector('[data-test-switch] span[class*=translate-x]'); return getComputedStyle(k).backgroundColor; })()`);
-    check("the knob is white in dark mode", /^(rgb\(255, 255, 255\)|oklch\(1 0 0\)|color\(srgb 1 1 1\))/.test(knob), knob);
-    await send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-color-scheme", value: "light" }] });
+    const knob = await run(`(() => { const k = document.querySelector('[data-test-switch] span[class*=translate-x]'); return { bg: getComputedStyle(k).backgroundColor, page: getComputedStyle(document.body).backgroundColor }; })()`);
+    check("the knob is white in dark mode", /^rgb\(255, 255, 255\)/.test(knob.bg) && knob.page !== "rgb(255, 255, 255)", JSON.stringify(knob));
+    await run(`document.documentElement.classList.remove('dark')`);
 
     // 11. The records card's pagination fits its card without overlapping.
     const pages = await run(`(() => { const nav = [...document.querySelectorAll('[data-rail-target=track] nav[aria-label]')].pop();
@@ -232,6 +235,24 @@ ws.onopen = async () => {
     await sleep(2500);
     const mark = await run(`(() => { const img = [...document.querySelectorAll('[data-collapsible=icon] img[src*=mark]')].find(i => i.getBoundingClientRect().width > 0); const r = img.getBoundingClientRect(); return [Math.round(r.width), Math.round(r.height)]; })()`);
     check("the collapsed sidebar's mark isn't squashed", mark[0] === 28 && mark[1] === 28, mark.join("×"));
+    //     Collapsing each example by its toggle centres the mark over the icons, unclipped.
+    for (const id of ["preview-sidebar-default", "preview-sidebar-dropdown"]) {
+      await run(`(() => { const aside = document.getElementById('${id}'); aside.scrollIntoView({ block: 'center' });
+        aside.closest('[data-controller~="ui--sidebar"]').querySelector('[data-action~="ui--sidebar#toggle"]').setAttribute('data-test-toggle', ''); })()`);
+      await sleep(300);
+      await click("[data-test-toggle]");
+      await sleep(600);
+      const lined = await run(`(() => { const aside = document.getElementById('${id}'); document.querySelector('[data-test-toggle]').removeAttribute('data-test-toggle');
+        const img = [...aside.querySelectorAll('img[src*=mark]')].find(i => i.getBoundingClientRect().width > 0); const m = img.getBoundingClientRect();
+        const b = aside.querySelector('[data-sidebar=menu-button], [data-slot=sidebar-menu-button], ul a, ul button').getBoundingClientRect();
+        const box = img.closest('[data-slot=sidebar-header]').getBoundingClientRect();
+        return { collapsed: aside.dataset.collapsible, off: Math.round(Math.abs((m.left + m.right) / 2 - (b.left + b.right) / 2)), inside: m.left >= box.left && m.right <= box.right }; })()`);
+      check(`collapsed ${id.replace("preview-sidebar-", "")} sidebar: mark centred over the icons`, lined.collapsed === "icon" && lined.off <= 1 && lined.inside, JSON.stringify(lined));
+      if (process.env.UX_SHOTS) {
+        const shot = await send("Page.captureScreenshot", { format: "png" });
+        (await import("node:fs")).writeFileSync(`${process.env.UX_SHOTS}/${id}.png`, Buffer.from(shot.result.data, "base64"));
+      }
+    }
 
     // 13. The Menu page's examples stay inside the page.
     await send("Page.navigate", { url: `${BASE}/docs/components/menu` });

@@ -1,12 +1,13 @@
 <%# The VelvetKit logo for the sidebar header: the full logo while expanded,
-    the V mark once collapsed to icons. The images are velvetkit.com's; in an
-    app, put its own logo here. %>
-<div class="flex h-9 min-w-0 items-center px-2">
+    the V mark once collapsed to icons. Collapsed, the mark drops the side
+    padding and sits in a box the size of a menu button, so it lines up over
+    the icons. The images are velvetkit.com's; in an app, put its own logo here. %>
+<div class="flex h-9 min-w-0 items-center px-2 group-data-[collapsible=icon]:px-0">
   <span class="group-data-[collapsible=icon]:hidden">
     <img src="/velvetkit/logo-light.png" alt="VelvetKit" class="h-8 w-auto max-w-none dark:hidden">
     <img src="/velvetkit/logo-dark.png" alt="VelvetKit" class="hidden h-8 w-auto max-w-none dark:block">
   </span>
-  <span class="hidden shrink-0 group-data-[collapsible=icon]:block">
+  <span class="hidden size-8 shrink-0 items-center justify-center group-data-[collapsible=icon]:flex">
     <img src="/velvetkit/mark-light.png" alt="VelvetKit" class="size-7 max-w-none shrink-0 object-contain dark:hidden">
     <img src="/velvetkit/mark-dark.png" alt="VelvetKit" class="hidden size-7 max-w-none shrink-0 object-contain dark:block">
   </span>
