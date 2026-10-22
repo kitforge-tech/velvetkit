@@ -105,7 +105,7 @@ class UI::SwitchTest < ViewComponent::TestCase
     assert thumb, "thumb span should exist"
     classes = thumb[:class].split
     assert_includes classes, "rounded-full"
-    assert_includes classes, "bg-background"
+    assert_includes classes, "bg-white"
     assert_includes classes, "peer-checked:translate-x-5"
   end
 
@@ -145,9 +145,21 @@ class UI::SwitchTest < ViewComponent::TestCase
     assert_match(/Enable notifications/, label_el.text)
   end
 
-  def test_without_label_no_label_element
+  # The checkbox is visually hidden, so without a <label> around it a click on
+  # the track reaches nothing and the switch can't be flipped by mouse.
+  def test_without_visible_label_the_switch_is_still_a_clickable_label
+    render_inline(UI::Switch.new(name: "notify", aria: { label: "Notifications" }))
+    label_el = page.find("label")
+    assert label_el.has_css?("input[type='checkbox']", visible: :all)
+    assert_empty label_el.text.strip
+  end
+
+  # White in both themes: in dark mode the background token is near black,
+  # which made the knob vanish into the track.
+  def test_thumb_is_white_in_both_themes
     render_inline(UI::Switch.new(name: "notify"))
-    refute_selector "label"
+    thumb = page.all("span", visible: :all).find { |s| s[:class].to_s.include?("rounded-full") && s[:class].to_s.include?("shadow") }
+    assert_includes thumb[:class].split, "bg-white"
   end
 
   def test_disabled_wrapper_dims

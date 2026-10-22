@@ -41,8 +41,12 @@ class UI::ThemeToggle < UI::Base
   # changing `data-lucide` at runtime: lucide replaces each <i> with an <svg>
   # on first render, so the original element is gone and a later attribute
   # change would do nothing.
-  def sun_classes = "block dark:hidden"
-  def moon_classes = "hidden dark:block"
+  # The trigger shows the preference (html[data-theme], set before paint by
+  # the theme script): sun for light, moon for dark, and a monitor while
+  # following the system, which is the default.
+  def sun_classes = "hidden in-data-[theme=light]:block"
+  def moon_classes = "hidden in-data-[theme=dark]:block"
+  def system_classes = "block in-data-[theme=light]:hidden in-data-[theme=dark]:hidden"
 
   def option_options(option)
     {
