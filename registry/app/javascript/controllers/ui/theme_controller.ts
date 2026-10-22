@@ -4,7 +4,8 @@ import { Controller } from '@hotwired/stimulus';
 //
 // Applies the `.dark` class to <html>, which is what `@custom-variant dark`
 // in application.css keys off. The stored preference is one of three values;
-// 'system' defers to the OS and keeps following it while selected.
+// 'system' defers to the OS and keeps following it while selected. With
+// nothing stored, the page is light.
 //
 // The same resolution logic runs in an inline <head> script (see
 // layouts/_theme_script.html.erb) so the class is set before first paint. This
@@ -62,11 +63,11 @@ export default class extends Controller<HTMLElement> {
     const stored = this.readStored();
     return stored === 'light' || stored === 'dark' || stored === 'system'
       ? stored
-      : 'system';
+      : 'light';
   }
 
   // Private windows and blocked site data make localStorage throw on access,
-  // so every read is guarded; the page still renders with the system theme.
+  // so every read is guarded; the page still renders in the light theme.
   private readStored(): string | null {
     try {
       return localStorage.getItem(STORAGE_KEY);

@@ -196,13 +196,16 @@ ws.onopen = async () => {
     r = await rail();
     check("› greys out at the end", r.next && !r.prev);
 
-    // 9. With no saved choice the theme follows the system, and says so.
+    // 9. With no saved choice the page is light, even on a dark OS, and the
+    //    toggle shows the sun.
+    await send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-color-scheme", value: "dark" }] });
     await run(`localStorage.clear()`);
     await send("Page.reload");
     await sleep(2500);
-    const theme = await run(`(() => { const m = document.querySelector('header svg.lucide-monitor, header [data-lucide=monitor]');
-      return { pref: document.documentElement.dataset.theme, monitor: !!m && m.getBoundingClientRect().width > 0 }; })()`);
-    check("theme follows the system by default, with the monitor icon", theme.pref === "system" && theme.monitor, JSON.stringify(theme));
+    const theme = await run(`(() => { const shown = (n) => { const m = document.querySelector('header svg.lucide-' + n); return !!m && m.getBoundingClientRect().width > 0; };
+      return { pref: document.documentElement.dataset.theme, dark: document.documentElement.classList.contains('dark'), sun: shown('sun'), monitor: shown('monitor') }; })()`);
+    check("theme is light by default, even on a dark OS, with the sun icon", theme.pref === "light" && !theme.dark && theme.sun && !theme.monitor, JSON.stringify(theme));
+    await send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-color-scheme", value: "light" }] });
 
     // 10. A hero switch flips with a real click, and its knob stays white in dark.
     await run(`(() => { const t = document.querySelector('[data-rail-target=track]'); const card = [...t.children].find(c => c.textContent.includes('Notifications'));
@@ -213,11 +216,11 @@ ws.onopen = async () => {
     await click("[data-test-switch] > span");
     await sleep(300);
     check("a hero switch flips on click", (await switchOn()) !== before);
-    await send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-color-scheme", value: "dark" }] });
+    await run(`document.documentElement.classList.add('dark')`);
     await sleep(300);
-    const knob = await run(`(() => { const k = document.querySelector('[data-test-switch] span[class*=translate-x]'); return getComputedStyle(k).backgroundColor; })()`);
-    check("the knob is white in dark mode", /^(rgb\(255, 255, 255\)|oklch\(1 0 0\)|color\(srgb 1 1 1\))/.test(knob), knob);
-    await send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-color-scheme", value: "light" }] });
+    const knob = await run(`(() => { const k = document.querySelector('[data-test-switch] span[class*=translate-x]'); return { bg: getComputedStyle(k).backgroundColor, page: getComputedStyle(document.body).backgroundColor }; })()`);
+    check("the knob is white in dark mode", /^rgb\(255, 255, 255\)/.test(knob.bg) && knob.page !== "rgb(255, 255, 255)", JSON.stringify(knob));
+    await run(`document.documentElement.classList.remove('dark')`);
 
     // 11. The records card's pagination fits its card without overlapping.
     const pages = await run(`(() => { const nav = [...document.querySelectorAll('[data-rail-target=track] nav[aria-label]')].pop();

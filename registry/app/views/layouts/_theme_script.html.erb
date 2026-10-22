@@ -8,7 +8,7 @@
     try {
       var stored = null;
       try { stored = localStorage.getItem('ui-theme'); } catch (e) {}
-      var pref = stored === 'light' || stored === 'dark' ? stored : 'system';
+      var pref = stored === 'dark' || stored === 'system' ? stored : 'light';
       var dark = pref === 'dark' ||
         (pref === 'system' &&
          window.matchMedia('(prefers-color-scheme: dark)').matches);
