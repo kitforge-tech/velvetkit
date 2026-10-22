@@ -49,18 +49,17 @@ class UI::ThemeToggleTest < ViewComponent::TestCase
   # lucide swaps each <i data-lucide> for an <svg> on first render, so the
   # element is gone afterwards and the icon cannot be changed by attribute.
   # All three are rendered and shown by the preference on <html data-theme>:
-  # a monitor while following the system (the default, and before any script
-  # runs), so "system" is visible rather than looking like light or dark.
-  def test_trigger_icon_follows_the_preference_with_system_by_default
+  # the sun for light, which is the default (and before any script runs).
+  def test_trigger_icon_follows_the_preference_with_light_by_default
     render_inline(UI::ThemeToggle.new)
     trigger = page.find("button[aria-haspopup]")
     icon = ->(name) { trigger.find("i[data-lucide='#{name}']", visible: :all)[:class].split }
-    assert_includes icon.("sun"), "in-data-[theme=light]:block"
+    sun = icon.("sun")
+    assert_includes sun, "block"
+    assert_includes sun, "in-data-[theme=dark]:hidden"
+    assert_includes sun, "in-data-[theme=system]:hidden"
     assert_includes icon.("moon"), "in-data-[theme=dark]:block"
-    monitor = icon.("monitor")
-    assert_includes monitor, "block"
-    assert_includes monitor, "in-data-[theme=light]:hidden"
-    assert_includes monitor, "in-data-[theme=dark]:hidden"
+    assert_includes icon.("monitor"), "in-data-[theme=system]:block"
   end
 
   def test_html_attrs_passthrough
