@@ -232,6 +232,24 @@ ws.onopen = async () => {
     await sleep(2500);
     const mark = await run(`(() => { const img = [...document.querySelectorAll('[data-collapsible=icon] img[src*=mark]')].find(i => i.getBoundingClientRect().width > 0); const r = img.getBoundingClientRect(); return [Math.round(r.width), Math.round(r.height)]; })()`);
     check("the collapsed sidebar's mark isn't squashed", mark[0] === 28 && mark[1] === 28, mark.join("×"));
+    //     Collapsing each example by its toggle centres the mark over the icons, unclipped.
+    for (const id of ["preview-sidebar-default", "preview-sidebar-dropdown"]) {
+      await run(`(() => { const aside = document.getElementById('${id}'); aside.scrollIntoView({ block: 'center' });
+        aside.closest('[data-controller~="ui--sidebar"]').querySelector('[data-action~="ui--sidebar#toggle"]').setAttribute('data-test-toggle', ''); })()`);
+      await sleep(300);
+      await click("[data-test-toggle]");
+      await sleep(600);
+      const lined = await run(`(() => { const aside = document.getElementById('${id}'); document.querySelector('[data-test-toggle]').removeAttribute('data-test-toggle');
+        const img = [...aside.querySelectorAll('img[src*=mark]')].find(i => i.getBoundingClientRect().width > 0); const m = img.getBoundingClientRect();
+        const b = aside.querySelector('[data-sidebar=menu-button], [data-slot=sidebar-menu-button], ul a, ul button').getBoundingClientRect();
+        const box = img.closest('[data-slot=sidebar-header]').getBoundingClientRect();
+        return { collapsed: aside.dataset.collapsible, off: Math.round(Math.abs((m.left + m.right) / 2 - (b.left + b.right) / 2)), inside: m.left >= box.left && m.right <= box.right }; })()`);
+      check(`collapsed ${id.replace("preview-sidebar-", "")} sidebar: mark centred over the icons`, lined.collapsed === "icon" && lined.off <= 1 && lined.inside, JSON.stringify(lined));
+      if (process.env.UX_SHOTS) {
+        const shot = await send("Page.captureScreenshot", { format: "png" });
+        (await import("node:fs")).writeFileSync(`${process.env.UX_SHOTS}/${id}.png`, Buffer.from(shot.result.data, "base64"));
+      }
+    }
 
     // 13. The Menu page's examples stay inside the page.
     await send("Page.navigate", { url: `${BASE}/docs/components/menu` });
