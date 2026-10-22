@@ -1,5 +1,5 @@
 <%= tag.div(**wrapper_options) do %><%= render(UI::Menu.new) do |menu| %>
-  <% menu.with_trigger(**trigger_options) do %><%= render(UI::Icon.new(name: "sun", size: :sm, class: sun_classes)) %><%= render(UI::Icon.new(name: "moon", size: :sm, class: moon_classes)) %><% end %>
+  <% menu.with_trigger(**trigger_options) do %><%= render(UI::Icon.new(name: "sun", size: :sm, class: sun_classes)) %><%= render(UI::Icon.new(name: "moon", size: :sm, class: moon_classes)) %><%= render(UI::Icon.new(name: "monitor", size: :sm, class: system_classes)) %><% end %>
   <% menu.with_menu_content(align: :end, class: "w-40") do |content| %>
     <% content.with_label(t("ui.theme_toggle.heading", default: "Theme")) %>
     <% OPTIONS.each do |option| %>
