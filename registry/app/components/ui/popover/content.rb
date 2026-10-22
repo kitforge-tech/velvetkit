@@ -44,18 +44,16 @@ class UI::Popover::Content < UI::Base
     )
   end
 
+  # A square turned 45°, half inside the popover. Only its two outer edges
+  # get a border, so it reads as the popover's outline stepping out to a
+  # point; the inner half covers the popover's own border. Keyed on
+  # data-side, which the controller updates when the popover flips.
   def arrow_classes
-    # Arrow borders are driven by data-side attribute so they update when
-    # Floating UI flips the popover position based on available viewport space.
-    # Base: border-t border-l (arrow points down for data-side="top")
-    # Overrides remove base borders and add the correct pointing-edge borders:
-    #   data-side="bottom": remove t/l, add b/r (points up)
-    #   data-side="left":   remove t/l, add b/l (points right)
-    #   data-side="right":  remove t/l, add t/r (points left)
-    "absolute w-2 h-2 bg-popover rotate-45 border-t border-l " \
-    "data-[side=bottom]:border-b-0 data-[side=bottom]:border-r-0 data-[side=bottom]:border-b data-[side=bottom]:border-r " \
-    "data-[side=left]:border-b-0 data-[side=left]:border-l-0 data-[side=left]:border-b data-[side=left]:border-r " \
-    "data-[side=right]:border-t-0 data-[side=right]:border-r-0 data-[side=right]:border-b data-[side=right]:border-l"
+    "absolute size-2 rotate-45 bg-popover border-border " \
+      "data-[side=top]:border-r data-[side=top]:border-b " \
+      "data-[side=bottom]:border-l data-[side=bottom]:border-t " \
+      "data-[side=left]:border-t data-[side=left]:border-r " \
+      "data-[side=right]:border-b data-[side=right]:border-l"
   end
 
   def html_options

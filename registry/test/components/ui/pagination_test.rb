@@ -72,7 +72,21 @@ class UI::PaginationTest < ViewComponent::TestCase
 
   # The caller owns the routes, so the component takes a block.
   def test_builds_urls_from_the_given_block
-    render_inline(UI::Pagination.new(pagy: pagy(count: 240)) { |p| "/sections/7?page=#{p}" })
-    assert_selector "a[href='/sections/7?page=2']"
+    render_inline(UI::Pagination.new(pagy: pagy(count: 240)) { |p| "/invoices?page=#{p}" })
+    assert_selector "a[href='/invoices?page=2']"
+  end
+
+  # Laid out by the width it is given, not the screen's: in a narrow card on
+  # a wide screen, the screen-width layout squeezed the summary and the
+  # links into one row and they overlapped.
+  def test_lays_out_by_its_container_not_the_screen
+    render_inline(UI::Pagination.new(pagy: pagy(count: 240, page: 5)) { |p| "/invoices?page=#{p}" })
+    with_class = ->(name) { "contains(concat(' ', normalize-space(@class), ' '), ' #{name} ')" }
+    container = page.find(:xpath, "//div[#{with_class.("@container")}]")
+    row = container.find(:xpath, "./div")
+    assert_includes row[:class].split, "@lg:flex-row"
+    refute(row[:class].split.any? { _1.start_with?("sm:") }, "no screen breakpoints")
+    assert_includes page.find("ul")[:class].split, "flex-wrap"
+    assert_equal 2, page.all(:xpath, "//span[#{with_class.("@md:inline")}]", visible: :all).size
   end
 end

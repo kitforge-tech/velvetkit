@@ -88,11 +88,16 @@ export function useFloating(
         const staticSide = basePlacement ? STATIC_SIDES[basePlacement] : undefined;
 
         if (staticSide) {
+          // Clear the side a flip left behind, and tell the arrow which way
+          // it now points so its borders follow.
           Object.assign(arrowElement.style, {
             left: arrowX != null ? `${arrowX}px` : '',
             top: arrowY != null ? `${arrowY}px` : '',
+            right: '',
+            bottom: '',
             [staticSide]: '-4px',
           });
+          arrowElement.dataset.side = basePlacement;
         }
       }
     });
