@@ -42,11 +42,11 @@ class UI::ThemeToggle < UI::Base
   # on first render, so the original element is gone and a later attribute
   # change would do nothing.
   # The trigger shows the preference (html[data-theme], set before paint by
-  # the theme script): sun for light, moon for dark, and a monitor while
-  # following the system, which is the default.
-  def sun_classes = "hidden in-data-[theme=light]:block"
+  # the theme script): sun for light, which is the default, moon for dark,
+  # and a monitor while following the system.
+  def sun_classes = "block in-data-[theme=dark]:hidden in-data-[theme=system]:hidden"
   def moon_classes = "hidden in-data-[theme=dark]:block"
-  def system_classes = "block in-data-[theme=light]:hidden in-data-[theme=dark]:hidden"
+  def system_classes = "hidden in-data-[theme=system]:block"
 
   def option_options(option)
     {
