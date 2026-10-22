@@ -1,12 +1,12 @@
 <%# The docs' table of contents: the sidebar on wide screens, the sheet on phones. %>
 <nav class="space-y-6" aria-label="Documentation">
-  <div>
+  <div class="space-y-0.5">
     <p class="mb-2 px-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Guides</p>
     <% DocsController::PAGES.each do |page, title| %>
       <%= nav_link title, page == "getting_started" ? docs_path : doc_path(page) %>
     <% end %>
   </div>
-  <div>
+  <div class="space-y-0.5">
     <p class="mb-2 px-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Components</p>
     <%= nav_link "All components", components_path %>
     <% ComponentDoc.all.each do |component| %>

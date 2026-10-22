@@ -1,16 +1,12 @@
-<% if label.present? %>
-  <%= tag.label for: @id, class: wrapper_classes do %>
-    <%= tag.span class: root_classes do %>
-      <%= tag.input(**input_options) %>
-      <%= tag.span class: track_classes %>
-      <%= tag.span class: thumb_classes %>
-    <% end %>
-    <%= tag.span class: label_text_classes do %><%= label %><% if required? %><%= tag.span(" *", class: "text-destructive ml-0.5") %><% end %><% end %>
-  <% end %>
-<% else %>
+<%# Always a <label>: the checkbox is visually hidden, so a click on the
+    track has to reach it through the label, visible text or not. %>
+<%= tag.label for: (@id if label.present?), class: wrapper_classes do %>
   <%= tag.span class: root_classes do %>
     <%= tag.input(**input_options) %>
     <%= tag.span class: track_classes %>
     <%= tag.span class: thumb_classes %>
+  <% end %>
+  <% if label.present? %>
+    <%= tag.span class: label_text_classes do %><%= label %><% if required? %><%= tag.span(" *", class: "text-destructive ml-0.5") %><% end %><% end %>
   <% end %>
 <% end %>
