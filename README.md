@@ -1,8 +1,8 @@
 <div align="center">
   <a href="https://velvetkit.com">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="site/public/velvetkit/logo-dark.png">
-      <img alt="VelvetKit" src="site/public/velvetkit/logo-light.png" width="280">
+      <source media="(prefers-color-scheme: dark)" srcset="site/public/velvetkit/logo-dark.svg">
+      <img alt="VelvetKit" src="site/public/velvetkit/logo-light.svg" width="280">
     </picture>
   </a>
 
