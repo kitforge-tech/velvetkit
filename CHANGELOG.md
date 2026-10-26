@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0 — unreleased
+## 0.1.0.beta — 2026-10-26
 
 - First release of the component library.
 - `velvetkit:install` and `velvetkit:add` generators, with a configurable namespace.
