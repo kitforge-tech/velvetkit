@@ -5,8 +5,8 @@ require_relative "lib/velvetkit/version"
 Gem::Specification.new do |spec|
   spec.name = "velvetkit"
   spec.version = Velvetkit::VERSION
-  spec.authors = [ "Rain Root" ]
-  spec.email = [ "rainroot.ghub@gmail.com" ]
+  spec.authors = [ "Rain Root", "Rathan Kumar" ]
+  spec.email = [ "rainroot.ghub@gmail.com", "rathan@kitforge.tech" ]
 
   spec.summary = "ViewComponent + Tailwind UI components, copied into your Rails app one at a time."
   spec.description = <<~DESC
