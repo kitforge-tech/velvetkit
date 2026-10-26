@@ -48,6 +48,11 @@
         <div class="ml-auto flex items-center gap-2">
           <%= render "layouts/search" %>
           <%= render(UI::Badge.new(variant: :outline, class: "hidden sm:inline-flex")) { "v#{Velvetkit::VERSION}" } %>
+          <%= render(UI::Link.new(href: ApplicationHelper::GITHUB_URL, variant: :ghost, size: :sm, button_variant: true,
+                                  class: "size-7 rounded-md px-0 text-foreground",
+                                  target: "_blank", rel: "noopener", aria: { label: "VelvetKit on GitHub" })) do %>
+            <%= render(UI::Icon.new(name: "github", size: :sm)) %>
+          <% end %>
           <%= render(UI::ThemeToggle.new) %>
         </div>
       </div>
@@ -55,21 +60,6 @@
 
     <%= content_for?(:main) ? yield(:main) : yield %>
 
-    <footer class="border-t">
-      <div class="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-10 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-        <div class="space-y-2">
-          <%= render "layouts/logo" %>
-          <p class="text-sm text-muted-foreground">Rails components you own. MIT licensed. v<%= Velvetkit::VERSION %></p>
-        </div>
-        <div class="flex flex-col gap-3 sm:items-end">
-          <%= render "layouts/built_by" %>
-          <p class="flex gap-4 text-xs text-muted-foreground">
-            <%= link_to "llms.txt", llms_path, class: "hover:text-foreground" %>
-            <%= link_to "llms-full.txt", llms_full_path, class: "hover:text-foreground" %>
-            <%= link_to "Lookbook", "/lookbook", class: "hover:text-foreground" %>
-          </p>
-        </div>
-      </div>
-    </footer>
+    <%= render "layouts/footer" %>
   </body>
 </html>
