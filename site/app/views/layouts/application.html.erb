@@ -48,6 +48,11 @@
         <div class="ml-auto flex items-center gap-2">
           <%= render "layouts/search" %>
           <%= render(UI::Badge.new(variant: :outline, class: "hidden sm:inline-flex")) { "v#{Velvetkit::VERSION}" } %>
+          <%= render(UI::Link.new(href: ApplicationHelper::GITHUB_URL, variant: :ghost, size: :sm, button_variant: true,
+                                  class: "size-7 px-0 text-muted-foreground hover:text-foreground",
+                                  target: "_blank", rel: "noopener", aria: { label: "VelvetKit on GitHub" })) do %>
+            <%= render(UI::Icon.new(name: "github", size: :sm)) %>
+          <% end %>
           <%= render(UI::ThemeToggle.new) %>
         </div>
       </div>
@@ -64,6 +69,7 @@
         <div class="flex flex-col gap-3 sm:items-end">
           <%= render "layouts/built_by" %>
           <p class="flex gap-4 text-xs text-muted-foreground">
+            <%= link_to "GitHub", ApplicationHelper::GITHUB_URL, class: "hover:text-foreground", target: "_blank", rel: "noopener" %>
             <%= link_to "llms.txt", llms_path, class: "hover:text-foreground" %>
             <%= link_to "llms-full.txt", llms_full_path, class: "hover:text-foreground" %>
             <%= link_to "Lookbook", "/lookbook", class: "hover:text-foreground" %>

@@ -1,4 +1,6 @@
 module ApplicationHelper
+  GITHUB_URL = "https://github.com/kitforge-tech/velvetkit"
+
   # Files the namespace playground rewrites, as velvetkit:add would.
   PLAYGROUND_FILES = %w[
     app/components/ui/dialog.rb
