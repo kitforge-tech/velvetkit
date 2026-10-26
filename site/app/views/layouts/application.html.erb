@@ -49,7 +49,7 @@
           <%= render "layouts/search" %>
           <%= render(UI::Badge.new(variant: :outline, class: "hidden sm:inline-flex")) { "v#{Velvetkit::VERSION}" } %>
           <%= render(UI::Link.new(href: ApplicationHelper::GITHUB_URL, variant: :ghost, size: :sm, button_variant: true,
-                                  class: "size-7 px-0 text-muted-foreground hover:text-foreground",
+                                  class: "size-7 rounded-md px-0 text-foreground",
                                   target: "_blank", rel: "noopener", aria: { label: "VelvetKit on GitHub" })) do %>
             <%= render(UI::Icon.new(name: "github", size: :sm)) %>
           <% end %>
