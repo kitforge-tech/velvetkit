@@ -5,3 +5,4 @@
 /test/dummy/tmp/
 *.gem
 .DS_Store
+mise.local.toml
