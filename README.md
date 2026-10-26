@@ -1,4 +1,6 @@
 # VelvetKit
+<img width="1512" height="828" alt="Screenshot 2026-10-26 at 9 15 19 PM" src="https://github.com/user-attachments/assets/ffafd932-34d5-4dfe-b314-ca3692fc54bf" />
+
 
 Accessible UI components for Rails, built on [ViewComponent](https://viewcomponent.org),
 Tailwind CSS 4 and Stimulus. Website: **https://velvetkit.com**
