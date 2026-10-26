@@ -1,33 +1,58 @@
-# VelvetKit
-<img width="1512" height="828" alt="Screenshot 2026-10-26 at 9 15 19 PM" src="https://github.com/user-attachments/assets/ffafd932-34d5-4dfe-b314-ca3692fc54bf" />
+<div align="center">
+  <a href="https://velvetkit.com">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="site/public/velvetkit/logo-dark.png">
+      <img alt="VelvetKit" src="site/public/velvetkit/logo-light.png" width="280">
+    </picture>
+  </a>
 
+  <p><strong>Rails UI components you own.</strong><br>
+  Accessible ViewComponents styled with Tailwind CSS 4 and wired up with Stimulus,<br>
+  copied into your app one at a time, under your namespace.</p>
 
-Accessible UI components for Rails, built on [ViewComponent](https://viewcomponent.org),
-Tailwind CSS 4 and Stimulus. Website: **https://velvetkit.com**
+  <p>
+    <a href="https://rubygems.org/gems/velvetkit"><img alt="Gem version" src="https://img.shields.io/gem/v/velvetkit?include_prereleases&color=4D1A7F"></a>
+    <a href="https://github.com/kitforge-tech/velvetkit/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/kitforge-tech/velvetkit/actions/workflows/ci.yml/badge.svg"></a>
+    <img alt="Rails 7.1+" src="https://img.shields.io/badge/Rails-7.1%2B-CC0000?logo=rubyonrails&logoColor=white">
+    <img alt="Tailwind CSS 4" src="https://img.shields.io/badge/Tailwind_CSS-4-38BDF8?logo=tailwindcss&logoColor=white">
+    <a href="LICENSE.txt"><img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-blue"></a>
+  </p>
+
+  <p>
+    <a href="https://velvetkit.com"><strong>Website</strong></a> ·
+    <a href="https://velvetkit.com/docs">Docs</a> ·
+    <a href="https://velvetkit.com/docs/components">Components</a> ·
+    <a href="https://velvetkit.com/docs/ai">Build with AI</a> ·
+    <a href="CHANGELOG.md">Changelog</a>
+  </p>
+</div>
+
+<br>
+
+<a href="https://velvetkit.com">
+  <img alt="The velvetkit.com home page: a sign-in form, a team list, notification switches and a plan picker, all built from VelvetKit components" src="https://github.com/user-attachments/assets/ffafd932-34d5-4dfe-b314-ca3692fc54bf">
+</a>
+
+## Why VelvetKit
 
 VelvetKit doesn't load a component library at runtime. A generator copies the
 components you ask for, plus the ones they depend on, into your app. After
-that they're your code, under whatever module name you choose, and you can
-change them however you like.
+that they're your code, and you can change them however you like.
 
-```bash
-bin/rails generate velvetkit:add dialog
-#  create  app/components/ui/base.rb
-#  create  app/components/ui/icon.rb
-#  create  app/components/ui/spinner.rb
-#  create  app/components/ui/button.rb
-#  create  app/components/ui/dialog.rb …
-#  create  app/javascript/controllers/ui/dialog_controller.ts
-```
+- **Only what you use.** `velvetkit:add dialog` brings Dialog and the Button,
+  Icon and Spinner it renders, and nothing else.
+- **Your namespace.** Components land under `UI::`, `Kit::` or any module you
+  choose, with their Stimulus identifiers, translations and DOM ids renamed to match.
+- **Accessible by default.** Keyboard support, focus management and ARIA
+  wiring are built in, and every component ships with its Minitest tests.
+- **Previews included.** Each component comes with Lookbook previews, copied
+  alongside it.
+- **Themeable.** Everything styles itself from CSS variables, with dark mode
+  and no flash on load.
+- **Ready for AI agents.** Your coding agent gets a reference of the
+  components you've installed, so it uses them instead of inventing new ones.
 
-## Requirements
-
-- Rails 7.1+, Ruby 3.2+
-- Tailwind CSS 4
-- A JavaScript bundler that compiles TypeScript (Bun or esbuild through
-  `jsbundling-rails`). The Stimulus controllers are `.ts` files.
-
-## Install
+## Quick start
 
 ```ruby
 # Gemfile
@@ -36,6 +61,78 @@ gem "velvetkit", group: :development
 
 ```bash
 bundle install
+bin/rails generate velvetkit:install     # components under UI::
+bin/rails generate velvetkit:add dialog  # Dialog, and what it uses
+```
+
+```bash
+#  create  app/components/ui/base.rb
+#  create  app/components/ui/icon.rb
+#  create  app/components/ui/spinner.rb
+#  create  app/components/ui/button.rb
+#  create  app/components/ui/dialog.rb …
+#  create  app/javascript/controllers/ui/dialog_controller.ts
+```
+
+```erb
+<%= render(UI::Button.new(variant: :outline)) { "Save draft" } %>
+```
+
+### Requirements
+
+- Rails 7.1+, Ruby 3.2+
+- Tailwind CSS 4
+- A JavaScript bundler that compiles TypeScript (Bun or esbuild through
+  `jsbundling-rails`). The Stimulus controllers are `.ts` files.
+
+## Components
+
+38 components, each with live examples on [velvetkit.com](https://velvetkit.com/docs/components):
+
+[Accordion](https://velvetkit.com/docs/components/accordion) ·
+[Alert](https://velvetkit.com/docs/components/alert) ·
+[Avatar](https://velvetkit.com/docs/components/avatar) ·
+[AvatarGroup](https://velvetkit.com/docs/components/avatar_group) ·
+[Badge](https://velvetkit.com/docs/components/badge) ·
+[Banner](https://velvetkit.com/docs/components/banner) ·
+[Breadcrumb](https://velvetkit.com/docs/components/breadcrumb) ·
+[Button](https://velvetkit.com/docs/components/button) ·
+[ButtonTo](https://velvetkit.com/docs/components/button_to) ·
+[Card](https://velvetkit.com/docs/components/card) ·
+[Checkbox](https://velvetkit.com/docs/components/checkbox) ·
+[DataGrid](https://velvetkit.com/docs/components/data_grid) ·
+[DatePicker](https://velvetkit.com/docs/components/date_picker) ·
+[Dialog](https://velvetkit.com/docs/components/dialog) ·
+[Divider](https://velvetkit.com/docs/components/divider) ·
+[Icon](https://velvetkit.com/docs/components/icon) ·
+[Image](https://velvetkit.com/docs/components/image) ·
+[Input](https://velvetkit.com/docs/components/input) ·
+[InputGroup](https://velvetkit.com/docs/components/input_group) ·
+[Label](https://velvetkit.com/docs/components/label) ·
+[Link](https://velvetkit.com/docs/components/link) ·
+[Menu](https://velvetkit.com/docs/components/menu) ·
+[NativeSelect](https://velvetkit.com/docs/components/native_select) ·
+[Pagination](https://velvetkit.com/docs/components/pagination) ·
+[PasswordInput](https://velvetkit.com/docs/components/password_input) ·
+[Popover](https://velvetkit.com/docs/components/popover) ·
+[RadioGroup](https://velvetkit.com/docs/components/radio_group) ·
+[Select](https://velvetkit.com/docs/components/select) ·
+[Sheet](https://velvetkit.com/docs/components/sheet) ·
+[Sidebar](https://velvetkit.com/docs/components/sidebar) ·
+[Spinner](https://velvetkit.com/docs/components/spinner) ·
+[Switch](https://velvetkit.com/docs/components/switch) ·
+[Table](https://velvetkit.com/docs/components/table) ·
+[Tabs](https://velvetkit.com/docs/components/tabs) ·
+[Text](https://velvetkit.com/docs/components/text) ·
+[ThemeToggle](https://velvetkit.com/docs/components/theme_toggle) ·
+[Tooltip](https://velvetkit.com/docs/components/tooltip) ·
+[Typography](https://velvetkit.com/docs/components/typography)
+
+## Usage
+
+### Install
+
+```bash
 bin/rails generate velvetkit:install                 # components under UI::
 bin/rails generate velvetkit:install --namespace=Kit # or under Kit::
 ```
@@ -52,11 +149,12 @@ bin/rails generate velvetkit:install --namespace=Kit # or under Kit::
 - installs `@hotwired/stimulus`, `lucide` and `tw-animate-css` with your
   package manager, which it picks from your lockfile
 
-## Add components
+### Add components
 
 ```bash
 bin/rails generate velvetkit:add                  # list what's available
 bin/rails generate velvetkit:add date_picker menu # add these and what they use
+bin/rails generate velvetkit:add --all            # everything
 ```
 
 `add` does the following for each component:
@@ -75,7 +173,7 @@ Options: `--namespace=Kit`, `--skip-tests`, `--skip-previews`,
 `--skip-packages` (list the packages instead of installing them), and the usual
 `--force`/`--skip` for files that already exist.
 
-## AI agents
+### AI agents
 
 `install` also writes three files so coding agents use your components
 instead of inventing new ones:
@@ -92,7 +190,7 @@ Run `bin/rails generate velvetkit:ai` to regenerate them, or install with
 [llms.txt](https://velvetkit.com/llms.txt), and every component page has a
 Markdown version.
 
-## Namespacing
+### Namespacing
 
 Every component is written once, against `UI`. The generators rewrite each file
 as they copy it, so with `--namespace=Kit`:
@@ -107,7 +205,7 @@ as they copy it, so with `--namespace=Kit`:
 
 The namespace must be a single constant name, like `UI`, `Kit` or `VelvetKit`.
 
-## Theming
+### Theming
 
 Components style themselves from the CSS variables in `velvetkit.css`
 (`--primary`, `--radius`, `--sidebar`, …), with a `.dark` set alongside. To
@@ -120,13 +218,18 @@ partial in your layout's `<head>`:
 <%= render "layouts/theme_script" %>
 ```
 
-## Developing VelvetKit
+## Contributing
+
+Bug reports and pull requests are welcome on
+[GitHub](https://github.com/kitforge-tech/velvetkit/issues).
 
 ```bash
 bundle install
+bundle exec rake test             # all three suites below
 bundle exec rake test:gem         # namespace rewriting, registry, generators
 bundle exec rake test:components  # every component, from the registry, as UI::
 bundle exec rake test:namespaced  # every component copied out as Kit::, then tested
+bundle exec rubocop
 ```
 
 `registry/` holds the components, laid out like a Rails app.
@@ -134,66 +237,29 @@ bundle exec rake test:namespaced  # every component copied out as Kit::, then te
 (descriptions, package and gem versions). Dependencies, Stimulus controllers
 and npm imports are read from the source, so they can't drift.
 
-## The docs site (velvetkit.com)
+To document a component, write or improve its Lookbook preview: the docs
+site renders previews live. `site/` is the Rails app behind velvetkit.com;
+see [site/README.md](site/README.md) to run and deploy it.
 
-`site/` is a Rails app that serves https://velvetkit.com. It installs the kit
-from `registry/` the way any app would, with `bin/sync-kit` (it runs
-`velvetkit:install` and `velvetkit:add --all`). The copied files are
-gitignored, so the registry is the only source.
+### Releasing
 
-The pages build themselves from the registry:
+1. Bump `VERSION` in `lib/velvetkit/version.rb` and add a `CHANGELOG.md`
+   entry, in a pull request.
+2. Once it's merged, tag the merge commit and push the tag:
 
-- each component page renders that component's Lookbook preview templates
-  live, next to their source
-- the "Comes with" list comes from the same dependency scan `add` uses
-- the arguments and slots are read from the component's Ruby
+   ```bash
+   git tag v0.1.1.beta && git push origin v0.1.1.beta
+   ```
 
-To document a component, write or improve its preview. The site picks it up.
+The [release workflow](.github/workflows/release.yml) checks the tag matches
+the version, runs the tests and publishes the gem to RubyGems.
 
-```bash
-cd site
-bun install && bundle install
-bin/dev            # sync the kit, then run Rails, JS and CSS watchers
-bin/rails test     # every page renders, every live example, SEO and AI endpoints
-bin/ux-check       # real clicks, keys and clipboard in headless Chrome (site on :3000)
-```
+## Licence
 
-### Deploying
+VelvetKit is released under the [MIT licence](LICENSE.txt).
 
-The image is built from the `Dockerfile` at the repository root. It needs
-the gem and the registry as well as `site/`.
+<br>
 
-**Dokploy:** create an Application from this repository with build type
-**Dockerfile**. The defaults fit: Dockerfile path `Dockerfile`, context `.`.
-Then:
-
-- Environment:
-  - `SECRET_KEY_BASE`, required: generate one with `openssl rand -hex 64`.
-  - `SITE_URL`, if the site isn't served at https://velvetkit.com.
-- Domains: `velvetkit.com` on container port **80**, with HTTPS on. Traefik
-  terminates TLS and the app trusts it (`assume_ssl`).
-- Health check: the image declares one against `GET /up`.
-
-**Kamal:** fill in the TODOs in `site/config/deploy.yml`, then run
-`bin/kamal deploy` from `site/`. It uses the same Dockerfile.
-
-**Anywhere else:**
-
-```bash
-docker build -t velvetkit-site .
-docker run -p 8080:80 -e SECRET_KEY_BASE=$(openssl rand -hex 64) -e FORCE_SSL=false velvetkit-site
-```
-
-### SEO and AI
-
-Every page has its own title, description, canonical URL and Open Graph
-and Twitter cards, using `public/og.png`. The home page carries JSON-LD for
-`SoftwareApplication` and `WebSite`; docs pages carry `TechArticle` and
-`BreadcrumbList`. `/sitemap.xml` and `/robots.txt` are built from the
-routes, and robots explicitly welcomes AI crawlers and points them at
-`/llms.txt`. Component pages link their Markdown version with
-`rel="alternate"`.
-
-## License
-
-MIT
+<div align="center">
+  <sub>Built by <a href="https://kitforge.tech">KitForge</a></sub>
+</div>
