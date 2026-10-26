@@ -60,22 +60,6 @@
 
     <%= content_for?(:main) ? yield(:main) : yield %>
 
-    <footer class="border-t">
-      <div class="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-10 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-        <div class="space-y-2">
-          <%= render "layouts/logo" %>
-          <p class="text-sm text-muted-foreground">Rails components you own. MIT licensed. v<%= Velvetkit::VERSION %></p>
-        </div>
-        <div class="flex flex-col gap-3 sm:items-end">
-          <%= render "layouts/built_by" %>
-          <p class="flex gap-4 text-xs text-muted-foreground">
-            <%= link_to "GitHub", ApplicationHelper::GITHUB_URL, class: "hover:text-foreground", target: "_blank", rel: "noopener" %>
-            <%= link_to "llms.txt", llms_path, class: "hover:text-foreground" %>
-            <%= link_to "llms-full.txt", llms_full_path, class: "hover:text-foreground" %>
-            <%= link_to "Lookbook", "/lookbook", class: "hover:text-foreground" %>
-          </p>
-        </div>
-      </div>
-    </footer>
+    <%= render "layouts/footer" %>
   </body>
 </html>

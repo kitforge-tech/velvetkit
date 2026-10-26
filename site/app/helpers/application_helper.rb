@@ -1,5 +1,6 @@
 module ApplicationHelper
   GITHUB_URL = "https://github.com/kitforge-tech/velvetkit"
+  RUBYGEMS_URL = "https://rubygems.org/gems/velvetkit"
 
   # Files the namespace playground rewrites, as velvetkit:add would.
   PLAYGROUND_FILES = %w[
