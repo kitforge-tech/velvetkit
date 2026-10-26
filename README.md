@@ -1,10 +1,7 @@
 <div align="center">
-  <a href="https://velvetkit.com">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="site/public/velvetkit/logo-dark.svg">
-      <img alt="VelvetKit" src="site/public/velvetkit/logo-light.svg" width="280">
-    </picture>
-  </a>
+  <!-- The fragments follow GitHub's theme; <picture> would follow the OS. -->
+  <a href="https://velvetkit.com"><img alt="VelvetKit" src="site/public/velvetkit/logo-light.svg#gh-light-mode-only" width="280"></a>
+  <a href="https://velvetkit.com"><img alt="VelvetKit" src="site/public/velvetkit/logo-dark.svg#gh-dark-mode-only" width="280"></a>
 
   <p><strong>Rails UI components you own.</strong><br>
   Accessible ViewComponents styled with Tailwind CSS 4 and wired up with Stimulus,<br>
