@@ -14,7 +14,7 @@
           Accessible ViewComponent UI for Rails, styled with Tailwind. Copied into your app, so you own every line.
         </p>
         <div class="flex items-center gap-2">
-          <%= render(UI::Badge.new(variant: :outline)) { "v#{Velvetkit::VERSION}" } %>
+          <%= render(UI::Badge.new(variant: :outline)) { "v#{ReleasedVersion.current}" } %>
           <%= render(UI::Link.new(href: ApplicationHelper::GITHUB_URL, variant: :ghost, size: :sm, button_variant: true,
                                   class: "size-7 rounded-md px-0 text-foreground",
                                   target: "_blank", rel: "noopener", aria: { label: "VelvetKit on GitHub" })) do %>
