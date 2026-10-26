@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4"
+          bundler-cache: true
+
+      - name: RuboCop
+        run: bundle exec rubocop -f github
+
+  scan_ruby:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4"
+          bundler-cache: true
+
+      - name: Audit gem dependencies
+        run: bundle exec bundle-audit check --update
+
+      - name: Audit docs site dependencies
+        run: bundle exec bundle-audit check --gemfile-lock site/Gemfile.lock --config site/config/bundler-audit.yml
+
+      # The docs site is the only Rails app in the repo; the gem itself has
+      # no controllers or views for Brakeman to check.
+      - name: Brakeman (docs site)
+        working-directory: site
+        run: |
+          gem install brakeman --no-document
+          brakeman --no-pager
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # pagy 43, used by the components' tests, needs Ruby 3.3+.
+        ruby: ["3.3", "3.4", "4.0"]
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+
+      - name: Gem, components and namespaced copies
+        run: bundle exec rake test
+
+      - name: Build the gem
+        run: gem build velvetkit.gemspec

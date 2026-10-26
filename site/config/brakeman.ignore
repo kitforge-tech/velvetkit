@@ -1,0 +1,28 @@
+{
+  "ignored_warnings": [
+    {
+      "warning_type": "Cross-Site Scripting",
+      "warning_code": 84,
+      "fingerprint": "2d6c9b9a8236117c0119b6de9c608b285e533f9a786d22239aaf2c6dc265c6c2",
+      "check_name": "RenderInline",
+      "message": "Unescaped model attribute rendered inline",
+      "file": "app/views/components/show.html.erb",
+      "line": 122,
+      "code": "render(inline => (Unresolved Model).new.source, {})",
+      "confidence": "Medium",
+      "note": "example.source is component example ERB read from the bundled registry on disk, never from user input."
+    },
+    {
+      "warning_type": "Dynamic Render Path",
+      "warning_code": 15,
+      "fingerprint": "bc39d1cde88820696661d4ca4498207596395d840b5e50aacf765f71722e60f5",
+      "check_name": "Render",
+      "message": "Render path contains parameter value",
+      "file": "app/controllers/docs_controller.rb",
+      "line": 15,
+      "code": "render(action => params[:page], {})",
+      "confidence": "High",
+      "note": "The docs/:page route constrains :page to DocsController::PAGES keys, so only those templates can render."
+    }
+  ]
+}

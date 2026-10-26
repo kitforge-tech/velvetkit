@@ -12,3 +12,4 @@ gem "tailwind_merge", "~> 1.5"
 gem "capybara"
 gem "rubocop-rails-omakase", require: false
 gem "pagy", "~> 43.0"
+gem "bundler-audit", require: false
