@@ -2,7 +2,9 @@ name: Release
 
 # Push a tag named after the gem version to publish it:
 #   git tag v0.1.1.beta && git push origin v0.1.1.beta
-# RubyGems trusts this workflow (trusted publishing), so no API key is stored.
+# verify checks the tag and runs the tests; release then waits for an owner
+# to approve the `release` environment before publishing. RubyGems trusts
+# this workflow (trusted publishing), so no API key is stored.
 
 on:
   push:
@@ -12,16 +14,13 @@ permissions:
   contents: read
 
 jobs:
-  release:
+  verify:
     if: github.repository == 'kitforge-tech/velvetkit'
     runs-on: ubuntu-latest
-    environment: release
-    permissions:
-      contents: write # rake release checks the tag
-      id-token: write # exchanged for a short-lived RubyGems API token
     steps:
       - uses: actions/checkout@v5
         with:
+          fetch-depth: 0 # origin/main, for the ancestry check
           persist-credentials: false
 
       - uses: ruby/setup-ruby@v1
@@ -37,8 +36,33 @@ jobs:
             exit 1
           fi
 
+      # Only code that reached main through a reviewed, green PR is released.
+      - name: Tagged commit is on main
+        run: |
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
+            echo "::error::$GITHUB_REF_NAME points at $GITHUB_SHA, which is not on main"
+            exit 1
+          fi
+
       - name: Tests
         run: bundle exec rake test
+
+  release:
+    needs: verify
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: write # rake release checks the tag
+      id-token: write # exchanged for a short-lived RubyGems API token
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4"
+          bundler-cache: true
 
       # The tag already exists, so rake release skips tagging and only
       # builds the gem and pushes it to RubyGems.
