@@ -1,0 +1,45 @@
+name: Release
+
+# Push a tag named after the gem version to publish it:
+#   git tag v0.1.1.beta && git push origin v0.1.1.beta
+# RubyGems trusts this workflow (trusted publishing), so no API key is stored.
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    if: github.repository == 'kitforge-tech/velvetkit'
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: write # rake release checks the tag
+      id-token: write # exchanged for a short-lived RubyGems API token
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4"
+          bundler-cache: true
+
+      - name: Tag matches gem version
+        run: |
+          version=$(ruby -r ./lib/velvetkit/version -e 'print Velvetkit::VERSION')
+          if [ "$GITHUB_REF_NAME" != "v$version" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match gem version v$version"
+            exit 1
+          fi
+
+      - name: Tests
+        run: bundle exec rake test
+
+      # The tag already exists, so rake release skips tagging and only
+      # builds the gem and pushes it to RubyGems.
+      - uses: rubygems/release-gem@v1
