@@ -83,7 +83,7 @@
            [ "file-code", "Any component as Markdown", component_path("dialog", format: :md), "Add .md to a component's address, like /docs/components/dialog.md." ],
            [ "clipboard-copy", "Copy for AI", component_path("dialog"), "On every component page: copy its Markdown, or open it in Claude or ChatGPT." ]
          ].each do |icon, title, path, text| %>
-        <%= link_to path, class: "group flex gap-3 rounded-lg border p-4 transition-colors hover:border-primary/50" do %>
+        <%= link_to path, class: "group flex gap-3 rounded-lg border p-4 transition-colors hover:border-primary/50", data: { umami_event: "ai-resource-#{title.parameterize}" } do %>
           <%= render(UI::Icon.new(name: icon, size: :sm, class: "mt-0.5 text-primary dark:text-fuchsia-300")) %>
           <span>
             <span class="block font-medium group-hover:text-primary dark:group-hover:text-fuchsia-200"><%= title %></span>

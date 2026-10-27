@@ -17,7 +17,8 @@
           <%= render(UI::Badge.new(variant: :outline)) { "v#{ReleasedVersion.current}" } %>
           <%= render(UI::Link.new(href: ApplicationHelper::GITHUB_URL, variant: :ghost, size: :sm, button_variant: true,
                                   class: "size-7 rounded-md px-0 text-foreground",
-                                  target: "_blank", rel: "noopener", aria: { label: "VelvetKit on GitHub" })) do %>
+                                  target: "_blank", rel: "noopener", aria: { label: "VelvetKit on GitHub" },
+                                  data: { umami_event: "footer-github" })) do %>
             <%= render(UI::Icon.new(name: "github", size: :sm)) %>
           <% end %>
         </div>

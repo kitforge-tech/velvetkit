@@ -17,7 +17,7 @@
         <h2 class="text-xl font-semibold">Browse every preview</h2>
         <p class="mt-1 text-white/70">This site's Lookbook runs on the registry, so it shows exactly what you'd copy.</p>
       </div>
-      <%= render(UI::Link.new(href: "/lookbook", variant: :secondary, size: :lg, button_variant: true, class: "shrink-0 bg-white text-[#2e0f52] hover:bg-white/90")) do |link| %>
+      <%= render(UI::Link.new(href: "/lookbook", variant: :secondary, size: :lg, button_variant: true, class: "shrink-0 bg-white text-[#2e0f52] hover:bg-white/90", data: { umami_event: "cta-open-lookbook" })) do |link| %>
         <% link.with_trailing_icon(name: "arrow-up-right") %>
         Open Lookbook
       <% end %>

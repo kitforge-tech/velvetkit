@@ -15,7 +15,7 @@
   <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-10 gap-y-3 px-4 py-6 text-sm text-muted-foreground sm:px-6">
     <span class="font-medium text-foreground">Written for agents too</span>
     <% [ [ "file-text", "llms.txt", llms_path ], [ "book-open", "A reference in your repo", doc_path("ai") ], [ "terminal", "Claude Code skill", doc_path("ai") ], [ "files", "Markdown for every page", component_path("dialog", format: :md) ] ].each do |icon, text, path| %>
-      <%= link_to path, class: "inline-flex items-center gap-2 hover:text-foreground" do %>
+      <%= link_to path, class: "inline-flex items-center gap-2 hover:text-foreground", data: { umami_event: "ai-feature-#{text.parameterize}" } do %>
         <%= render(UI::Icon.new(name: icon, size: :sm, class: "text-primary dark:text-fuchsia-300")) %><%= text %>
       <% end %>
     <% end %>
@@ -78,7 +78,8 @@
       <div class="mx-auto mt-8 flex max-w-3xl flex-wrap justify-center gap-2">
         <% ComponentDoc.all.each do |component| %>
           <%= link_to component.title, component_path(component),
-                      class: "rounded-full border border-white/15 bg-white/5 px-3 py-1 text-sm text-white/85 transition-colors hover:border-fuchsia-300 hover:bg-white/10 hover:text-white" %>
+                      class: "rounded-full border border-white/15 bg-white/5 px-3 py-1 text-sm text-white/85 transition-colors hover:border-fuchsia-300 hover:bg-white/10 hover:text-white",
+                      data: { umami_event: "home-component-#{component.name}" } %>
         <% end %>
       </div>
     </div>

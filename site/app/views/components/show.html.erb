@@ -25,17 +25,17 @@
       <%= render(UI::Icon.new(name: "chevron-down", size: :xs)) %>
     <% end %>
     <% menu.with_content(class: "w-56") do |content| %>
-      <% content.with_item(data: { action: "clipboard#copy" }) do %>
+      <% content.with_item(data: { action: "clipboard#copy", umami_event: "ask-ai-copy-markdown" }) do %>
         <%# The item itself says it worked: a tick for the icon, "Copied" for the words. %>
         <span class="contents" data-clipboard-target="idle"><%= render(UI::Icon.new(name: "copy", size: :sm)) %>Copy as Markdown</span>
         <span class="contents" hidden data-clipboard-target="done"><%= render(UI::Icon.new(name: "check", size: :sm, class: "text-emerald-600 dark:text-emerald-400")) %>Copied</span>
       <% end %>
-      <% content.with_item(href: component_path(@component, format: :md)) do %>
+      <% content.with_item(href: component_path(@component, format: :md), data: { umami_event: "ask-ai-view-markdown" }) do %>
         <%= render(UI::Icon.new(name: "file-text", size: :sm)) %>View as Markdown
       <% end %>
       <% content.with_divider %>
       <% ask_ai_links(component_url(@component, format: :md), @component.title).each do |assistant, url| %>
-        <% content.with_item(href: url, target: "_blank", rel: "noopener") do %>
+        <% content.with_item(href: url, target: "_blank", rel: "noopener", data: { umami_event: "ask-ai-open-#{assistant.parameterize}" }) do %>
           <%= render(UI::Icon.new(name: "external-link", size: :sm)) %>Open in <%= assistant %>
         <% end %>
       <% end %>
