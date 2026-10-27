@@ -34,6 +34,9 @@ module Site
     # robots.txt. Set SITE_URL where it differs (a staging host).
     config.x.site_url = ENV.fetch("SITE_URL", "https://velvetkit.com")
 
+    # Where the version badge reads the latest release from (ReleasedVersion).
+    config.x.rubygems_latest_url = "https://rubygems.org/api/v1/versions/velvetkit/latest.json"
+
     previews = File.join(Velvetkit.registry.root, "test/components/previews")
     config.autoload_paths << previews
 

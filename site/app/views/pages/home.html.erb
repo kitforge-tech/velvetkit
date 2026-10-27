@@ -2,7 +2,7 @@
 <% content_for :structured_data do %>
   <%= json_ld("@type" => "SoftwareApplication", "name" => "VelvetKit", "url" => site_url,
               "description" => SeoHelper::DEFAULT_DESCRIPTION, "applicationCategory" => "DeveloperApplication",
-              "operatingSystem" => "Ruby on Rails", "softwareVersion" => Velvetkit::VERSION, "license" => "https://opensource.org/licenses/MIT",
+              "operatingSystem" => "Ruby on Rails", "softwareVersion" => ReleasedVersion.current, "license" => "https://opensource.org/licenses/MIT",
               "codeRepository" => ApplicationHelper::GITHUB_URL,
               "offers" => { "@type" => "Offer", "price" => "0", "priceCurrency" => "USD" },
               "author" => { "@type" => "Organization", "name" => "KitForge", "url" => "https://kitforge.tech" }) %>
