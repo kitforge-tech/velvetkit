@@ -1,0 +1,13 @@
+<%= tag.nav(**html_options) do %>
+  <% if @title %>
+    <%= tag.p(@title, id: title_id, class: "mb-3 font-medium text-foreground") %>
+  <% end %>
+  <div class="relative border-s border-border ps-3" data-ui--table-of-contents-target="rail">
+    <%# Slides to the current link; positioned by the controller. %>
+    <span aria-hidden="true" data-state="hidden" data-ui--table-of-contents-target="indicator"
+          class="absolute -start-px top-0 h-0 w-0.5 rounded-full bg-primary opacity-0 data-[state=visible]:opacity-100 transition-[transform,height,opacity] duration-200 ease-out motion-reduce:transition-none"></span>
+    <ul class="space-y-1">
+      <% items.each do |item| %><%= item %><% end %>
+    </ul>
+  </div>
+<% end %>

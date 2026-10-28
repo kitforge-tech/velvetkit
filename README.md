@@ -118,6 +118,7 @@ bin/rails generate velvetkit:add dialog  # Dialog, and what it uses
 [Spinner](https://velvetkit.com/docs/components/spinner) ·
 [Switch](https://velvetkit.com/docs/components/switch) ·
 [Table](https://velvetkit.com/docs/components/table) ·
+[TableOfContents](https://velvetkit.com/docs/components/table_of_contents) ·
 [Tabs](https://velvetkit.com/docs/components/tabs) ·
 [Text](https://velvetkit.com/docs/components/text) ·
 [ThemeToggle](https://velvetkit.com/docs/components/theme_toggle) ·

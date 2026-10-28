@@ -1,0 +1,8 @@
+<li>
+  <%= tag.a(@text, **link_options) %>
+  <% if items? %>
+    <ul class="ms-4 mt-1 space-y-1">
+      <% items.each do |item| %><%= item %><% end %>
+    </ul>
+  <% end %>
+</li>
