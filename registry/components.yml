@@ -94,6 +94,8 @@ components:
     description: Tabbed panels with keyboard navigation.
   text:
     description: Body text in set sizes, weights and tones.
+  textarea:
+    description: A multi-line text field with label and error, that can grow with its text.
   theme_toggle:
     description: A light/dark/system theme switcher.
     files:

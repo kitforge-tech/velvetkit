@@ -1,0 +1,7 @@
+<div class="flex flex-col gap-4 max-w-md">
+  <%= render(UI::Textarea.new(label: "Bio", value: "Rails developer who likes accessible UI.")) %>
+  <%= render(UI::Textarea.new(label: "Reason", required: true, placeholder: "Required")) %>
+  <%= render(UI::Textarea.new(label: "Summary", error: true, value: "Too short")) %>
+  <%= render(UI::Textarea.new(label: "Notes", disabled: true, value: "Locked after review")) %>
+  <%= render(UI::Textarea.new(label: "Fixed size", resize: :none, placeholder: "Can't be resized")) %>
+</div>

@@ -121,6 +121,7 @@ bin/rails generate velvetkit:add dialog  # Dialog, and what it uses
 [TableOfContents](https://velvetkit.com/docs/components/table_of_contents) ·
 [Tabs](https://velvetkit.com/docs/components/tabs) ·
 [Text](https://velvetkit.com/docs/components/text) ·
+[Textarea](https://velvetkit.com/docs/components/textarea) ·
 [ThemeToggle](https://velvetkit.com/docs/components/theme_toggle) ·
 [Tooltip](https://velvetkit.com/docs/components/tooltip) ·
 [Typography](https://velvetkit.com/docs/components/typography)
