@@ -30,4 +30,7 @@ class UI::InputPreview < ViewComponent::Preview
 
   # @label With Labels
   def with_labels; render_with_template; end
+
+  # @label Hint and Error
+  def hint_and_error; render_with_template; end
 end

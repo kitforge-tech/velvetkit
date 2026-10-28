@@ -1,9 +1,2 @@
 <%# frozen_string_literal: true %>
-<% if render_label? %>
-  <div class="flex flex-col gap-2 w-full">
-    <%= render(label_component) { label_text } %>
-    <% if form_field? %><%= @form.public_send(form_builder_method, @field, **form_field_options) %><% else %><%= tag.input(**html_options) %><% end %>
-  </div>
-<% else %>
-  <% if form_field? %><%= @form.public_send(form_builder_method, @field, **form_field_options) %><% else %><%= tag.input(**html_options) %><% end %>
-<% end %>
+<%= render(wrapper) do %><% if form_field? %><%= @form.public_send(form_builder_method, @field, **form_field_options) %><% else %><%= tag.input(**html_options) %><% end %><% end %>

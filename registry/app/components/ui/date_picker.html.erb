@@ -17,7 +17,7 @@
            placeholder="<%= placeholder %>" class="<%= input_classes %>"
            value="<%= typed_value %>"
            <%= "required" if @required %> <%= "disabled" if @disabled %>
-           <%= "aria-describedby=\"#{input_id}-hint\"".html_safe if render_hint? %>
+           <%= tag.attributes("aria-describedby": describedby, "aria-invalid": ("true" if wrapper.error?)) %>
            data-ui--date-picker-target="input"
            data-action="input->ui--date-picker#typed">
 
@@ -40,6 +40,9 @@
     <p id="<%= input_id %>-hint" class="mt-1 text-xs text-muted-foreground">
       <%= t("ui.date_picker.hint", pattern: placeholder) %>
     </p>
+  <% end %>
+  <% if wrapper.error_message %>
+    <%= tag.p(wrapper.error_message, id: wrapper.error_id, class: "mt-1 text-xs text-destructive") %>
   <% end %>
 
   <div id="<%= panel_id %>" role="dialog" hidden

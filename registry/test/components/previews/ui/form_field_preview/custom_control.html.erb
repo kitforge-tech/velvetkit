@@ -1,0 +1,6 @@
+<div class="max-w-md">
+  <%= render(UI::FormField.new(label: "Accent colour", hint: "Used for your avatar and links.")) do |field| %>
+    <%= tag.input(type: "color", name: "accent", value: "#4d1a7f",
+                  class: "h-9 w-16 rounded-md border border-input bg-background p-1", **field.control_attributes) %>
+  <% end %>
+</div>

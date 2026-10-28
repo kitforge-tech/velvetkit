@@ -165,4 +165,18 @@ class UI::DatePickerTest < ViewComponent::TestCase
       assert_includes arrow.text(:all), I18n.t(key)
     end
   end
+
+  def test_error_message_shows_under_the_hint_and_describes_the_input
+    render_inline(UI::DatePicker.new(name: "starts_on", label: "Start date", error: "Pick a date in the future"))
+    input = page.find("input[type='text'][aria-invalid='true']")
+    assert_equal "#{input[:id]}-hint #{input[:id]}-error", input["aria-describedby"]
+    assert_selector "p##{input[:id]}-error.text-destructive", text: "Pick a date in the future"
+  end
+
+  def test_no_error_only_the_hint_describes
+    render_inline(UI::DatePicker.new(name: "starts_on"))
+    input = page.find("input[type='text']")
+    assert_equal "#{input[:id]}-hint", input["aria-describedby"]
+    refute input["aria-invalid"]
+  end
 end

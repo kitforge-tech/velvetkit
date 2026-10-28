@@ -1,0 +1,9 @@
+<% if wrap? %>
+  <%= tag.div(class: classes, **@html_attrs) do %>
+    <% if render_label? %><%= render(label_component) { label_text } %><% end %>
+    <%= content %>
+    <%= render(UI::FormField::Messages.new(self)) %>
+  <% end %>
+<% else %>
+  <%= content %>
+<% end %>

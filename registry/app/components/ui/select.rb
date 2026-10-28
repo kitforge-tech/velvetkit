@@ -42,8 +42,8 @@ class UI::Select < UI::Base
   )
 
   def initialize(name: nil, options: [], selected: nil, prompt: nil,
-                 label: nil, size: :default, searchable: false, multiple: false,
-                 required: false, error: false, disabled: false,
+                 label: nil, hint: nil, size: :default, searchable: false, multiple: false,
+                 required: false, error: nil, disabled: false,
                  form: nil, field: nil,
                  class: nil, **html_attrs)
     @name       = name
@@ -62,9 +62,15 @@ class UI::Select < UI::Base
     @user_class = binding.local_variable_get(:class)
     @html_attrs = html_attrs
     @uid        = SecureRandom.hex(4)
+    @wrapper    = UI::FormField.new(label: label, hint: hint, error: error,
+                                    required: required, disabled: disabled,
+                                    form: form, field: field, for: trigger_id)
   end
 
-  attr_reader :prompt, :size
+  attr_reader :prompt, :size, :wrapper
+
+  # Lays out its own label, so it takes FormField's parts rather than its wrapper.
+  delegate :render_label?, :label_text, :label_component, to: :wrapper
 
   def searchable? = @searchable
   def multiple? = @multiple
@@ -76,7 +82,7 @@ class UI::Select < UI::Base
 
   def trigger_classes
     cn(variant_classes(size: @size),
-       { "border-destructive focus:ring-destructive" => @error },
+       { "border-destructive focus:ring-destructive" => wrapper.error? },
        @user_class)
   end
 
@@ -87,37 +93,14 @@ class UI::Select < UI::Base
       class: trigger_classes,
       role: "combobox",
       disabled: @disabled,
-      aria: { haspopup: "listbox", expanded: "false", controls: listbox_id, invalid: (@error ? "true" : nil) },
+      aria: { haspopup: "listbox", expanded: "false", controls: listbox_id,
+              invalid: ("true" if wrapper.error?), describedby: wrapper.describedby },
       data: { "ui--select-target": "trigger",
               action: "click->ui--select#toggle keydown->ui--select#keydown" }
     }
   end
 
   def form_field? = @form.present? && @field.present?
-
-  # Same convention as UI::Input: bound to a form object the attribute name
-  # supplies the label; `label:` overrides, `label: false` opts out.
-  def render_label?
-    return false if @label == false
-
-    @label.present? || form_field?
-  end
-
-  def label_text
-    return @label if @label.is_a?(String) && @label.present?
-    return nil unless form_field?
-
-    object = @form.object
-    if object.respond_to?(:class) && object.class.respond_to?(:human_attribute_name)
-      object.class.human_attribute_name(@field)
-    else
-      @field.to_s.humanize
-    end
-  end
-
-  def label_component
-    UI::Label.new(for: trigger_id, required: @required, disabled: @disabled)
-  end
 
   # Accepts [["Label", value], ...] or a plain list of scalars. A prompt
   # becomes a first, empty option, as `include_blank` makes it natively;

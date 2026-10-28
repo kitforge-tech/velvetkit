@@ -26,7 +26,7 @@
 #   <%= render(UI::DatePicker.new(name: "event[date]", value: @date, label: "Date")) %>
 class UI::DatePicker < UI::Base
   def initialize(name: nil, value: nil, form: nil, field: nil, label: nil,
-                 required: false, error: false, disabled: false, hint: true,
+                 required: false, error: nil, disabled: false, hint: true,
                  min: nil, max: nil, class: nil, **html_attrs)
     @name = name
     @value = value
@@ -44,7 +44,11 @@ class UI::DatePicker < UI::Base
     @max = max
     @user_class = binding.local_variable_get(:class)
     @html_attrs = html_attrs
+    # Only for the error: the label and the format hint are laid out here.
+    @wrapper = UI::FormField.new(label: false, error: error, form: form, field: field, for: input_id)
   end
+
+  attr_reader :wrapper
 
   def field_name = @name || (@form && @field && "#{@form.object_name}[#{@field}]")
 
@@ -65,6 +69,10 @@ class UI::DatePicker < UI::Base
   def render_hint? = @hint != false
 
   def input_id = @input_id ||= "ui-date-#{SecureRandom.hex(4)}"
+
+  def describedby
+    [ ("#{input_id}-hint" if render_hint?), (wrapper.error_id if wrapper.error_message) ].compact.join(" ").presence
+  end
   def panel_id = "#{input_id}-panel"
 
   def classes = cn("relative", @user_class)
@@ -78,7 +86,7 @@ class UI::DatePicker < UI::Base
       # aria-invalid rather than a Ruby flag, so a date the user mistypes is
       # marked without a round trip.
       "aria-invalid:border-destructive aria-invalid:ring-destructive",
-      @error && "border-destructive"
+      wrapper.error? && "border-destructive"
     )
   end
 

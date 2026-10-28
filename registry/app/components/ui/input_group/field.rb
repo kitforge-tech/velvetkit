@@ -16,6 +16,9 @@ class UI::InputGroup::Field < UI::Input
 
   def initialize(**args)
     super(**args)
+    # Inside the group's border there is no room for a label or messages: the
+    # component composing the group shows those. Keep only the invalid state.
+    @wrapper = UI::FormField.new(label: false, error: @wrapper.error?)
     @html_attrs[:data] ||= {}
     @html_attrs[:data][:slot] = "input-group-control"
   end

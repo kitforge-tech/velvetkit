@@ -2,7 +2,7 @@
 
 require "securerandom"
 
-# A multi-line text field, with the same label, required, error and
+# A multi-line text field, with the same label, hint, required, error and
 # form-builder options as UI::Input.
 #
 # `autogrow: true` grows the box with its text (CSS field-sizing, no
@@ -43,7 +43,7 @@ class UI::Textarea < UI::Base
   # Without them a plain <textarea> is rendered; pass `name:` and `value:`.
   def initialize(size: :default, rows: 3, resize: :vertical, autogrow: false,
                  label: nil, label_size: :default, label_weight: :medium,
-                 required: false, error: false, disabled: false,
+                 hint: nil, required: false, error: nil, disabled: false,
                  value: nil, form: nil, field: nil,
                  class: nil, **html_attrs)
     @form         = form
@@ -61,15 +61,20 @@ class UI::Textarea < UI::Base
     @value        = value
     @user_class   = binding.local_variable_get(:class)
     @html_attrs   = html_attrs
-    @textarea_id  = @html_attrs[:id] || (render_label? ? "ui-textarea-#{SecureRandom.hex(4)}" : nil)
+    @wrapper      = UI::FormField.new(label: label, hint: hint, error: error,
+                                      required: required, disabled: disabled,
+                                      label_size: label_size, label_weight: label_weight,
+                                      form: form, field: field)
+    @textarea_id  = @html_attrs[:id] || (@wrapper.wrap? ? "ui-textarea-#{SecureRandom.hex(4)}" : nil)
     @html_attrs[:id] = @textarea_id if @textarea_id
+    @wrapper.for  = @textarea_id
   end
 
-  attr_reader :value
+  attr_reader :value, :wrapper
 
   def classes
     cn(
-      variant_classes(size: @size, resize: @resize, autogrow: @autogrow, error: @error),
+      variant_classes(size: @size, resize: @resize, autogrow: @autogrow, error: wrapper.error?),
       @user_class
     )
   end
@@ -80,7 +85,8 @@ class UI::Textarea < UI::Base
     opts[:class]          = classes
     opts[:disabled]       = true if @disabled
     opts[:required]       = true if @required
-    opts[:"aria-invalid"] = "true" if @error
+    opts[:"aria-invalid"] = "true" if wrapper.error?
+    opts[:"aria-describedby"] = wrapper.describedby if wrapper.describedby
     opts
   end
 
@@ -91,35 +97,5 @@ class UI::Textarea < UI::Base
   # The builder derives the name and value itself.
   def form_field_options
     html_options.except(:name)
-  end
-
-  # As UI::Input: bound to a form object, the attribute name supplies the
-  # label. Pass `label:` to override it, or `label: false` to opt out.
-  def render_label?
-    return false if @label == false
-
-    @label.present? || form_field?
-  end
-
-  def label_text
-    return @label if @label.is_a?(String) && @label.present?
-    return nil unless form_field?
-
-    object = @form.object
-    if object.respond_to?(:class) && object.class.respond_to?(:human_attribute_name)
-      object.class.human_attribute_name(@field)
-    else
-      @field.to_s.humanize
-    end
-  end
-
-  def label_component
-    UI::Label.new(
-      for: @textarea_id,
-      size: @label_size,
-      weight: @label_weight,
-      required: @required,
-      disabled: @disabled
-    )
   end
 end

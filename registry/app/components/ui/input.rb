@@ -42,7 +42,7 @@ class UI::Input < UI::Base
 
   def initialize(type: :text, size: :default, variant: :default,
                  label: nil, label_size: :default, label_weight: :medium,
-                 required: false, error: false, disabled: false,
+                 hint: nil, required: false, error: nil, disabled: false,
                  form: nil, field: nil,
                  class: nil, **html_attrs)
     @form           = form
@@ -58,13 +58,20 @@ class UI::Input < UI::Base
     @disabled       = disabled
     @user_class     = binding.local_variable_get(:class)
     @html_attrs     = html_attrs
-    @input_id       = @html_attrs[:id] || (render_label? ? "ui-input-#{SecureRandom.hex(4)}" : nil)
+    @wrapper        = UI::FormField.new(label: label, hint: hint, error: error,
+                                        required: required, disabled: disabled,
+                                        label_size: label_size, label_weight: label_weight,
+                                        form: form, field: field)
+    @input_id       = @html_attrs[:id] || (@wrapper.wrap? ? "ui-input-#{SecureRandom.hex(4)}" : nil)
     @html_attrs[:id] = @input_id if @input_id
+    @wrapper.for    = @input_id
   end
+
+  attr_reader :wrapper
 
   def classes
     cn(
-      variant_classes(size: @size, variant: @variant),
+      variant_classes(size: @size, variant: wrapper.error? ? :error : @variant),
       @user_class
     )
   end
@@ -76,7 +83,8 @@ class UI::Input < UI::Base
     opts[:class]          = classes
     opts[:disabled]       = true if @disabled
     opts[:required]       = true if @required
-    opts[:"aria-invalid"] = "true" if @error
+    opts[:"aria-invalid"] = "true" if wrapper.error?
+    opts[:"aria-describedby"] = wrapper.describedby if wrapper.describedby
     opts
   end
 
@@ -91,37 +99,5 @@ class UI::Input < UI::Base
 
   def form_builder_method
     BUILDER_METHODS.fetch(@type.to_sym, :text_field)
-  end
-
-  # Labels follow Rails' own convention: bound to a form object, the attribute
-  # name supplies the text (via human_attribute_name, so i18n and
-  # `activerecord.attributes.*` overrides apply) with no per-call-site string.
-  # Pass `label:` to override the text, or `label: false` to opt out entirely.
-  def render_label?
-    return false if @label == false
-
-    @label.present? || form_field?
-  end
-
-  def label_text
-    return @label if @label.is_a?(String) && @label.present?
-    return nil unless form_field?
-
-    object = @form.object
-    if object.respond_to?(:class) && object.class.respond_to?(:human_attribute_name)
-      object.class.human_attribute_name(@field)
-    else
-      @field.to_s.humanize
-    end
-  end
-
-  def label_component
-    UI::Label.new(
-      for: @input_id,
-      size: @label_size,
-      weight: @label_weight,
-      required: @required,
-      disabled: @disabled
-    )
   end
 end

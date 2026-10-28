@@ -1,0 +1,6 @@
+<% if @field.hint.present? %>
+  <%= tag.p(@field.hint, id: @field.hint_id, class: "text-xs text-muted-foreground") %>
+<% end %>
+<% if @field.error_message.present? %>
+  <%= tag.p(@field.error_message, id: @field.error_id, class: "text-xs text-destructive") %>
+<% end %>
