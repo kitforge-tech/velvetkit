@@ -1,13 +1,32 @@
 <% content_for :main do %>
+  <% page = yield %>
+  <% outline = page_outline(page) %>
+  <%# Same width as the navbar on every page, outline or not. %>
   <div class="mx-auto flex max-w-6xl gap-12 px-4 py-8 sm:px-6 md:py-12">
     <aside class="hidden w-52 shrink-0 md:block">
       <div class="sticky top-20 -mx-1.5 h-[calc(100vh-6rem)] overflow-y-auto overscroll-contain px-1.5 pt-1 pb-8" data-controller="sidebar-scroll" data-focus-scope="sidebar">
         <%= render "layouts/nav" %>
       </div>
     </aside>
-    <main class="min-w-0 flex-1">
-      <%= yield %>
+    <main class="min-w-0 flex-1 [&_[id]]:scroll-mt-20">
+      <%= page %>
     </main>
+    <% if outline.size > 1 %>
+      <aside class="hidden w-44 shrink-0 xl:block">
+        <div class="sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto overscroll-contain pt-1 pb-8">
+          <%# A section counts as reached just below the sticky header, where a link jumps it to. %>
+          <%= render(UI::TableOfContents.new(title: "On this page", offset: 96)) do |toc| %>
+            <% outline.each do |section| %>
+              <% toc.with_item(href: "##{section[:id]}", text: section[:text]) do |item| %>
+                <% section[:children].each do |child| %>
+                  <% item.with_item(href: "##{child[:id]}", text: child[:text]) %>
+                <% end %>
+              <% end %>
+            <% end %>
+          <% end %>
+        </div>
+      </aside>
+    <% end %>
   </div>
 <% end %>
 <%# Search engines read each docs page as an article in a breadcrumb trail. %>
