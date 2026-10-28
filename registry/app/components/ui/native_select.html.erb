@@ -2,7 +2,7 @@
     is drawn back with a positioned icon over the control. %>
 <% control = capture do %>
   <div class="relative w-full">
-    <% if form_field? %><%= @form.select(@field, normalized_options, { include_blank: prompt.presence, selected: @selected }, form_select_options) %><% else %><%= tag.select(**select_options) do %><% if prompt.present? %><option value=""><%= prompt %></option><% end %><% normalized_options.each do |label, value| %><option value="<%= value %>" <%= "selected" if selected?(value) %>><%= label %></option><% end %><% end %><% end %>
+    <% if form_field? %><%= @form.select(@field, normalized_options, builder_select_options, form_select_options) %><% else %><%= tag.select(**select_options) do %><% if prompt.present? %><option value=""><%= prompt %></option><% end %><% normalized_options.each do |label, value| %><option value="<%= value %>" <%= "selected" if selected?(value) %>><%= label %></option><% end %><% end %><% end %>
     <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground"><%= render(UI::Icon.new(name: "chevron-down", size: :sm, aria: { hidden: true })) %></span>
   </div>
 <% end %>
