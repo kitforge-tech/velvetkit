@@ -115,4 +115,15 @@ class UI::NativeSelectTest < ViewComponent::TestCase
     assert_equal "", page.all("option").first[:value]
     assert_equal "selected", page.find("option[value='2']")[:selected]
   end
+
+  def test_a_bound_select_keeps_the_models_value
+    record = Struct.new(:team_id) do
+      def to_model = self
+      def model_name = ActiveModel::Name.new(self.class, nil, "Member")
+      def persisted? = false
+    end.new(2)
+    form = ActionView::Helpers::FormBuilder.new(:member, record, vc_test_controller.view_context, {})
+    render_inline(UI::NativeSelect.new(form: form, field: :team_id, options: [ [ "Design", 1 ], [ "Engineering", 2 ] ], prompt: "Choose"))
+    assert_selector "option[value='2'][selected]", text: "Engineering"
+  end
 end
