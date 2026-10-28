@@ -3,7 +3,7 @@
 # UI::InputGroup::Field — a UI::Input variant stripped of its own
 # border/shadow/ring so the parent wrapper owns those styles.
 #
-# The wrapper owns the focus treatment via :focus-within; the field strips
+# The wrapper owns the focus treatment (lit while this field has focus); the field strips
 # its own outline + ring so there is no double indicator on focus.
 class UI::InputGroup::Field < UI::Input
   STRIPPED_CLASSES =

@@ -74,8 +74,11 @@ class UI::InputGroupTest < ViewComponent::TestCase
     render_inline(UI::InputGroup.new) do |g|
       g.with_field(error: true, placeholder: "x")
     end
-    wrapper = page.find("div[data-slot='input-group']")
-    assert_includes wrapper[:class], "border-destructive"
+    classes = page.find("div[data-slot='input-group']")[:class].split
+    # Driven by the field's aria-invalid, with a selector browsers accept:
+    # a :has() nested in another :has() is invalid and the rule is dropped.
+    assert_includes classes, "has-[[data-slot][aria-invalid=true]:enabled]:border-destructive"
+    assert classes.none? { |c| c.scan(":has(").size > 0 && c.start_with?("has-[") }, "nested :has() in #{classes.grep(/has\(/)}"
   end
 
   def test_field_never_renders_messages_inside_the_group
@@ -145,5 +148,24 @@ class UI::InputGroupTest < ViewComponent::TestCase
       g.with_field(placeholder: "x")
     end
     assert_selector "div#my-group[data-slot='input-group']"
+  end
+
+  def test_ring_follows_the_control_not_any_focused_addon
+    render_inline(UI::InputGroup.new) { |g| g.with_field(placeholder: "x") }
+    classes = page.find("div[data-slot='input-group']")[:class].split
+    assert_includes classes, "has-[[data-slot]:focus]:ring-2"
+    refute classes.any? { |c| c.start_with?("focus-within:") }
+  end
+
+  def test_addon_button_rings_on_keyboard_focus_only
+    render_inline(UI::InputGroup.new) do |g|
+      g.with_field(placeholder: "x")
+      g.with_addon(align: "inline-end") { |a| a.with_icon_button(aria: { label: "Show" }) { "o" } }
+    end
+    classes = page.find("button[aria-label='Show']")[:class].split
+    assert_includes classes, "focus:ring-0"
+    assert_includes classes, "focus:ring-offset-0"
+    assert_includes classes, "focus-visible:ring-2"
+    refute_includes classes, "focus:ring-2"
   end
 end
