@@ -11,6 +11,8 @@ Rails.application.routes.draw do
   get "docs", to: "docs#show", as: :docs, defaults: { page: "getting_started" }
   get "docs/components", to: "components#index", as: :components
   get "docs/components/:id", to: "components#show", as: :component, constraints: { format: /html|md/ }
+  post "docs/forms/sign_in", to: "form_demos#sign_in", as: :form_demo_sign_in
+  post "docs/forms/invitation", to: "form_demos#invitation", as: :form_demo_invitation
   get "docs/:page", to: "docs#show", as: :doc, constraints: { page: Regexp.union(DocsController::PAGES.keys) }
 
   get "demo/rows", to: "demo_rows#index", as: :demo_rows, defaults: { format: :json }

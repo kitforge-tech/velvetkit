@@ -2,14 +2,26 @@
 <nav class="space-y-6" aria-label="Documentation">
   <div class="space-y-0.5">
     <p class="mb-2 px-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Guides</p>
-    <% DocsController::PAGES.each do |page, title| %>
+    <% DocsController::PAGES.except(*DocsController::FORM_PAGES).each do |page, title| %>
       <%= nav_link title, page == "getting_started" ? docs_path : doc_path(page) %>
     <% end %>
   </div>
   <div class="space-y-0.5">
     <p class="mb-2 px-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Components</p>
     <%= nav_link "All components", components_path %>
-    <% ComponentDoc.all.each do |component| %>
+    <%# The form components, and the guide to using them, form one branch; it
+        starts open on any of their pages. %>
+    <% forms = [ doc_path("forms"), *ComponentDoc.forms.map { component_path(_1) } ] %>
+    <%= render(UI::Collapsible.new(open: forms.any? { current_page?(_1) },
+                                   trigger_class: "text-muted-foreground hover:bg-accent hover:text-foreground",
+                                   content_class: "ml-3 space-y-0.5 border-l pl-2")) do |branch| %>
+      <% branch.with_trigger { "Forms" } %>
+      <%= nav_link DocsController::PAGES["forms"], doc_path("forms") %>
+      <% ComponentDoc.forms.each do |component| %>
+        <%= nav_link component.title, component_path(component) %>
+      <% end %>
+    <% end %>
+    <% ComponentDoc.all.reject(&:form?).each do |component| %>
       <%= nav_link component.title, component_path(component) %>
     <% end %>
   </div>

@@ -1,0 +1,17 @@
+class SessionsController < ApplicationController
+  def new
+    @sign_in = SignIn.new
+  end
+
+  def create
+    @sign_in = SignIn.new(params.expect(sign_in: [ :email, :password, :remember_me ]))
+
+    if (user = @sign_in.authenticate)
+      start_new_session_for user
+      redirect_to after_authentication_url
+    else
+      # 422 tells Turbo to render the form again, errors and all.
+      render :new, status: :unprocessable_entity
+    end
+  end
+end

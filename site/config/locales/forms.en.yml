@@ -1,0 +1,10 @@
+# What the invitation form calls its fields. Labels and error messages both
+# read these, so "Start date" can't be blank, not "Starts on".
+en:
+  activemodel:
+    attributes:
+      invitation:
+        team_id: "Team"
+        starts_on: "Start date"
+        note: "Personal note"
+        terms: "Permission"

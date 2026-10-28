@@ -1,0 +1,14 @@
+<%= form_with model: sign_in, url: form_demo_sign_in_path, class: "flex flex-col gap-5" do |f| %>
+  <%# Errors on the form as a whole, rather than on one field. %>
+  <% if sign_in.errors[:base].any? %>
+    <%= render(UI::Alert.new(variant: :destructive)) do |alert| %>
+      <% alert.with_title { sign_in.errors[:base].to_sentence } %>
+    <% end %>
+  <% end %>
+
+  <%= render(UI::Input.new(form: f, field: :email, type: :email, autocomplete: "email")) %>
+  <%= render(UI::PasswordInput.new(form: f, field: :password, autocomplete: "current-password")) %>
+  <%= render(UI::Checkbox.new(form: f, field: :remember_me, label: "Keep me signed in")) %>
+
+  <%= render(UI::Button.new(type: :submit, full_width: true)) { "Sign in" } %>
+<% end %>

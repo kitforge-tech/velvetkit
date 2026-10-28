@@ -1,0 +1,18 @@
+class Invitation < ApplicationRecord
+  ROLES = %w[Admin Member Viewer].freeze
+
+  belongs_to :team # "Team must exist" shows under the team_id field
+
+  validates :name, :email, :role, :starts_on, presence: true
+  validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
+  validates :role, inclusion: { in: ROLES }, allow_blank: true
+  validates :note, length: { maximum: 160 }
+  validates :terms, acceptance: true # not a column: Rails adds the attribute
+  validate :starts_on_is_not_in_the_past
+
+  private
+
+  def starts_on_is_not_in_the_past
+    errors.add(:starts_on, "can't be in the past") if starts_on&.past?
+  end
+end

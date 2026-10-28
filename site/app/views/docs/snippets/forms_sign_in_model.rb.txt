@@ -1,0 +1,21 @@
+class SignIn
+  include ActiveModel::Model
+  include ActiveModel::Attributes
+
+  attribute :email, :string
+  attribute :password, :string
+  attribute :remember_me, :boolean, default: false
+
+  validates :email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP, allow_blank: true }
+  validates :password, presence: true
+
+  # The user, or nil with an error on the form as a whole: which of the two
+  # was wrong is not something to tell a stranger.
+  def authenticate
+    return unless valid?
+
+    User.authenticate_by(email:, password:).tap do |user|
+      errors.add(:base, "Email or password is incorrect") unless user
+    end
+  end
+end

@@ -1,0 +1,6 @@
+<%# From the model, automatically: %>
+<%= render(UI::Input.new(form: f, field: :email)) %>
+
+<%# Your own message, or none: %>
+<%= render(UI::Input.new(form: f, field: :email, error: "Use your work email")) %>
+<%= render(UI::Input.new(form: f, field: :email, error: false)) %>
