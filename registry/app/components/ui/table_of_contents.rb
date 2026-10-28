@@ -38,12 +38,15 @@ class UI::TableOfContents < UI::Base
   def html_options
     data = {
       controller: "ui--table-of-contents",
+      # Until the controller has marked the current link, nothing animates:
+      # otherwise every page load fades the highlight in.
+      settling: "",
       "ui--table-of-contents-offset-value": @offset,
       "ui--table-of-contents-container-value": @container
     }.compact
 
     opts = @html_attrs.except(:data)
-    opts[:class] = cn("text-sm", @user_class)
+    opts[:class] = cn("text-sm data-[settling]:[&_*]:transition-none", @user_class)
     opts[:data]  = data.merge(@html_attrs[:data] || {})
     if @title
       opts[:"aria-labelledby"] = title_id
