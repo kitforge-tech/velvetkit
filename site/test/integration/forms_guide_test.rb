@@ -72,5 +72,4 @@ class FormsGuideTest < ActionDispatch::IntegrationTest
     get component_path("dialog")
     assert_select "aside details:not([open]) > summary", text: "Forms"
   end
-
 end
