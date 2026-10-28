@@ -17,6 +17,26 @@ module ApplicationHelper
     with bin/rails generate velvetkit:add and use them for all new UI.
   PROMPT
 
+  # The page's "On this page" list, read from its rendered HTML: each h2 with
+  # an id, and the h3s after it. An h3 without an id links to its parent's, as
+  # each component example does. Headings in live previews (marked
+  # data-outline-skip) and in dialogs or popovers belong to the demo, not the page.
+  def page_outline(html)
+    Nokogiri::HTML5.fragment(html).css("h2, h3").each_with_object([]) do |heading, outline|
+      next if heading.ancestors("[data-outline-skip], dialog, [popover]").any?
+
+      id = heading["id"] || (heading.name == "h3" && heading.parent["id"])
+      next if id.blank?
+
+      entry = { id: id, text: heading.text.squish, children: [] }
+      if heading.name == "h2"
+        outline << entry
+      elsif outline.any?
+        outline.last[:children] << entry
+      end
+    end
+  end
+
   # wrap: for prose, like prompts, rather than code. language: when neither
   # the label nor the code says what it is.
   def code_block(source, label: nil, wrap: false, language: nil)

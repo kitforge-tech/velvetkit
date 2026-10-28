@@ -63,3 +63,6 @@ application.register("ui--tooltip", UI__TooltipController)
 
 import UI__SelectController from "./ui/select_controller"
 application.register("ui--select", UI__SelectController)
+
+import UI__TableOfContentsController from "./ui/table_of_contents_controller"
+application.register("ui--table-of-contents", UI__TableOfContentsController)

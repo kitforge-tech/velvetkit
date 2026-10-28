@@ -88,6 +88,8 @@ components:
     description: An on/off toggle.
   table:
     description: A styled table with header, rows and caption.
+  table_of_contents:
+    description: An "On this page" list that follows the reader's scroll.
   tabs:
     description: Tabbed panels with keyboard navigation.
   text:

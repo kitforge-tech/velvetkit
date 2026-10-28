@@ -32,6 +32,8 @@ en:
       hide: 'Hide password'
     sidebar:
       toggle: 'Toggle sidebar'
+    table_of_contents:
+      label: 'On this page'
     pagination:
       label: 'Pages'
       summary: 'Showing %{from}–%{to} of %{count}'

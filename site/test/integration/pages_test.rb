@@ -28,6 +28,27 @@ class PagesTest < ActionDispatch::IntegrationTest
     assert_select "[role=alert], .text-destructive", minimum: 1
   end
 
+  test "guides list their sections on this page" do
+    get doc_path("theming")
+    assert_select "aside nav[aria-labelledby] a", text: "The colour tokens" do |links|
+      assert_equal "#tokens", links.first["href"]
+    end
+  end
+
+  test "component pages list their examples, but not headings inside them" do
+    get component_path("table_of_contents")
+    assert_select "aside nav[aria-labelledby]" do
+      assert_select "a[href='#examples']"
+      assert_select "a[href='#examples'] + ul a[href='#flat']", text: "Flat"
+      assert_select "a[href^='#toc-default']", count: 0
+    end
+  end
+
+  test "a page with no sections has no outline" do
+    get components_path
+    assert_select "aside nav[aria-labelledby]", count: 0
+  end
+
   test "components index lists every component" do
     get components_path
     assert_response :success

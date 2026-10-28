@@ -1,0 +1,41 @@
+<%# The article scrolls in its own box here; on a real page leave out `container:`. %>
+<div class="grid grid-cols-[1fr_14rem] gap-8 max-w-3xl">
+  <div id="toc-default-article" class="h-96 overflow-y-auto rounded-md border p-6 space-y-6">
+    <section class="space-y-2">
+      <h2 id="toc-default-process" class="text-lg font-semibold">Contribution process</h2>
+      <p class="text-sm text-muted-foreground">Every change goes through the same four steps.</p>
+    </section>
+    <% [
+      ["toc-default-issue", "1. Create an issue or open a merge request"],
+      ["toc-default-classify", "2. Classify as core or extended"],
+      ["toc-default-support", "3. Define level of support"],
+      ["toc-default-merge", "4. Merge your changes"]
+    ].each do |id, heading| %>
+      <section class="space-y-2">
+        <h3 id="<%= id %>" class="font-medium"><%= heading %></h3>
+        <p class="text-sm text-muted-foreground">Describe the change and why it matters. Link related issues, add screenshots for visual changes, and note anything reviewers should try by hand.</p>
+        <p class="text-sm text-muted-foreground">Keep each change focused on one thing, so it is quick to review and easy to revert.</p>
+      </section>
+    <% end %>
+    <section class="space-y-2">
+      <h2 id="toc-default-resources" class="text-lg font-semibold">Resources</h2>
+      <p class="text-sm text-muted-foreground">Guides, design files and the component checklist.</p>
+      <p class="text-sm text-muted-foreground">Ask in the discussion board when something is unclear.</p>
+    </section>
+    <section class="min-h-80 space-y-2">
+      <h2 id="toc-default-conduct" class="text-lg font-semibold">Code of conduct</h2>
+      <p class="text-sm text-muted-foreground">Be kind, assume good intent, and keep feedback about the work.</p>
+    </section>
+  </div>
+
+  <%= render(UI::TableOfContents.new(title: "On this page", container: "#toc-default-article", offset: 24)) do |toc| %>
+    <% toc.with_item(href: "#toc-default-process", text: "Contribution process") do |item| %>
+      <% item.with_item(href: "#toc-default-issue", text: "1. Create an issue or open a merge request") %>
+      <% item.with_item(href: "#toc-default-classify", text: "2. Classify as core or extended") %>
+      <% item.with_item(href: "#toc-default-support", text: "3. Define level of support") %>
+      <% item.with_item(href: "#toc-default-merge", text: "4. Merge your changes") %>
+    <% end %>
+    <% toc.with_item(href: "#toc-default-resources", text: "Resources") %>
+    <% toc.with_item(href: "#toc-default-conduct", text: "Code of conduct") %>
+  <% end %>
+</div>

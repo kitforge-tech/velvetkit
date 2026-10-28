@@ -102,7 +102,7 @@
       <%= render(UI::Badge.new(variant: :secondary)) { "Talks to a server" } %>
     </div>
     <p class="text-muted-foreground">Sort a column, or filter one from its menu. Each change asks this site for a fresh page of 120 sample rows.</p>
-    <%= render "components/demos/#{@component.name}" %>
+    <div data-outline-skip><%= render "components/demos/#{@component.name}" %></div>
   </section>
 <% end %>
 
@@ -118,7 +118,7 @@
               <% list.with_trigger(value: "code") do |trigger| %><% trigger.with_leading_icon(name: "code") %>Code<% end %>
             <% end %>
             <% tabs.with_panel(value: "preview", class: "pt-3") do %>
-              <div class="relative min-h-40 rounded-xl border bg-[radial-gradient(var(--border)_1px,transparent_1px)] [background-size:16px_16px] p-6 sm:p-10">
+              <div data-outline-skip class="relative min-h-40 rounded-xl border bg-[radial-gradient(var(--border)_1px,transparent_1px)] [background-size:16px_16px] p-6 sm:p-10">
                 <%= render inline: example.source %>
               </div>
             <% end %>
