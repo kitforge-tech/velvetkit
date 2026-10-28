@@ -13,8 +13,11 @@
 #     <%= g.with_field(type: :email, placeholder: "you@example.com") %>
 #   <% end %>
 class UI::InputGroup < UI::Base
-  # Wrapper owns the focus ring via :focus-within so it lights up on any
-  # descendant focus (mouse click or keyboard). focus-visible is too narrow.
+  # Wrapper owns the control's focus ring, lit when the control itself has
+  # focus (mouse or keyboard). Not :focus-within: an addon button has its own
+  # ring, and the two would stack.
+  # An invalid, enabled control turns the border red: [aria-invalid]:enabled,
+  # because a :has() nested inside has-[] is invalid CSS and drops the rule.
   WRAPPER_BASE =
     "group/input-group relative flex w-full items-center rounded-md border " \
     "border-input bg-background " \
@@ -28,12 +31,12 @@ class UI::InputGroup < UI::Base
     "has-[>[data-align=block-end]]:h-auto " \
     "has-[>[data-align=block-end]]:flex-col " \
     "has-[>[data-align=block-end]]:[&>input]:pt-3 " \
-    "focus-within:ring-2 " \
-    "focus-within:ring-primary " \
-    "focus-within:ring-offset-1 " \
+    "has-[[data-slot]:focus]:ring-2 " \
+    "has-[[data-slot]:focus]:ring-primary " \
+    "has-[[data-slot]:focus]:ring-offset-1 " \
     "ring-offset-background " \
-    "has-[[data-slot][aria-invalid=true]:not(:has(input:disabled))]:border-destructive " \
-    "has-[[data-slot][aria-invalid=true]:not(:has(input:disabled))]:ring-destructive " \
+    "has-[[data-slot][aria-invalid=true]:enabled]:border-destructive " \
+    "has-[[data-slot][aria-invalid=true]:enabled]:ring-destructive " \
     "has-[input:disabled]:border-input " \
     "has-[input:disabled]:bg-muted " \
     "has-[input:disabled]:opacity-50"
@@ -47,9 +50,8 @@ class UI::InputGroup < UI::Base
     @html_attrs = html_attrs
   end
 
+  # The invalid state comes from the field's aria-invalid, via WRAPPER_BASE.
   def wrapper_classes
-    # Propagate error styling to the wrapper when the field is in error state.
-    error = field&.instance_variable_get(:@error)
-    cn(WRAPPER_BASE, { "border-destructive" => error }, @user_class)
+    cn(WRAPPER_BASE, @user_class)
   end
 end

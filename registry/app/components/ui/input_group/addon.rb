@@ -33,7 +33,10 @@ class UI::InputGroup::Addon < UI::Base
       class: cn(
         "text-sm flex gap-2 items-center h-6 gap-1 px-2",
         "rounded-[calc(var(--radius)-5px)]",
-        "[&>svg:not([class*='size-'])]:size-3.5 has-[>svg]:px-2"
+        "[&>svg:not([class*='size-'])]:size-3.5 has-[>svg]:px-2",
+        # Inside a field a click shouldn't ring the button (it reads as a
+        # second ring on the field); keyboard focus still does.
+        "focus:ring-0 focus:ring-offset-0 focus-visible:ring-2 focus-visible:ring-offset-1"
       ),
       **opts
     )
