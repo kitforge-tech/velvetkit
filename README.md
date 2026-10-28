@@ -96,6 +96,7 @@ bin/rails generate velvetkit:add dialog  # Dialog, and what it uses
 [ButtonTo](https://velvetkit.com/docs/components/button_to) ·
 [Card](https://velvetkit.com/docs/components/card) ·
 [Checkbox](https://velvetkit.com/docs/components/checkbox) ·
+[Collapsible](https://velvetkit.com/docs/components/collapsible) ·
 [DataGrid](https://velvetkit.com/docs/components/data_grid) ·
 [DatePicker](https://velvetkit.com/docs/components/date_picker) ·
 [Dialog](https://velvetkit.com/docs/components/dialog) ·
