@@ -1,0 +1,5 @@
+<%= form_with model: @user do |f| %>
+  <%= render(UI::Input.new(form: f, field: :email, type: :email, hint: "We'll only use it for receipts.")) %>
+  <%= render(UI::Textarea.new(form: f, field: :bio)) %>
+  <%= render(UI::Select.new(form: f, field: :plan, options: Plan::NAMES)) %>
+<% end %>

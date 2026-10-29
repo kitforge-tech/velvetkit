@@ -1,0 +1,112 @@
+<% content_for :title, "Building forms" %>
+<% sign_in = @sign_in || Demo::SignIn.new %>
+<% invitation = @invitation || Demo::Invitation.new %>
+
+<article class="max-w-3xl space-y-12">
+  <header class="space-y-3">
+    <%= render(UI::Breadcrumb.new(size: :sm)) do |bc| %>
+      <% bc.with_item(href: docs_path, text: "Docs") %>
+      <% bc.with_item(href: doc_path("forms"), text: "Building forms", current: true) %>
+    <% end %>
+    <h1 class="text-4xl font-bold tracking-tight">Building forms</h1>
+    <p class="text-lg text-muted-foreground">Pass the form builder and the attribute, and each field takes its name, value, label and errors from your model. Validation works the Rails way: save, and on failure render the form again with a 422.</p>
+  </header>
+
+  <section class="space-y-4">
+    <h2 id="bind" class="text-2xl font-semibold tracking-tight">Bind a field to a model</h2>
+    <p>Give a field <code class="font-mono text-sm">form:</code> and <code class="font-mono text-sm">field:</code> and it renders through the builder, so it gets a scoped name like <code class="font-mono text-sm">user[email]</code> and the model's current value.</p>
+    <%= code_block(snippet("forms_bind.html.erb"), label: "app/views/users/_form.html.erb") %>
+    <ul class="space-y-2 text-sm">
+      <li class="flex gap-3"><%= render(UI::Icon.new(name: "check", size: :sm, class: "mt-0.5 shrink-0 text-primary dark:text-fuchsia-300")) %><span><strong class="font-medium">The label</strong> is the attribute's human name, so <code class="font-mono">activerecord.attributes</code> translations apply. Pass <code class="font-mono">label:</code> to change it, or <code class="font-mono">label: false</code> to leave it out.</span></li>
+      <li class="flex gap-3"><%= render(UI::Icon.new(name: "check", size: :sm, class: "mt-0.5 shrink-0 text-primary dark:text-fuchsia-300")) %><span><strong class="font-medium">A hint</strong> (<code class="font-mono">hint:</code>) sits under the field, and screen readers read it with the field.</span></li>
+      <li class="flex gap-3"><%= render(UI::Icon.new(name: "check", size: :sm, class: "mt-0.5 shrink-0 text-primary dark:text-fuchsia-300")) %><span>Input, Textarea, Select, Native select, Checkbox, Password input and Date picker all work this way. <%= link_to "Form field", component_path("form_field"), class: "text-primary underline-offset-4 hover:underline dark:text-fuchsia-300" %> adds the same label, hint and error to a control of your own.</span></li>
+    </ul>
+  </section>
+
+  <section class="space-y-4">
+    <h2 id="errors" class="text-2xl font-semibold tracking-tight">Showing errors</h2>
+    <p>A bound field shows the model's errors on its attribute: a red border, the message underneath, and <code class="font-mono text-sm">aria-invalid</code> with the message as its description. For a <code class="font-mono text-sm">team_id</code> field that includes <code class="font-mono text-sm">belongs_to :team</code>'s "Team must exist". Nothing extra to write.</p>
+    <%= code_block(snippet("forms_errors.html.erb"), label: "app/views/users/_form.html.erb") %>
+    <p>Rails wraps every field that has an error in <code class="font-mono text-sm">&lt;div class="field_with_errors"&gt;</code>, which can break a form's layout. The fields show errors themselves, so turn the wrapper off:</p>
+    <%= code_block(snippet("forms_field_error_proc.rb"), label: "config/application.rb") %>
+  </section>
+
+  <section class="space-y-4">
+    <h2 id="sign-in" class="text-2xl font-semibold tracking-tight">Example: sign in</h2>
+    <p>Submit it empty to see field errors, then try a wrong password for an error on the whole form. <span class="text-muted-foreground">The demo account is <code class="font-mono text-sm"><%= Demo::SignIn::EMAIL %></code> with <code class="font-mono text-sm"><%= Demo::SignIn::PASSWORD %></code>.</span></p>
+    <%= render(UI::Tabs.new(default_value: "preview", size: :sm)) do |tabs| %>
+      <% tabs.with_list do |list| %>
+        <% list.with_trigger(value: "preview") do |trigger| %><% trigger.with_leading_icon(name: "eye") %>Preview<% end %>
+        <% list.with_trigger(value: "view") { "View" } %>
+        <% list.with_trigger(value: "model") { "Model" } %>
+        <% list.with_trigger(value: "controller") { "Controller" } %>
+      <% end %>
+      <% tabs.with_panel(value: "preview", class: "pt-3") do %>
+        <div data-outline-skip class="rounded-xl border bg-[radial-gradient(var(--border)_1px,transparent_1px)] [background-size:16px_16px] p-6 sm:p-10">
+          <%= turbo_frame_tag "sign-in-demo", class: "mx-auto block max-w-sm rounded-xl border bg-background p-6 shadow-sm" do %>
+            <% if @success && @sign_in %>
+              <%= render(UI::Alert.new(variant: :success)) do |alert| %>
+                <% alert.with_title { "Signed in as #{sign_in.email}" } %>
+                <% alert.with_description { safe_join([ "An app would redirect here. ", link_to("Try again", doc_path("forms"), class: "underline", data: { turbo_frame: "_top" }) ]) } %>
+              <% end %>
+            <% else %>
+              <%= render "docs/forms/sign_in", sign_in: sign_in %>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+      <% tabs.with_panel(value: "view", class: "pt-3") do %>
+        <%= code_block(File.read(Rails.root.join("app/views/docs/forms/_sign_in.html.erb")), label: "app/views/sessions/_form.html.erb") %>
+      <% end %>
+      <% tabs.with_panel(value: "model", class: "pt-3") do %>
+        <%= code_block(snippet("forms_sign_in_model.rb"), label: "app/models/sign_in.rb") %>
+      <% end %>
+      <% tabs.with_panel(value: "controller", class: "pt-3") do %>
+        <%= code_block(snippet("forms_sessions_controller.rb"), label: "app/controllers/sessions_controller.rb") %>
+      <% end %>
+    <% end %>
+  </section>
+
+  <section class="space-y-4">
+    <h2 id="invitation" class="text-2xl font-semibold tracking-tight">Example: invite a teammate</h2>
+    <p>A longer form with every kind of field. Each one has a validation that can fail: send it empty, pick a start date in the past, or leave the permission box unticked. The errors are listed at the top as well as under each field, and the field names come from the locale file, so a label and its error always match.</p>
+    <%= render(UI::Tabs.new(default_value: "preview", size: :sm)) do |tabs| %>
+      <% tabs.with_list do |list| %>
+        <% list.with_trigger(value: "preview") do |trigger| %><% trigger.with_leading_icon(name: "eye") %>Preview<% end %>
+        <% list.with_trigger(value: "view") { "View" } %>
+        <% list.with_trigger(value: "model") { "Model" } %>
+        <% list.with_trigger(value: "controller") { "Controller" } %>
+      <% end %>
+      <% tabs.with_panel(value: "preview", class: "pt-3") do %>
+        <div data-outline-skip class="rounded-xl border bg-[radial-gradient(var(--border)_1px,transparent_1px)] [background-size:16px_16px] p-6 sm:p-10">
+          <%= turbo_frame_tag "invitation-demo", class: "block rounded-xl border bg-background p-6 shadow-sm" do %>
+            <% if @success && @invitation %>
+              <%= render(UI::Alert.new(variant: :success)) do |alert| %>
+                <% alert.with_title { "Invite sent to #{invitation.email}" } %>
+                <% alert.with_description { safe_join([ "An app would save it and redirect. ", link_to("Send another", doc_path("forms"), class: "underline", data: { turbo_frame: "_top" }) ]) } %>
+              <% end %>
+            <% else %>
+              <%= render "docs/forms/invitation", invitation: invitation %>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+      <% tabs.with_panel(value: "view", class: "pt-3") do %>
+        <%= code_block(File.read(Rails.root.join("app/views/docs/forms/_invitation.html.erb")), label: "app/views/invitations/_form.html.erb") %>
+      <% end %>
+      <% tabs.with_panel(value: "model", class: "pt-3") do %>
+        <div class="space-y-3">
+          <%= code_block(snippet("forms_invitation_model.rb"), label: "app/models/invitation.rb") %>
+          <%# The demo's own translations; an Active Record model reads them from activerecord.attributes. %>
+          <%= code_block(File.read(Rails.root.join("config/locales/forms.en.yml")).sub(/\A(#.*\n)+/, "").gsub("activemodel:", "activerecord:"), label: "config/locales/en.yml") %>
+        </div>
+      <% end %>
+      <% tabs.with_panel(value: "controller", class: "pt-3") do %>
+        <%= code_block(snippet("forms_invitations_controller.rb"), label: "app/controllers/invitations_controller.rb") %>
+      <% end %>
+    <% end %>
+    <p class="text-sm text-muted-foreground">The view tabs show the exact templates running above. In the demo they post to this site and use a stand-in model with the same validations; the model and controller tabs show what they'd be in your app.</p>
+  </section>
+
+  <%= render "docs/pager", previous_page: [ "Components", components_path ], next_page: [ "Form field", component_path("form_field") ] %>
+</article>

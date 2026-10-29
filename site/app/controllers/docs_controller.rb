@@ -5,8 +5,12 @@ class DocsController < ApplicationController
     "ai" => "Build with AI",
     "namespacing" => "Namespacing",
     "theming" => "Theming and dark mode",
-    "lookbook" => "Lookbook"
+    "lookbook" => "Lookbook",
+    "forms" => "Building forms"
   }.freeze
+
+  # Listed under Forms in the sidebar rather than Guides.
+  FORM_PAGES = %w[forms].freeze
 
   layout "docs"
 

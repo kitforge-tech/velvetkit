@@ -1,0 +1,34 @@
+<%= form_with model: invitation, url: form_demo_invitation_path, class: "grid gap-5 sm:grid-cols-2" do |f| %>
+  <%# One summary at the top, so a long form says what's wrong before the reader scrolls. %>
+  <% if invitation.errors.any? %>
+    <%= render(UI::Alert.new(variant: :destructive, class: "sm:col-span-2")) do |alert| %>
+      <% alert.with_title { "#{pluralize(invitation.errors.count, "problem")} to fix before sending" } %>
+      <% alert.with_description do %>
+        <ul class="list-disc pl-4"><% invitation.errors.full_messages.each do |message| %><li><%= message %></li><% end %></ul>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%= render(UI::Input.new(form: f, field: :name, autocomplete: "off")) %>
+  <%= render(UI::Input.new(form: f, field: :email, type: :email, hint: "We'll send the invite here.")) %>
+
+  <%= render(UI::Select.new(form: f, field: :role, options: Demo::Invitation::ROLES, prompt: "Choose a role")) %>
+  <%= render(UI::NativeSelect.new(form: f, field: :team_id, options: Demo::Invitation::TEAMS, prompt: "Choose a team")) %>
+
+  <%= render(UI::DatePicker.new(form: f, field: :starts_on)) %>
+  <div class="hidden sm:block"></div>
+
+  <%= render(UI::Textarea.new(form: f, field: :note, class: "sm:col-span-2", rows: 3,
+                              hint: "Up to 160 characters, added to the invite email.")) %>
+
+  <div class="flex flex-col gap-4 sm:col-span-2">
+    <%# A switch only submits when on, so send "0" first for when it's off. %>
+    <%= f.hidden_field :notify, value: "0", id: nil %>
+    <%= render(UI::Switch.new(name: "invitation[notify]", checked: invitation.notify, label: "Email me when they join")) %>
+    <%= render(UI::Checkbox.new(form: f, field: :terms, label: "I have permission to invite this person")) %>
+  </div>
+
+  <div class="sm:col-span-2">
+    <%= render(UI::Button.new(type: :submit)) { "Send invite" } %>
+  </div>
+<% end %>
