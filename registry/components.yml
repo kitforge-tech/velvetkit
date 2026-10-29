@@ -43,6 +43,8 @@ components:
     description: A bordered container with header, content and footer.
   checkbox:
     description: A checkbox with label, standalone or bound to a form builder.
+  collapsible:
+    description: A section that opens and closes under its trigger, like a branch of a nav tree.
   data_grid:
     description: A sortable, filterable, server-paged table on AG Grid.
   date_picker:

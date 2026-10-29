@@ -80,6 +80,12 @@ class UI::NativeSelect < UI::Base
   # to avoid overriding the scoped name with a bare one.
   def form_select_options = select_options.except(:name)
 
+  # Without an explicit `selected:` the builder selects the model's value;
+  # passing `selected: nil` would select nothing, losing it on a re-render.
+  def builder_select_options
+    { include_blank: prompt.presence, selected: @selected }.compact
+  end
+
   # Accepts [["Label", value], ...] or a plain list of scalars.
   def normalized_options
     options.map { |option| option.is_a?(Array) ? option : [ option, option ] }

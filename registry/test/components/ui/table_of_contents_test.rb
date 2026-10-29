@@ -110,4 +110,11 @@ class UI::TableOfContentsTest < ViewComponent::TestCase
     render_toc(data: { test_id: "toc" })
     assert_selector "nav[data-test-id='toc'][data-controller~='ui--table-of-contents']"
   end
+
+  def test_starts_settling_so_the_first_state_does_not_animate
+    render_toc
+    nav = page.find("nav")
+    assert nav.matches_css?("[data-settling]")
+    assert_includes nav[:class].split, "data-[settling]:[&_*]:transition-none"
+  end
 end

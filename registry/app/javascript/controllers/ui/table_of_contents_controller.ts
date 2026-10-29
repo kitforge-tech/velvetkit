@@ -18,6 +18,7 @@ export default class extends Controller<HTMLElement> {
   private scroller: HTMLElement | Window = window;
   private active: HTMLAnchorElement | null = null;
   private frame = 0;
+  private settleFrame = 0;
   private locked = false;
   private unlockTimer = 0;
   private resizeObserver?: ResizeObserver;
@@ -30,6 +31,11 @@ export default class extends Controller<HTMLElement> {
     this.resizeObserver = new ResizeObserver(this.schedule);
     this.resizeObserver.observe(this.element);
     this.update();
+    // The first state is drawn without transitions (data-settling); let them
+    // back in once it has been painted.
+    this.settleFrame = requestAnimationFrame(() => {
+      this.settleFrame = requestAnimationFrame(() => delete this.element.dataset.settling);
+    });
   }
 
   disconnect() {
@@ -37,6 +43,7 @@ export default class extends Controller<HTMLElement> {
     this.scroller.removeEventListener('scrollend', this.unlock);
     this.resizeObserver?.disconnect();
     cancelAnimationFrame(this.frame);
+    cancelAnimationFrame(this.settleFrame);
     clearTimeout(this.unlockTimer);
   }
 
