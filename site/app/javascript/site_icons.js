@@ -3,6 +3,11 @@
 // an app should list just the icons it uses, as velvetkit_icons.ts does.
 import { createIcons, icons } from "lucide"
 
+// Drawn whenever an icon is added, however it arrives (a Turbo visit, frame
+// or stream, or a controller's markup). Only <i> is watched: the SVG that
+// replaces it keeps data-lucide, and drawing on that would never stop.
 const draw = () => createIcons({ icons })
-;["turbo:load", "turbo:frame-load", "turbo:render", "turbo:submit-end", "turbo:render-stream"]
-  .forEach((event) => document.addEventListener(event, draw))
+draw()
+new MutationObserver((records) => {
+  if (records.some((r) => [...r.addedNodes].some((n) => n instanceof Element && (n.matches("i[data-lucide]") || n.querySelector("i[data-lucide]"))))) draw()
+}).observe(document.documentElement, { childList: true, subtree: true })
