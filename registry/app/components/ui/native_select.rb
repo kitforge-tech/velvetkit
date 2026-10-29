@@ -30,8 +30,8 @@ class UI::NativeSelect < UI::Base
   )
 
   def initialize(name: nil, options: [], selected: nil, prompt: nil,
-                 label: nil, size: :default,
-                 required: false, error: false, disabled: false,
+                 label: nil, hint: nil, size: :default,
+                 required: false, error: nil, disabled: false,
                  form: nil, field: nil,
                  class: nil, **html_attrs)
     @name       = name
@@ -47,44 +47,23 @@ class UI::NativeSelect < UI::Base
     @field      = field
     @user_class = binding.local_variable_get(:class)
     @html_attrs = html_attrs
-    @select_id  = @html_attrs[:id] || (render_label? ? "ui-native-select-#{SecureRandom.hex(4)}" : nil)
+    @wrapper    = UI::FormField.new(label: label, hint: hint, error: error,
+                                    required: required, disabled: disabled,
+                                    form: form, field: field)
+    @select_id  = @html_attrs[:id] || (@wrapper.wrap? ? "ui-native-select-#{SecureRandom.hex(4)}" : nil)
     @html_attrs[:id] = @select_id if @select_id
+    @wrapper.for = @select_id
   end
 
-  attr_reader :options, :prompt
+  attr_reader :options, :prompt, :wrapper
 
   def classes
     cn(variant_classes(size: @size),
-       { "border-destructive focus:ring-destructive" => @error },
+       { "border-destructive focus:ring-destructive" => wrapper.error? },
        @user_class)
   end
 
   def form_field? = @form.present? && @field.present?
-
-  # Same convention as UI::Input: bound to a form object the attribute name
-  # supplies the label; `label:` overrides, `label: false` opts out.
-  def render_label?
-    return false if @label == false
-
-    @label.present? || form_field?
-  end
-
-  def label_text
-    return nil unless render_label?
-    return @label if @label.is_a?(String) && @label.present?
-    return nil unless form_field?
-
-    object = @form.object
-    if object.respond_to?(:class) && object.class.respond_to?(:human_attribute_name)
-      object.class.human_attribute_name(@field)
-    else
-      @field.to_s.humanize
-    end
-  end
-
-  def label_component
-    UI::Label.new(for: @select_id, required: @required, disabled: @disabled)
-  end
 
   def select_options
     opts = @html_attrs.dup
@@ -92,7 +71,8 @@ class UI::NativeSelect < UI::Base
     opts[:name] = @name if @name
     opts[:disabled] = true if @disabled
     opts[:required] = true if @required
-    opts[:"aria-invalid"] = "true" if @error
+    opts[:"aria-invalid"] = "true" if wrapper.error?
+    opts[:"aria-describedby"] = wrapper.describedby if wrapper.describedby
     opts
   end
 

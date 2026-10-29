@@ -81,6 +81,12 @@ class UI::InputGroupTest < ViewComponent::TestCase
     assert classes.none? { |c| c.scan(":has(").size > 0 && c.start_with?("has-[") }, "nested :has() in #{classes.grep(/has\(/)}"
   end
 
+  def test_field_never_renders_messages_inside_the_group
+    render_inline(UI::InputGroup.new) { |g| g.with_field(error: "Taken", hint: "Pick another") }
+    assert_selector "input[aria-invalid='true']"
+    refute_selector "p"
+  end
+
   def test_field_disabled_sets_disabled_on_input
     render_inline(UI::InputGroup.new) do |g|
       g.with_field(disabled: true, placeholder: "x")

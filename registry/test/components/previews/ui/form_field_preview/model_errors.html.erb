@@ -1,0 +1,11 @@
+<%# In an app, @signup comes back from a failed save. Bound fields show its errors on their own. %>
+<% signup = Struct.new(:email, :bio) do
+     include ActiveModel::Validations
+     def self.model_name = ActiveModel::Name.new(self, nil, "Signup")
+     validates :email, presence: true
+     validates :bio, length: { minimum: 20 }
+   end.new("", "Hi").tap(&:validate) %>
+<%= form_with(model: signup, url: "#", class: "flex flex-col gap-6 max-w-md") do |f| %>
+  <%= render(UI::Input.new(form: f, field: :email, type: :email)) %>
+  <%= render(UI::Textarea.new(form: f, field: :bio, hint: "A sentence or two about you.")) %>
+<% end %>

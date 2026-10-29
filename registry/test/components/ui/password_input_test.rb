@@ -95,4 +95,13 @@ class UI::PasswordInputTest < ViewComponent::TestCase
     render_inline(UI::PasswordInput.new(form: form_builder_for(User.new), field: :password, label: false))
     assert_no_selector "label"
   end
+
+  def test_hint_and_error_sit_outside_the_group_and_describe_the_input
+    render_inline(UI::PasswordInput.new(label: "Password", id: "pw", hint: "At least 12 characters", error: "Too short"))
+    input = page.find("input#pw[aria-invalid='true']")
+    assert_equal "pw-hint pw-error", input["aria-describedby"]
+    assert_selector "p#pw-hint", text: "At least 12 characters"
+    assert_selector "p#pw-error", text: "Too short"
+    assert_selector "p", count: 2
+  end
 end

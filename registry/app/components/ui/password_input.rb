@@ -16,8 +16,8 @@ require "securerandom"
 #   <%= render(UI::PasswordInput.new(form: f, field: :password, required: true)) %>
 #   <%= render(UI::PasswordInput.new(name: "user[password]")) %>
 class UI::PasswordInput < UI::Base
-  def initialize(form: nil, field: nil, label: nil, required: false,
-                 disabled: false, error: false, class: nil, **html_attrs)
+  def initialize(form: nil, field: nil, label: nil, hint: nil, required: false,
+                 disabled: false, error: nil, class: nil, **html_attrs)
     @form       = form
     @field      = field
     @label      = label
@@ -29,7 +29,12 @@ class UI::PasswordInput < UI::Base
     @error      = error
     @user_class = binding.local_variable_get(:class)
     @html_attrs = html_attrs
+    @wrapper    = UI::FormField.new(label: label, hint: hint, error: error,
+                                    required: required, disabled: disabled,
+                                    form: form, field: field, for: @input_id)
   end
+
+  attr_reader :wrapper
 
   def group_component
     UI::InputGroup.new(
@@ -38,32 +43,8 @@ class UI::PasswordInput < UI::Base
     )
   end
 
-  # Same convention as UI::Input: bound to a form object the attribute name
-  # supplies the label text; `label:` overrides it, `label: false` opts out.
-  def render_label?
-    return false if @label == false
-
-    @label.present? || form_field?
-  end
-
   def form_field?
     @form.present? && @field.present?
-  end
-
-  def label_text
-    return @label if @label.is_a?(String) && @label.present?
-    return nil unless form_field?
-
-    object = @form.object
-    if object.respond_to?(:class) && object.class.respond_to?(:human_attribute_name)
-      object.class.human_attribute_name(@field)
-    else
-      @field.to_s.humanize
-    end
-  end
-
-  def label_component
-    UI::Label.new(for: @input_id, required: @required, disabled: @disabled)
   end
 
   def field_options
@@ -75,7 +56,8 @@ class UI::PasswordInput < UI::Base
       label: false,
       required: @required,
       disabled: @disabled,
-      error: @error,
+      error: wrapper.error?,
+      "aria-describedby": wrapper.describedby,
       data: { "ui--password-visibility-target" => "input" },
       **@html_attrs
     }

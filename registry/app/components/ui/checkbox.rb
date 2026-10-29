@@ -20,9 +20,9 @@ class UI::Checkbox < UI::Base
   )
 
   def initialize(name: nil, value: "1", unchecked_value: "0", checked: false,
-                 label: nil, size: :default,
+                 label: nil, hint: nil, size: :default,
                  form: nil, field: nil,
-                 required: false, error: false, disabled: false,
+                 required: false, error: nil, disabled: false,
                  class: nil, **html_attrs)
     @form            = form
     @field           = field
@@ -37,9 +37,14 @@ class UI::Checkbox < UI::Base
     @disabled   = disabled
     @user_class = binding.local_variable_get(:class)
     @html_attrs = html_attrs
-    @id = @html_attrs[:id] || ("ui-cb-#{SecureRandom.hex(4)}" if label?)
+    # The label sits beside the box, so FormField only adds the messages below.
+    @wrapper = UI::FormField.new(label: false, hint: hint, error: error, form: form, field: field)
+    @id = @html_attrs[:id] || ("ui-cb-#{SecureRandom.hex(4)}" if label? || @wrapper.wrap?)
     @html_attrs[:id] = @id if @id
+    @wrapper.for = @id
   end
+
+  attr_reader :wrapper
 
   def form_field?
     @form.present? && @field.present?
@@ -87,7 +92,8 @@ class UI::Checkbox < UI::Base
     opts[:checked] = true if @checked
     opts[:disabled] = true if @disabled
     opts[:required] = true if @required
-    opts[:"aria-invalid"] = "true" if @error
+    opts[:"aria-invalid"] = "true" if wrapper.error?
+    opts[:"aria-describedby"] = wrapper.describedby if wrapper.describedby
     opts[:class]   = classes
     # Add accessible name when no visual label is present
     if !label? && opts[:"aria-label"].blank?
@@ -107,7 +113,7 @@ class UI::Checkbox < UI::Base
   def classes
     cn(
       variant_classes(size: @size),
-      { "border-destructive aria-invalid:focus:ring-destructive" => @error },
+      { "border-destructive aria-invalid:focus:ring-destructive" => wrapper.error? },
       @user_class
     )
   end

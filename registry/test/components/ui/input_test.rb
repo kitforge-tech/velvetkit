@@ -248,4 +248,41 @@ class UI::InputTest < ViewComponent::TestCase
     render_inline(UI::Input.new(name: "user[email]"))
     assert_no_selector "label"
   end
+
+  # ── Hint and error message ───────────────────────────────────────────────────
+
+  def test_hint_describes_the_input
+    render_inline(UI::Input.new(hint: "We never share it"))
+    input = page.find("input")
+    assert input[:id].start_with?("ui-input-")
+    assert_selector "div > input + p##{input[:id]}-hint", text: "We never share it"
+    assert_equal "#{input[:id]}-hint", input["aria-describedby"]
+  end
+
+  def test_error_message_marks_invalid_and_describes
+    render_inline(UI::Input.new(label: "Email", id: "email", error: "Enter an email"))
+    input = page.find("input#email[aria-invalid='true']")
+    assert_includes input[:class].split, "border-destructive"
+    assert_selector "p#email-error.text-destructive", text: "Enter an email"
+    assert_equal "email-error", input["aria-describedby"]
+  end
+
+  def test_error_true_styles_without_variant
+    render_inline(UI::Input.new(error: true))
+    assert_includes page.find("input[aria-invalid='true']")[:class].split, "border-destructive"
+    refute_selector "p"
+  end
+
+  class Signup
+    include ActiveModel::Model
+    attr_accessor :email
+    validates :email, presence: true
+  end
+
+  def test_model_errors_show_under_a_bound_input
+    signup = Signup.new.tap(&:validate)
+    render_inline(UI::Input.new(form: ActionView::Helpers::FormBuilder.new(:signup, signup, vc_test_controller.view_context, {}), field: :email))
+    input = page.find("input[name='signup[email]'][aria-invalid='true']")
+    assert_selector "p##{input[:id]}-error", text: "Email can't be blank"
+  end
 end

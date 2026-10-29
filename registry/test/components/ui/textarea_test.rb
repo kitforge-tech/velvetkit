@@ -157,4 +157,22 @@ class UI::TextareaTest < ViewComponent::TestCase
     render_inline(UI::Textarea.new(form: form_builder_for(Post.new), field: :body, label: false))
     assert_no_selector "label"
   end
+
+  # ── Hint and error message ───────────────────────────────────────────────────
+
+  def test_hint_and_error_describe_the_textarea
+    render_inline(UI::Textarea.new(label: "Bio", id: "bio", hint: "Markdown works", error: "Too long"))
+    textarea = page.find("textarea#bio[aria-invalid='true']")
+    assert_equal "bio-hint bio-error", textarea["aria-describedby"]
+    assert_includes textarea[:class].split, "border-destructive"
+    assert_selector "textarea + p#bio-hint + p#bio-error"
+  end
+
+  def test_model_errors_show_under_a_bound_textarea
+    post = Post.new
+    post.errors.add(:body, :blank)
+    render_inline(UI::Textarea.new(form: form_builder_for(post), field: :body))
+    assert_selector "textarea[aria-invalid='true']"
+    assert_selector "p.text-destructive", text: "Body can't be blank"
+  end
 end

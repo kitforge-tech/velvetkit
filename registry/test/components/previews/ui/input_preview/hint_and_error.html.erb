@@ -1,0 +1,4 @@
+<div class="flex flex-col gap-6 max-w-sm">
+  <%= render(UI::Input.new(label: "Email", type: :email, hint: "We'll only use it to send receipts.")) %>
+  <%= render(UI::Input.new(label: "Username", value: "a", error: "Use at least 3 characters.")) %>
+</div>

@@ -101,6 +101,7 @@ bin/rails generate velvetkit:add dialog  # Dialog, and what it uses
 [DatePicker](https://velvetkit.com/docs/components/date_picker) ·
 [Dialog](https://velvetkit.com/docs/components/dialog) ·
 [Divider](https://velvetkit.com/docs/components/divider) ·
+[FormField](https://velvetkit.com/docs/components/form_field) ·
 [Icon](https://velvetkit.com/docs/components/icon) ·
 [Image](https://velvetkit.com/docs/components/image) ·
 [Input](https://velvetkit.com/docs/components/input) ·

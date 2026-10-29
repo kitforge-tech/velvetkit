@@ -48,6 +48,10 @@
     <% end %>
   <% end %>
 
+  <% if wrapper.hint.present? || wrapper.error_message.present? %>
+    <div class="mt-2 flex flex-col gap-2"><%= render(UI::FormField::Messages.new(wrapper)) %></div>
+  <% end %>
+
   <% if form_field? %>
     <%= @form.select(@field, native_choices, { selected: current_values }, native_options) %>
   <% else %>

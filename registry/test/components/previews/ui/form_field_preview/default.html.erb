@@ -1,0 +1,7 @@
+<div class="flex flex-col gap-6 max-w-md">
+  <%= render(UI::Input.new(type: :email, label: "Email", hint: "We'll only use it to send receipts.", placeholder: "you@example.com")) %>
+  <%= render(UI::Input.new(label: "Username", value: "a", error: "Use at least 3 characters.")) %>
+  <%= render(UI::Textarea.new(label: "Bio", hint: "Shown on your public profile.", rows: 3)) %>
+  <%= render(UI::NativeSelect.new(label: "Team", options: %w[Design Engineering], prompt: "Choose a team", error: "Choose a team to continue.")) %>
+  <%= render(UI::Select.new(label: "Plan", options: %w[Free Pro Team], hint: "You can change plans at any time.")) %>
+</div>

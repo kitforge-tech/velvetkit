@@ -178,4 +178,18 @@ class UI::SelectTest < ViewComponent::TestCase
     assert_equal "true", root["data-ui--select-multiple-value"]
     assert_equal "%{count} selected", root["data-ui--select-summary-value"]
   end
+
+  def test_hint_and_error_describe_the_trigger
+    render_inline(UI::Select.new(options: %w[Free Pro], label: "Plan", hint: "Billed monthly", error: "Choose a plan"))
+    trigger = page.find("button[role='combobox'][aria-invalid='true']")
+    assert_equal "#{trigger[:id]}-hint #{trigger[:id]}-error", trigger["aria-describedby"]
+    assert_selector "p##{trigger[:id]}-hint", text: "Billed monthly"
+    assert_selector "p##{trigger[:id]}-error.text-destructive", text: "Choose a plan"
+  end
+
+  def test_no_messages_no_describedby
+    render_inline(UI::Select.new(options: %w[Free Pro]))
+    refute_selector "button[aria-describedby]"
+    refute_selector "p.text-destructive"
+  end
 end

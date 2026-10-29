@@ -53,12 +53,14 @@ components:
     description: A modal dialog on the native <dialog> element.
   divider:
     description: A horizontal or vertical rule, optionally labelled.
+  form_field:
+    description: A label, hint and error message wired to any form control.
   icon:
     description: A Lucide icon.
   image:
     description: An image with consistent sizing and corner radius.
   input:
-    description: A text field with label, hint and error, standalone or with a form builder.
+    description: A text field with label, hint and error message, standalone or with a form builder.
   input_group:
     description: A text field with addons before or after it.
   label:
@@ -97,7 +99,7 @@ components:
   text:
     description: Body text in set sizes, weights and tones.
   textarea:
-    description: A multi-line text field with label and error, that can grow with its text.
+    description: A multi-line text field with label, hint and error, that can grow with its text.
   theme_toggle:
     description: A light/dark/system theme switcher.
     files:

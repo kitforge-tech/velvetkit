@@ -233,4 +233,28 @@ class UI::CheckboxTest < ViewComponent::TestCase
     render_inline(UI::Checkbox.new(form: form_builder_for(User.new), field: :remember_me, label: false))
     assert_no_selector "label"
   end
+
+  def test_error_message_shows_under_the_box_and_describes_it
+    render_inline(UI::Checkbox.new(name: "terms", label: "I accept the terms", id: "terms", error: "You must accept the terms"))
+    box = page.find("input#terms[aria-invalid='true']")
+    assert_equal "terms-error", box["aria-describedby"]
+    assert_selector "div > label + p#terms-error.text-destructive", text: "You must accept the terms"
+  end
+
+  def test_model_errors_show_under_a_bound_checkbox
+    record = Struct.new(:terms) do
+      include ActiveModel::Validations
+      def self.model_name = ActiveModel::Name.new(self, nil, "Signup")
+      validates :terms, acceptance: { accept: "1" }
+    end.new("0").tap(&:validate)
+    form = ActionView::Helpers::FormBuilder.new(:signup, record, vc_test_controller.view_context, {})
+    render_inline(UI::Checkbox.new(form: form, field: :terms))
+    assert_selector "input[type='checkbox'][aria-invalid='true']"
+    assert_selector "p.text-destructive", text: "Terms must be accepted"
+  end
+
+  def test_no_messages_no_wrapper
+    render_inline(UI::Checkbox.new(name: "terms", label: "Terms"))
+    refute_selector "div"
+  end
 end

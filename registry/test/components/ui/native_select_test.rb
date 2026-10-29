@@ -17,6 +17,20 @@ class UI::NativeSelectTest < ViewComponent::TestCase
 
   # Native rather than a custom listbox: it gets the platform picker on a
   # phone, keyboard support and screen-reader behaviour for free.
+  def test_hint_and_error_describe_the_select
+    render_inline(UI::NativeSelect.new(options: %w[a b], label: "Team", id: "team", hint: "You can change it later", error: "Choose a team"))
+    select = page.find("select#team[aria-invalid='true']")
+    assert_equal "team-hint team-error", select["aria-describedby"]
+    assert_selector "p#team-hint", text: "You can change it later"
+    assert_selector "p#team-error.text-destructive", text: "Choose a team"
+  end
+
+  def test_no_label_or_messages_renders_no_wrapper
+    render_inline(UI::NativeSelect.new(options: %w[a b]))
+    refute_selector "div.flex-col"
+    refute_selector "select[aria-describedby]"
+  end
+
   def test_accepts_a_plain_array_of_strings
     render_inline(UI::NativeSelect.new(name: "board", options: %w[cbse icse]))
     assert_selector "option[value='cbse']", text: "cbse"

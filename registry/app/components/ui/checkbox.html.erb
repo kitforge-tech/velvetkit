@@ -1,3 +1,4 @@
+<%= render(wrapper) do %>
 <% if label.present? %>
   <%= tag.label for: @id, class: wrapper_classes do %>
     <%= tag.span class: "relative inline-flex" do %>
@@ -15,4 +16,5 @@
       <%= render(UI::Icon.new(name: "check", size: icon_size, class: "stroke-[3]", aria: { hidden: true })) %>
     <% end %>
   <% end %>
+<% end %>
 <% end %>
