@@ -7,7 +7,7 @@
   copied into your app one at a time, under your namespace.</p>
 
   <p>
-    <a href="https://rubygems.org/gems/velvetkit"><img alt="Gem version" src="https://img.shields.io/gem/v/velvetkit?include_prereleases&color=4D1A7F"></a>
+    <a href="https://rubygems.org/gems/velvetkit"><img alt="Gem version" src="https://img.shields.io/gem/v/velvetkit?color=4D1A7F"></a>
     <a href="https://github.com/kitforge-tech/velvetkit/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/kitforge-tech/velvetkit/actions/workflows/ci.yml/badge.svg"></a>
     <img alt="Rails 7.1+" src="https://img.shields.io/badge/Rails-7.1%2B-CC0000?logo=rubyonrails&logoColor=white">
     <img alt="Tailwind CSS 4" src="https://img.shields.io/badge/Tailwind_CSS-4-38BDF8?logo=tailwindcss&logoColor=white">
