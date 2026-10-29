@@ -13,6 +13,7 @@ import {
   ChevronRight,
   ChevronsUpDown,
   CircleAlert,
+  CircleCheck,
   Ellipsis,
   Eye,
   EyeOff,
@@ -34,6 +35,7 @@ const icons = {
   ChevronRight,
   ChevronsUpDown,
   CircleAlert,
+  CircleCheck,
   Ellipsis,
   Eye,
   EyeOff,
@@ -47,12 +49,20 @@ const icons = {
   X,
 };
 
-// Turbo replaces markup without a full page load, so icons are drawn again
-// after every kind of render, not just the first.
-[
-  'turbo:load',
-  'turbo:frame-load',
-  'turbo:render',
-  'turbo:submit-end',
-  'turbo:render-stream',
-].forEach((event) => document.addEventListener(event, () => createIcons({ icons })));
+// Icons are drawn whenever one is added to the page, however it arrives: a
+// Turbo visit, frame or stream, or a controller's own markup. Only <i> is
+// watched: the SVG that replaces it keeps data-lucide, and drawing on that
+// would draw forever.
+const draw = () => createIcons({ icons });
+const added = (records: MutationRecord[]) =>
+  records.some((record) =>
+    Array.from(record.addedNodes).some(
+      (node) => node instanceof Element && (node.matches('i[data-lucide]') || node.querySelector('i[data-lucide]') !== null),
+    ),
+  );
+
+draw();
+new MutationObserver((records) => added(records) && draw()).observe(document.documentElement, {
+  childList: true,
+  subtree: true,
+});
