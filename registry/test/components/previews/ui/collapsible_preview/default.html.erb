@@ -1,0 +1,18 @@
+<%# A sidebar tree: branches open on click, and the one holding the current page starts open. %>
+<nav aria-label="Documentation" class="w-56 text-sm">
+  <%= render(UI::Collapsible.new(open: true, trigger_class: "font-medium hover:bg-accent", content_class: "ml-3 space-y-0.5 border-l pl-2")) do |c| %>
+    <% c.with_trigger { "Forms" } %>
+    <a href="#" class="block rounded-md px-3 py-1.5 text-muted-foreground hover:bg-accent hover:text-foreground">Input</a>
+    <a href="#" aria-current="page" class="block rounded-md bg-primary/10 px-3 py-1.5 font-medium text-primary">Textarea</a>
+    <%= render(UI::Collapsible.new(trigger_class: "text-muted-foreground hover:bg-accent hover:text-foreground", content_class: "ml-3 space-y-0.5 border-l pl-2")) do |inner| %>
+      <% inner.with_trigger { "Choices" } %>
+      <a href="#" class="block rounded-md px-3 py-1.5 text-muted-foreground hover:bg-accent hover:text-foreground">Select</a>
+      <a href="#" class="block rounded-md px-3 py-1.5 text-muted-foreground hover:bg-accent hover:text-foreground">Checkbox</a>
+    <% end %>
+  <% end %>
+  <%= render(UI::Collapsible.new(trigger_class: "font-medium hover:bg-accent", content_class: "ml-3 space-y-0.5 border-l pl-2")) do |c| %>
+    <% c.with_trigger { "Overlays" } %>
+    <a href="#" class="block rounded-md px-3 py-1.5 text-muted-foreground hover:bg-accent hover:text-foreground">Dialog</a>
+    <a href="#" class="block rounded-md px-3 py-1.5 text-muted-foreground hover:bg-accent hover:text-foreground">Sheet</a>
+  <% end %>
+</nav>

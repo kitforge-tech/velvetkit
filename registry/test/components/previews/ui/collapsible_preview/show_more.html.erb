@@ -1,0 +1,7 @@
+<div class="max-w-md rounded-lg border p-4">
+  <p class="text-sm">Payments are collected on the 1st of each month.</p>
+  <%= render(UI::Collapsible.new(size: :sm, class: "mt-2", trigger_class: "w-auto -ml-2 text-primary hover:underline")) do |c| %>
+    <% c.with_trigger { "How refunds work" } %>
+    <p class="px-0 text-sm text-muted-foreground">Cancel within 14 days for a full refund. After that, the rest of the month is credited to your next invoice.</p>
+  <% end %>
+</div>
