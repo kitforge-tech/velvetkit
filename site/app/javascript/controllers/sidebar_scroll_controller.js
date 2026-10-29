@@ -15,12 +15,17 @@ export default class extends Controller {
     this.record = () => { remembered = this.element.scrollTop }
     this.element.addEventListener("scroll", this.record, { passive: true })
 
-    // After layout: while Turbo is still swapping the page in, the sidebar
-    // has no height yet and the browser ignores a scroll position.
-    requestAnimationFrame(() => {
-      if (remembered === null) this.element.querySelector("[aria-current=page]")?.scrollIntoView({ block: "center" })
-      else this.element.scrollTop = remembered
-    })
+    // Now, before the first paint: restored a frame later, the new sidebar
+    // is drawn at the top first and jumps back, a flicker on every visit.
+    this.restore()
+    // Again after layout, in case the sidebar had no height yet and the
+    // browser ignored the position.
+    requestAnimationFrame(() => this.restore())
+  }
+
+  restore() {
+    if (remembered === null) this.element.querySelector("[aria-current=page]")?.scrollIntoView({ block: "center" })
+    else if (this.element.scrollTop !== remembered) this.element.scrollTop = remembered
   }
 
   disconnect() {
