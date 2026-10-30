@@ -104,6 +104,8 @@ components:
     description: A light/dark/system theme switcher.
     files:
       - app/views/layouts/_theme_script.html.erb
+  toast:
+    description: A stacked, auto-dismissing message, pushed from the client or a Turbo Stream.
   tooltip:
     description: A hint shown on hover and focus.
   typography:

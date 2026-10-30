@@ -56,3 +56,5 @@ en:
         light: 'Light'
         dark: 'Dark'
         system: 'System'
+    toast:
+      close_label: 'Dismiss'
