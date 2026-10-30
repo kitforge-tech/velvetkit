@@ -1,0 +1,4 @@
+<%= render(wrapper) do %><%= tag.label for: @input_id, class: dropzone_classes,
+              data: { controller: "ui--file-field",
+                      "ui--file-field-target": "dropzone",
+                      action: "dragover->ui--file-field#dragOver dragleave->ui--file-field#dragLeave drop->ui--file-field#drop" } do %><%= render(UI::Icon.new(name: "upload", size: :lg, class: "text-muted-foreground", aria: { hidden: true })) %><p class="text-sm text-muted-foreground"><span class="font-medium text-primary"><%= t("ui.file_field.browse", default: "Click to upload") %></span> <%= t("ui.file_field.drop", default: "or drag and drop") %></p><p class="text-xs text-muted-foreground empty:hidden" data-ui--file-field-target="filenames"></p><% if form_field? %><%= @form.file_field(@field, **form_field_options) %><% else %><%= tag.input(**html_options) %><% end %><% end %><% end %>

@@ -58,3 +58,6 @@ en:
         system: 'System'
     toast:
       close_label: 'Dismiss'
+    file_field:
+      browse: 'Click to upload'
+      drop: 'or drag and drop'
