@@ -34,11 +34,11 @@
         with their tests and previews. Your AI agent gets a reference to build with them.
       </p>
       <div class="flex flex-wrap gap-3">
-        <%= render(UI::Link.new(href: docs_path, variant: :secondary, size: :lg, button_variant: true, class: "bg-white text-[#2e0f52] hover:bg-white/90")) do |link| %>
+        <%= render(UI::Link.new(href: docs_path, variant: :secondary, size: :lg, button_variant: true, class: "bg-white text-[#2e0f52] hover:bg-white/90", data: { umami_event: "cta-get-started" })) do |link| %>
           <% link.with_trailing_icon(name: "arrow-right") %>
           Get started
         <% end %>
-        <%= render(UI::Link.new(href: components_path, variant: :outline, size: :lg, button_variant: true, class: "border-white/25 bg-white/5 text-white hover:bg-white/10 hover:text-white")) { "Browse #{ComponentDoc.names.size} components" } %>
+        <%= render(UI::Link.new(href: components_path, variant: :outline, size: :lg, button_variant: true, class: "border-white/25 bg-white/5 text-white hover:bg-white/10 hover:text-white", data: { umami_event: "cta-browse-components" })) { "Browse #{ComponentDoc.names.size} components" } %>
       </div>
     </div>
   </div>

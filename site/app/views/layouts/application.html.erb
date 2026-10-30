@@ -18,6 +18,8 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+    <script defer src="https://stats.kitforge.tech/script.js" data-website-id="ed0fa006-2c3f-45da-816c-16e30e920c6a"></script>
+    <script defer src="https://stats.kitforge.tech/recorder.js" data-website-id="ed0fa006-2c3f-45da-816c-16e30e920c6a"></script>
   </head>
 
   <body class="min-h-screen antialiased">
@@ -36,13 +38,13 @@
         <div class="mr-4"><%= render "layouts/navbar_logo" %></div>
 
         <nav class="hidden items-center gap-1 md:flex" data-focus-scope="header">
-          <%= render(UI::Link.new(**header_link_options(:docs, docs_path))) { "Docs" } %>
-          <%= render(UI::Link.new(**header_link_options(:components, components_path))) { "Components" } %>
-          <%= render(UI::Link.new(**header_link_options(:ai, doc_path("ai")))) do |link| %>
+          <%= render(UI::Link.new(**header_link_options(:docs, docs_path), data: { umami_event: "nav-docs" })) { "Docs" } %>
+          <%= render(UI::Link.new(**header_link_options(:components, components_path), data: { umami_event: "nav-components" })) { "Components" } %>
+          <%= render(UI::Link.new(**header_link_options(:ai, doc_path("ai")), data: { umami_event: "nav-ai" })) do |link| %>
             <% link.with_leading_icon(name: "sparkles", class: "text-primary dark:text-fuchsia-300") %>
             AI
           <% end %>
-          <%= render(UI::Link.new(**header_link_options(:lookbook, "/lookbook"))) { "Lookbook" } %>
+          <%= render(UI::Link.new(**header_link_options(:lookbook, "/lookbook"), data: { umami_event: "nav-lookbook" })) { "Lookbook" } %>
         </nav>
 
         <div class="ml-auto flex items-center gap-2">
@@ -50,7 +52,8 @@
           <%= render(UI::Badge.new(variant: :outline, class: "hidden sm:inline-flex")) { "v#{ReleasedVersion.current}" } %>
           <%= render(UI::Link.new(href: ApplicationHelper::GITHUB_URL, variant: :ghost, size: :sm, button_variant: true,
                                   class: "size-7 rounded-md px-0 text-foreground",
-                                  target: "_blank", rel: "noopener", aria: { label: "VelvetKit on GitHub" })) do %>
+                                  target: "_blank", rel: "noopener", aria: { label: "VelvetKit on GitHub" },
+                                  data: { umami_event: "header-github" })) do %>
             <%= render(UI::Icon.new(name: "github", size: :sm)) %>
           <% end %>
           <%= render(UI::ThemeToggle.new) %>
