@@ -72,3 +72,6 @@ application.register("ui--toast", UI__ToastController)
 
 import UI__ToastViewportController from "./ui/toast_viewport_controller"
 application.register("ui--toast-viewport", UI__ToastViewportController)
+
+import UI__FileFieldController from "./ui/file_field_controller"
+application.register("ui--file-field", UI__FileFieldController)

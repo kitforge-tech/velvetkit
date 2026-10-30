@@ -24,6 +24,7 @@ import {
   Moon,
   PanelLeft,
   Sun,
+  Upload,
   X,
 } from 'lucide';
 
@@ -46,6 +47,7 @@ const icons = {
   Moon,
   PanelLeft,
   Sun,
+  Upload,
   X,
 };
 

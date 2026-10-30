@@ -53,6 +53,8 @@ components:
     description: A modal dialog on the native <dialog> element.
   divider:
     description: A horizontal or vertical rule, optionally labelled.
+  file_field:
+    description: A drag-and-drop file picker with a label, hint and error message, standalone or with a form builder.
   form_field:
     description: A label, hint and error message wired to any form control.
   icon:
@@ -86,6 +88,8 @@ components:
     description: A panel that slides in from an edge of the screen.
   sidebar:
     description: A collapsible application sidebar with groups and menus.
+  skeleton:
+    description: A pulsing placeholder shown in a piece of content's shape while it loads.
   spinner:
     description: A loading indicator.
   switch:
