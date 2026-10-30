@@ -1,6 +1,6 @@
 <nav class="flex items-center justify-between gap-4 border-t pt-8" aria-label="Pages">
   <% if previous_page %>
-    <%= render(UI::Link.new(href: previous_page.last, variant: :outline, button_variant: true)) do |link| %>
+    <%= render(UI::Link.new(href: previous_page.last, variant: :outline, button_variant: true, data: { umami_event: "pager-previous", umami_event_page: previous_page.first })) do |link| %>
       <% link.with_leading_icon(name: "arrow-left") %>
       <%= previous_page.first %>
     <% end %>
@@ -8,7 +8,7 @@
     <span></span>
   <% end %>
   <% if next_page %>
-    <%= render(UI::Link.new(href: next_page.last, variant: :outline, button_variant: true)) do |link| %>
+    <%= render(UI::Link.new(href: next_page.last, variant: :outline, button_variant: true, data: { umami_event: "pager-next", umami_event_page: next_page.first })) do |link| %>
       <% link.with_trailing_icon(name: "arrow-right") %>
       <%= next_page.first %>
     <% end %>

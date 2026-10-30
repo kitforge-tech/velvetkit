@@ -192,6 +192,72 @@ document.addEventListener("click", (event) => {
 })
 
 // ---------------------------------------------------------------------------
+// Component filter on the index page
+// ---------------------------------------------------------------------------
+
+let filterTimeout = null
+
+document.addEventListener("input", (event) => {
+  const input = event.target.closest("[data-action*='filter#filter']")
+  if (!input) return
+  clearTimeout(filterTimeout)
+  filterTimeout = setTimeout(() => {
+    const query = input.value.trim()
+    if (query.length >= 2) {
+      tracker()?.track("component-filter", { query })
+    }
+  }, 800)
+})
+
+// ---------------------------------------------------------------------------
+// FAQ accordion tracking
+// ---------------------------------------------------------------------------
+
+document.addEventListener("click", (event) => {
+  const trigger = event.target.closest("[data-action*='accordion#toggle'], [data-action*='ui--accordion#toggle']")
+  if (!trigger) return
+  const question = trigger.textContent.trim().substring(0, 80)
+  tracker()?.track("faq-open", { question })
+})
+
+// ---------------------------------------------------------------------------
+// Example tab switches (Preview / Code)
+// ---------------------------------------------------------------------------
+
+document.addEventListener("click", (event) => {
+  const trigger = event.target.closest("[data-action*='tabs#activate'], [data-action*='ui--tabs#activate']")
+  if (!trigger) return
+  const value = trigger.dataset.value || trigger.textContent.trim()
+  const page = window.location.pathname
+  tracker()?.track("tab-switch", { tab: value, page })
+})
+
+// ---------------------------------------------------------------------------
+// Theming playground interaction
+// ---------------------------------------------------------------------------
+
+let playgroundTracked = false
+
+document.addEventListener("input", (event) => {
+  const slider = event.target.closest("[data-action*='theme-playground#update']")
+  if (!slider || playgroundTracked) return
+  playgroundTracked = true
+  tracker()?.track("theming-playground")
+})
+
+document.addEventListener("turbo:load", () => { playgroundTracked = false })
+
+// ---------------------------------------------------------------------------
+// Sidebar navigation clicks
+// ---------------------------------------------------------------------------
+
+document.addEventListener("click", (event) => {
+  const link = event.target.closest("nav[aria-label='Documentation'] a")
+  if (!link) return
+  tracker()?.track("sidebar-nav", { page: link.textContent.trim() })
+})
+
+// ---------------------------------------------------------------------------
 // LLM file downloads (llms.txt, llms-full.txt, .md exports)
 // ---------------------------------------------------------------------------
 

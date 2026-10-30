@@ -25,7 +25,8 @@
   <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
     <% @components.each do |component| %>
       <%= link_to component_path(component), class: "group block rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary",
-                  data: { filter_target: "item", filter_text: "#{component.name} #{component.title} #{component.description}".downcase } do %>
+                  data: { filter_target: "item", filter_text: "#{component.name} #{component.title} #{component.description}".downcase,
+                          umami_event: "component-card", umami_event_component: component.name } do %>
         <%= render(UI::Card.new(class: "h-full transition-all group-hover:-translate-y-0.5 group-hover:border-primary/50 group-hover:shadow-md")) do |card| %>
           <% card.with_header do |header| %>
             <div class="flex items-center justify-between gap-2">

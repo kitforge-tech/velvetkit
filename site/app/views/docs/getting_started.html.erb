@@ -24,7 +24,7 @@
       <p class="font-medium">Working with an agent?</p>
       <p class="text-sm text-muted-foreground">Give it one prompt and it does every step below, then learns the kit from llms.txt.</p>
     </div>
-    <%= render(UI::Link.new(href: doc_path("ai"), variant: :default, size: :sm, button_variant: true, class: "shrink-0")) do |link| %>
+    <%= render(UI::Link.new(href: doc_path("ai"), variant: :default, size: :sm, button_variant: true, class: "shrink-0", data: { umami_event: "cta-build-with-ai" })) do |link| %>
       <% link.with_trailing_icon(name: "arrow-right") %>
       Build with AI
     <% end %>
