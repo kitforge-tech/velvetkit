@@ -1,0 +1,11 @@
+<%= tag.div(class: classes,
+            role: role,
+            aria: { live: live }.merge(@html_attrs[:aria] || {}),
+            data: {
+              controller: "ui--toast",
+              "ui--toast-duration-value": @duration_ms,
+              action: "mouseenter->ui--toast#pause mouseleave->ui--toast#resume",
+              state: "open",
+              slot: "toast"
+            }.merge(@html_attrs[:data] || {}),
+            **@html_attrs.except(:data, :aria)) do %><% if icon? %><%= render(UI::Icon.new(name: @icon_name, size: :sm, aria: { hidden: true })) %><% end %><div class="flex-1 min-w-0 space-y-1"><% if title? %><p class="text-sm font-semibold leading-none" data-ui--toast-target="title"><%= @title %></p><% end %><% if description? %><p class="text-sm opacity-90" data-ui--toast-target="description"><%= @description %></p><% end %><% if action? %><%= action %><% end %></div><% if dismissible? %><%= render(UI::Button.new(variant: :ghost, size: :icon_sm, class: "shrink-0 -m-1 text-current/70 hover:text-current hover:bg-current/10", aria: { label: t("ui.toast.close_label", default: "Dismiss") }, data: { action: "click->ui--toast#dismiss" })) do |btn| %><% btn.with_leading_icon(name: "x", size: :sm) %><% end %><% end %><% end %>

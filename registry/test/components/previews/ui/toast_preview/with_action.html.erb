@@ -1,0 +1,7 @@
+<div class="max-w-sm">
+  <%= render(UI::Toast.new(variant: :default, title: "Update available", duration: 0)) do |toast| %>
+    <% toast.with_action do %>
+      <%= render(UI::Button.new(size: :sm)) { "Reload" } %>
+    <% end %>
+  <% end %>
+</div>

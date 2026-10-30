@@ -66,3 +66,9 @@ application.register("ui--select", UI__SelectController)
 
 import UI__TableOfContentsController from "./ui/table_of_contents_controller"
 application.register("ui--table-of-contents", UI__TableOfContentsController)
+
+import UI__ToastController from "./ui/toast_controller"
+application.register("ui--toast", UI__ToastController)
+
+import UI__ToastViewportController from "./ui/toast_viewport_controller"
+application.register("ui--toast-viewport", UI__ToastViewportController)

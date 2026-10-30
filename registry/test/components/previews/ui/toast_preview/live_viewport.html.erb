@@ -1,0 +1,21 @@
+<div class="flex flex-wrap gap-2">
+  <%
+    demos = {
+      default:     ["Notification", "Heads up, something happened."],
+      success:     ["Saved", "Your changes have been saved."],
+      destructive: ["Something broke", "There was a problem with your request."],
+      warning:     ["Careful", "This action cannot be undone."],
+      info:        ["FYI", "Here's some helpful information."]
+    }
+  %>
+  <% demos.each do |variant, (title, description)| %>
+    <% payload = { title: title, description: description, variant: variant }.to_json %>
+    <%= render(UI::Button.new(variant: :outline, size: :sm,
+          onclick: "window.dispatchEvent(new CustomEvent('toast:show', { detail: #{payload} }))")) { title } %>
+  <% end %>
+  <% persistent = { title: "Stays until dismissed", description: "duration: 0 skips the auto-dismiss timer.", variant: :default, duration: 0 }.to_json %>
+  <%= render(UI::Button.new(variant: :outline, size: :sm,
+        onclick: "window.dispatchEvent(new CustomEvent('toast:show', { detail: #{persistent} }))")) { "Persistent" } %>
+</div>
+
+<%= render(UI::Toast::Viewport.new) %>

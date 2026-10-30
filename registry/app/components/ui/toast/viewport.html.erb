@@ -1,0 +1,4 @@
+<%= tag.div(id: @id,
+            class: classes,
+            data: { controller: "ui--toast-viewport" }.merge(@html_attrs[:data] || {}),
+            **@html_attrs.except(:data)) do %><% UI::Toast::Viewport::VARIANTS.each do |variant| %><template data-ui--toast-viewport-target="template" data-variant="<%= variant %>"><%= render(UI::Toast.new(variant: variant, title: "Title", description: "Description")) %></template><% end %><% end %>

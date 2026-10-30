@@ -1,0 +1,7 @@
+<div class="flex flex-col gap-4 max-w-sm">
+  <%= render(UI::Toast.new(variant: :default, title: "Default", description: "Heads up, something happened.")) %>
+  <%= render(UI::Toast.new(variant: :success, title: "Success", description: "Your changes have been saved.")) %>
+  <%= render(UI::Toast.new(variant: :destructive, title: "Destructive", description: "There was a problem with your request.")) %>
+  <%= render(UI::Toast.new(variant: :warning, title: "Warning", description: "This action cannot be undone.")) %>
+  <%= render(UI::Toast.new(variant: :info, title: "Info", description: "Here's some helpful information.")) %>
+</div>
