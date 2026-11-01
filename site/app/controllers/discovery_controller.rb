@@ -10,11 +10,10 @@ class DiscoveryController < ApplicationController
                    Google-Extended Applebot-Extended CCBot Bytespider meta-externalagent].freeze
 
   def sitemap
-    pages = [ root_path, docs_path ] +
-            DocsController::PAGES.keys.excluding("getting_started").map { |page| doc_path(page) } +
-            [ components_path ] + ComponentDoc.names.map { |name| component_path(name) }
-
-    xml = pages.map { |path| "  <url><loc>#{ERB::Util.html_escape(site_url(path))}</loc></url>" }.join("\n")
+    xml = Sitemap.paths.map do |path|
+      lastmod = Sitemap.lastmod(path)
+      "  <url><loc>#{ERB::Util.html_escape(site_url(path))}</loc>#{"<lastmod>#{lastmod}</lastmod>" if lastmod}</url>"
+    end.join("\n")
     render xml: %(<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n#{xml}\n</urlset>\n)
   end
 

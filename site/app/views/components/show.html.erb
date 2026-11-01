@@ -1,4 +1,5 @@
-<% content_for :title, @component.title %>
+<%# "Button component for Rails": the words people search with, not just the name. %>
+<% content_for :title, "#{@component.title} component for Rails" %>
 <% content_for :description, "#{@component.description} Add it to a Rails app with velvetkit:add; live examples, arguments and slots." %>
 <% content_for :head_links, tag.link(rel: "alternate", type: "text/markdown", href: site_url(component_path(@component, format: :md)), title: "#{@component.title} as Markdown") %>
 <% names = ComponentDoc.names %>

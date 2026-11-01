@@ -72,6 +72,12 @@ bundle exec rubocop
 bundle exec rake test     # gem + component tests + a namespaced-rewrite run
 ```
 
+If the PR adds or changes a component or a docs page, commit it, then run
+`bin/rails seo:lastmod` from `site/` and commit `site/config/lastmod.yml`. That
+file holds the sitemap's `<lastmod>` dates, worked out from git history. The
+build can't work them out itself, because the Docker context leaves out `.git`.
+The site's SEO test fails when a page has no date.
+
 `rake test` also regenerates every component under a different namespace
 (`Kit::` instead of `UI::`) into `tmp/namespaced` and runs its tests there —
 this is what proves the namespace rewrite (`Velvetkit::Namespace`) leaves
