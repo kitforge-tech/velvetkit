@@ -1,0 +1,20 @@
+<%# Touch size: 44px tabs; long-press a tab to open its menu. Tabs with
+    unsaved work ask before closing; empty ones close straight away. %>
+<div class="max-w-2xl space-y-3">
+  <%= render(UI::SessionTabs.new(size: :touch, return_focus: "#session-tabs-demo-input")) do |tabs| %>
+    <% tabs.with_tab(value: "1", active: true, rename: true, move: true, close: true,
+                     close_confirm: "This tab has 3 unsaved items. They will be lost.") do |tab| %>
+      <% tab.with_meta { "3 items" } %>Tab 1
+    <% end %>
+    <% tabs.with_tab(value: "2", rename: true, move: true, close: true,
+                     close_confirm: "This tab has 1 unsaved item. It will be lost.") do |tab| %>
+      <% tab.with_meta { "1 item" } %>Tab 2
+    <% end %>
+    <% tabs.with_tab(value: "3", rename: true, move: true, close: true) do |tab| %>
+      <% tab.with_meta { "Empty" } %>Tab 3
+    <% end %>
+    <% tabs.with_add %>
+  <% end %>
+  <input id="session-tabs-demo-input" class="h-11 w-full rounded-md border border-input bg-background px-3 text-sm"
+         placeholder="Focus comes back here after each tab action (return_focus:)">
+</div>

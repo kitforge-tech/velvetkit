@@ -49,6 +49,20 @@ en:
       no_matches: 'No matches'
       # Shown on a multiple select once more than two options are ticked.
       selected: '%{count} selected'
+    session_tabs:
+      label: 'Open tabs'
+      add: 'New tab'
+      options: 'Tab options'
+      rename: 'Rename'
+      rename_label: 'Tab name'
+      duplicate: 'Duplicate'
+      move_left: 'Move left'
+      move_right: 'Move right'
+      close: 'Close'
+      confirm_close:
+        title: 'Close this tab?'
+        cancel: 'Keep it open'
+        confirm: 'Close tab'
     theme_toggle:
       label: 'Change theme'
       heading: 'Theme'

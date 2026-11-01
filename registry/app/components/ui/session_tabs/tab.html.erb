@@ -1,0 +1,37 @@
+<% label_html = content %>
+<%= tag.div(**wrapper_options) do %>
+  <% if movable? %><%= tag.span(**handle_options) do %><%= render(UI::Icon.new(name: "grip-vertical", size: menu_icon_size, class: handle_icon_classes)) %><% end %><% end %>
+  <%= tag.public_send(link? ? :a : :button, **trigger_options) do %>
+    <%= tag.span(label_html, id: label_id, class: "truncate max-w-[20ch]", data: { "ui--session-tabs-target": "label" }) %>
+    <% if meta? %><span class="shrink-0 text-xs font-normal tabular-nums text-muted-foreground"><%= meta %></span><% end %>
+  <% end %>
+  <% if any_menu? %>
+    <%= render(UI::Menu.new(class: "flex shrink-0")) do |menu| %>
+      <% menu.with_trigger(**menu_trigger_options) do %><%= render(UI::Icon.new(name: "ellipsis-vertical", size: menu_icon_size, class: menu_icon_classes)) %><% end %>
+      <% menu.with_content(align: :end) do |c| %>
+        <% if enabled?(:rename) %>
+          <% c.with_item(t("ui.session_tabs.rename", default: "Rename"), **action_item_options(:rename)) %>
+        <% end %>
+        <% if enabled?(:duplicate) %>
+          <% c.with_item(t("ui.session_tabs.duplicate", default: "Duplicate"), **action_item_options(:duplicate)) %>
+        <% end %>
+        <% if enabled?(:move) %>
+          <% c.with_item(t("ui.session_tabs.move_left", default: "Move left"),
+                         **action_item_options(:moveLeft, move: "left"), **hidden_item_options(!can_move_left?)) %>
+          <% c.with_item(t("ui.session_tabs.move_right", default: "Move right"),
+                         **action_item_options(:moveRight, move: "right"), **hidden_item_options(!can_move_right?)) %>
+        <% end %>
+        <% menu_items.each do |label, opts, block| %>
+          <% c.with_item(label, **opts, &block) %>
+        <% end %>
+        <% if enabled?(:close) %>
+          <% if enabled?(:rename) || enabled?(:duplicate) || enabled?(:move) || menu_items.any? %>
+            <% c.with_divider(hidden: !close_available?, data: { "close-part": true }) %>
+          <% end %>
+          <% c.with_item(t("ui.session_tabs.close", default: "Close"), variant: :destructive,
+                         **action_item_options(:close, "close-part": true), **hidden_item_options(!close_available?)) %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

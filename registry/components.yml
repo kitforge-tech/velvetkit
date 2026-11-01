@@ -84,6 +84,8 @@ components:
     description: The browser's own select, styled closed; best for phones' system pickers.
   select:
     description: A styled dropdown with keyboard navigation and type-ahead, posting like a native select.
+  session_tabs:
+    description: Browser-style tabs the user opens, renames, duplicates, reorders and closes.
   sheet:
     description: A panel that slides in from an edge of the screen.
   sidebar:
