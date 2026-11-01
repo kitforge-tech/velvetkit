@@ -51,6 +51,23 @@ class SeoTest < ActionDispatch::IntegrationTest
     ComponentDoc.names.each { |name| assert_includes locs, "#{SITE}/docs/components/#{name}" }
   end
 
+  test "every sitemap page says when it last changed" do
+    get "/sitemap.xml"
+    urls = Nokogiri::XML(response.body).remove_namespaces!.xpath("//url")
+    missing = urls.reject { _1.at_xpath("lastmod") }.map { _1.at_xpath("loc").text }
+    assert_empty missing, "No lastmod for these; run `bin/rails seo:lastmod` and commit config/lastmod.yml"
+    urls.each { assert_match(/\A\d{4}-\d{2}-\d{2}\z/, _1.at_xpath("lastmod").text) }
+  end
+
+  test "component titles say what it is and that it's for Rails, within 70 characters" do
+    ComponentDoc.all.each do |component|
+      get component_path(component)
+      title = css_select("title").text
+      assert_equal "#{component.title} component for Rails · VelvetKit", title
+      assert_operator title.length, :<=, 70, "#{component.name} title too long: #{title}"
+    end
+  end
+
   test "robots welcomes search and AI crawlers and points at the sitemap and llms.txt" do
     get "/robots.txt"
     assert_response :success
