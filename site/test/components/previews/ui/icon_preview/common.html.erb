@@ -1,0 +1,8 @@
+<div class="grid grid-cols-6 gap-4">
+  <% %w[menu arrow-right globe badge-check circle-alert x circle-check eye eye-off lock chevrons-up-down layout-dashboard panel-left user loader].each do |name| %>
+    <div class="flex flex-col items-center gap-1 p-2 border rounded-md">
+      <%= render(UI::Icon.new(name: name)) %>
+      <span class="text-xs text-muted-foreground"><%= name %></span>
+    </div>
+  <% end %>
+</div>
