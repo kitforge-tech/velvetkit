@@ -1,0 +1,16 @@
+<%# A "Default" view the user can't close or rename, plus views they made. %>
+<div class="max-w-2xl">
+  <%= render(UI::SessionTabs.new(label: "Saved views")) do |tabs| %>
+    <% tabs.with_tab(value: "default", active: true, duplicate: true) do |tab| %>
+      <% tab.with_meta { "128" } %>Default
+    <% end %>
+    <% tabs.with_tab(value: "unpaid", rename: true, duplicate: true, move: true, close: true) do |tab| %>
+      <% tab.with_meta { "12" } %>Unpaid
+    <% end %>
+    <% tabs.with_tab(value: "this-week", rename: true, duplicate: true, move: true, close: true) do |tab| %>
+      <% tab.with_meta { "41" } %>This week
+    <% end %>
+    <% tabs.with_add %>
+  <% end %>
+  <div class="rounded-b-md border border-t-0 p-4 text-sm text-muted-foreground">The table for the selected view goes here.</div>
+</div>

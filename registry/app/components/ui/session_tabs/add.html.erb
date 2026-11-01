@@ -1,0 +1,1 @@
+<% if url? %><%= render(UI::ButtonTo.new(url, method: :post, form_class: "contents", **button_options)) do |b| %><% b.with_leading_icon(name: "plus", size: icon_size) %><% end %><% else %><%= render(UI::Button.new(**button_options)) do |b| %><% b.with_leading_icon(name: "plus", size: icon_size) %><% end %><% end %>

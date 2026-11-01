@@ -1,0 +1,46 @@
+<%# Every action dispatches a cancelable ui--session-tabs:<action> event.
+    This page logs them, refuses to close "Pinned", and handles "add" itself
+    by cloning a <template>. In a real app, pass URLs instead and let the
+    server re-render. %>
+<div class="max-w-2xl space-y-3" id="session-tabs-events-demo">
+  <%= render(UI::SessionTabs.new) do |tabs| %>
+    <% tabs.with_tab(value: "pinned", active: true, rename: true, move: true, close: true) { "Pinned" } %>
+    <% tabs.with_tab(value: "notes", rename: true, duplicate: true, move: true, close: true) { "Notes" } %>
+    <% tabs.with_add %>
+  <% end %>
+  <pre class="h-40 overflow-auto rounded-md bg-muted p-3 text-xs" data-log></pre>
+</div>
+<script>
+  (() => {
+    const root = document.getElementById("session-tabs-events-demo");
+    const log = root.querySelector("[data-log]");
+    let n = 0;
+    const write = (line) => { log.textContent = line + "\n" + log.textContent; };
+
+    for (const action of ["select", "add", "rename", "duplicate", "move", "close"]) {
+      root.addEventListener(`ui--session-tabs:${action}`, (event) => {
+        write(`${action} ${JSON.stringify(event.detail)}`);
+
+        if (action === "close" && event.detail.value === "pinned") {
+          event.preventDefault();
+          write("  ↳ cancelled: Pinned can't be closed");
+        }
+
+        if (action === "add" || action === "duplicate") {
+          // The app supplies new markup; here, copy an existing tab.
+          const list = root.querySelector('[role="tablist"]');
+          const source = list.querySelector('[data-value="notes"]') || list.lastElementChild;
+          const copy = source.cloneNode(true);
+          n += 1;
+          const value = `new-${n}`;
+          copy.dataset.value = value;
+          copy.dataset.state = "inactive";
+          copy.querySelectorAll("[id]").forEach((el) => { el.id = `${el.id}-${value}`; });
+          copy.querySelector('[data-ui--session-tabs-target="label"]').textContent =
+            action === "add" ? `New tab ${n}` : `Copy ${n}`;
+          list.appendChild(copy);
+        }
+      });
+    }
+  })();
+</script>

@@ -1,0 +1,15 @@
+<%= tag.div(id: id, class: root_classes, data: root_data, **@html_attrs.except(:data)) do %>
+  <%= tag.div(role: "tablist", "aria-label": tablist_label, "aria-orientation": "horizontal",
+              class: tablist_classes, data: { "ui--session-tabs-target": "list" }) do %><% tabs.each do |tab| %><%= tab %><% end %><% end %>
+  <% if add? %><%= add %><% end %>
+  <%= render(UI::Dialog.new(id: dialog_id, data: { "ui--session-tabs-target": "dialog" })) do |dialog| %>
+    <% dialog.with_content(size: :sm, show_close: false) do |c| %>
+      <% c.with_title(t("ui.session_tabs.confirm_close.title", default: "Close this tab?")) %>
+      <% c.with_description do %><span data-ui--session-tabs-target="confirmMessage"></span><% end %>
+      <% c.with_footer do %>
+        <%= render(UI::Button.new(variant: :outline, data: { action: "click->ui--dialog#close" })) do %><%= t("ui.session_tabs.confirm_close.cancel", default: "Keep it open") %><% end %>
+        <%= render(UI::Button.new(variant: :destructive, data: { action: "click->ui--session-tabs#confirmClose" })) do %><%= t("ui.session_tabs.confirm_close.confirm", default: "Close tab") %><% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>
