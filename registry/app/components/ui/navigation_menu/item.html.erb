@@ -1,0 +1,16 @@
+<%# Run the block first, so with_link calls and any custom panel markup exist
+    before deciding whether this item is a trigger or a plain link. %>
+<% body = content %>
+<%= tag.li(**li_options) do %>
+  <% if links? || body.present? %>
+    <%= tag.button(**trigger_options) do %><%= label %><%= render(UI::Icon.new(name: "chevron-down", size: :xs, class: "transition-transform duration-200 group-aria-expanded/nav-item:rotate-180 motion-reduce:transition-none")) %><% end %>
+    <%= tag.div(**panel_options) do %>
+      <% if links? %>
+        <ul class="<%= list_classes %>"><% links.each do |link| %><li><%= link %></li><% end %></ul>
+      <% end %>
+      <%= body %>
+    <% end %>
+  <% else %>
+    <%= tag.a(**link_options) do %><%= label %><% end %>
+  <% end %>
+<% end %>

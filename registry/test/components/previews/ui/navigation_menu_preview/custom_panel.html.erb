@@ -1,0 +1,20 @@
+<%# Any markup can go in a panel alongside, or instead of, its links. %>
+<div class="flex min-h-[28rem] justify-center pt-8">
+  <%= render(UI::NavigationMenu.new) do |nav| %>
+    <% nav.with_item(label: "Company", panel_class: "w-[32rem]") do |item| %>
+      <% item.with_link(title: "About", href: "#about", description: "Who we are and why we build this.") %>
+      <% item.with_link(title: "Careers", href: "#careers", description: "Open roles, remote-first.") %>
+      <% item.with_link(title: "Customers", href: "#customers", description: "Teams that run on Acme, in their words.") %>
+      <% item.with_link(title: "Contact", href: "#contact", description: "Sales, support and partnerships.") %>
+      <div class="mt-2 flex items-center justify-between gap-4 rounded-md bg-muted p-4">
+        <div>
+          <p class="text-sm font-medium">We're hiring</p>
+          <p class="mt-1 text-sm text-muted-foreground">Three engineering roles are open this quarter.</p>
+        </div>
+        <%= render(UI::Button.new(size: :sm, variant: :outline)) { "See roles" } %>
+      </div>
+    <% end %>
+    <% nav.with_item(label: "Blog", href: "#blog") %>
+    <% nav.with_item(label: "Contact", href: "#contact") %>
+  <% end %>
+</div>

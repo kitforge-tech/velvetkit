@@ -1,0 +1,9 @@
+<%= tag.a(**link_options) do %>
+  <% if icon %>
+    <span class="flex size-9 shrink-0 items-center justify-center rounded-md border bg-background text-muted-foreground"><%= render(UI::Icon.new(name: icon, size: :sm)) %></span>
+  <% end %>
+  <span class="min-w-0">
+    <span class="block font-medium leading-snug"><%= title %></span>
+    <% if description %><span class="mt-1 line-clamp-2 block leading-snug text-muted-foreground"><%= description %></span><% end %>
+  </span>
+<% end %>

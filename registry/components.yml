@@ -71,6 +71,8 @@ components:
     description: A link styled as text or as a button.
   menu:
     description: A dropdown menu with keyboard navigation.
+  navigation_menu:
+    description: Site navigation with links and hover or click panels of rich links.
   pagination:
     description: Page links for a long list, from a Pagy object.
     gems: [pagy]
