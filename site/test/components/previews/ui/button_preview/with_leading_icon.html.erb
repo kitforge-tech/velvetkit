@@ -1,0 +1,22 @@
+<div class="flex flex-wrap items-center gap-3">
+  <%= render(UI::Button.new(variant: :default)) do |btn|
+        btn.with_leading_icon(name: "lock")
+        "Sign in"
+      end %>
+  <%= render(UI::Button.new(variant: :outline)) do |btn|
+        btn.with_leading_icon(name: "eye")
+        "Preview"
+      end %>
+  <%= render(UI::Button.new(variant: :secondary)) do |btn|
+        btn.with_leading_icon(name: "badge-check")
+        "Verified"
+      end %>
+  <%= render(UI::Button.new(variant: :destructive)) do |btn|
+        btn.with_leading_icon(name: "x")
+        "Delete"
+      end %>
+  <%= render(UI::Button.new(variant: :ghost)) do |btn|
+        btn.with_leading_icon(name: "user")
+        "Profile"
+      end %>
+</div>
