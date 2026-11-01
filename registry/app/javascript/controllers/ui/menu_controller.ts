@@ -38,6 +38,9 @@ export default class extends Controller<HTMLElement> {
       offset: 4,
       flip: true,
       shift: true,
+      // Escape scrolling or clipped ancestors (a scrolling tab bar, a table
+      // cell, a drawer), as UI::Select does.
+      strategy: 'fixed',
     });
     this.floatingCleanup = floating.destroy;
 
