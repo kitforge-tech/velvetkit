@@ -1,0 +1,14 @@
+<div class="flex flex-wrap items-center gap-3">
+  <%= render(UI::Button.new(variant: :default)) do |btn|
+        btn.with_trailing_icon(name: "arrow-right")
+        "Continue"
+      end %>
+  <%= render(UI::Button.new(variant: :outline)) do |btn|
+        btn.with_trailing_icon(name: "chevrons-up-down")
+        "Sort"
+      end %>
+  <%= render(UI::Button.new(variant: :link)) do |btn|
+        btn.with_trailing_icon(name: "arrow-right")
+        "Read more"
+      end %>
+</div>
