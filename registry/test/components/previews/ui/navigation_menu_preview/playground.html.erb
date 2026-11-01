@@ -1,0 +1,73 @@
+<div class="min-h-screen bg-background">
+  <header class="sticky top-0 z-40 border-b bg-background/95 backdrop-blur">
+    <div class="mx-auto flex h-14 max-w-6xl items-center gap-6 px-4">
+      <a href="#" class="flex items-center gap-2 font-semibold"><span class="size-6 rounded-md bg-primary"></span>Acme</a>
+
+      <%= render(UI::NavigationMenu.new(label: "Main", open_delay: open_delay, close_delay: close_delay)) do |nav| %>
+        <% nav.with_item(label: "Products", columns: 2) do |item| %>
+          <% item.with_link(title: "Analytics", href: "#analytics", icon: "chart-column", description: "See what customers do, as they do it.") %>
+          <% item.with_link(title: "Automations", href: "#automations", icon: "workflow", description: "Run the repetitive parts on a schedule.") %>
+          <% item.with_link(title: "Inbox", href: "#inbox", icon: "message-circle", description: "Every conversation in one place.") %>
+          <% item.with_link(title: "Billing", href: "#billing", icon: "credit-card", description: "Invoices, plans and payment methods.") %>
+          <% item.with_link(title: "Storefront", href: "#storefront", icon: "store", description: "Sell online with a page you own.") %>
+          <% item.with_link(title: "Notifications", href: "#notifications", icon: "bell", description: "Email, SMS and push from one API.") %>
+          <% item.with_link(title: "Security", href: "#security", icon: "shield", description: "SSO, audit logs and roles.") %>
+          <% item.with_link(title: "Integrations", href: "#integrations", icon: "layout-grid", description: "Connect the tools you already use.") %>
+        <% end %>
+        <% nav.with_item(label: "Solutions", columns: 2) do |item| %>
+          <% item.with_link(title: "Startups", href: "#startups", description: "Everything to launch, on a free plan.") %>
+          <% item.with_link(title: "Enterprise", href: "#enterprise", description: "Scale, compliance and a named contact.") %>
+          <% item.with_link(title: "Agencies", href: "#agencies", description: "Run every client from one account.") %>
+          <% item.with_link(title: "Education", href: "#education", description: "Discounts for schools and students.") %>
+          <% item.with_link(title: "Nonprofits", href: "#nonprofits", description: "Half price for registered charities.") %>
+          <% item.with_link(title: "Developers", href: "#developers", description: "APIs, webhooks and SDKs.") %>
+        <% end %>
+        <% nav.with_item(label: "Resources") do |item| %>
+          <% item.with_link(title: "Documentation", href: "#docs", icon: "book-open", description: "Guides and the API reference.") %>
+          <% item.with_link(title: "Blog", href: "#blog", icon: "newspaper", description: "Product news and how-tos.") %>
+          <% item.with_link(title: "Changelog", href: "#changelog", icon: "rocket", description: "What shipped this week.") %>
+          <% item.with_link(title: "Academy", href: "#academy", icon: "graduation-cap", description: "Free courses, start to finish.") %>
+          <% item.with_link(title: "Help centre", href: "#help", icon: "life-buoy", description: "Answers, and a human when you need one.") %>
+        <% end %>
+        <% nav.with_item(label: "Pricing", href: "#pricing") %>
+        <% nav.with_item(label: "Docs", href: "#docs", active: true) %>
+      <% end %>
+
+      <div class="ml-auto flex items-center gap-2">
+        <%= render(UI::Button.new(variant: :ghost, size: :sm)) { "Sign in" } %>
+        <%= render(UI::Button.new(size: :sm)) { "Get started" } %>
+      </div>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-3xl space-y-6 px-4 py-12">
+    <h1 class="text-3xl font-bold tracking-tight">Scroll this page with a menu open</h1>
+    <p class="text-muted-foreground">The header sticks to the top and its panels stay attached to their triggers. At the bottom there's a footer menu: its panels open upwards, because there's no room below.</p>
+    <% 8.times do |i| %>
+      <section class="space-y-2">
+        <h2 class="text-lg font-semibold">Section <%= i + 1 %></h2>
+        <p class="text-sm text-muted-foreground">Placeholder copy so the page is long enough to scroll. Open a menu in the header, then scroll up and down: the panel follows the trigger. Then scroll to the footer and open one of its menus.</p>
+        <div class="h-32 rounded-lg border bg-muted/40"></div>
+      </section>
+    <% end %>
+  </main>
+
+  <footer class="border-t">
+    <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-6">
+      <span class="text-sm text-muted-foreground">© Acme</span>
+      <%= render(UI::NavigationMenu.new(label: "Footer")) do |nav| %>
+        <% nav.with_item(label: "Company") do |item| %>
+          <% item.with_link(title: "About", href: "#about", description: "Who we are and why we build this.") %>
+          <% item.with_link(title: "Careers", href: "#careers", description: "Open roles, remote-first.") %>
+          <% item.with_link(title: "Press", href: "#press", description: "Logos, photos and contacts.") %>
+        <% end %>
+        <% nav.with_item(label: "Legal") do |item| %>
+          <% item.with_link(title: "Terms", href: "#terms") %>
+          <% item.with_link(title: "Privacy", href: "#privacy") %>
+          <% item.with_link(title: "Cookies", href: "#cookies") %>
+        <% end %>
+        <% nav.with_item(label: "Status", href: "#status") %>
+      <% end %>
+    </div>
+  </footer>
+</div>

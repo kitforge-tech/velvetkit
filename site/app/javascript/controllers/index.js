@@ -78,3 +78,6 @@ application.register("ui--file-field", UI__FileFieldController)
 
 import UI__SessionTabsController from "./ui/session_tabs_controller"
 application.register("ui--session-tabs", UI__SessionTabsController)
+
+import UI__NavigationMenuController from "./ui/navigation_menu_controller"
+application.register("ui--navigation-menu", UI__NavigationMenuController)

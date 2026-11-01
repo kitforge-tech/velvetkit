@@ -34,6 +34,8 @@ en:
       toggle: 'Toggle sidebar'
     table_of_contents:
       label: 'On this page'
+    navigation_menu:
+      label: 'Main'
     pagination:
       label: 'Pages'
       summary: 'Showing %{from}–%{to} of %{count}'

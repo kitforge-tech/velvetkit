@@ -1,0 +1,23 @@
+<div class="flex min-h-96 justify-center pt-8">
+  <%= render(UI::NavigationMenu.new) do |nav| %>
+    <% nav.with_item(label: "Getting started") do |item| %>
+      <% item.with_link(title: "Introduction", href: "#introduction", description: "Re-usable components built with Tailwind CSS.") %>
+      <% item.with_link(title: "Installation", href: "#installation", description: "How to install dependencies and structure your app.") %>
+      <% item.with_link(title: "Typography", href: "#typography", description: "Styles for headings, paragraphs, lists…etc") %>
+    <% end %>
+    <% nav.with_item(label: "Components", columns: 2) do |item| %>
+      <% item.with_link(title: "Alert", href: "#alert", description: "A callout for important information.") %>
+      <% item.with_link(title: "Dialog", href: "#dialog", description: "A modal window on top of the page.") %>
+      <% item.with_link(title: "Menu", href: "#menu", description: "A list of actions behind a button.") %>
+      <% item.with_link(title: "Tabs", href: "#tabs", description: "Panels shown one at a time.") %>
+      <% item.with_link(title: "Toast", href: "#toast", description: "A short message that disappears on its own.") %>
+      <% item.with_link(title: "Tooltip", href: "#tooltip", description: "A label that appears on hover or focus.") %>
+    <% end %>
+    <% nav.with_item(label: "With Icon") do |item| %>
+      <% item.with_link(title: "Backlog", href: "#backlog", icon: "circle-alert") %>
+      <% item.with_link(title: "To do", href: "#todo", icon: "info") %>
+      <% item.with_link(title: "Done", href: "#done", icon: "circle-check") %>
+    <% end %>
+    <% nav.with_item(label: "Docs", href: "#docs") %>
+  <% end %>
+</div>
