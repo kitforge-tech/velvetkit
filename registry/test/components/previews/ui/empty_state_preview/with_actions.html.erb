@@ -1,0 +1,4 @@
+<%= render(UI::EmptyState.new(icon: "folder-kanban", title: "No projects yet", description: "You haven't created any projects. Start one from scratch or import an existing repository.")) do %>
+  <%= render(UI::Button.new) do |btn| %><% btn.with_leading_icon(name: "plus") %>Create project<% end %>
+  <%= render(UI::Button.new(variant: :outline)) { "Import" } %>
+<% end %>

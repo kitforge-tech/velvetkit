@@ -1,0 +1,7 @@
+<div class="max-w-md">
+  <%= render(UI::Card.new) do |card| %>
+    <% card.with_content do %>
+      <%= render(UI::EmptyState.new(icon: "bell", heading_level: 4, class: "md:p-8", title: "No notifications", description: "We'll let you know when a build fails or someone mentions you.")) %>
+    <% end %>
+  <% end %>
+</div>

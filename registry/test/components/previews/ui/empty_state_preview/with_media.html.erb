@@ -1,0 +1,8 @@
+<%= render(UI::EmptyState.new(title: "Nobody else is here", description: "Invite your team to share projects and reply to customers together.")) do |empty| %>
+  <% empty.with_media do %>
+    <%= render(UI::AvatarGroup.new(size: :lg)) do |group| %>
+      <% %w[JD AS RM].each { |initials| group.with_avatar { initials } } %>
+    <% end %>
+  <% end %>
+  <%= render(UI::Button.new(size: :sm)) do |btn| %><% btn.with_leading_icon(name: "users") %>Invite people<% end %>
+<% end %>

@@ -52,6 +52,8 @@ components:
     description: A modal dialog on the native <dialog> element.
   divider:
     description: A horizontal or vertical rule, optionally labelled.
+  empty_state:
+    description: What a page shows when it has nothing to list yet, with a way to add the first thing.
   file_field:
     description: A drag-and-drop file picker with a label, hint and error message, standalone or with a form builder.
   form_field:
