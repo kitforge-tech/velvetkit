@@ -179,11 +179,11 @@ class UI::ButtonTest < ViewComponent::TestCase
       "Continue"
     end
     btn = page.find("button")
-    icons = btn.all("i", visible: :all)
+    icons = btn.all("svg", visible: :all)
     assert_equal 1, icons.size
-    assert_equal "arrow-right", icons.first["data-lucide"]
+    assert icons.first.matches_css?("[data-icon='arrow-right']")
     # icon precedes text in DOM order
-    assert_match(/<i[^>]*data-lucide="arrow-right".*Continue/m, btn.native.to_html)
+    assert_match(/<svg[^>]*data-icon="arrow-right".*Continue/m, btn.native.to_html)
   end
 
   def test_trailing_icon_renders_after_content
@@ -192,7 +192,7 @@ class UI::ButtonTest < ViewComponent::TestCase
       "Next"
     end
     btn = page.find("button")
-    assert_match(/Next.*<i[^>]*data-lucide="arrow-right"/m, btn.native.to_html)
+    assert_match(/Next.*<svg[^>]*data-icon="arrow-right"/m, btn.native.to_html)
   end
 
   def test_both_leading_and_trailing_icons
@@ -202,8 +202,10 @@ class UI::ButtonTest < ViewComponent::TestCase
       "Sign in"
     end
     btn = page.find("button")
-    icons = btn.all("i", visible: :all).map { |i| i["data-lucide"] }
-    assert_equal [ "lock", "arrow-right" ], icons
+    icons = btn.all("svg", visible: :all)
+    assert_equal 2, icons.size
+    assert icons[0].matches_css?("[data-icon='lock']")
+    assert icons[1].matches_css?("[data-icon='arrow-right']")
   end
 
   def test_icon_only_button_renders_icon_without_text_slot
@@ -214,7 +216,7 @@ class UI::ButtonTest < ViewComponent::TestCase
     classes = btn[:class].split
     assert_includes classes, "h-9"
     assert_includes classes, "w-9"
-    assert_equal "menu", btn.find("i", visible: :all)["data-lucide"]
+    assert btn.find("svg", visible: :all).matches_css?("[data-icon='menu']")
   end
 
   def test_loading_replaces_leading_icon_with_animated_loader
@@ -223,10 +225,10 @@ class UI::ButtonTest < ViewComponent::TestCase
       "Saving"
     end
     btn = page.find("button")
-    icons = btn.all("i", visible: :all)
+    icons = btn.all("svg", visible: :all)
     assert_equal 1, icons.size
     loader = icons.first
-    assert_equal "loader", loader["data-lucide"]
+    assert loader.matches_css?("[data-icon='loader']")
     assert_includes loader[:class].split, "animate-spin"
   end
 
@@ -237,8 +239,9 @@ class UI::ButtonTest < ViewComponent::TestCase
     end
     btn = page.find("button")
     # only the loader is rendered; trailing icon dropped
-    icons = btn.all("i", visible: :all).map { |i| i["data-lucide"] }
-    assert_equal [ "loader" ], icons
+    icons = btn.all("svg", visible: :all)
+    assert_equal 1, icons.size
+    assert icons[0].matches_css?("[data-icon='loader']")
   end
 
   def test_icon_slot_auto_sizes_to_button_size_sm
@@ -246,7 +249,7 @@ class UI::ButtonTest < ViewComponent::TestCase
       btn.with_leading_icon(name: "lock")
       "Auth"
     end
-    icon = page.find("button i", visible: :all)
+    icon = page.find("button svg", visible: :all)
     classes = icon[:class].split
     assert_includes classes, "w-3"
     assert_includes classes, "h-3"
@@ -257,7 +260,7 @@ class UI::ButtonTest < ViewComponent::TestCase
       btn.with_leading_icon(name: "lock")
       "Auth"
     end
-    icon = page.find("button i", visible: :all)
+    icon = page.find("button svg", visible: :all)
     classes = icon[:class].split
     assert_includes classes, "w-5"
     assert_includes classes, "h-5"
@@ -268,7 +271,7 @@ class UI::ButtonTest < ViewComponent::TestCase
       btn.with_leading_icon(name: "lock", size: :xl)
       "Big"
     end
-    icon = page.find("button i", visible: :all)
+    icon = page.find("button svg", visible: :all)
     classes = icon[:class].split
     assert_includes classes, "w-8"
     assert_includes classes, "h-8"

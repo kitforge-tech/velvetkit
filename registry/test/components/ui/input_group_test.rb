@@ -129,7 +129,7 @@ class UI::InputGroupTest < ViewComponent::TestCase
       end
       g.with_field(placeholder: "Email")
     end
-    assert_selector "[data-slot='input-group-addon'] i[data-lucide='mail']"
+    assert_selector "[data-slot='input-group-addon'] svg[data-icon='mail']"
   end
 
   def test_multiple_addons

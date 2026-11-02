@@ -6,3 +6,8 @@ cd "$(dirname "$0")/.."
 
 bin/rails generate velvetkit:install --namespace=UI --force --skip-tests --skip-packages --skip-ai --quiet
 bin/rails generate velvetkit:add --all --force --skip-tests --skip-previews --skip-packages --quiet
+
+# Every Lucide icon, for the docs only: the live examples draw icons the kit
+# doesn't, and a docs site can afford the files. An app keeps just the icons
+# it uses (bin/rails generate velvetkit:icons).
+mkdir -p app/assets/icons && cp node_modules/lucide-static/icons/*.svg app/assets/icons/

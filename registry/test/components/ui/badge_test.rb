@@ -73,9 +73,9 @@ class UI::BadgeTest < ViewComponent::TestCase
       "Verified"
     end
     span = page.find("span")
-    icon = span.find("i", visible: :all)
-    assert_equal "badge-check", icon["data-lucide"]
-    assert_match(/<i[^>]*data-lucide="badge-check".*Verified/m, span.native.to_html)
+    icon = span.find("svg", visible: :all)
+    assert icon.matches_css?("[data-icon='badge-check']")
+    assert_match(/<svg[^>]*data-icon="badge-check".*Verified/m, span.native.to_html)
   end
 
   def test_user_class_override_via_tailwind_merge

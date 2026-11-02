@@ -139,15 +139,14 @@ bin/rails generate velvetkit:install --namespace=Kit # or under Kit::
 
 `install` does the following:
 
-- writes `config/velvetkit.yml` with the namespace
+- writes `config/velvetkit.yml` with the namespace and icon library
 - adds `view_component` and `tailwind_merge` to the Gemfile
 - adds an acronym inflection when the namespace needs one (`UI`, not `Kit`)
 - copies the base component, design tokens (`app/assets/tailwind/velvetkit.css`),
-  translations (`config/locales/velvetkit.en.yml`) and Lucide icon setup
-  (`app/javascript/velvetkit_icons.ts`), and imports the CSS and icons from
-  your entry points
-- installs `@hotwired/stimulus`, `lucide` and `tw-animate-css` with your
-  package manager, which it picks from your lockfile
+  and translations (`config/locales/velvetkit.en.yml`), and imports the CSS
+  from your Tailwind entry point
+- installs `@hotwired/stimulus` and `tw-animate-css` with your package
+  manager, which it picks from your lockfile
 
 ### Add components
 
@@ -162,6 +161,8 @@ bin/rails generate velvetkit:add --all            # everything
 - copies the component, its templates and sub-components
 - copies its Stimulus controllers and any lazily-loaded entry points (AG Grid
   for `data_grid`, Cally for `date_picker`)
+- copies the SVG of every icon it draws into `app/assets/icons`, named for
+  your icon library
 - copies its Minitest tests and Lookbook previews. A preview that shows
   components you haven't added is skipped, and `add` tells you which.
 - registers its controllers in `app/javascript/controllers/index.js` when
@@ -169,9 +170,26 @@ bin/rails generate velvetkit:add --all            # everything
 - installs any npm packages it needs, and adds any gems it needs (`pagy` for
   `pagination`) to the Gemfile
 
-Options: `--namespace=Kit`, `--skip-tests`, `--skip-previews`,
+Options: `--namespace=Kit`, `--icons=tabler`, `--skip-tests`, `--skip-previews`,
 `--skip-packages` (list the packages instead of installing them), and the usual
 `--force`/`--skip` for files that already exist.
+
+### Icons
+
+Components draw their icons from one library: Lucide (the default), Tabler or
+Phosphor. Choose it with `velvetkit:install --icons=phosphor`. Like shadcn/ui,
+the choice is made when components are copied: they're written with Lucide
+names, and `add` renames every icon for your library and copies its SVG into
+`app/assets/icons`. `Icon` draws the SVG into the page on the server, so
+there's no icon JavaScript.
+
+```bash
+bin/rails generate velvetkit:icons rocket user # add icons for your own views
+bin/rails generate velvetkit:icons             # or every one they draw that has no SVG
+```
+
+See [Icons](https://velvetkit.com/docs/icons) for switching libraries and
+upgrading from 0.2.
 
 ### AI agents
 

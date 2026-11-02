@@ -5,6 +5,7 @@ class DocsController < ApplicationController
     "ai" => "Build with AI",
     "namespacing" => "Namespacing",
     "theming" => "Theming and dark mode",
+    "icons" => "Icons",
     "lookbook" => "Lookbook",
     "forms" => "Building forms"
   }.freeze

@@ -130,4 +130,20 @@ module ApplicationHelper
     source = source[/^export default .*/m] || source if file.end_with?(".ts")
     [ namespace.rewrite_path(file), namespace.rewrite(source).lines.first(18).join ]
   end
+
+  # One of the kit's icons as `library` draws it, from the gem's own copy,
+  # for the Icons guide. The site's UI::Icon only has Lucide.
+  def library_icon(icon, library)
+    icons = Velvetkit.registry.icons
+    svg = Velvetkit.registry.read(icons.svg_file(icon, library)).sub(/\A<!--.*?-->\s*/m, "")
+    svg = svg.sub(/<svg\b[^>]*>/) { |open| open.gsub(/\s(?:width|height|class)="[^"]*"/, "") }
+    svg.sub("<svg", %(<svg class="size-5 shrink-0" aria-hidden="true")).html_safe # rubocop:disable Rails/OutputSafety -- the gem's own SVGs
+  end
+
+  # A registry file's Ruby as `library` would get it, from its first line of
+  # code: the icon renaming the add generator does.
+  def renamed_icons(file, library, lines: 8)
+    source = Velvetkit.registry.icons.rewrite(Velvetkit.registry.read(file), library)
+    source[/^class .*/m].lines.first(lines).join
+  end
 end

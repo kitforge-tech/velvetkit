@@ -54,23 +54,23 @@ class UI::AlertTest < ViewComponent::TestCase
 
   def test_default_variant_renders_default_icon_info
     render_inline(UI::Alert.new) { "Default" }
-    icons = page.all("i", visible: :all)
+    icons = page.all("svg", visible: :all)
     assert_equal 1, icons.size
-    assert_equal "info", icons.first["data-lucide"]
+    assert icons.first.matches_css?("[data-icon='info']")
   end
 
   def test_destructive_variant_renders_circle_alert_icon
     render_inline(UI::Alert.new(variant: :destructive)) { "Error" }
-    icons = page.all("i", visible: :all)
+    icons = page.all("svg", visible: :all)
     assert_equal 1, icons.size
-    assert_equal "circle-alert", icons.first["data-lucide"]
+    assert icons.first.matches_css?("[data-icon='circle-alert']")
   end
 
   def test_success_variant_renders_circle_check_icon
     render_inline(UI::Alert.new(variant: :success)) { "Success" }
-    icons = page.all("i", visible: :all)
+    icons = page.all("svg", visible: :all)
     assert_equal 1, icons.size
-    assert_equal "circle-check", icons.first["data-lucide"]
+    assert icons.first.matches_css?("[data-icon='circle-check']")
   end
 
   def test_custom_icon_slot_overrides_default
@@ -78,9 +78,9 @@ class UI::AlertTest < ViewComponent::TestCase
       alert.with_icon(name: "badge-check")
       "Custom icon"
     end
-    icons = page.all("i", visible: :all)
+    icons = page.all("svg", visible: :all)
     assert_equal 1, icons.size
-    assert_equal "badge-check", icons.first["data-lucide"]
+    assert icons.first.matches_css?("[data-icon='badge-check']")
   end
 
   def test_title_slot_renders
@@ -150,9 +150,9 @@ class UI::AlertTest < ViewComponent::TestCase
 
   def test_close_button_renders_x_icon
     render_inline(UI::Alert.new(dismissible: true)) { "Dismissible" }
-    icons = page.all("[role='alert'] button i")
+    icons = page.all("[role='alert'] button svg")
     assert_equal 1, icons.size
-    assert_equal "x", icons.first["data-lucide"]
+    assert icons.first.matches_css?("[data-icon='x']")
   end
 
   def test_close_button_has_dismiss_action

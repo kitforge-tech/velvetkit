@@ -1,0 +1,2 @@
+<%= render UI::Icon.new(name: "rocket") %>
+<%= render UI::Icon.new(name: "user", size: :sm, label: "Account") %>

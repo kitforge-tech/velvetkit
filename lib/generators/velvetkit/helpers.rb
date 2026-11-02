@@ -15,6 +15,8 @@ module Velvetkit
         "package-lock.json" => "npm install"
       }.freeze
 
+      ICONS_DIR = "app/assets/icons"
+
       private
 
       def registry
@@ -27,12 +29,37 @@ module Velvetkit
       end
 
       def configured_namespace
-        config = File.join(destination_root, CONFIG_FILE)
-        YAML.load_file(config)&.fetch("namespace", nil) if File.exist?(config)
+        configured("namespace")
       end
 
+      # --icons, else config/velvetkit.yml, else lucide.
+      def icon_library
+        @icon_library ||= Icons.library!(options[:icons] || configured("icons"))
+      rescue Error => e
+        raise Thor::Error, e.message
+      end
+
+      def configured(key)
+        config = File.join(destination_root, CONFIG_FILE)
+        YAML.load_file(config)&.fetch(key, nil) if File.exist?(config)
+      end
+
+      # Ruby and templates get the app's icon names, then its namespace.
       def copy_from_registry(file)
-        create_file kit_namespace.rewrite_path(file), kit_namespace.rewrite(registry.read(file))
+        source = registry.read(file)
+        source = registry.icons.rewrite(source, icon_library) if file.end_with?(".rb", ".erb")
+        create_file kit_namespace.rewrite_path(file), kit_namespace.rewrite(source)
+      end
+
+      # The SVG of every icon the files draw, in the app's library.
+      def copy_icons(files)
+        icons = registry.icons
+        names = files.select { |file| file.end_with?(".rb", ".erb") }
+                     .flat_map { |file| icons.names_in(registry.read(file)) }.uniq.sort
+        names.select { |icon| icons.name(icon, icon_library) }.each do |icon|
+          create_file File.join(ICONS_DIR, "#{icons.name(icon, icon_library)}.svg"),
+                      registry.read(icons.svg_file(icon, icon_library))
+        end
       end
 
       def install_packages(packages)

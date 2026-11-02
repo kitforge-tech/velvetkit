@@ -37,10 +37,8 @@ class UI::ThemeToggle < UI::Base
     }
   end
 
-  # Both icons are rendered and swapped with `dark:` variants rather than by
-  # changing `data-lucide` at runtime: lucide replaces each <i> with an <svg>
-  # on first render, so the original element is gone and a later attribute
-  # change would do nothing.
+  # All three icons are rendered and shown by CSS, so the right one is there
+  # before any script runs.
   # The trigger shows the preference (html[data-theme], set before paint by
   # the theme script): sun for light, which is the default, moon for dark,
   # and a monitor while following the system.

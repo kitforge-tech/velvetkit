@@ -46,20 +46,18 @@ class UI::ThemeToggleTest < ViewComponent::TestCase
     end
   end
 
-  # lucide swaps each <i data-lucide> for an <svg> on first render, so the
-  # element is gone afterwards and the icon cannot be changed by attribute.
-  # All three are rendered and shown by the preference on <html data-theme>:
+  # All three icons are rendered and shown by the preference on <html data-theme>:
   # the sun for light, which is the default (and before any script runs).
   def test_trigger_icon_follows_the_preference_with_light_by_default
     render_inline(UI::ThemeToggle.new)
     trigger = page.find("button[aria-haspopup]")
-    icon = ->(name) { trigger.find("i[data-lucide='#{name}']", visible: :all)[:class].split }
-    sun = icon.("sun")
+    icon = ->(selector) { trigger.find(selector, visible: :all)[:class].split }
+    sun = icon.("svg[data-icon='sun']")
     assert_includes sun, "block"
     assert_includes sun, "in-data-[theme=dark]:hidden"
     assert_includes sun, "in-data-[theme=system]:hidden"
-    assert_includes icon.("moon"), "in-data-[theme=dark]:block"
-    assert_includes icon.("monitor"), "in-data-[theme=system]:block"
+    assert_includes icon.("svg[data-icon='moon']"), "in-data-[theme=dark]:block"
+    assert_includes icon.("svg[data-icon='monitor']"), "in-data-[theme=system]:block"
   end
 
   def test_html_attrs_passthrough
@@ -80,7 +78,7 @@ class UI::ThemeToggleTest < ViewComponent::TestCase
   def test_each_option_has_a_check_indicator_shown_only_when_checked
     render_inline(UI::ThemeToggle.new)
     page.all("[data-ui--theme-target='option']", visible: :all).each do |option|
-      check = option.find("i[data-lucide='check']", visible: :all)
+      check = option.find("svg[data-icon='check']", visible: :all)
       assert_includes check[:class].split, "hidden"
       assert_includes check[:class].split, "group-aria-checked:block"
     end

@@ -43,14 +43,14 @@ class UI::Toast < UI::Base
           "text-popover-foreground shadow-lg pointer-events-auto duration-300 fill-mode-forwards " \
           "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:slide-in-from-bottom-2 " \
           "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:slide-out-to-bottom-2 " \
-          "[&>i]:translate-y-0.5 [&>i]:shrink-0",
+          "[&>svg]:translate-y-0.5 [&>svg]:shrink-0",
     variants: {
       variant: {
-        default:     "[&>i]:text-muted-foreground",
-        success:     "[&>i]:text-emerald-600 dark:[&>i]:text-emerald-400",
-        destructive: "[&>i]:text-destructive",
-        warning:     "[&>i]:text-amber-600 dark:[&>i]:text-amber-400",
-        info:        "[&>i]:text-sky-600 dark:[&>i]:text-sky-400"
+        default:     "[&>svg]:text-muted-foreground",
+        success:     "[&>svg]:text-emerald-600 dark:[&>svg]:text-emerald-400",
+        destructive: "[&>svg]:text-destructive",
+        warning:     "[&>svg]:text-amber-600 dark:[&>svg]:text-amber-400",
+        info:        "[&>svg]:text-sky-600 dark:[&>svg]:text-sky-400"
       }
     },
     defaults: { variant: :default }

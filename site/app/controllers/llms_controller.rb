@@ -28,6 +28,7 @@ class LlmsController < ApplicationController
       - [Build with AI](#{doc_url("ai")}): how agents get the kit's context in an app
       - [Namespacing](#{doc_url("namespacing")})
       - [Theming](#{doc_url("theming")})
+      - [Icons](#{doc_url("icons")})
       - [Lookbook](#{doc_url("lookbook")})
 
       ## Components

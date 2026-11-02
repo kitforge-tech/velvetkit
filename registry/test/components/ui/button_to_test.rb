@@ -36,7 +36,7 @@ class UI::ButtonToTest < ViewComponent::TestCase
       button.with_leading_icon(name: "mail")
       "Continue"
     end
-    assert_selector "button i[data-lucide='mail']"
+    assert_selector "button svg[data-icon='mail']"
   end
 
   def test_renders_trailing_icon_slot
@@ -44,7 +44,7 @@ class UI::ButtonToTest < ViewComponent::TestCase
       button.with_trailing_icon(name: "arrow-right")
       "Continue"
     end
-    assert_selector "button i[data-lucide='arrow-right']"
+    assert_selector "button svg[data-icon='arrow-right']"
   end
 
   def test_loading_state_shows_spinner_and_disables

@@ -11,13 +11,16 @@ module Velvetkit
 
       desc <<~DESC
         Set the app up for VelvetKit: choose the namespace, and add the base
-        component, design tokens, translations and icons every component uses.
+        component, design tokens and translations every component uses, and
+        choose the icon library the components draw from.
 
-          bin/rails generate velvetkit:install --namespace=Kit
+          bin/rails generate velvetkit:install --namespace=Kit --icons=phosphor
       DESC
 
       class_option :namespace, type: :string, default: Namespace::CANONICAL,
                                desc: "Module to put the components under"
+      class_option :icons, type: :string, default: Icons::CANONICAL,
+                           desc: "Icon library: #{Icons::LIBRARIES.keys.join(', ')}"
       class_option :skip_tests, type: :boolean, default: false, desc: "Don't copy the base component's test"
       class_option :skip_packages, type: :boolean, default: false,
                                    desc: "List the npm packages to add instead of installing them"
@@ -27,8 +30,10 @@ module Velvetkit
       def write_config
         create_file CONFIG_FILE, <<~YAML
           # VelvetKit — https://velvetkit.com
-          # `bin/rails generate velvetkit:add` puts components under this module.
+          # `bin/rails generate velvetkit:add` puts components under this module,
+          # with their icons from this library (#{Icons::LIBRARIES.keys.join(', ')}).
           namespace: #{kit_namespace.name}
+          icons: #{icon_library}
         YAML
       end
 
@@ -74,16 +79,8 @@ module Velvetkit
         inject_into_file entry, %(@import "#{path}";\n), after: /@import ["']tailwindcss["'];?\n/
       end
 
-      def import_icons
-        entry = %w[app/javascript/application.js app/javascript/application.ts].find { |file| exists?(file) }
-        return say_status(:js, "import ./velvetkit_icons from your JavaScript entry point", :yellow) unless entry
-        return if read(entry).include?("velvetkit_icons")
-
-        append_to_file entry, %(import "./velvetkit_icons"\n)
-      end
-
       def add_base_component
-        invoke "velvetkit:add", [ "base" ], namespace: kit_namespace.name, skip_tests: options[:skip_tests], skip_packages: true
+        invoke "velvetkit:add", [ "base" ], namespace: kit_namespace.name, icons: icon_library, skip_tests: options[:skip_tests], skip_packages: true
       end
 
       def add_packages

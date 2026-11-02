@@ -103,8 +103,8 @@ class UI::Tabs::TriggerTest < ViewComponent::TestCase
       end
       tabs.with_panel(value: "a") { "panel-a" }
     end
-    icon = page.find("[role='tab'][data-value='a'] i", visible: :all)
-    assert_equal "user", icon["data-lucide"]
+    icon = page.find("[role='tab'][data-value='a'] svg", visible: :all)
+    assert icon.matches_css?("[data-icon='user']")
   end
 
   def test_line_variant_size_sm

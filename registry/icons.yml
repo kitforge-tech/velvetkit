@@ -1,0 +1,61 @@
+# Every icon the components and their previews draw, by its Lucide name,
+# with its name in each other library. `velvetkit:add` renames the icons in
+# what it copies for the library in config/velvetkit.yml, and copies the
+# SVGs from icons/<library>/. After changing this file run `rake icons:sync`.
+#
+# test/velvetkit/icons_test.rb fails when a component draws an icon that
+# isn't listed here, or a listed icon has no SVG.
+
+arrow-right: { tabler: arrow-right, phosphor: arrow-right }
+badge-check: { tabler: rosette-discount-check, phosphor: seal-check }
+bar-chart-3: { tabler: chart-bar, phosphor: chart-bar }
+bell: { tabler: bell, phosphor: bell }
+book-open: { tabler: book, phosphor: book-open }
+calendar: { tabler: calendar, phosphor: calendar-blank }
+chart-column: { tabler: chart-bar, phosphor: chart-bar }
+check: { tabler: check, phosphor: check }
+chevron-down: { tabler: chevron-down, phosphor: caret-down }
+chevron-left: { tabler: chevron-left, phosphor: caret-left }
+chevron-right: { tabler: chevron-right, phosphor: caret-right }
+chevrons-up-down: { tabler: selector, phosphor: caret-up-down }
+circle-alert: { tabler: alert-circle, phosphor: warning-circle }
+circle-check: { tabler: circle-check, phosphor: check-circle }
+cloud: { tabler: cloud, phosphor: cloud }
+credit-card: { tabler: credit-card, phosphor: credit-card }
+ellipsis: { tabler: dots, phosphor: dots-three }
+ellipsis-vertical: { tabler: dots-vertical, phosphor: dots-three-vertical }
+eye: { tabler: eye, phosphor: eye }
+eye-off: { tabler: eye-off, phosphor: eye-slash }
+file-text: { tabler: file-text, phosphor: file-text }
+folder-kanban: { tabler: layout-kanban, phosphor: kanban }
+git-branch: { tabler: git-branch, phosphor: git-branch }
+globe: { tabler: world, phosphor: globe }
+graduation-cap: { tabler: school, phosphor: graduation-cap }
+grip-vertical: { tabler: grip-vertical, phosphor: dots-six-vertical }
+home: { tabler: home, phosphor: house }
+info: { tabler: info-circle, phosphor: info }
+layout-dashboard: { tabler: layout-dashboard, phosphor: squares-four }
+layout-grid: { tabler: layout-grid, phosphor: grid-four }
+life-buoy: { tabler: lifebuoy, phosphor: lifebuoy }
+loader: { tabler: loader, phosphor: spinner }
+lock: { tabler: lock, phosphor: lock }
+log-out: { tabler: logout, phosphor: sign-out }
+mail: { tabler: mail, phosphor: envelope }
+menu: { tabler: menu-2, phosphor: list }
+message-circle: { tabler: message-circle, phosphor: chat-circle }
+monitor: { tabler: device-desktop, phosphor: desktop }
+moon: { tabler: moon, phosphor: moon }
+newspaper: { tabler: news, phosphor: newspaper }
+panel-left: { tabler: layout-sidebar, phosphor: sidebar }
+plus: { tabler: plus, phosphor: plus }
+rocket: { tabler: rocket, phosphor: rocket }
+search: { tabler: search, phosphor: magnifying-glass }
+settings: { tabler: settings, phosphor: gear }
+shield: { tabler: shield, phosphor: shield }
+store: { tabler: building-store, phosphor: storefront }
+sun: { tabler: sun, phosphor: sun }
+upload: { tabler: upload, phosphor: upload-simple }
+user: { tabler: user, phosphor: user }
+users: { tabler: users, phosphor: users }
+workflow: { tabler: sitemap, phosphor: flow-arrow }
+x: { tabler: x, phosphor: x }

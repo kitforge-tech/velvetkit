@@ -27,7 +27,7 @@ class UI::Accordion::TriggerTest < ViewComponent::TestCase
 
   def test_renders_chevron_icon
     render_inline(UI::Accordion::Trigger.new) { "x" }
-    assert_selector "button i[data-lucide='chevron-right']"
+    assert_selector "button svg[data-icon='chevron-right']"
   end
 
   def test_aria_controls_when_content_id_provided

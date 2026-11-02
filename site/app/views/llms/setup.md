@@ -23,16 +23,26 @@ bin/rails generate velvetkit:add dialog date_picker   # these, plus what they us
 bin/rails generate velvetkit:add                      # list every component
 ```
 
-`install` writes `config/velvetkit.yml` (the namespace), adds `view_component`
-and `tailwind_merge` to the Gemfile, copies the design tokens
-(`app/assets/tailwind/velvetkit.css`), translations, Lucide icon setup and
-the base component, and writes `docs/velvetkit.md`: a reference for AI agents
+`install` writes `config/velvetkit.yml` (the namespace and icon library),
+adds `view_component` and `tailwind_merge` to the Gemfile, copies the design
+tokens (`app/assets/tailwind/velvetkit.css`), translations and the base
+component, and writes `docs/velvetkit.md`: a reference for AI agents
 covering the components installed in that app, in its namespace. A Claude
 Code skill and an AGENTS.md section point agents at it, and `add` keeps it
 current.
 
-Generator options: `--namespace=Kit`, `--all`, `--skip-tests`,
+Generator options: `--namespace=Kit`, `--icons=tabler`, `--all`, `--skip-tests`,
 `--skip-previews`, `--skip-packages`, `--skip-ai`, `--force`, `--skip`.
+
+## Icons
+
+Components draw icons from one library: `lucide` (default), `tabler` or
+`phosphor`, chosen with `install --icons=phosphor` and kept in
+`config/velvetkit.yml`. `add` renames each icon for that library as it copies
+a component and copies its SVG to `app/assets/icons`. `UI::Icon.new(name:
+"rocket")` draws `app/assets/icons/rocket.svg` inline, on the server. Add
+icons with `bin/rails generate velvetkit:icons rocket user`, or with no names
+to add every icon the app's views draw that has no SVG yet.
 
 ## Namespacing
 

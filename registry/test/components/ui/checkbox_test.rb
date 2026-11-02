@@ -86,8 +86,8 @@ class UI::CheckboxTest < ViewComponent::TestCase
   def test_check_icon_inside_overlay
     render_inline(UI::Checkbox.new(name: "test"))
     overlay = page.find("span.pointer-events-none")
-    icon = overlay.find("i", visible: :all)
-    assert_equal "check", icon["data-lucide"]
+    icon = overlay.find("svg", visible: :all)
+    assert icon.matches_css?("[data-icon='check']")
   end
 
   def test_user_class_override_via_tailwind_merge

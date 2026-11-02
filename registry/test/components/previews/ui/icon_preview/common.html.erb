@@ -1,8 +1,24 @@
 <div class="grid grid-cols-6 gap-4">
-  <% %w[menu arrow-right globe badge-check circle-alert x circle-check eye eye-off lock chevrons-up-down layout-dashboard panel-left user loader].each do |name| %>
+  <% [
+    UI::Icon.new(name: "menu"),
+    UI::Icon.new(name: "arrow-right"),
+    UI::Icon.new(name: "globe"),
+    UI::Icon.new(name: "badge-check"),
+    UI::Icon.new(name: "circle-alert"),
+    UI::Icon.new(name: "x"),
+    UI::Icon.new(name: "circle-check"),
+    UI::Icon.new(name: "eye"),
+    UI::Icon.new(name: "eye-off"),
+    UI::Icon.new(name: "lock"),
+    UI::Icon.new(name: "chevrons-up-down"),
+    UI::Icon.new(name: "layout-dashboard"),
+    UI::Icon.new(name: "panel-left"),
+    UI::Icon.new(name: "user"),
+    UI::Icon.new(name: "loader"),
+  ].each do |icon| %>
     <div class="flex flex-col items-center gap-1 p-2 border rounded-md">
-      <%= render(UI::Icon.new(name: name)) %>
-      <span class="text-xs text-muted-foreground"><%= name %></span>
+      <%= render(icon) %>
+      <span class="text-xs text-muted-foreground"><%= icon.name %></span>
     </div>
   <% end %>
 </div>

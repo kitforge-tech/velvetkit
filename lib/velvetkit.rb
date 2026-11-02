@@ -3,6 +3,7 @@
 require "velvetkit/version"
 require "velvetkit/namespace"
 require "velvetkit/registry"
+require "velvetkit/icons"
 require "velvetkit/reference"
 
 # VelvetKit copies ViewComponent UI components into a Rails app, one at a time

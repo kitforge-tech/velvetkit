@@ -44,6 +44,7 @@
       <h2 id="install" class="text-xl font-semibold">Install</h2>
       <p class="text-muted-foreground">Choose the module your components will live under. <code class="font-mono text-sm">UI</code> is the default. You can't easily change it later, so <%= link_to "read about namespacing", doc_path("namespacing"), class: "text-primary underline-offset-4 hover:underline" %> if you're unsure.</p>
       <%= code_block("bin/rails generate velvetkit:install --namespace=UI") %>
+      <p class="text-muted-foreground">Icons come from Lucide unless you add <code class="font-mono text-sm">--icons=tabler</code> or <code class="font-mono text-sm">--icons=phosphor</code>. <%= link_to "More about icons", doc_path("icons"), class: "text-primary underline-offset-4 hover:underline" %>.</p>
       <%= render(UI::Card.new) do |card| %>
         <% card.with_header do |header| %>
           <% header.with_title { "What install does" } %>
@@ -51,11 +52,10 @@
         <% card.with_content do %>
           <ul class="space-y-2.5 text-sm">
             <% [
-                 [ "file-cog", "Writes", "config/velvetkit.yml", "with your namespace" ],
+                 [ "file-cog", "Writes", "config/velvetkit.yml", "with your namespace and icon library" ],
                  [ "gem", "Adds", "view_component and tailwind_merge", "to your Gemfile" ],
                  [ "palette", "Copies", "app/assets/tailwind/velvetkit.css", "the design tokens, and imports it" ],
                  [ "languages", "Copies", "config/locales/velvetkit.en.yml", "every string the components show" ],
-                 [ "shapes", "Copies", "app/javascript/velvetkit_icons.ts", "the Lucide icons, and imports it" ],
                  [ "box", "Copies", "the base component", "that every other component builds on" ]
                ].each do |icon, verb, what, why| %>
               <li class="flex gap-3">
@@ -102,6 +102,7 @@
       <% end %>
       <% [
            [ "--namespace=Kit", "Use this module instead of the one in config/velvetkit.yml." ],
+           [ "--icons=tabler", "Use this icon library: lucide, tabler or phosphor." ],
            [ "--all", "Add every component." ],
            [ "--skip-tests", "Don't copy the components' Minitest tests." ],
            [ "--skip-previews", "Don't copy the Lookbook previews." ],
