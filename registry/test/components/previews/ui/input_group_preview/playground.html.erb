@@ -2,11 +2,11 @@
 <div class="max-w-sm">
   <%= render(UI::InputGroup.new) do |g| %>
     <% if left_icon %>
-      <%= g.with_addon(align: "inline-start") { render(UI::Icon.new(name: icon_name)) } %>
+      <%= g.with_addon(align: "inline-start") { render(UI::Icon.new(name: addon_icon)) } %>
     <% end %>
     <%= g.with_field(type: :email, placeholder: "you@example.com", error: error, disabled: disabled) %>
     <% if right_icon %>
-      <%= g.with_addon(align: "inline-end") { render(UI::Icon.new(name: icon_name)) } %>
+      <%= g.with_addon(align: "inline-end") { render(UI::Icon.new(name: addon_icon)) } %>
     <% end %>
   <% end %>
 </div>

@@ -79,8 +79,8 @@ class UI::LinkTest < ViewComponent::TestCase
     end
 
     anchor = page.find("a", text: "Continue")
-    assert_equal "arrow-right", anchor.find("i", visible: :all)["data-lucide"]
-    assert_match(/<i[^>]*data-lucide="arrow-right".*Continue/m, anchor.native.to_html)
+    assert anchor.find("svg", visible: :all).matches_css?("[data-icon='arrow-right']")
+    assert_match(/<svg[^>]*data-icon="arrow-right".*Continue/m, anchor.native.to_html)
   end
 
   def test_trailing_icon_renders_after_content
@@ -90,6 +90,6 @@ class UI::LinkTest < ViewComponent::TestCase
     end
 
     anchor = page.find("a", text: "Continue")
-    assert_match(/Continue.*<i[^>]*data-lucide="arrow-right"/m, anchor.native.to_html)
+    assert_match(/Continue.*<svg[^>]*data-icon="arrow-right"/m, anchor.native.to_html)
   end
 end

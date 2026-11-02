@@ -4,7 +4,7 @@
 /app/javascript/controllers/ui/
 /app/javascript/ag_grid.ts
 /app/javascript/cally.ts
-/app/javascript/velvetkit_icons.ts
+/app/assets/icons/
 /app/assets/tailwind/
 /app/views/layouts/_theme_script.html.erb
 /config/locales/velvetkit.en.yml

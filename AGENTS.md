@@ -65,6 +65,20 @@ Files for a component named `thing`:
   an individual component (the few pages under `site/app/views/docs/` are
   broader topic guides, not per-component docs).
 
+## Icons
+
+Components name icons in Lucide's names. `registry/icons.yml` maps every icon
+the components and previews draw to its name in each other library, and
+`registry/icons/<library>/` holds the SVGs. Using a new icon in a component or
+preview means adding it to `icons.yml` and running `bundle exec rake
+icons:sync`; `test/velvetkit/icons_test.rb` fails until you do.
+
+`velvetkit:add` renames icons with the patterns in `lib/velvetkit/icons.rb`, so
+write icon names the ways it recognises: `Icon.new(name: "x")`,
+`with_*_icon(name: :x)`, `icon: "x"` / `*_icon: "x"`, an `ICONS = { … }` map,
+and in tests `svg[data-icon='x']` (not `assert_equal "x", el["data-icon"]`).
+`rake test:namespaced` installs with Phosphor, so a name it misses fails there.
+
 ## Before opening a PR
 
 ```

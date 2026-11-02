@@ -24,6 +24,7 @@ module Dummy
     config.secret_key_base = "velvetkit-dummy"
     config.autoload_paths << File.join(APP_ROOT, "app/components")
     config.i18n.load_path += Dir[File.join(APP_ROOT, "config/locales/*.yml")]
+    config.x.velvetkit.icons_path = File.join(APP_ROOT, File.exist?(File.join(APP_ROOT, "icons.yml")) ? "icons/lucide" : "app/assets/icons")
   end
 end
 

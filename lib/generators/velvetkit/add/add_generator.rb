@@ -21,11 +21,17 @@ module Velvetkit
 
       class_option :namespace, type: :string,
                                desc: "Module for the components (default: #{CONFIG_FILE}, else UI)"
+      class_option :icons, type: :string,
+                           desc: "Icon library: #{Icons::LIBRARIES.keys.join(', ')} (default: #{CONFIG_FILE}, else lucide)"
       class_option :all, type: :boolean, default: false, desc: "Add every component"
       class_option :skip_tests, type: :boolean, default: false, desc: "Don't copy component tests"
       class_option :skip_previews, type: :boolean, default: false, desc: "Don't copy Lookbook previews"
       class_option :skip_packages, type: :boolean, default: false,
                                    desc: "List the npm packages to add instead of installing them"
+
+      def check_icon_library
+        icon_library
+      end
 
       def list_components
         return if requested.any?
@@ -51,8 +57,17 @@ module Velvetkit
             say_status :skip, "#{name} preview, it also shows #{needs.join(', ')}", :yellow
           else
             registry.preview_files(name).each { |file| copy_from_registry(file) }
+            copied_previews.concat(registry.preview_files(name))
           end
         end
+      end
+
+      # The icons the components and their previews draw, as SVGs in the
+      # app's icon library.
+      def copy_icon_files
+        return if resolved.empty?
+
+        copy_icons(resolved.flat_map { |name| registry.component_files(name) } + copied_previews)
       end
 
       # Apps that list controllers in a manifest (jsbundling with
@@ -97,6 +112,10 @@ module Velvetkit
 
       def resolved
         @resolved ||= requested.empty? ? [] : registry.resolve(requested)
+      end
+
+      def copied_previews
+        @copied_previews ||= []
       end
 
       def requested

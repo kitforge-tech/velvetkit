@@ -52,7 +52,7 @@ class UI::NavigationMenuTest < ViewComponent::TestCase
 
   def test_trigger_has_a_rotating_chevron
     render_nav
-    icon = page.find("button", text: "Getting started").find("[data-lucide='chevron-down']", visible: :all)
+    icon = page.find("button", text: "Getting started").find("[data-icon='chevron-down']", visible: :all)
     assert_includes icon[:class], "group-aria-expanded/nav-item:rotate-180"
   end
 
@@ -82,7 +82,7 @@ class UI::NavigationMenuTest < ViewComponent::TestCase
       nav.with_item(label: "More") { |i| i.with_link(title: "Status", href: "/s", icon: "circle-check", active: true) }
     end
     link = page.find("a[href='/s']", visible: :all)
-    assert link.has_selector?("[data-lucide='circle-check']", visible: :all)
+    assert link.has_selector?("[data-icon='circle-check']", visible: :all)
     assert_includes link[:class], "items-center"
     assert_equal "page", link["aria-current"]
   end

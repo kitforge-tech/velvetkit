@@ -202,7 +202,7 @@ ws.onopen = async () => {
     await run(`localStorage.clear()`);
     await send("Page.reload");
     await sleep(2500);
-    const theme = await run(`(() => { const shown = (n) => { const m = document.querySelector('header svg.lucide-' + n); return !!m && m.getBoundingClientRect().width > 0; };
+    const theme = await run(`(() => { const shown = (n) => { const m = document.querySelector('header svg[data-icon="' + n + '"]'); return !!m && m.getBoundingClientRect().width > 0; };
       return { pref: document.documentElement.dataset.theme, dark: document.documentElement.classList.contains('dark'), sun: shown('sun'), monitor: shown('monitor') }; })()`);
     check("theme is light by default, even on a dark OS, with the sun icon", theme.pref === "light" && !theme.dark && theme.sun && !theme.monitor, JSON.stringify(theme));
     await send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-color-scheme", value: "light" }] });

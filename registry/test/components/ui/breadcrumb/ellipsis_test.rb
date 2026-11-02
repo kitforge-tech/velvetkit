@@ -13,7 +13,7 @@ class UI::Breadcrumb::EllipsisTest < ViewComponent::TestCase
 
   def test_renders_ellipsis_icon
     render_inline(UI::Breadcrumb::Ellipsis.new)
-    assert_selector "li i[data-lucide='ellipsis']"
+    assert_selector "li svg[data-icon='ellipsis']"
   end
 
   def test_static_ellipsis_is_fully_decorative
@@ -34,7 +34,7 @@ class UI::Breadcrumb::EllipsisTest < ViewComponent::TestCase
       "<a href=\"/docs\">Documentation</a>".html_safe
     end
     assert_selector "li button[aria-label='More breadcrumb pages']"
-    assert_selector "li i[data-lucide='ellipsis']"
+    assert_selector "li svg[data-icon='ellipsis']"
   end
 
   def test_popover_content_includes_provided_html

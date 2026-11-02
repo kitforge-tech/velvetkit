@@ -15,7 +15,7 @@ component fits, and never build a second version of a component that exists.
 - Lookbook previews: `test/components/previews/ui/`
 - Design tokens: `app/assets/tailwind/velvetkit.css`
 - Strings: `config/locales/velvetkit.en.yml`, under `ui.`
-- Icons: `app/javascript/velvetkit_icons.ts`
+- Icons: `app/assets/icons/`, one SVG per icon, from the library named in `config/velvetkit.yml`
 
 ## Rules
 
@@ -44,9 +44,12 @@ component fits, and never build a second version of a component that exists.
    component with everything it depends on, and refreshes this file.
    Available: {{available}}.
 
-5. **Icons are Lucide names** (`UI::Icon.new(name: "calendar")`). An icon the
-   app hasn't used before must be added to `app/javascript/velvetkit_icons.ts`,
-   in both the import list and the `icons` object, or it renders empty.
+5. **Icons are SVG files** in `app/assets/icons`, named as the app's icon
+   library names them (`icons:` in `config/velvetkit.yml`: lucide, tabler or
+   phosphor). `UI::Icon.new(name: "calendar")` draws
+   `app/assets/icons/calendar.svg`. Before using an icon the app doesn't have
+   yet, run `bin/rails generate velvetkit:icons calendar`; one with no file
+   draws a dashed square.
 
 6. **User-facing text goes through I18n**, as the components' own strings do.
 

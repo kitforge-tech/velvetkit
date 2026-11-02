@@ -169,16 +169,16 @@ class UI::SessionTabsTest < ViewComponent::TestCase
     assert_equal "pointerdown->ui--session-tabs#dragStart", handle["data-action"]
     assert_equal "true", handle["aria-hidden"]
     assert_includes handle[:class], "touch-none"
-    assert handle.has_selector?("[data-lucide='grip-vertical']", visible: :all)
+    assert handle.has_selector?("[data-icon='grip-vertical']", visible: :all)
   end
 
   def test_controls_reveal_on_hover_and_slide_in
     render_tabs do |t|
       t.with_tab(value: "a", move: true, rename: true) { "Alpha" }
     end
-    grip = page.find("[data-ui--session-tabs-target='handle'] [data-lucide]", visible: :all)[:class]
+    grip = page.find("[data-ui--session-tabs-target='handle'] [data-icon]", visible: :all)[:class]
     menu = page.find("[data-ui--session-tabs-target='menuTrigger']")[:class]
-    dots = page.find("[data-ui--session-tabs-target='menuTrigger'] [data-lucide]", visible: :all)[:class]
+    dots = page.find("[data-ui--session-tabs-target='menuTrigger'] [data-icon]", visible: :all)[:class]
     [ grip, menu ].each do |classes|
       assert_includes classes, "opacity-0"
       assert_includes classes, "group-hover/tab:opacity-100"

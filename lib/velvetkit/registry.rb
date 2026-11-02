@@ -18,15 +18,18 @@ module Velvetkit
     FOUNDATION = %w[
       config/locales/velvetkit.en.yml
       app/assets/tailwind/velvetkit.css
-      app/javascript/velvetkit_icons.ts
     ].freeze
-    FOUNDATION_PACKAGES = %w[@hotwired/stimulus lucide tw-animate-css].freeze
+    FOUNDATION_PACKAGES = %w[@hotwired/stimulus tw-animate-css].freeze
 
     attr_reader :root
 
     def initialize(root)
       @root = root
       @catalog = YAML.load_file(File.join(root, "components.yml"))
+    end
+
+    def icons
+      @icons ||= Icons.new(root)
     end
 
     def names

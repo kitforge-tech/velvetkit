@@ -78,13 +78,13 @@ class UI::BannerTest < ViewComponent::TestCase
     render_inline(UI::Banner.new) do |banner|
       banner.with_leading_icon(name: "info")
     end
-    assert_selector "[data-slot='banner'] i[data-lucide='info']"
+    assert_selector "[data-slot='banner'] svg[data-icon='info']"
   end
 
   def test_dismiss_button_uses_button_component
     render_inline(UI::Banner.new) { "Message" }
     assert_selector "button[aria-label='Dismiss']"
-    assert_selector "button[aria-label='Dismiss'] i[data-lucide='x']"
+    assert_selector "button[aria-label='Dismiss'] svg[data-icon='x']"
   end
 
   def test_dismiss_button_wired_to_controller
@@ -95,7 +95,7 @@ class UI::BannerTest < ViewComponent::TestCase
 
   def test_custom_dismiss_icon
     render_inline(UI::Banner.new(dismiss_icon: "check")) { "x" }
-    assert_selector "button[aria-label='Dismiss'] i[data-lucide='check']"
+    assert_selector "button[aria-label='Dismiss'] svg[data-icon='check']"
   end
 
   def test_dismissible_false_hides_close

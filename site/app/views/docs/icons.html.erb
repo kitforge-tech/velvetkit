@@ -1,0 +1,82 @@
+<% content_for :title, "Icons" %>
+<% libraries = Velvetkit::Icons::LIBRARIES %>
+<% sample = %w[search x check chevron-down circle-alert info eye-off grip-vertical loader settings mail calendar] %>
+<% link_class = "text-primary underline-offset-4 hover:underline" %>
+
+<article class="max-w-3xl space-y-12">
+  <header class="space-y-3">
+    <%= render(UI::Breadcrumb.new(size: :sm)) do |bc| %>
+      <% bc.with_item(href: docs_path, text: "Docs") %>
+      <% bc.with_item(href: doc_path("icons"), text: "Icons", current: true) %>
+    <% end %>
+    <h1 class="text-4xl font-bold tracking-tight">Icons</h1>
+    <p class="text-lg text-muted-foreground">Components draw their icons from one library you choose: Lucide, Tabler or Phosphor. Each icon is an SVG file in your app, drawn into the page on the server, with no JavaScript.</p>
+  </header>
+
+  <section class="space-y-4">
+    <h2 id="choose" class="text-2xl font-semibold tracking-tight">Choose a library</h2>
+    <p>Pick it when you install. Lucide is the default.</p>
+    <%= code_block("bin/rails generate velvetkit:install --icons=phosphor") %>
+    <p class="text-muted-foreground">The choice is saved in <code class="font-mono text-sm">config/velvetkit.yml</code>, and every component you add after that uses it:</p>
+    <%= code_block("namespace: UI\nicons: phosphor", label: "config/velvetkit.yml") %>
+
+    <%= render(UI::Tabs.new(default_value: "lucide")) do |tabs| %>
+      <% tabs.with_list do |list| %>
+        <% libraries.each_key { |library| list.with_trigger(value: library) { library.capitalize } } %>
+      <% end %>
+      <% libraries.each do |library, spec| %>
+        <% tabs.with_panel(value: library) do %>
+          <div class="space-y-4 pt-2">
+            <ul class="grid grid-cols-3 gap-2 sm:grid-cols-4">
+              <% sample.each do |icon| %>
+                <li class="flex items-center gap-2 rounded-md border px-3 py-2">
+                  <%= library_icon(icon, library) %>
+                  <code class="truncate font-mono text-xs text-muted-foreground"><%= Velvetkit.registry.icons.name(icon, library) %></code>
+                </li>
+              <% end %>
+            </ul>
+            <%= code_block(renamed_icons("app/components/ui/alert.rb", library), label: "app/components/ui/alert.rb") %>
+            <p class="text-sm text-muted-foreground">
+              <%= link_to "Browse #{library.capitalize}", spec[:browse], class: link_class %> ·
+              <code class="font-mono text-xs"><%= spec[:package] %>@<%= spec[:version] %></code> · <%= spec[:license] %> licence
+            </p>
+          </div>
+        <% end %>
+      <% end %>
+    <% end %>
+  </section>
+
+  <section class="space-y-4">
+    <h2 id="how" class="text-2xl font-semibold tracking-tight">How it works</h2>
+    <p>The components are written with Lucide names. When <code class="font-mono text-sm">velvetkit:add</code> copies one into an app that uses another library, it renames every icon in the component, its tests and its previews, so the Alert above asks for <code class="font-mono text-sm">warning-circle</code> under Phosphor. It also copies the SVG of each icon the component draws into <code class="font-mono text-sm">app/assets/icons</code>.</p>
+    <p>After that, nothing looks anything up. <code class="font-mono text-sm">UI::Icon.new(name: "warning-circle")</code> reads <code class="font-mono text-sm">app/assets/icons/warning-circle.svg</code> and puts the SVG into the page, sized by the component and coloured with the text around it.</p>
+  </section>
+
+  <section class="space-y-4">
+    <h2 id="your-own" class="text-2xl font-semibold tracking-tight">Add your own icons</h2>
+    <p>Use any icon from your library by its name in that library. Add its SVG first:</p>
+    <%= code_block("bin/rails generate velvetkit:icons rocket user") %>
+    <p class="text-muted-foreground">Run it with no names to add every icon your own components, views and helpers draw that has no SVG yet. Icons the kit uses come from the gem; others are downloaded from the npm CDN, at the version the kit was built with.</p>
+    <%= code_block(snippet("icons.html.erb"), label: "app/views/home/index.html.erb") %>
+    <p class="text-muted-foreground">An icon with no SVG draws a dashed square, and the log names the missing file. In production it draws nothing. Any SVG can go in <code class="font-mono text-sm">app/assets/icons</code>, from another library or your designer, as long as it has a <code class="font-mono text-sm">viewBox</code> and uses <code class="font-mono text-sm">currentColor</code>.</p>
+  </section>
+
+  <section class="space-y-4">
+    <h2 id="switch" class="text-2xl font-semibold tracking-tight">Switch libraries later</h2>
+    <p>Change <code class="font-mono text-sm">icons:</code> in <code class="font-mono text-sm">config/velvetkit.yml</code>, then add your components again so they're renamed and get the new SVGs. This overwrites them, so commit first and review the diff for your own changes.</p>
+    <%= code_block("bin/rails generate velvetkit:add dialog menu alert --force") %>
+    <p class="text-muted-foreground">Icons in your own views keep the names you gave them. Rename those to the new library's names, then run <code class="font-mono text-sm">velvetkit:icons</code> to fetch their SVGs.</p>
+  </section>
+
+  <section class="space-y-4">
+    <h2 id="upgrading" class="text-2xl font-semibold tracking-tight">Upgrading from 0.2</h2>
+    <p>Before 0.3, icons were drawn in the browser by the <code class="font-mono text-sm">lucide</code> package. Components you added then keep working that way until you add them again.</p>
+    <ol class="list-decimal space-y-2 pl-5">
+      <li>Add your components again with <code class="font-mono text-sm">--force</code>, including <code class="font-mono text-sm">icon</code>. They now draw SVGs, and copy the ones they need.</li>
+      <li>Run <code class="font-mono text-sm">bin/rails generate velvetkit:icons</code> with no names, to add an SVG for every icon your own views draw.</li>
+      <li>Delete <code class="font-mono text-sm">app/javascript/velvetkit_icons.ts</code> and its import, and remove <code class="font-mono text-sm">lucide</code> from <code class="font-mono text-sm">package.json</code>.</li>
+    </ol>
+  </section>
+
+  <%= render "docs/pager", previous_page: [ "Theming and dark mode", doc_path("theming") ], next_page: [ "Lookbook", doc_path("lookbook") ] %>
+</article>

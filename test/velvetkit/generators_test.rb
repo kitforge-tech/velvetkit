@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
 require "minitest/autorun"
+require "minitest/mock"
 require "tmpdir"
 require "fileutils"
 require "generators/velvetkit/install/install_generator"
 require "generators/velvetkit/add/add_generator"
+require "generators/velvetkit/icons/icons_generator"
 
 class Velvetkit::GeneratorsTest < Minitest::Test
   def setup
@@ -24,11 +26,12 @@ class Velvetkit::GeneratorsTest < Minitest::Test
     install "--namespace=Kit"
 
     assert_match "namespace: Kit", read("config/velvetkit.yml")
+    assert_match "icons: lucide", read("config/velvetkit.yml")
     assert_match "class Kit::Base", read("app/components/kit/base.rb")
     assert_match "  kit:", read("config/locales/velvetkit.en.yml")
     assert exist?("app/assets/tailwind/velvetkit.css")
     assert_match %(@import "tailwindcss";\n@import "./velvetkit.css";), read("app/assets/tailwind/application.css")
-    assert_match %(import "./velvetkit_icons"), read("app/javascript/application.js")
+    assert_equal %(import "./controllers"\n), read("app/javascript/application.js"), "icons need no JavaScript"
     assert_match %(gem "view_component"), read("Gemfile")
     assert_match %(gem "tailwind_merge"), read("Gemfile")
     refute exist?("config/initializers/inflections.rb"), "Kit needs no inflection"
@@ -53,6 +56,78 @@ class Velvetkit::GeneratorsTest < Minitest::Test
     assert exist?("app/javascript/controllers/kit/popover_controller.ts")
     assert exist?("app/javascript/controllers/kit/_internal/use_floating.ts")
     refute exist?("app/javascript/controllers/kit/dialog_controller.ts")
+  end
+
+  def test_add_copies_the_svg_of_every_icon_its_components_draw
+    install "--namespace=Kit"
+    add "alert"
+
+    %w[info circle-alert circle-check x].each { |icon| assert exist?("app/assets/icons/#{icon}.svg"), icon }
+    assert_match(/\A<!-- @license lucide-static/, read("app/assets/icons/x.svg"))
+    refute exist?("app/assets/icons/search.svg"), "only what alert draws"
+  end
+
+  def test_add_renames_icons_for_the_configured_library
+    install "--namespace=Kit", "--icons=phosphor"
+    add "alert"
+
+    assert_match "icons: phosphor", read("config/velvetkit.yml")
+    alert = read("app/components/kit/alert.rb")
+    assert_match %("warning-circle"), alert
+    refute_match %("circle-alert"), alert
+    assert_match "[data-icon='warning-circle']", read("test/components/kit/alert_test.rb")
+    assert exist?("app/assets/icons/warning-circle.svg")
+    assert_match "@phosphor-icons/core", read("app/assets/icons/warning-circle.svg")
+    refute exist?("app/assets/icons/circle-alert.svg")
+  end
+
+  def test_add_copies_the_icons_its_previews_draw
+    install "--namespace=Kit"
+    add "sidebar"
+
+    assert exist?("app/assets/icons/layout-dashboard.svg"), "drawn by a sidebar preview"
+  end
+
+  def test_an_unknown_icon_library_is_refused
+    install "--namespace=Kit"
+    output = add("badge", "--icons=fontawesome").join
+
+    assert_match "Unknown icon library \"fontawesome\"", output
+    refute exist?("app/components/kit/badge.rb")
+  end
+
+  def test_icons_copies_an_icon_the_kit_ships_without_downloading
+    install "--namespace=Kit", "--icons=tabler"
+    Velvetkit::Icons.stub(:download, ->(*) { flunk "downloaded" }) { icons "alert-circle" }
+
+    assert_match "@tabler/icons", read("app/assets/icons/alert-circle.svg")
+  end
+
+  def test_icons_downloads_any_other_from_the_apps_library
+    install "--namespace=Kit", "--icons=tabler"
+    fetched = []
+    download = ->(name, library) { fetched << [ name, library ] && "<svg/>" }
+    Velvetkit::Icons.stub(:download, download) { icons "anchor" }
+
+    assert_equal [ [ "anchor", "tabler" ] ], fetched
+    assert_equal "<svg/>", read("app/assets/icons/anchor.svg")
+  end
+
+  def test_icons_with_no_names_adds_what_the_apps_views_draw
+    install "--namespace=Kit"
+    write "app/views/home/index.html.erb", <<~ERB
+      <%= render Kit::Icon.new(name: "anchor") %>
+      <%= render Kit::Icon.new(name: "rocket") %>
+      <%= render Kit::Button.new(leading_icon: "x") %>
+    ERB
+    write "app/assets/icons/x.svg", "<svg/>"
+    fetched = []
+    Velvetkit::Icons.stub(:download, ->(name, _) { fetched << name && "<svg/>" }) { icons }
+
+    assert_equal [ "anchor" ], fetched, "rocket ships with the kit; x already has an SVG"
+    assert exist?("app/assets/icons/anchor.svg")
+    assert_match "lucide-static", read("app/assets/icons/rocket.svg")
+    assert_equal "<svg/>", read("app/assets/icons/x.svg")
   end
 
   def test_add_reads_the_namespace_from_config
@@ -186,6 +261,10 @@ class Velvetkit::GeneratorsTest < Minitest::Test
 
   def add(*args)
     run_generator Velvetkit::Generators::AddGenerator, args
+  end
+
+  def icons(*args)
+    capture_io { Velvetkit::Generators::IconsGenerator.start(args, destination_root: @app) }
   end
 
   def run_generator(generator, args)

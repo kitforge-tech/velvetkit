@@ -39,49 +39,50 @@ class UI::ToastTest < ViewComponent::TestCase
   def test_default_variant_classes
     render_inline(UI::Toast.new(title: "x"))
     classes = toast_el[:class].split
-    assert_includes classes, "[&>i]:text-muted-foreground"
+    assert_includes classes, "[&>svg]:text-muted-foreground"
   end
 
   def test_success_variant_classes
     render_inline(UI::Toast.new(variant: :success, title: "x"))
     classes = toast_el[:class].split
-    assert_includes classes, "[&>i]:text-emerald-600"
+    assert_includes classes, "[&>svg]:text-emerald-600"
   end
 
   def test_destructive_variant_classes
     render_inline(UI::Toast.new(variant: :destructive, title: "x"))
     classes = toast_el[:class].split
-    assert_includes classes, "[&>i]:text-destructive"
+    assert_includes classes, "[&>svg]:text-destructive"
   end
 
   def test_warning_variant_classes
     render_inline(UI::Toast.new(variant: :warning, title: "x"))
     classes = toast_el[:class].split
-    assert_includes classes, "[&>i]:text-amber-600"
+    assert_includes classes, "[&>svg]:text-amber-600"
   end
 
   def test_info_variant_classes
     render_inline(UI::Toast.new(variant: :info, title: "x"))
     classes = toast_el[:class].split
-    assert_includes classes, "[&>i]:text-sky-600"
+    assert_includes classes, "[&>svg]:text-sky-600"
   end
 
   def test_default_icon_per_variant
-    { default: "info", success: "circle-check", destructive: "circle-alert", warning: "circle-alert", info: "info" }
-      .each do |variant, icon|
+    { default: "svg[data-icon='info']", success: "svg[data-icon='circle-check']",
+      destructive: "svg[data-icon='circle-alert']", warning: "svg[data-icon='circle-alert']",
+      info: "svg[data-icon='info']" }.each do |variant, icon|
       render_inline(UI::Toast.new(variant: variant, title: "x"))
-      assert_selector "i[data-lucide='#{icon}']"
+      assert_selector icon
     end
   end
 
   def test_icon_false_suppresses_icon
     render_inline(UI::Toast.new(title: "x", icon: false))
-    refute_selector "[data-slot='toast'] > i"
+    refute_selector "[data-slot='toast'] > svg"
   end
 
   def test_icon_override
     render_inline(UI::Toast.new(title: "x", icon: "rocket"))
-    assert_selector "[data-slot='toast'] > i[data-lucide='rocket']"
+    assert_selector "[data-slot='toast'] > svg[data-icon='rocket']"
   end
 
   def test_title_renders

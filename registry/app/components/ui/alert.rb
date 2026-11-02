@@ -12,7 +12,7 @@ class UI::Alert < UI::Base
   variants(
     base: "relative w-full rounded-md border p-4 " \
           "flex items-start gap-3 " \
-          "[&>i]:translate-y-0.5 [&>i]:shrink-0",
+          "[&>svg]:translate-y-0.5 [&>svg]:shrink-0",
     variants: {
       variant: {
         default:     "bg-background text-foreground border-input",
