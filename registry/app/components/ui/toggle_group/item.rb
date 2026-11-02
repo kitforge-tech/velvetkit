@@ -15,9 +15,15 @@ class UI::ToggleGroup::Item < UI::Base
     outline: { sm: "h-8 w-8", default: "h-9 w-9", lg: "h-10 w-10" }
   }.freeze
 
-  CHECKED = {
-    default: "has-[:checked]:bg-background has-[:checked]:text-foreground has-[:checked]:shadow-sm",
-    outline: "has-[:checked]:bg-accent has-[:checked]:text-accent-foreground"
+  # Hover only tints an unchecked item, so a checked one still looks checked
+  # under the pointer. The outline group clips its items to its corners, so
+  # the focus ring goes inside the item there.
+  STATES = {
+    default: "rounded-md hover:text-foreground " \
+             "has-[:checked]:bg-background has-[:checked]:text-foreground has-[:checked]:shadow-sm",
+    outline: "[&:not(:has(:checked))]:hover:bg-muted [&:not(:has(:checked))]:hover:text-foreground " \
+             "has-[:checked]:bg-primary/10 has-[:checked]:text-primary " \
+             "has-[:checked]:hover:bg-primary/15 has-[:focus-visible]:ring-inset"
   }.freeze
 
   def initialize(value:, label: nil, icon: nil, icon_only: false, disabled: false, class: nil, **html_attrs)
@@ -45,13 +51,10 @@ class UI::ToggleGroup::Item < UI::Base
       "relative inline-flex shrink-0 cursor-pointer select-none items-center justify-center gap-1.5 " \
       "whitespace-nowrap text-sm font-medium transition-colors " \
       "has-[:focus-visible]:z-10 has-[:focus-visible]:outline-none " \
-      "has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring " \
+      "has-[:focus-visible]:ring-[3px] has-[:focus-visible]:ring-ring/40 " \
       "has-[:disabled]:pointer-events-none has-[:disabled]:opacity-50",
-      # The outline group clips its items to its rounded corners, so the ring
-      # goes inside the item there.
-      variant == :default ? "rounded-md hover:text-foreground" : "hover:bg-muted hover:text-foreground has-[:focus-visible]:ring-inset",
       (icon_only? ? ICON_ONLY : HEIGHTS).dig(variant, size),
-      CHECKED[variant],
+      STATES[variant],
       @user_class
     )
   end

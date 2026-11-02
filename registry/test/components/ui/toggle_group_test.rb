@@ -109,7 +109,10 @@ class UI::ToggleGroupTest < ViewComponent::TestCase
     root = page.find("[data-slot='toggle-group'][data-variant='outline']")
     assert_includes root[:class].split, "border"
     assert_includes root[:class].split, "divide-x"
-    assert_includes page.find("label", text: "List")[:class].split, "has-[:checked]:bg-accent"
+    item = page.find("label", text: "List")[:class].split
+    assert_includes item, "has-[:checked]:bg-primary/10"
+    assert_includes item, "[&:not(:has(:checked))]:hover:bg-muted"
+    refute_includes item, "hover:bg-muted"
   end
 
   def test_sizes
