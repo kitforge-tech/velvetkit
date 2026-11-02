@@ -6,10 +6,14 @@
 # test/velvetkit/icons_test.rb fails when a component draws an icon that
 # isn't listed here, or a listed icon has no SVG.
 
+align-center: { tabler: align-center, phosphor: text-align-center }
+align-left: { tabler: align-left, phosphor: text-align-left }
+align-right: { tabler: align-right, phosphor: text-align-right }
 arrow-right: { tabler: arrow-right, phosphor: arrow-right }
 badge-check: { tabler: rosette-discount-check, phosphor: seal-check }
 bar-chart-3: { tabler: chart-bar, phosphor: chart-bar }
 bell: { tabler: bell, phosphor: bell }
+bold: { tabler: bold, phosphor: text-b }
 book-open: { tabler: book, phosphor: book-open }
 calendar: { tabler: calendar, phosphor: calendar-blank }
 chart-column: { tabler: chart-bar, phosphor: chart-bar }
@@ -35,9 +39,11 @@ grip-vertical: { tabler: grip-vertical, phosphor: dots-six-vertical }
 home: { tabler: home, phosphor: house }
 inbox: { tabler: inbox, phosphor: tray }
 info: { tabler: info-circle, phosphor: info }
+italic: { tabler: italic, phosphor: text-italic }
 layout-dashboard: { tabler: layout-dashboard, phosphor: squares-four }
 layout-grid: { tabler: layout-grid, phosphor: grid-four }
 life-buoy: { tabler: lifebuoy, phosphor: lifebuoy }
+list: { tabler: list, phosphor: list }
 loader: { tabler: loader, phosphor: spinner }
 lock: { tabler: lock, phosphor: lock }
 log-out: { tabler: logout, phosphor: sign-out }
@@ -55,6 +61,7 @@ settings: { tabler: settings, phosphor: gear }
 shield: { tabler: shield, phosphor: shield }
 store: { tabler: building-store, phosphor: storefront }
 sun: { tabler: sun, phosphor: sun }
+underline: { tabler: underline, phosphor: text-underline }
 upload: { tabler: upload, phosphor: upload-simple }
 user: { tabler: user, phosphor: user }
 users: { tabler: users, phosphor: users }

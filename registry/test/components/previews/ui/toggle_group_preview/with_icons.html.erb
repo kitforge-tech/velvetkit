@@ -1,0 +1,5 @@
+<%= render(UI::ToggleGroup.new(name: "layout", value: "grid", label: "Layout")) do |group| %>
+  <% group.with_item(value: "list", label: "List", icon: "list") %>
+  <% group.with_item(value: "grid", label: "Grid", icon: "layout-grid") %>
+  <% group.with_item(value: "board", label: "Board", icon: "folder-kanban") %>
+<% end %>

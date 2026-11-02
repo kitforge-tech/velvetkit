@@ -1,0 +1,5 @@
+<%= render(UI::ToggleGroup.new(name: "billing", value: "monthly", variant: :outline, label: "Billing period")) do |group| %>
+  <% group.with_item(value: "monthly", label: "Monthly") %>
+  <% group.with_item(value: "yearly", label: "Yearly") %>
+  <% group.with_item(value: "lifetime", label: "Lifetime", disabled: true) %>
+<% end %>

@@ -1,0 +1,5 @@
+<%= render(UI::ToggleGroup.new(name: "align", value: "left", variant: :outline, label: "Text alignment")) do |group| %>
+  <% group.with_item(value: "left", label: "Align left", icon: "align-left", icon_only: true) %>
+  <% group.with_item(value: "center", label: "Align center", icon: "align-center", icon_only: true) %>
+  <% group.with_item(value: "right", label: "Align right", icon: "align-right", icon_only: true) %>
+<% end %>
