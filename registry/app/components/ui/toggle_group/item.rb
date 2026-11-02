@@ -15,15 +15,15 @@ class UI::ToggleGroup::Item < UI::Base
     outline: { sm: "h-8 w-8", default: "h-9 w-9", lg: "h-10 w-10" }
   }.freeze
 
-  # Hover only tints an unchecked item, so a checked one still looks checked
-  # under the pointer. The outline group clips its items to its corners, so
-  # the focus ring goes inside the item there.
+  # In the outline group only a checked item has a background; hover just
+  # darkens the text, so it can't be mistaken for checked. The group clips its
+  # items to its corners, so the focus ring goes inside the item there.
   STATES = {
     default: "rounded-md hover:text-foreground " \
              "has-[:checked]:bg-background has-[:checked]:text-foreground has-[:checked]:shadow-sm",
-    outline: "[&:not(:has(:checked))]:hover:bg-foreground/5 [&:not(:has(:checked))]:hover:text-foreground " \
-             "has-[:checked]:bg-foreground/12 has-[:checked]:text-foreground " \
-             "has-[:checked]:hover:bg-foreground/16 has-[:focus-visible]:ring-inset"
+    outline: "text-muted-foreground " \
+             "hover:text-foreground " \
+             "has-[:checked]:bg-foreground/8 has-[:checked]:text-foreground has-[:focus-visible]:ring-inset"
   }.freeze
 
   def initialize(value:, label: nil, icon: nil, icon_only: false, disabled: false, class: nil, **html_attrs)
