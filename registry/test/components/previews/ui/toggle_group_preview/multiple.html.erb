@@ -1,0 +1,5 @@
+<%= render(UI::ToggleGroup.new(name: "styles", value: %w[bold], multiple: true, variant: :outline, label: "Text style")) do |group| %>
+  <% group.with_item(value: "bold", label: "Bold", icon: "bold", icon_only: true) %>
+  <% group.with_item(value: "italic", label: "Italic", icon: "italic", icon_only: true) %>
+  <% group.with_item(value: "underline", label: "Underline", icon: "underline", icon_only: true) %>
+<% end %>

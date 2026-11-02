@@ -1,0 +1,1 @@
+<%= tag.label(**label_attrs) do %><%= tag.input(**input_attrs) %><% if icon? %><%= render(UI::Icon.new(name: @icon, size: icon_size)) %><% end %><% if text.present? %><%= tag.span text, class: ("sr-only" if icon_only?) %><% end %><% end %>

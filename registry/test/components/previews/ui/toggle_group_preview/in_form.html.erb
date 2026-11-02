@@ -1,0 +1,11 @@
+<form class="flex max-w-sm flex-col gap-4" action="#" onsubmit="event.preventDefault()">
+  <div class="flex flex-col gap-2">
+    <span id="visibility-label" class="text-sm font-medium">Visibility</span>
+    <%= render(UI::ToggleGroup.new(name: "project[visibility]", value: "team", required: true, variant: :outline, class: "w-full", aria: { labelledby: "visibility-label" })) do |group| %>
+      <% group.with_item(value: "private", label: "Private", class: "flex-1") %>
+      <% group.with_item(value: "team", label: "Team", class: "flex-1") %>
+      <% group.with_item(value: "public", label: "Public", class: "flex-1") %>
+    <% end %>
+  </div>
+  <%= render(UI::Button.new(type: :submit, class: "self-start")) { "Save" } %>
+</form>

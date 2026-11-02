@@ -1,0 +1,9 @@
+<div class="flex flex-col items-start gap-4">
+  <% %i[sm default lg].each do |size| %>
+    <%= render(UI::ToggleGroup.new(name: "size-#{size}", value: "b", size: size, label: "#{size} size")) do |group| %>
+      <% group.with_item(value: "a", label: "Draft") %>
+      <% group.with_item(value: "b", label: "Published") %>
+      <% group.with_item(value: "c", label: "Archived") %>
+    <% end %>
+  <% end %>
+</div>
