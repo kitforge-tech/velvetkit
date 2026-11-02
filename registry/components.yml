@@ -57,7 +57,7 @@ components:
   form_field:
     description: A label, hint and error message wired to any form control.
   icon:
-    description: A Lucide icon.
+    description: An SVG icon from your chosen icon library, drawn inline on the server.
   image:
     description: An image with consistent sizing and corner radius.
   input:
