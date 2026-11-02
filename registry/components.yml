@@ -97,6 +97,8 @@ components:
     description: A pulsing placeholder shown in a piece of content's shape while it loads.
   spinner:
     description: A loading indicator.
+  stepper:
+    description: The steps of a multi-step form, each one done, current or still to come.
   switch:
     description: An on/off toggle.
   table:

@@ -1,0 +1,16 @@
+<%= tag.li(**item_attrs) do %>
+  <% body = capture do %>
+    <%= tag.span class: indicator_classes, aria: { hidden: true } do %><% if icon_name %><%= render(UI::Icon.new(name: icon_name, size: :sm)) %><% else %><%= number %><% end %><% end %>
+    <%= tag.span class: text_classes do %>
+      <%= tag.span @title, class: title_classes %>
+      <% if @description.present? %><%= tag.span @description, class: description_classes %><% end %>
+      <%= tag.span ", #{status_text}", class: "sr-only" %>
+    <% end %>
+  <% end %>
+  <% if link? %>
+    <%= link_to @href, class: link_classes do %><%= body %><% end %>
+  <% else %>
+    <%= tag.div body, class: body_classes %>
+  <% end %>
+  <% unless last? %><%= tag.div class: connector_classes, aria: { hidden: true } %><% end %>
+<% end %>

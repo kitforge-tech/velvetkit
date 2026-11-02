@@ -1,0 +1,8 @@
+<div class="max-w-sm">
+  <%= render(UI::Stepper.new(current: 2, orientation: :vertical, label: "Setup")) do |stepper| %>
+    <% stepper.with_step(title: "Create your workspace", description: "Pick a name and a URL for your team.") %>
+    <% stepper.with_step(title: "Connect a repository", description: "We'll watch it and run your checks on every push.") %>
+    <% stepper.with_step(title: "Invite your team", description: "Add people now, or later from Settings.") %>
+    <% stepper.with_step(title: "Deploy", description: "Ship the first build.") %>
+  <% end %>
+</div>

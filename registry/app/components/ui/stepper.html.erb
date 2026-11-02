@@ -1,0 +1,1 @@
+<%= tag.nav(**nav_attrs) do %><%= tag.ol class: list_classes do %><% steps.each_with_index do |step, index| %><% step.place(self, index + 1, last: index == steps.size - 1) %><%= step %><% end %><% end %><% end %>
