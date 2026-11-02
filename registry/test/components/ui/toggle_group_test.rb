@@ -110,8 +110,8 @@ class UI::ToggleGroupTest < ViewComponent::TestCase
     assert_includes root[:class].split, "border"
     assert_includes root[:class].split, "divide-x"
     item = page.find("label", text: "List")[:class].split
-    assert_includes item, "has-[:checked]:bg-primary/10"
-    assert_includes item, "[&:not(:has(:checked))]:hover:bg-muted"
+    assert_includes item, "has-[:checked]:bg-foreground/12"
+    assert_includes item, "[&:not(:has(:checked))]:hover:bg-foreground/5"
     refute_includes item, "hover:bg-muted"
   end
 

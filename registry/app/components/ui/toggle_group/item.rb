@@ -21,9 +21,9 @@ class UI::ToggleGroup::Item < UI::Base
   STATES = {
     default: "rounded-md hover:text-foreground " \
              "has-[:checked]:bg-background has-[:checked]:text-foreground has-[:checked]:shadow-sm",
-    outline: "[&:not(:has(:checked))]:hover:bg-muted [&:not(:has(:checked))]:hover:text-foreground " \
-             "has-[:checked]:bg-primary/10 has-[:checked]:text-primary " \
-             "has-[:checked]:hover:bg-primary/15 has-[:focus-visible]:ring-inset"
+    outline: "[&:not(:has(:checked))]:hover:bg-foreground/5 [&:not(:has(:checked))]:hover:text-foreground " \
+             "has-[:checked]:bg-foreground/12 has-[:checked]:text-foreground " \
+             "has-[:checked]:hover:bg-foreground/16 has-[:focus-visible]:ring-inset"
   }.freeze
 
   def initialize(value:, label: nil, icon: nil, icon_only: false, disabled: false, class: nil, **html_attrs)
