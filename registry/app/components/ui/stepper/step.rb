@@ -48,7 +48,7 @@ class UI::Stepper::Step < UI::Base
   def item_attrs
     attrs = @html_attrs.except(:data)
     attrs[:class] = cn(
-      vertical? ? "relative flex gap-3 pb-8 last:pb-0" : "flex min-w-0 items-center gap-2",
+      vertical? ? "relative flex gap-3 pb-8 last:pb-0" : "flex min-w-0 items-start gap-2",
       { "flex-1" => !vertical? && !last?, "max-sm:flex-auto" => !vertical? && !last? && titled? },
       @user_class
     )
@@ -76,13 +76,11 @@ class UI::Stepper::Step < UI::Base
   end
 
   def text_classes
-    return "flex min-w-0 flex-col gap-0.5 pt-1.5" if vertical?
-
-    cn("flex min-w-0 flex-col", { "max-sm:sr-only" => !titled? })
+    cn("flex min-w-0 flex-col gap-0.5 pt-1.5", { "max-sm:sr-only" => !vertical? && !titled? })
   end
 
   def body_classes
-    cn("flex min-w-0", vertical? ? "gap-3" : "items-center gap-2", { "max-sm:shrink-0" => !vertical? && titled? })
+    cn("flex min-w-0 gap-3", { "max-sm:shrink-0" => !vertical? && titled? })
   end
 
   def titled? = %i[current error].include?(status)
@@ -91,14 +89,15 @@ class UI::Stepper::Step < UI::Base
     cn(body_classes, "group/step rounded-md outline-none focus-visible:ring-[3px] focus-visible:ring-ring/40")
   end
 
-  # Horizontal: a line after the step that fills the space to the next one.
-  # Vertical: a line down from the indicator to the next step.
+  # Horizontal: a line after the step, level with the middle of its circle,
+  # filling the space to the next one. Vertical: a line down from the circle to
+  # the next one, 4px clear of each.
   def connector_classes
     done = status == :complete
     if vertical?
-      cn("absolute left-4 top-10 bottom-2 w-px -translate-x-1/2", done ? "bg-primary" : "bg-border")
+      cn("absolute left-4 top-9 bottom-1 w-px -translate-x-1/2", done ? "bg-primary" : "bg-border")
     else
-      cn("h-px min-w-4 flex-1", done ? "bg-primary" : "bg-border")
+      cn("mt-4 h-px min-w-4 flex-1", done ? "bg-primary" : "bg-border")
     end
   end
 
