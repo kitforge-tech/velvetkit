@@ -33,6 +33,7 @@ globe: { tabler: world, phosphor: globe }
 graduation-cap: { tabler: school, phosphor: graduation-cap }
 grip-vertical: { tabler: grip-vertical, phosphor: dots-six-vertical }
 home: { tabler: home, phosphor: house }
+inbox: { tabler: inbox, phosphor: tray }
 info: { tabler: info-circle, phosphor: info }
 layout-dashboard: { tabler: layout-dashboard, phosphor: squares-four }
 layout-grid: { tabler: layout-grid, phosphor: grid-four }

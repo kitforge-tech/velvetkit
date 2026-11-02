@@ -1,0 +1,20 @@
+<%= tag.div class: classes, data: { slot: "empty-state" }.merge(@html_attrs[:data] || {}), **@html_attrs.except(:data) do %>
+  <% if header? %>
+    <div class="flex max-w-sm flex-col items-center gap-2">
+      <% if media? %>
+        <div class="mb-2"><%= media %></div>
+      <% elsif icon? %>
+        <div class="mb-2 flex size-12 items-center justify-center rounded-lg bg-muted text-foreground">
+          <%= render(UI::Icon.new(name: @icon, size: :lg)) %>
+        </div>
+      <% end %>
+      <% if @title.present? %><%= heading %><% end %>
+      <% if @description.present? %>
+        <p class="text-sm/relaxed text-muted-foreground [&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary"><%= @description %></p>
+      <% end %>
+    </div>
+  <% end %>
+  <% if content.present? %>
+    <div class="flex flex-wrap items-center justify-center gap-2"><%= content %></div>
+  <% end %>
+<% end %>
