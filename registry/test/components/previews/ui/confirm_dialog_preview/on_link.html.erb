@@ -1,0 +1,5 @@
+<%# Turbo turns a data-turbo-method link into a form; the options still apply. %>
+<%= link_to "Sign out of every device", "/demo/sessions", class: "text-sm font-medium text-primary underline-offset-4 hover:underline",
+      data: { turbo_method: :delete, turbo_confirm: "Sign out everywhere?",
+              confirm_description: "You'll need to sign in again on your phone and laptop.",
+              confirm_button: "Sign out" } %>

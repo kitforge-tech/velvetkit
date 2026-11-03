@@ -81,3 +81,6 @@ application.register("ui--session-tabs", UI__SessionTabsController)
 
 import UI__NavigationMenuController from "./ui/navigation_menu_controller"
 application.register("ui--navigation-menu", UI__NavigationMenuController)
+
+import UI__ConfirmDialogController from "./ui/confirm_dialog_controller"
+application.register("ui--confirm-dialog", UI__ConfirmDialogController)

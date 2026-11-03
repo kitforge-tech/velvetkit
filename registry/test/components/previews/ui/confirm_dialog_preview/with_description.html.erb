@@ -1,0 +1,4 @@
+<%= render(UI::ButtonTo.new("/demo/posts/1/publish", method: :patch,
+      data: { turbo_confirm: "Publish this post?",
+              confirm_description: "Subscribers get an email straight away.",
+              confirm_button: "Publish", confirm_cancel: "Not yet" })) { "Publish" } %>

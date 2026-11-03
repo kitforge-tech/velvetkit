@@ -1,3 +1,4 @@
 import "@hotwired/turbo-rails"
 import "./controllers"
 import "./focus_carry"
+import "./docs_demo"

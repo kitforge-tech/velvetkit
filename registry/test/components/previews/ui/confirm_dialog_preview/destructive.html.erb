@@ -1,0 +1,7 @@
+<%# In your layout, once: render(UI::ConfirmDialog.new) %>
+<%= render(UI::ButtonTo.new("/demo/projects/1", method: :delete, variant: :destructive,
+      data: { turbo_confirm: "Delete this project?",
+              confirm_description: "Its pages, files and history go too. This can't be undone.",
+              confirm_button: "Delete project", confirm_variant: "destructive" })) do |button| %>
+  <% button.with_leading_icon(name: "trash-2") %>Delete project
+<% end %>

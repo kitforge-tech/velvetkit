@@ -13,6 +13,9 @@ en:
       hint: 'Type the date as %{pattern}, or use the calendar'
       previous: 'Previous month'
       next: 'Next month'
+    confirm_dialog:
+      confirm: 'Confirm'
+      cancel: 'Cancel'
     data_grid:
       empty: 'Nothing to show'
     breadcrumb:

@@ -61,6 +61,7 @@ settings: { tabler: settings, phosphor: gear }
 shield: { tabler: shield, phosphor: shield }
 store: { tabler: building-store, phosphor: storefront }
 sun: { tabler: sun, phosphor: sun }
+trash-2: { tabler: trash, phosphor: trash }
 underline: { tabler: underline, phosphor: text-underline }
 upload: { tabler: upload, phosphor: upload-simple }
 user: { tabler: user, phosphor: user }

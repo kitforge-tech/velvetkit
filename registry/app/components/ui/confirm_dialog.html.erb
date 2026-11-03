@@ -1,0 +1,13 @@
+<%= tag.dialog(**dialog_attrs) do %>
+  <%= tag.form method: "dialog", class: PANEL, data: { state: "closed", "ui--confirm-dialog-target": "panel" } do %>
+    <div class="flex flex-col gap-2 text-center sm:text-left">
+      <%= tag.h2 id: title_id, class: "text-lg font-semibold leading-none tracking-tight", data: { "ui--confirm-dialog-target": "title" } %>
+      <%= tag.p id: description_id, hidden: true, class: "text-sm text-muted-foreground", data: { "ui--confirm-dialog-target": "description" } %>
+    </div>
+    <div class="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+      <%= render(UI::Button.new(type: :submit, variant: :outline, value: "cancel", autofocus: true, data: { "ui--confirm-dialog-target": "cancel" })) { cancel_label } %>
+      <%= render(UI::Button.new(type: :submit, value: "confirm", data: { "ui--confirm-dialog-target": "confirm" })) { confirm_label } %>
+      <%= render(UI::Button.new(type: :submit, variant: :destructive, value: "confirm", hidden: true, data: { "ui--confirm-dialog-target": "destructive" })) { confirm_label } %>
+    </div>
+  <% end %>
+<% end %>

@@ -10,5 +10,7 @@
   </head>
   <body class="min-h-screen bg-background p-6 text-foreground">
     <%= yield %>
+    <%= render(UI::ConfirmDialog.new) %>
+    <%= render(UI::Toast::Viewport.new) %>
   </body>
 </html>
