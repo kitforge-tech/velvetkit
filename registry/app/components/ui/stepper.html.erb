@@ -1,0 +1,19 @@
+<%= tag.div(**root_attrs) do %><%= tag.div class: frame_classes do %>
+  <%= tag.nav(**nav_attrs) do %>
+    <%= tag.ol class: list_classes do %><% steps.each do |step| %><%= step %><% end %><% end %>
+    <% if summary? %>
+      <%= tag.p summary_text, class: "mt-4 text-sm font-medium text-foreground @md/stepper:hidden", hidden: finished?, aria: { hidden: true }, data: { "ui--stepper-target": "summary" } %>
+    <% end %>
+  <% end %>
+  <% if body? %>
+    <%= tag.div class: body_classes do %>
+      <% panels.each do |step| %>
+        <%= tag.div(step.panel, **panel_attrs(step)) %>
+      <% end %>
+      <% if completion? %>
+        <%= tag.div(completion, **completion_attrs) %>
+      <% end %>
+      <%= content %>
+    <% end %>
+  <% end %>
+<% end %><% end %>

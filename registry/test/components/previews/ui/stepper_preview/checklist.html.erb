@@ -1,0 +1,12 @@
+<%# `connector: false` for steps that can be done in any order. Done ones link
+    back, so people can change what they set. %>
+<div class="w-full max-w-md rounded-xl border bg-card p-6">
+  <h3 class="font-semibold">Set up your store</h3>
+  <p class="mb-6 text-sm text-muted-foreground">2 of 4 done</p>
+  <%= render(UI::Stepper.new(orientation: :vertical, connector: false, label: "Store setup")) do |stepper| %>
+    <% stepper.with_step(title: "Add your first product", description: "Linen shirt, ₹2,400", status: :complete, href: "#") %>
+    <% stepper.with_step(title: "Choose a theme", description: "Using Coast", status: :complete, href: "#") %>
+    <% stepper.with_step(title: "Set up payments", description: "Connect UPI or a card processor", status: :current, icon: "credit-card") %>
+    <% stepper.with_step(title: "Pick a domain", description: "Or keep yourstore.example.com", status: :upcoming, icon: "globe") %>
+  <% end %>
+</div>

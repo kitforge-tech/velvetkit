@@ -1,0 +1,41 @@
+<%# Dots, and `labels: false`: the heading on each panel says where you are. %>
+<div class="w-full max-w-xl rounded-2xl border bg-card p-6 sm:p-8">
+  <%= render(UI::Stepper.new(variant: :dot, labels: false, label: "Form your LLC")) do |stepper| %>
+    <% stepper.with_step(title: "State") do %>
+      <h3 class="text-2xl font-semibold tracking-tight">Choose the state to incorporate your LLC</h3>
+      <p class="mt-6 mb-3 text-xs font-medium tracking-wide text-muted-foreground uppercase">Recommended</p>
+      <fieldset class="grid gap-3">
+        <legend class="sr-only">State</legend>
+        <% [["wyoming", "Wyoming", true, "Lower annual costs. No corporate income tax or franchise tax."],
+            ["delaware", "Delaware", false, "Strong legal protection for shareholders. Popular with C-corps."]].each do |value, name, recommended, detail| %>
+          <label class="flex cursor-pointer flex-col gap-1.5 rounded-lg border p-4 transition-colors hover:bg-accent/50 has-[:checked]:border-primary has-[:checked]:bg-primary/5 has-[:focus-visible]:ring-[3px] has-[:focus-visible]:ring-ring/40">
+            <input type="radio" name="llc[state]" value="<%= value %>" required class="sr-only">
+            <span class="flex items-center gap-2 font-medium"><%= name %><% if recommended %><%= render(UI::Badge.new(variant: :outline, size: :sm, class: "border-emerald-300 text-emerald-700 dark:border-emerald-800 dark:text-emerald-300")) { "Recommended" } %><% end %></span>
+            <span class="text-sm text-muted-foreground"><%= detail %></span>
+          </label>
+        <% end %>
+      </fieldset>
+    <% end %>
+    <% stepper.with_step(title: "Name") do %>
+      <h3 class="mb-6 text-2xl font-semibold tracking-tight">What's your company called?</h3>
+      <%= render(UI::Input.new(label: "Company name", name: "llc[name]", required: true, placeholder: "Northwind Studio", hint: "We'll add “LLC” to the end.")) %>
+    <% end %>
+    <% stepper.with_step(title: "Members") do %>
+      <h3 class="mb-6 text-2xl font-semibold tracking-tight">How many owners?</h3>
+      <%= render(UI::Input.new(type: :number, label: "Members", name: "llc[members]", required: true, min: 1, max: 50, value: 1, class: "w-28")) %>
+    <% end %>
+    <% stepper.with_step(title: "Review") do %>
+      <h3 class="mb-2 text-2xl font-semibold tracking-tight">Ready to file</h3>
+      <p class="text-sm text-muted-foreground">We'll file with the state today. Most states approve in 3 to 5 business days.</p>
+    <% end %>
+    <% stepper.with_completion do %>
+      <%= render(UI::EmptyState.new(icon: "circle-check", title: "Filed", description: "We'll email you when the state approves it.", class: "md:p-6")) do %>
+        <%= render(UI::Button.new(variant: :outline, data: { action: "ui--stepper#reset" })) { "Start over" } %>
+      <% end %>
+    <% end %>
+    <div class="mt-8 flex flex-col gap-2">
+      <%= render(UI::Button.new(size: :lg, full_width: true, data: { action: "ui--stepper#next", "ui--stepper-target": "next" })) { "Continue" } %>
+      <%= render(UI::Button.new(variant: :ghost, full_width: true, hidden: true, data: { action: "ui--stepper#previous", "ui--stepper-target": "previous" })) { "Back" } %>
+    </div>
+  <% end %>
+</div>

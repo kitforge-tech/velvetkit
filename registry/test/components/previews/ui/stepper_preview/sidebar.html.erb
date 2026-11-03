@@ -1,0 +1,43 @@
+<%# `layout: :side`: the steps in a column beside the panels, for a longer
+    flow. The last button moves on to the completion instead of posting. %>
+<div class="w-full max-w-4xl rounded-xl border bg-card p-6 sm:p-8">
+  <%= render(UI::Stepper.new(orientation: :vertical, layout: :side, label: "Book a speaker")) do |stepper| %>
+    <% stepper.with_step(title: "Format", description: "In person or remote") do %>
+      <h3 class="text-lg font-semibold">How will the speaker join?</h3>
+      <p class="mb-5 text-sm text-muted-foreground">Remote talks can still be watched together in the office.</p>
+      <%= render(UI::RadioGroup.new(name: "booking[format]", value: "remote")) do |group| %>
+        <% group.with_item(value: "in_person", label: "In person, at our office") %>
+        <% group.with_item(value: "remote", label: "Remote, with the team in the office") %>
+        <% group.with_item(value: "all_remote", label: "Remote, everyone from home") %>
+      <% end %>
+    <% end %>
+    <% stepper.with_step(title: "Talk", description: "Title and audience") do %>
+      <div class="grid gap-4">
+        <%= render(UI::Input.new(label: "Title", name: "booking[title]", required: true, placeholder: "Scaling Postgres without sharding")) %>
+        <%= render(UI::NativeSelect.new(label: "Audience", name: "booking[audience]", required: true, prompt: "Choose one",
+                                        options: [["Engineering", "engineering"], ["Whole company", "company"], ["Leadership", "leadership"]])) %>
+      </div>
+    <% end %>
+    <% stepper.with_step(title: "Date and time", description: "When it happens") do %>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <%= render(UI::Input.new(type: :date, label: "Date", name: "booking[date]", required: true)) %>
+        <%= render(UI::Input.new(type: :time, label: "Start", name: "booking[time]", required: true, value: "16:00")) %>
+      </div>
+    <% end %>
+    <% stepper.with_step(title: "Speaker", description: "Who to invite") do %>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <%= render(UI::Input.new(label: "Name", name: "booking[speaker]", required: true)) %>
+        <%= render(UI::Input.new(type: :email, label: "Email", name: "booking[email]", required: true)) %>
+      </div>
+    <% end %>
+    <% stepper.with_completion do %>
+      <%= render(UI::EmptyState.new(icon: "circle-check", title: "Request sent", description: "We've emailed the speaker. You'll hear back when they accept.", class: "md:p-6")) do %>
+        <%= render(UI::Button.new(variant: :outline, data: { action: "ui--stepper#reset" })) { "Book another" } %>
+      <% end %>
+    <% end %>
+    <div class="mt-8 flex items-center gap-2">
+      <%= render(UI::Button.new(variant: :ghost, hidden: true, data: { action: "ui--stepper#previous", "ui--stepper-target": "previous" })) { "Back" } %>
+      <%= render(UI::Button.new(class: "ml-auto", data: { action: "ui--stepper#next", "ui--stepper-target": "next" })) { "Continue" } %>
+    </div>
+  <% end %>
+</div>

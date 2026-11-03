@@ -1,0 +1,55 @@
+<%# One form, split into steps. Continue checks the fields on the current step
+    in the browser (required, pattern, type) and stays put, marking the step,
+    if one is wrong. Nothing is sent until "Create project". %>
+<%= form_with url: "/demo/projects", class: "w-full max-w-3xl" do %>
+  <%= render(UI::Card.new) do |card| %>
+    <% card.with_content(class: "pt-6") do %>
+      <%= render(UI::Stepper.new(label: "Create a project")) do |stepper| %>
+        <% stepper.with_step(title: "Details", description: "Name and address") do %>
+          <div class="grid gap-4 sm:grid-cols-2">
+            <%= render(UI::Input.new(label: "Project name", name: "project[name]", required: true, placeholder: "Acme dashboard")) %>
+            <%# The address is the part after the slash, so the box shows the rest. %>
+            <%= render(UI::FormField.new(label: "Address", required: true, hint: "Lowercase letters, numbers and dashes")) do |field| %>
+              <%= render(UI::InputGroup.new) do |group| %>
+                <% group.with_addon(align: "inline-start") { "acme.app/" } %>
+                <% group.with_field(name: "project[slug]", required: true, pattern: "[a-z0-9]+(-[a-z0-9]+)*", placeholder: "dashboard",
+                                    title: "Lowercase letters, numbers and dashes, like sales-dashboard", autocapitalize: "none",
+                                    spellcheck: false, **field.control_attributes) %>
+              <% end %>
+            <% end %>
+          </div>
+        <% end %>
+        <% stepper.with_step(title: "Plan", description: "Pick what fits") do %>
+          <fieldset class="grid gap-3 sm:grid-cols-3">
+            <legend class="sr-only">Plan</legend>
+            <% [["hobby", "Hobby", "Free", "One member, 3 projects"],
+                ["team", "Team", "$20 a month", "Up to 10 members"],
+                ["business", "Business", "$80 a month", "Unlimited members, SSO"]].each do |value, name, price, detail| %>
+              <label class="relative flex cursor-pointer flex-col gap-1 rounded-lg border p-4 transition-colors hover:bg-accent/50 has-[:checked]:border-primary has-[:checked]:bg-primary/5 has-[:focus-visible]:ring-[3px] has-[:focus-visible]:ring-ring/40">
+                <input type="radio" name="project[plan]" value="<%= value %>" required class="peer sr-only">
+                <span class="text-sm font-medium"><%= name %></span>
+                <span class="text-lg font-semibold"><%= price %></span>
+                <span class="text-sm text-muted-foreground"><%= detail %></span>
+              </label>
+            <% end %>
+          </fieldset>
+        <% end %>
+        <% stepper.with_step(title: "Team", description: "Invite people") do %>
+          <%= render(UI::Input.new(type: :email, label: "Email addresses", name: "project[invites]", multiple: true,
+                                   placeholder: "dev@acme.com, ops@acme.com", hint: "Optional. Separate them with commas.")) %>
+        <% end %>
+        <% stepper.with_step(title: "Review", description: "Check and create") do %>
+          <%= render(UI::Alert.new(variant: :info)) do |alert| %>
+            <% alert.with_title { "Almost there" } %>
+            <% alert.with_description { "You can rename the project, change its URL or plan, and invite more people later, from Settings." } %>
+          <% end %>
+        <% end %>
+        <div class="mt-8 flex items-center gap-2 border-t pt-6">
+          <%= render(UI::Button.new(variant: :outline, hidden: true, data: { action: "ui--stepper#previous", "ui--stepper-target": "previous" })) do |button| %><% button.with_leading_icon(name: "arrow-left") %>Back<% end %>
+          <%= render(UI::Button.new(class: "ml-auto", data: { action: "ui--stepper#next", "ui--stepper-target": "next" })) do |button| %>Continue<% button.with_trailing_icon(name: "arrow-right") %><% end %>
+          <%= render(UI::Button.new(type: :submit, class: "ml-auto", hidden: true, data: { "ui--stepper-target": "submit" })) { "Create project" } %>
+        </div>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

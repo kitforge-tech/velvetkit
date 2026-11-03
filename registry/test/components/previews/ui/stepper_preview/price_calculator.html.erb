@@ -1,0 +1,14 @@
+<%= render(UI::Card.new(class: "w-full max-w-3xl")) do |card| %>
+  <% card.with_header do |header| %>
+    <%= render(UI::Card::Title.new) { "Price calculator" } %>
+    <%= render(UI::Card::Description.new) { "All printing includes full colour on both sides." } %>
+  <% end %>
+  <% card.with_content do %>
+    <%= render(UI::Stepper.new(current: 3, label: "Price calculator")) do |stepper| %>
+      <% stepper.with_step(title: "Size and style") %>
+      <% stepper.with_step(title: "Paper type") %>
+      <% stepper.with_step(title: "Quantity") %>
+      <% stepper.with_step(title: "Packs") %>
+    <% end %>
+  <% end %>
+<% end %>

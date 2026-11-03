@@ -47,6 +47,14 @@ en:
       next: 'Go to next page'
       next_label: 'Next'
       more: 'More pages'
+    stepper:
+      label: 'Progress'
+      complete: 'Completed'
+      current: 'Current step'
+      upcoming: 'Not started'
+      error: 'Needs attention'
+      loading: 'Checking'
+      summary: 'Step %{current} of %{total}'
     select:
       placeholder: 'Choose…'
       search: 'Search'

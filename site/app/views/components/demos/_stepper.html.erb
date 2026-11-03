@@ -1,0 +1,64 @@
+<%# The whole sign-up is one turbo frame: each step posts, and the server
+    answers with the frame again, on the next step or the same one. %>
+<% signup = local_assigns.fetch(:signup) { Demo::Signup.new } %>
+<% step = local_assigns.fetch(:step, 1) %>
+<% failed = local_assigns.fetch(:failed, false) %>
+<% done = step > Demo::Signup::STEPS.size %>
+<% hint = ->(number, done_text, todo_text) { failed && step == number ? "Check the fields below" : (step > number ? done_text : todo_text) } %>
+<%= turbo_frame_tag "stepper-demo", class: "block rounded-xl border bg-card p-6 sm:p-8" do %>
+  <%= render(UI::Stepper.new(current: step, label: "Sign up")) do |stepper| %>
+    <% stepper.with_step(title: "Account", description: hint.(1, signup.email, "Email and password"),
+                         status: (:error if failed && step == 1)) %>
+    <% stepper.with_step(title: "Workspace", description: hint.(2, "#{signup.workspace_slug}.example.com", "Name and URL"),
+                         status: (:error if failed && step == 2)) %>
+    <% stepper.with_step(title: "Plan", description: hint.(3, Demo::Signup::PLANS[signup.plan], "Pick what fits"),
+                         status: (:error if failed && step == 3)) %>
+
+    <% if done %>
+      <%= render(UI::EmptyState.new(icon: "circle-check", title: "Workspace created",
+                                    description: "#{signup.workspace_slug}.example.com is ready, on the #{Demo::Signup::PLANS[signup.plan]} plan. (Not really: it's a demo.)",
+                                    class: "mt-8 md:p-6")) do %>
+        <%= link_to "Start again", component_path("stepper", anchor: "demo"), data: { turbo_frame: "_top" }, class: "text-sm font-medium text-primary underline-offset-4 hover:underline" %>
+      <% end %>
+    <% else %>
+      <%# novalidate: every check here is the server's, to show them all. %>
+      <%= form_with model: signup, url: stepper_demo_path, novalidate: true, class: "mt-8 grid gap-5" do |f| %>
+        <%= hidden_field_tag :step, step %>
+        <% Demo::Signup.carried(step).each do |name| %>
+          <%= f.hidden_field name %>
+        <% end %>
+
+        <% case step %>
+        <% when 1 %>
+          <%= render(UI::Input.new(form: f, field: :email, type: :email, autocomplete: "email", placeholder: "you@company.com")) %>
+          <%= render(UI::PasswordInput.new(form: f, field: :password, autocomplete: "new-password", hint: "At least 8 characters")) %>
+        <% when 2 %>
+          <div class="grid gap-5 sm:grid-cols-2">
+            <%= render(UI::Input.new(form: f, field: :workspace_name, placeholder: "Acme")) %>
+            <%# The address is just the name before .example.com, so the box says so. %>
+            <%= render(UI::FormField.new(form: f, field: :workspace_slug)) do |field| %>
+              <%= render(UI::InputGroup.new) do |group| %>
+                <% group.with_field(form: f, field: :workspace_slug, placeholder: "acme", autocapitalize: "none", spellcheck: false, **field.control_attributes) %>
+                <% group.with_addon(align: "inline-end") { ".example.com" } %>
+              <% end %>
+            <% end %>
+          </div>
+        <% when 3 %>
+          <%= render(UI::RadioGroup.new(name: "signup[plan]", value: signup.plan)) do |group| %>
+            <% Demo::Signup::PLANS.each { |value, label| group.with_item(value: value, label: label) } %>
+          <% end %>
+          <% if signup.errors[:plan].any? %>
+            <p class="text-sm text-destructive">Plan <%= signup.errors[:plan].first %></p>
+          <% end %>
+        <% end %>
+
+        <div class="flex items-center gap-2 border-t pt-5">
+          <% if step > 1 %>
+            <%= render(UI::Button.new(type: :submit, variant: :outline, name: "back", value: "1", formnovalidate: true)) do |button| %><% button.with_leading_icon(name: "arrow-left") %>Back<% end %>
+          <% end %>
+          <%= render(UI::Button.new(type: :submit, class: "ml-auto")) { step == Demo::Signup::STEPS.size ? "Create workspace" : "Continue" } %>
+        </div>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

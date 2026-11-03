@@ -1,0 +1,10 @@
+<%# A status the server knows: no panels, no buttons, just where the order is. %>
+<div class="w-full max-w-3xl">
+  <%= render(UI::Stepper.new(current: 3, align: :center, label: "Order #4021")) do |stepper| %>
+    <% stepper.with_step(title: "Ordered", description: "Mon, 2 Nov") %>
+    <% stepper.with_step(title: "Packed", description: "Tue, 3 Nov") %>
+    <% stepper.with_step(title: "Shipped", description: "Left Mumbai hub") %>
+    <% stepper.with_step(title: "Out for delivery") %>
+    <% stepper.with_step(title: "Delivered", description: "By Fri, 6 Nov") %>
+  <% end %>
+</div>

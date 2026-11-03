@@ -9,6 +9,7 @@
 align-center: { tabler: align-center, phosphor: text-align-center }
 align-left: { tabler: align-left, phosphor: text-align-left }
 align-right: { tabler: align-right, phosphor: text-align-right }
+arrow-left: { tabler: arrow-left, phosphor: arrow-left }
 arrow-right: { tabler: arrow-right, phosphor: arrow-right }
 badge-check: { tabler: rosette-discount-check, phosphor: seal-check }
 bar-chart-3: { tabler: chart-bar, phosphor: chart-bar }
@@ -55,10 +56,13 @@ moon: { tabler: moon, phosphor: moon }
 newspaper: { tabler: news, phosphor: newspaper }
 panel-left: { tabler: layout-sidebar, phosphor: sidebar }
 plus: { tabler: plus, phosphor: plus }
+qr-code: { tabler: qrcode, phosphor: qr-code }
 rocket: { tabler: rocket, phosphor: rocket }
+rotate-cw: { tabler: rotate-clockwise, phosphor: arrow-clockwise }
 search: { tabler: search, phosphor: magnifying-glass }
 settings: { tabler: settings, phosphor: gear }
 shield: { tabler: shield, phosphor: shield }
+shield-check: { tabler: shield-check, phosphor: shield-check }
 store: { tabler: building-store, phosphor: storefront }
 sun: { tabler: sun, phosphor: sun }
 trash-2: { tabler: trash, phosphor: trash }

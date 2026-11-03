@@ -102,7 +102,7 @@
       <h2 id="demo" class="text-2xl font-semibold tracking-tight">Live demo</h2>
       <%= render(UI::Badge.new(variant: :secondary)) { "Talks to a server" } %>
     </div>
-    <p class="text-muted-foreground">Sort a column, or filter one from its menu. Each change asks this site for a fresh page of 120 sample rows.</p>
+    <p class="text-muted-foreground"><%= render "components/demos/#{@component.name}_intro" %></p>
     <div data-outline-skip><%= render "components/demos/#{@component.name}" %></div>
   </section>
 <% end %>
