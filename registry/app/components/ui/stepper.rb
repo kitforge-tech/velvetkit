@@ -20,7 +20,9 @@ require "securerandom"
 # steps panels and the stepper moves between them in the browser; a button
 # with `data-action="ui--stepper#next"` checks the panel's fields and moves
 # on, marking the step as an error if one is invalid, and `ui--stepper#previous`
-# goes back. Give a button `data-ui--stepper-target="next"` or `"previous"` and
+# goes back, as does clicking a done step (`navigable: false` turns that
+# off). Moving on is only ever by Continue, so a panel is never skipped
+# unchecked. Give a button `data-ui--stepper-target="next"` or `"previous"` and
 # it hides when there's nowhere to go, and `"submit"` shows only on the last
 # step. Panels sit under the steps; `layout: :side` puts a vertical stepper
 # beside them, given the room, and `layout: :inline` puts each one under its
@@ -44,7 +46,7 @@ class UI::Stepper < UI::Base
   renders_one :completion
 
   def initialize(current: 1, orientation: :horizontal, variant: :default, align: :start, layout: :stacked,
-                 connector: true, labels: true, label: nil, class: nil, **html_attrs)
+                 connector: true, labels: true, navigable: nil, label: nil, class: nil, **html_attrs)
     @current     = current.to_i
     @orientation = ORIENTATIONS.include?(orientation.to_sym) ? orientation.to_sym : :horizontal
     @variant     = variant.to_sym == :dot ? :dot : :default
@@ -52,6 +54,7 @@ class UI::Stepper < UI::Base
     @layout      = layout.to_sym
     @connector   = connector
     @labels      = labels
+    @navigable   = navigable
     @label       = label
     @user_class  = binding.local_variable_get(:class)
     @html_attrs  = html_attrs
@@ -66,6 +69,10 @@ class UI::Stepper < UI::Base
   def side? = vertical? && @layout == :side
   def inline? = vertical? && @layout == :inline
   def finished? = @current > steps.size
+
+  # Steps with panels go back when a done one is clicked, unless
+  # `navigable: false` keeps people on Back.
+  def navigable? = @navigable.nil? ? steps.any?(&:panel?) : @navigable
 
   def id = @html_attrs[:id] || (@id ||= "ui-stepper-#{SecureRandom.hex(4)}")
 

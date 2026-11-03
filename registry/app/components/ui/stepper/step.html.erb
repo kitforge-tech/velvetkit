@@ -1,6 +1,6 @@
 <%= tag.li(**item_attrs) do %>
   <%= tag.div class: head_classes do %>
-    <%= tag.span class: indicator_classes, aria: { hidden: true } do %>
+    <%= tag.span(**indicator_attrs) do %>
       <% unless dot? %>
         <%= tag.span number_glyph, class: glyph_classes(:number) %>
         <%= tag.span render(UI::Icon.new(name: "check", size: :sm)), class: glyph_classes(:complete) %>
@@ -15,6 +15,8 @@
   <%= tag.div class: text_classes do %>
     <% if link? %>
       <%= link_to @href, class: link_classes do %><%= tag.span @title, id: title_id, class: title_classes %><% end %>
+    <% elsif navigable? %>
+      <%= tag.button(**select_attrs) do %><%= tag.span @title, id: title_id, class: title_classes %><% end %>
     <% else %>
       <%= tag.span @title, id: title_id, class: title_classes %>
     <% end %>

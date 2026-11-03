@@ -202,4 +202,38 @@ class UI::StepperTest < ViewComponent::TestCase
     assert_includes root[:class], "max-w-xl"
     assert_selector "li span[id='signup-step-1']"
   end
+
+  def render_panels(**opts)
+    render_inline(UI::Stepper.new(current: 2, **opts)) do |stepper|
+      stepper.with_step(title: "Account") { "Account fields" }
+      stepper.with_step(title: "Plan") { "Plan fields" }
+      stepper.with_step(title: "Payment") { "Card fields" }
+    end
+  end
+
+  def test_with_panels_a_done_step_is_a_button_back_to_it
+    render_panels
+    controller = "ui--stepper"
+    back = page.find("li[data-status='complete'] button[type='button']")
+    assert_equal "Account", back.text
+    refute back.disabled?
+    assert_equal "#{controller}#select", back["data-action"]
+    assert_equal "click->#{controller}#select", page.find("li[data-status='complete'] span[aria-hidden]", match: :first)["data-action"]
+  end
+
+  def test_steps_not_done_yet_are_disabled_buttons
+    render_panels
+    assert_selector "li[data-status='current'] button[disabled]", text: "Plan"
+    assert_selector "li[data-status='upcoming'] button[disabled]", text: "Payment"
+  end
+
+  def test_navigable_false_keeps_titles_plain
+    render_panels(navigable: false)
+    refute_selector "li button"
+  end
+
+  def test_without_panels_titles_are_plain
+    render_steps(current: 2)
+    refute_selector "li button"
+  end
 end

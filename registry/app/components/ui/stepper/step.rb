@@ -78,6 +78,7 @@ class UI::Stepper::Step < UI::Base
   def dot? = @stepper.dot?
   def center? = !vertical? && @stepper.align == :center
   def link? = @href.present? && %i[complete error].include?(status)
+  def navigable? = !link? && @stepper.navigable?
   def title_id = "#{@stepper.id}-step-#{@number}"
   def description? = @description.present?
   def inline_panel? = @stepper.inline? && panel?
@@ -106,7 +107,9 @@ class UI::Stepper::Step < UI::Base
     cn("relative z-10 flex shrink-0 items-center justify-center rounded-full",
        "transition-[background-color,border-color,color,box-shadow] duration-300 motion-reduce:transition-none",
        INDICATOR[@stepper.variant],
-       { "mt-1" => dot? && vertical? })
+       { "mt-1" => dot? && vertical?,
+         "group-data-[status=complete]/step:cursor-pointer group-data-[status=complete]/step:hover:ring-4 " \
+         "group-data-[status=complete]/step:hover:ring-primary/15" => navigable? })
   end
 
   # The number (or the step's icon) for steps to come and the current one; a
@@ -134,11 +137,26 @@ class UI::Stepper::Step < UI::Base
   def title_classes
     cn("text-sm font-medium text-foreground transition-colors duration-300",
        "group-data-[status=upcoming]/step:text-muted-foreground group-data-[status=error]/step:text-destructive",
-       { "underline-offset-4 group-hover/link:underline" => link? })
+       { "underline-offset-4 group-hover/link:underline" => link?,
+         "underline-offset-4 group-enabled/link:group-hover/link:underline" => navigable? })
   end
 
   def description_classes
     "text-sm text-muted-foreground group-data-[status=error]/step:text-destructive/90"
+  end
+
+  # A done step's title is a button back to it, and so (for the mouse) is its
+  # indicator. The controller enables it as each step is done.
+  def select_attrs
+    { type: "button", disabled: status != :complete, data: { action: "ui--stepper#select" },
+      class: "group/link flex w-fit cursor-pointer rounded-sm text-start outline-none focus-visible:ring-[3px] " \
+             "focus-visible:ring-ring/40 disabled:cursor-default #{'self-center' if center?}" }
+  end
+
+  def indicator_attrs
+    attrs = { class: indicator_classes, aria: { hidden: true } }
+    attrs[:data] = { action: "click->ui--stepper#select" } if navigable?
+    attrs
   end
 
   def link_classes
@@ -163,9 +181,13 @@ class UI::Stepper::Step < UI::Base
   end
 
   def connector_fill_classes
+    # Filled once this step is done, or the next one is: going back to change
+    # an answer leaves the way on to the steps already done drawn in.
     cn("block size-full bg-primary transition-transform duration-500 ease-out motion-reduce:transition-none",
-       vertical? ? "origin-top scale-y-0 group-data-[status=complete]/step:scale-y-100"
-                 : "origin-left scale-x-0 group-data-[status=complete]/step:scale-x-100 rtl:origin-right")
+       vertical? ? "origin-top scale-y-0 group-data-[status=complete]/step:scale-y-100 " \
+                   "[li:has(+li[data-status=complete])_&]:scale-y-100"
+                 : "origin-left scale-x-0 group-data-[status=complete]/step:scale-x-100 " \
+                   "[li:has(+li[data-status=complete])_&]:scale-x-100 rtl:origin-right")
   end
 
   def head_classes

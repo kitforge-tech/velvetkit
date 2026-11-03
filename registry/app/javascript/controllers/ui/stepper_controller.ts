@@ -5,7 +5,9 @@ type Status = 'complete' | 'current' | 'upcoming' | 'error' | 'loading';
 // Moves a UI::Stepper between its steps in the browser. Every step's look hangs
 // off its data-status, so this sets that, aria-current, and which panel shows.
 // Moving on checks the current panel's fields first; an invalid one keeps
-// someone on the step and marks it as an error until it's fixed.
+// someone on the step and marks it as an error until it's fixed. Going back
+// keeps the steps after it done, so a click on one returns there, checking
+// each panel on the way.
 export default class extends Controller<HTMLElement> {
   static targets = ['step', 'panel', 'completion', 'previous', 'next', 'submit', 'summary'];
   static values = { current: { type: Number, default: 1 }, summary: String };
@@ -20,8 +22,13 @@ export default class extends Controller<HTMLElement> {
   declare currentValue: number;
   declare summaryValue: string;
 
+  // The furthest step reached; the ones before it stay done while someone
+  // goes back to change an answer.
+  private furthest = 1;
+
   connect() {
     // The server drew the steps as they are; only the buttons need setting.
+    this.furthest = this.currentValue;
     this.syncButtons();
   }
 
@@ -36,19 +43,21 @@ export default class extends Controller<HTMLElement> {
   }
 
   reset() {
+    this.furthest = 1;
     this.go(1);
   }
 
-  // data-action="ui--stepper#goTo" data-ui--stepper-step-param="2". Going on
-  // past the current step still checks each panel on the way.
+  // A done step's title (or indicator) was clicked: go to it.
+  select(event: Event) {
+    const step = (event.currentTarget as HTMLElement).closest<HTMLElement>('[data-ui--stepper-target~="step"]');
+    const index = step ? this.stepTargets.indexOf(step) : -1;
+    if (index >= 0 && step?.dataset.status === 'complete') this.travel(index + 1);
+  }
+
+  // data-action="ui--stepper#goTo" data-ui--stepper-step-param="2".
   goTo(event: Event & { params: { step?: number | string } }) {
     const step = Number(event.params.step);
-    if (!(step >= 1 && step <= this.total + 1)) return;
-    while (this.currentValue < step) {
-      if (!this.validate()) return;
-      this.go(this.currentValue + 1);
-    }
-    if (step < this.currentValue) this.go(step);
+    if (step >= 1 && step <= this.total + 1) this.travel(step);
   }
 
   // Enter in a field moves on, rather than submitting the form underneath from
@@ -99,6 +108,15 @@ export default class extends Controller<HTMLElement> {
     );
   }
 
+  // Straight back; forward a step at a time, stopping at a panel that's wrong.
+  private travel(step: number) {
+    if (step < this.currentValue) return this.go(step);
+    while (this.currentValue < step) {
+      if (!this.validate()) return;
+      this.go(this.currentValue + 1);
+    }
+  }
+
   private validate() {
     const panel = this.currentPanel;
     const step = this.currentStep;
@@ -117,11 +135,15 @@ export default class extends Controller<HTMLElement> {
     this.element.dataset.moved = '';
     this.element.dataset.direction = back ? 'back' : 'forward';
     this.currentValue = step;
+    this.furthest = Math.max(this.furthest, step);
     this.sync();
   }
 
   private setStatus(step: HTMLElement, status: Status) {
     step.dataset.status = status;
+    step.querySelectorAll<HTMLButtonElement>('button[data-action~="ui--stepper#select"]').forEach((button) => {
+      button.disabled = status !== 'complete';
+    });
     if (status === 'current' || status === 'loading') step.setAttribute('aria-current', 'step');
     else step.removeAttribute('aria-current');
   }
@@ -132,7 +154,7 @@ export default class extends Controller<HTMLElement> {
 
     this.stepTargets.forEach((step, index) => {
       const number = index + 1;
-      this.setStatus(step, number < current ? 'complete' : number === current ? 'current' : 'upcoming');
+      this.setStatus(step, number === current ? 'current' : number < this.furthest ? 'complete' : 'upcoming');
     });
     this.panelTargets.forEach((panel) => (panel.hidden = Number(panel.dataset.step) !== current));
     this.completionTargets.forEach((el) => (el.hidden = !finished));
