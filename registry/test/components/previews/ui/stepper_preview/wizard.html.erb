@@ -8,8 +8,15 @@
         <% stepper.with_step(title: "Details", description: "Name and address") do %>
           <div class="grid gap-4 sm:grid-cols-2">
             <%= render(UI::Input.new(label: "Project name", name: "project[name]", required: true, placeholder: "Acme dashboard")) %>
-            <%= render(UI::Input.new(label: "URL", name: "project[slug]", required: true, pattern: "[a-z0-9]+(-[a-z0-9]+)*",
-                                     placeholder: "acme-dashboard", hint: "Lowercase letters, numbers and dashes")) %>
+            <%# The address is the part after the slash, so the box shows the rest. %>
+            <%= render(UI::FormField.new(label: "Address", required: true, hint: "Lowercase letters, numbers and dashes")) do |field| %>
+              <%= render(UI::InputGroup.new) do |group| %>
+                <% group.with_addon(align: "inline-start") { "acme.app/" } %>
+                <% group.with_field(name: "project[slug]", required: true, pattern: "[a-z0-9]+(-[a-z0-9]+)*", placeholder: "dashboard",
+                                    title: "Lowercase letters, numbers and dashes, like sales-dashboard", autocapitalize: "none",
+                                    spellcheck: false, **field.control_attributes) %>
+              <% end %>
+            <% end %>
           </div>
         <% end %>
         <% stepper.with_step(title: "Plan", description: "Pick what fits") do %>

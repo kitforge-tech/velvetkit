@@ -30,10 +30,22 @@ class StepperDemoTest < ActionDispatch::IntegrationTest
     assert_select "input[name='signup[password]']", count: 0
   end
 
-  test "a taken workspace URL" do
+  test "a pasted address is cut down to the workspace name" do
+    post stepper_demo_path, params: { step: 2, signup: signup(email: "grace@example.com", workspace_name: "Works", workspace_slug: "https://www.Works.example.com/") }
+    assert_response :success
+    assert_select "li[data-status='complete']", text: /works.example.com/
+  end
+
+  test "a name that isn't one says what is" do
+    post stepper_demo_path, params: { step: 2, signup: signup(email: "grace@example.com", workspace_name: "Works", workspace_slug: "works.com") }
+    assert_response :unprocessable_entity
+    assert_select "p.text-destructive", text: "Workspace address can only have lowercase letters, numbers and dashes, like acme-hq"
+  end
+
+  test "a taken workspace address" do
     post stepper_demo_path, params: { step: 2, signup: signup(email: "grace@example.com", workspace_name: "Acme", workspace_slug: "acme") }
     assert_response :unprocessable_entity
-    assert_select "p.text-destructive", text: "Workspace URL is taken. Try acme-hq?"
+    assert_select "p.text-destructive", text: "Workspace address is taken. Try acme-hq?"
   end
 
   test "back skips the checks" do

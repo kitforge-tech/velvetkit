@@ -35,7 +35,13 @@
         <% when 2 %>
           <div class="grid gap-5 sm:grid-cols-2">
             <%= render(UI::Input.new(form: f, field: :workspace_name, placeholder: "Acme")) %>
-            <%= render(UI::Input.new(form: f, field: :workspace_slug, placeholder: "acme", hint: "Your workspace's address, at example.com")) %>
+            <%# The address is just the name before .example.com, so the box says so. %>
+            <%= render(UI::FormField.new(form: f, field: :workspace_slug)) do |field| %>
+              <%= render(UI::InputGroup.new) do |group| %>
+                <% group.with_field(form: f, field: :workspace_slug, placeholder: "acme", autocapitalize: "none", spellcheck: false, **field.control_attributes) %>
+                <% group.with_addon(align: "inline-end") { ".example.com" } %>
+              <% end %>
+            <% end %>
           </div>
         <% when 3 %>
           <%= render(UI::RadioGroup.new(name: "signup[plan]", value: signup.plan)) do |group| %>

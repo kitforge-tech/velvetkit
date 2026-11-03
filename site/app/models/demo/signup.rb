@@ -29,7 +29,7 @@ class Demo::Signup
   with_options on: :workspace do
     validates :workspace_name, presence: true
     validates :workspace_slug, presence: true,
-                               format: { with: /\A[a-z0-9][a-z0-9-]*\z/, allow_blank: true, message: "can only have lowercase letters, numbers and dashes" }
+                               format: { with: /\A[a-z0-9][a-z0-9-]*\z/, allow_blank: true, message: "can only have lowercase letters, numbers and dashes, like acme-hq" }
     validate { errors.add(:workspace_slug, "is taken. Try #{workspace_slug}-hq?") if TAKEN_SLUGS.include?(workspace_slug.to_s) }
   end
 
@@ -37,10 +37,17 @@ class Demo::Signup
     validates :plan, inclusion: { in: PLANS.keys, message: "needs choosing" }
   end
 
+  # People paste whole addresses: keep just the name, so
+  # "https://www.acme.example.com/" is "acme", and "Acme HQ" is "acme-hq".
+  def workspace_slug=(value)
+    super(value.to_s.strip.downcase.sub(%r{\A[a-z]+://}, "").sub(/\Awww\./, "").sub(%r{/.*\z}, "")
+               .delete_suffix(".example.com").gsub(/\s+/, "-"))
+  end
+
   def self.model_name = ActiveModel::Name.new(self, nil, "Signup")
 
   def self.human_attribute_name(attribute, options = {})
-    { "workspace_name" => "Workspace name", "workspace_slug" => "Workspace URL" }.fetch(attribute.to_s) { super }
+    { "workspace_name" => "Workspace name", "workspace_slug" => "Workspace address" }.fetch(attribute.to_s) { super }
   end
 
   def self.carried(step) = attribute_names - FIELDS.fetch(step) - %w[password]
