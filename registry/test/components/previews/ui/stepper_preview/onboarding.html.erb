@@ -1,0 +1,12 @@
+<div class="w-full max-w-4xl space-y-10">
+  <%= render(UI::Stepper.new(current: 3, variant: :dot, align: :center, label: "Contractor onboarding")) do |stepper| %>
+    <% ["General info", "Payment info", "Benefits and compliance", "Review and sign", "Contractor signs", "Activated"].each do |title| %>
+      <% stepper.with_step(title: title) %>
+    <% end %>
+  <% end %>
+  <%= render(UI::Stepper.new(current: 2, variant: :dot, label: "Checkout")) do |stepper| %>
+    <% stepper.with_step(title: "Cart") %>
+    <% stepper.with_step(title: "Shipping") %>
+    <% stepper.with_step(title: "Payment") %>
+  <% end %>
+</div>

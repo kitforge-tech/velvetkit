@@ -1,0 +1,9 @@
+<%# `status: :loading` for a step that's waiting on someone else. %>
+<div class="w-full max-w-sm">
+  <%= render(UI::Stepper.new(orientation: :vertical, current: 3, label: "Leave request approvals")) do |stepper| %>
+    <% stepper.with_step(title: "Team lead", description: "Approved by Aditi Rao · 15 Jun 2026") %>
+    <% stepper.with_step(title: "Head of department", description: "Approved by Farhan Shah · 15 Jun 2026") %>
+    <% stepper.with_step(title: "VP, People", description: "Waiting since 16 Jun 2026", status: :loading) %>
+    <% stepper.with_step(title: "Payroll", description: "Updates your leave balance") %>
+  <% end %>
+</div>

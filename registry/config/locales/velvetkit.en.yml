@@ -53,6 +53,8 @@ en:
       current: 'Current step'
       upcoming: 'Not started'
       error: 'Needs attention'
+      loading: 'Checking'
+      summary: 'Step %{current} of %{total}'
     select:
       placeholder: 'Choose…'
       search: 'Search'

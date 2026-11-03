@@ -1,6 +1,0 @@
-<%# `current:` past the last step marks every step done. %>
-<%= render(UI::Stepper.new(current: 4)) do |stepper| %>
-  <% stepper.with_step(title: "Account") %>
-  <% stepper.with_step(title: "Plan") %>
-  <% stepper.with_step(title: "Payment") %>
-<% end %>

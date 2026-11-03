@@ -1,0 +1,31 @@
+<%# `layout: :inline`: each panel opens under its own step, with its own
+    button, like a checklist that walks you through. %>
+<div class="w-full max-w-lg">
+  <%= render(UI::Stepper.new(orientation: :vertical, layout: :inline, label: "Turn on two-factor")) do |stepper| %>
+    <% stepper.with_step(title: "Install an authenticator app", description: "1Password, Authy or Google Authenticator") do %>
+      <p class="mb-3 text-sm text-muted-foreground">Any app that makes six-digit codes works.</p>
+      <%= render(UI::Button.new(size: :sm, data: { action: "ui--stepper#next" })) { "I have one" } %>
+    <% end %>
+    <% stepper.with_step(title: "Scan the code", description: "Or type the key by hand") do %>
+      <div class="mb-3 flex items-center gap-4">
+        <div class="grid size-24 shrink-0 place-items-center rounded-md border bg-muted text-muted-foreground"><%= render(UI::Icon.new(name: "qr-code", size: :xl)) %></div>
+        <code class="font-mono text-sm break-all">JBSW Y3DP EHPK 3PXP</code>
+      </div>
+      <%= render(UI::Button.new(size: :sm, data: { action: "ui--stepper#next" })) { "Next" } %>
+    <% end %>
+    <% stepper.with_step(title: "Enter a code", description: "To check it's set up") do %>
+      <div class="flex items-end gap-2">
+        <%= render(UI::Input.new(label: "Six-digit code", name: "otp", required: true, pattern: "[0-9]{6}", inputmode: "numeric",
+                                 autocomplete: "one-time-code", maxlength: 6, placeholder: "123456", class: "w-36 font-mono")) %>
+        <%= render(UI::Button.new(data: { action: "ui--stepper#next" })) { "Verify" } %>
+      </div>
+    <% end %>
+    <% stepper.with_completion do %>
+      <%= render(UI::Alert.new(variant: :success)) do |alert| %>
+        <% alert.with_icon(name: "shield-check") %>
+        <% alert.with_title { "Two-factor is on" } %>
+        <% alert.with_description { "You'll be asked for a code when you sign in on a new device." } %>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>

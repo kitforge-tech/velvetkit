@@ -1,5 +1,0 @@
-<%= render(UI::Stepper.new(current: 3)) do |stepper| %>
-  <% stepper.with_step(title: "Account", description: "Name and email") %>
-  <% stepper.with_step(title: "Billing", description: "Card was declined", status: :error) %>
-  <% stepper.with_step(title: "Review", description: "Check and confirm") %>
-<% end %>

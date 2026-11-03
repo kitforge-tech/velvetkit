@@ -1,0 +1,20 @@
+<%# The server decides the step. Each panel is a form that posts to it: valid,
+    it redirects to the next step; invalid, it renders this again with
+    `status: :error` and the field's error, with a 422. Done steps link back.
+    While the form is sending, the step shows a spinner. %>
+<div class="w-full max-w-2xl">
+  <%= render(UI::Stepper.new(current: 2, label: "Sign up")) do |stepper| %>
+    <% stepper.with_step(title: "Account", description: "ada@example.com", href: "#account") %>
+    <% stepper.with_step(title: "Workspace", description: "That address is taken", status: :error) do %>
+      <%= form_with url: "/demo/signup/workspace", method: :patch, class: "grid gap-4" do %>
+        <%= render(UI::Input.new(label: "Workspace URL", name: "workspace[slug]", value: "acme", required: true,
+                                 error: "acme.example.com is taken. Try acme-hq or acme-labs.")) %>
+        <div class="flex justify-end gap-2">
+          <%= render(UI::Button.new(type: :submit)) { "Continue" } %>
+        </div>
+      <% end %>
+    <% end %>
+    <% stepper.with_step(title: "Plan") %>
+    <% stepper.with_step(title: "Invite") %>
+  <% end %>
+</div>

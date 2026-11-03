@@ -1,16 +1,25 @@
 <%= tag.li(**item_attrs) do %>
-  <% body = capture do %>
-    <%= tag.span class: indicator_classes, aria: { hidden: true } do %><% if icon_name %><%= render(UI::Icon.new(name: icon_name, size: :sm)) %><% else %><%= number %><% end %><% end %>
-    <%= tag.span class: text_classes do %>
-      <%= tag.span @title, class: title_classes %>
-      <% if @description.present? %><%= tag.span @description, class: description_classes %><% end %>
-      <%= tag.span ", #{status_text}", class: "sr-only" %>
+  <%= tag.div class: head_classes do %>
+    <%= tag.span class: indicator_classes, aria: { hidden: true } do %>
+      <% unless dot? %>
+        <%= tag.span number_glyph, class: glyph_classes(:number) %>
+        <%= tag.span render(UI::Icon.new(name: "check", size: :sm)), class: glyph_classes(:complete) %>
+        <%= tag.span "!", class: glyph_classes(:error) + " font-bold" %>
+        <%= tag.span render(UI::Icon.new(name: "loader", size: :sm, class: "animate-spin")), class: glyph_classes(:loading) %>
+      <% end %>
+    <% end %>
+    <% if connector? %>
+      <%= tag.span class: connector_classes, aria: { hidden: true } do %><%= tag.span class: connector_fill_classes %><% end %>
     <% end %>
   <% end %>
-  <% if link? %>
-    <%= link_to @href, class: link_classes do %><%= body %><% end %>
-  <% else %>
-    <%= tag.div body, class: body_classes %>
+  <%= tag.div class: text_classes do %>
+    <% if link? %>
+      <%= link_to @href, class: link_classes do %><%= tag.span @title, id: title_id, class: title_classes %><% end %>
+    <% else %>
+      <%= tag.span @title, id: title_id, class: title_classes %>
+    <% end %>
+    <% if description? %><%= tag.span @description, class: description_classes %><% end %>
+    <% status_texts.each do |text, classes| %><%= tag.span ", #{text}", class: classes %><% end %>
+    <% if inline_panel? %><%= tag.div(panel, **panel_attrs) %><% end %>
   <% end %>
-  <% unless last? %><%= tag.div class: connector_classes, aria: { hidden: true } %><% end %>
 <% end %>

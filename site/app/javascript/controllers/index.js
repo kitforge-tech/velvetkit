@@ -84,3 +84,6 @@ application.register("ui--navigation-menu", UI__NavigationMenuController)
 
 import UI__ConfirmDialogController from "./ui/confirm_dialog_controller"
 application.register("ui--confirm-dialog", UI__ConfirmDialogController)
+
+import UI__StepperController from "./ui/stepper_controller"
+application.register("ui--stepper", UI__StepperController)

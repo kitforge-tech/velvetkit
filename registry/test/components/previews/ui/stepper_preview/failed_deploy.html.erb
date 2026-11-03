@@ -1,0 +1,13 @@
+<%# `status: :error` marks the step that failed; the description says why. %>
+<div class="w-full max-w-md">
+  <%= render(UI::Stepper.new(orientation: :vertical, current: 2, label: "Deploy a1f9c3e")) do |stepper| %>
+    <% stepper.with_step(title: "Build", description: "Finished in 42s") %>
+    <% stepper.with_step(title: "Test", description: "3 of 214 tests failed in spec/billing", status: :error) %>
+    <% stepper.with_step(title: "Migrate database") %>
+    <% stepper.with_step(title: "Release", description: "To production") %>
+    <div class="flex gap-2 pl-11">
+      <%= render(UI::Button.new(size: :sm)) do |button| %><% button.with_leading_icon(name: "rotate-cw") %>Retry tests<% end %>
+      <%= render(UI::Button.new(variant: :outline, size: :sm)) { "View logs" } %>
+    </div>
+  <% end %>
+</div>

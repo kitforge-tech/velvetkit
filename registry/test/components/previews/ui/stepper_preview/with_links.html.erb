@@ -1,7 +1,0 @@
-<%# Steps already done link back; the current one never does. %>
-<%= render(UI::Stepper.new(current: 3)) do |stepper| %>
-  <% stepper.with_step(title: "Details", href: "#details") %>
-  <% stepper.with_step(title: "Address", href: "#address") %>
-  <% stepper.with_step(title: "Review", href: "#review") %>
-  <% stepper.with_step(title: "Confirm") %>
-<% end %>
