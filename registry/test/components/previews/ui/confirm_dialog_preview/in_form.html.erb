@@ -1,0 +1,6 @@
+<%# On a form, Turbo asks before submitting it. %>
+<%= form_with url: "/demo/invoices", class: "flex w-full max-w-md flex-col gap-4",
+      data: { turbo_confirm: "Send this invoice to Acme Inc.?", confirm_button: "Send invoice" } do %>
+  <%= render(UI::Input.new(label: "Amount", name: "invoice[amount]", value: "1,200.00")) %>
+  <%= render(UI::Button.new(type: :submit, class: "self-start")) { "Send" } %>
+<% end %>

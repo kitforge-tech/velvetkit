@@ -61,5 +61,7 @@
     <%= content_for?(:main) ? yield(:main) : yield %>
 
     <%= render "layouts/footer" %>
+    <%= render(UI::ConfirmDialog.new) %>
+    <%= render(UI::Toast::Viewport.new) %>
   </body>
 </html>

@@ -44,6 +44,8 @@ components:
     description: A checkbox with label, standalone or bound to a form builder.
   collapsible:
     description: A section that opens and closes under its trigger, like a branch of a nav tree.
+  confirm_dialog:
+    description: A styled dialog that answers data-turbo-confirm, in place of the browser's confirm box.
   data_grid:
     description: A sortable, filterable, server-paged table on AG Grid.
   date_picker:

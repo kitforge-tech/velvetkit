@@ -1,0 +1,3 @@
+<%# Only data-turbo-confirm: the message is the title, with the default buttons. %>
+<%= render(UI::ButtonTo.new("/demo/notifications/read", method: :patch, variant: :outline,
+      data: { turbo_confirm: "Mark every notification as read?" })) { "Mark all as read" } %>
