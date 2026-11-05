@@ -1,0 +1,7 @@
+<%= render(UI::Timeline.new(variant: :dot, label: "Activity", class: "max-w-md")) do |timeline| %>
+  <% timeline.with_item(title: "Sam changed the price to $24.00", time: "2 minutes ago") %>
+  <% timeline.with_item(title: "Priya added a photo", time: "1 hour ago") %>
+  <% timeline.with_item(title: "Import failed", status: :error, time: "Yesterday", description: "Row 12 has no SKU.") %>
+  <% timeline.with_item(title: "Sam edited the description", time: "Nov 2") %>
+  <% timeline.with_item(title: "Priya created this product", time: "Oct 28") %>
+<% end %>
