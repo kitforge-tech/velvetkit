@@ -1,0 +1,6 @@
+<%= render(UI::Timeline.new(label: "Order status", class: "max-w-md")) do |timeline| %>
+  <% timeline.with_item(title: "Packed", time: "Nov 4, 2:40 pm") %>
+  <% timeline.with_item(title: "Out for delivery", time: "Nov 5, 8:05 am") %>
+  <% timeline.with_item(title: "Delivery failed", status: :error, time: "Nov 5, 4:18 pm", description: "No one was home to sign for it.") %>
+  <% timeline.with_item(title: "Second attempt", status: :upcoming, time: "Expected tomorrow") %>
+<% end %>

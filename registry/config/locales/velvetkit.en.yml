@@ -86,6 +86,12 @@ en:
         light: 'Light'
         dark: 'Dark'
         system: 'System'
+    timeline:
+      label: 'Timeline'
+      complete: 'Completed'
+      current: 'In progress'
+      upcoming: 'Not started'
+      error: 'Failed'
     toast:
       close_label: 'Dismiss'
     file_field:

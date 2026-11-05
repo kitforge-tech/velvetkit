@@ -1,0 +1,5 @@
+<%= render(UI::Timeline.new(label: "Invoice", class: "max-w-md")) do |timeline| %>
+  <% timeline.with_item(title: "Sent", time: Time.utc(2026, 11, 3, 9, 30)) %>
+  <% timeline.with_item(title: "Viewed", time: Time.utc(2026, 11, 4, 16, 5), time_label: "Yesterday") %>
+  <% timeline.with_item(title: "Paid", status: :current, time: Date.new(2026, 11, 5)) %>
+<% end %>

@@ -1,0 +1,7 @@
+<%= render(UI::Timeline.new(variant: :colored, label: "Order status", class: "max-w-md")) do |timeline| %>
+  <% timeline.with_item(title: "Order placed", icon: "file-text", time: "Nov 3, 9:12 am") %>
+  <% timeline.with_item(title: "Payment received", icon: "credit-card", time: "Nov 3, 9:13 am", description: "Card ending 4242") %>
+  <% timeline.with_item(title: "Packed", icon: "package", time: "Nov 4, 2:40 pm") %>
+  <% timeline.with_item(title: "Out for delivery", icon: "truck", status: :current, time: "Nov 5, 8:05 am") %>
+  <% timeline.with_item(title: "Delivered", icon: "home", status: :upcoming, time: "Expected today") %>
+<% end %>

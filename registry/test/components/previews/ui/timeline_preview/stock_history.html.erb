@@ -1,0 +1,6 @@
+<%= render(UI::Timeline.new(label: "Stock history", class: "max-w-md")) do |timeline| %>
+  <% timeline.with_item(title: "Sold 2", icon: "store", time: "Today, 11:02 am", description: "Bill #1042. 46 left.") %>
+  <% timeline.with_item(title: "Written off 1", icon: "trash-2", time: "Yesterday, 6:30 pm", description: "Damaged in storage. 48 left.") %>
+  <% timeline.with_item(title: "Received 24", icon: "truck", time: "Nov 2, 10:15 am", description: "From Northwind Traders. 49 left.") %>
+  <% timeline.with_item(title: "Opening stock 25", icon: "package", time: "Oct 28, 9:00 am") %>
+<% end %>

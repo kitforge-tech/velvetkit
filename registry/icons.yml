@@ -55,6 +55,7 @@ minus: { tabler: minus, phosphor: minus }
 monitor: { tabler: device-desktop, phosphor: desktop }
 moon: { tabler: moon, phosphor: moon }
 newspaper: { tabler: news, phosphor: newspaper }
+package: { tabler: package, phosphor: package }
 panel-left: { tabler: layout-sidebar, phosphor: sidebar }
 plus: { tabler: plus, phosphor: plus }
 qr-code: { tabler: qrcode, phosphor: qr-code }
@@ -67,6 +68,7 @@ shield-check: { tabler: shield-check, phosphor: shield-check }
 store: { tabler: building-store, phosphor: storefront }
 sun: { tabler: sun, phosphor: sun }
 trash-2: { tabler: trash, phosphor: trash }
+truck: { tabler: truck, phosphor: truck }
 underline: { tabler: underline, phosphor: text-underline }
 upload: { tabler: upload, phosphor: upload-simple }
 user: { tabler: user, phosphor: user }

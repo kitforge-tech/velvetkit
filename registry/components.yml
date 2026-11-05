@@ -119,6 +119,8 @@ components:
     description: A light/dark/system theme switcher.
     files:
       - app/views/layouts/_theme_script.html.erb
+  timeline:
+    description: What happened and what's still to come, as a list of dated entries.
   toast:
     description: A stacked, auto-dismissing message, pushed from the client or a Turbo Stream.
   toggle_group:
