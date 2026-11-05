@@ -1,0 +1,4 @@
+<div class="flex w-48 flex-col gap-4">
+  <%= render(UI::NumberInput.new(label: "Weight (kg)", value: 1.5, min: 0, step: 0.25, name: "weight", hint: "In steps of 0.25")) %>
+  <%= render(UI::NumberInput.new(label: "Any amount", value: 2.75, min: 0, step: "any", name: "amount", hint: "Buttons move by 1")) %>
+</div>

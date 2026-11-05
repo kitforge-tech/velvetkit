@@ -1,0 +1,11 @@
+<%# frozen_string_literal: true %>
+<% group = capture do %><%= render(group_component) do |g| %>
+  <% g.with_field(**field_options) %>
+  <% g.with_addon(align: "inline-start", class: UI::NumberInput::ADDON_CLASSES) do %>
+    <%= render(UI::Button.new(**step_button_options(:decrement))) do %><%= render(UI::Icon.new(name: "minus", size: icon_size)) %><% end %>
+  <% end %>
+  <% g.with_addon(align: "inline-end", class: UI::NumberInput::ADDON_CLASSES) do %>
+    <%= render(UI::Button.new(**step_button_options(:increment))) do %><%= render(UI::Icon.new(name: "plus", size: icon_size)) %><% end %>
+  <% end %>
+<% end %><% end %>
+<%= render(wrapper) { group } %>

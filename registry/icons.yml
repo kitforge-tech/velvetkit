@@ -51,6 +51,7 @@ log-out: { tabler: logout, phosphor: sign-out }
 mail: { tabler: mail, phosphor: envelope }
 menu: { tabler: menu-2, phosphor: list }
 message-circle: { tabler: message-circle, phosphor: chat-circle }
+minus: { tabler: minus, phosphor: minus }
 monitor: { tabler: device-desktop, phosphor: desktop }
 moon: { tabler: moon, phosphor: moon }
 newspaper: { tabler: news, phosphor: newspaper }

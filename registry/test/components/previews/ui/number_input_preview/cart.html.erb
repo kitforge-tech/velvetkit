@@ -1,0 +1,11 @@
+<ul class="flex max-w-md flex-col divide-y">
+  <% [ [ "Oat milk, 1 L", "$3.20", 2 ], [ "Filter coffee, 250 g", "$11.50", 1 ], [ "Ceramic mug", "$14.00", 4 ] ].each do |name, price, quantity| %>
+    <li class="flex items-center justify-between gap-4 py-3">
+      <span class="min-w-0 text-sm">
+        <span class="block font-medium"><%= name %></span>
+        <span class="text-muted-foreground"><%= price %></span>
+      </span>
+      <%= render(UI::NumberInput.new(value: quantity, min: 1, max: 20, name: "quantity[]", "aria-label": "Quantity of #{name}", class: "w-28 shrink-0")) %>
+    </li>
+  <% end %>
+</ul>
