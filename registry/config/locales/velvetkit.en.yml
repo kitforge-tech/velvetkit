@@ -30,6 +30,9 @@ en:
       label: 'Loading'
     dialog:
       close_label: 'Close'
+    number_input:
+      decrement: 'Decrease'
+      increment: 'Increase'
     password_input:
       show: 'Show password'
       hide: 'Hide password'

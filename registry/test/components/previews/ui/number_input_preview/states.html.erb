@@ -1,0 +1,7 @@
+<div class="flex w-48 flex-col gap-4">
+  <%= render(UI::NumberInput.new(label: "At its minimum", value: 1, min: 1, max: 5, name: "at_min")) %>
+  <%= render(UI::NumberInput.new(label: "At its maximum", value: 5, min: 1, max: 5, name: "at_max")) %>
+  <%= render(UI::NumberInput.new(label: "Disabled", value: 3, disabled: true, name: "disabled")) %>
+  <%= render(UI::NumberInput.new(label: "Read only", value: 3, readonly: true, name: "readonly")) %>
+  <%= render(UI::NumberInput.new(label: "With an error", value: 0, error: "Must be at least 1", name: "invalid")) %>
+</div>

@@ -1,0 +1,5 @@
+<div class="flex w-48 flex-col gap-4">
+  <%= render(UI::NumberInput.new(size: :sm, label: "Small", value: 1, min: 0, name: "small")) %>
+  <%= render(UI::NumberInput.new(label: "Default", value: 2, min: 0, name: "default")) %>
+  <%= render(UI::NumberInput.new(size: :lg, label: "Large, for touch screens", value: 3, min: 0, name: "large")) %>
+</div>

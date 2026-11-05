@@ -87,3 +87,6 @@ application.register("ui--confirm-dialog", UI__ConfirmDialogController)
 
 import UI__StepperController from "./ui/stepper_controller"
 application.register("ui--stepper", UI__StepperController)
+
+import UI__NumberInputController from "./ui/number_input_controller"
+application.register("ui--number-input", UI__NumberInputController)
