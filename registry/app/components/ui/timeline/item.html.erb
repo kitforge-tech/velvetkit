@@ -1,0 +1,21 @@
+<%= tag.li(**item_attrs) do %>
+  <%= tag.span class: marker_classes, aria: { hidden: true } do %>
+    <% if !dot? && marker_icon %><%= render(UI::Icon.new(name: marker_icon, size: :sm)) %><% end %>
+    <% if !dot? && !marker_icon && status == :current %><%= tag.span class: "size-2 rounded-full bg-current" %><% end %>
+  <% end %>
+  <% if connector? %><%= tag.span class: connector_classes, aria: { hidden: true } %><% end %>
+  <%= tag.div class: text_classes do %>
+    <%= tag.div class: "flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5" do %>
+      <%= tag.span class: title_classes do %><%= title %><%= tag.span ", #{status_text}", class: "sr-only" %><% end %>
+      <% if time? %>
+        <% if date? %>
+          <%= tag.time time_text, datetime: @time.iso8601, class: "text-xs text-muted-foreground" %>
+        <% else %>
+          <%= tag.span time_text, class: "text-xs text-muted-foreground" %>
+        <% end %>
+      <% end %>
+    <% end %>
+    <% if description? %><%= tag.p description, class: "text-sm text-muted-foreground" %><% end %>
+    <% if content? %><%= tag.div content, class: "mt-1.5 text-sm text-foreground" %><% end %>
+  <% end %>
+<% end %>
