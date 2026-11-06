@@ -20,8 +20,10 @@ class ChartsController < ApplicationController
 
   layout "docs"
 
+  # The route only allows these pages, and the template is still taken from the
+  # list rather than from the request.
   def show
-    @chart_page = params[:page]
+    @chart_page = PAGES.keys.find { |page| page == params[:page] } or raise ActionController::RoutingError, "Not Found"
     render @chart_page
   end
 
