@@ -192,4 +192,59 @@ class UI::SelectTest < ViewComponent::TestCase
     refute_selector "button[aria-describedby]"
     refute_selector "p.text-destructive"
   end
+
+  # ── Searching the server ──────────────────────────────────────────────────
+
+  def render_remote(**opts)
+    render_inline(UI::Select.new(name: "order[customer_id]", url: "/customers/search", **opts))
+  end
+
+  def test_url_searches_the_server_with_a_search_box
+    render_remote
+    root = page.find("[data-controller='ui--select']")
+    assert_equal "/customers/search", root["data-ui--select-url-value"]
+    assert_equal "q", root["data-ui--select-param-value"]
+    assert_selector "input[type='search'][data-ui--select-target='search']", visible: :all
+  end
+
+  def test_param_renames_the_query
+    render_remote(param: "term")
+    assert_equal "term", page.find("[data-controller='ui--select']")["data-ui--select-param-value"]
+  end
+
+  def test_remote_says_when_searching_or_failing
+    render_remote
+    root = page.find("[data-controller='ui--select']")
+    assert_equal "Searching…", root["data-ui--select-searching-value"]
+    assert_includes root["data-ui--select-failed-value"], "Couldn't load"
+    assert_selector "[data-ui--select-target='status'][role='status']", visible: :all
+  end
+
+  def test_remote_options_are_built_from_a_template_with_the_options_classes
+    render_remote
+    template = rendered_content[%r{<template data-ui--select-target="template">.*?</template>}m]
+    assert template, "no option template"
+    assert_includes template, 'role="option"'
+    assert_includes template, 'data-ui--select-target="check"'
+  end
+
+  def test_remote_starts_with_the_options_given_so_an_edit_form_names_its_choice
+    render_remote(options: [ [ "Acme Traders", 7 ] ], selected: 7)
+    assert_selector "[role='option'][data-value='7'][aria-selected='true']", text: "Acme Traders", visible: :all
+    assert_selector "button[role='combobox']", text: "Acme Traders"
+    assert_selector "select[name='order[customer_id]'] option[value='7'][selected]", visible: :all
+  end
+
+  def test_remote_with_nothing_chosen_shows_the_prompt
+    render_remote(prompt: "Find a customer")
+    assert_selector "button[role='combobox']", text: "Find a customer"
+  end
+
+  def test_without_url_there_is_no_server_search
+    render_inline(UI::Select.new(name: "plan", options: %w[Free Pro], searchable: true))
+    root = page.find("[data-controller='ui--select']")
+    assert_nil root["data-ui--select-url-value"]
+    assert_no_selector "template", visible: :all
+    assert_no_selector "[data-ui--select-target='status']", visible: :all
+  end
 end

@@ -1,4 +1,4 @@
-<%= tag.div(class: "relative w-full", data: root_data) do %>
+<%= tag.div(class: "relative w-full", data: remote? ? root_data.merge(status_texts) : root_data) do %>
   <% if render_label? %>
     <div class="mb-2"><%= render(label_component) { label_text } %></div>
   <% end %>
@@ -32,9 +32,7 @@
         <%= tag.div(id: option_id(index), role: "option", aria: { selected: selected?(value).to_s },
                     data: { value: value, "ui--select-target": "option",
                             action: "click->ui--select#choose mousemove->ui--select#hover" },
-                    class: "relative flex cursor-default select-none items-center rounded-sm py-1.5 pr-8 pl-2 #{size == :sm ? "text-xs" : "text-sm"} " \
-                           "outline-none data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground aria-selected:font-medium " \
-                           "#{value.to_s.empty? ? "text-muted-foreground" : ""}") do %>
+                    class: option_classes(value)) do %>
           <span class="truncate"><%= label %></span>
           <span class="absolute right-2 flex size-4 items-center justify-center text-primary dark:text-foreground" data-ui--select-target="check" <%= "hidden" unless selected?(value) %>>
             <%= render(UI::Icon.new(name: "check", size: :sm)) %>
@@ -45,6 +43,21 @@
 
     <% if searchable? %>
       <p hidden data-ui--select-target="empty" class="px-3 py-3 text-sm text-muted-foreground"><%= t("ui.select.no_matches", default: "No matches") %></p>
+    <% end %>
+    <% if remote? %>
+      <%# Searching and failures are announced; the options themselves are read as they're highlighted. %>
+      <p hidden role="status" data-ui--select-target="status" class="flex items-center gap-2 px-3 py-3 text-sm text-muted-foreground"></p>
+      <template data-ui--select-target="template">
+        <%= tag.div(role: "option", aria: { selected: "false" },
+                    data: { value: "", "ui--select-target": "option",
+                            action: "click->ui--select#choose mousemove->ui--select#hover" },
+                    class: option_classes("x")) do %>
+          <span class="truncate"></span>
+          <span class="absolute right-2 flex size-4 items-center justify-center text-primary dark:text-foreground" data-ui--select-target="check" hidden>
+            <%= render(UI::Icon.new(name: "check", size: :sm)) %>
+          </span>
+        <% end %>
+      </template>
     <% end %>
   <% end %>
 

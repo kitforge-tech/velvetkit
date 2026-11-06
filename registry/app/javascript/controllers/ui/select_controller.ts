@@ -11,9 +11,20 @@ import { useDismiss } from './_internal/use_dismiss.js';
 // The hidden native <select> holds the value. Every pick is written to it and
 // announced with `input` and `change`, so forms and listeners see an ordinary
 // select. A multiple select stays open while you tick options.
+//
+// With a `url`, the search box asks the server instead of filtering what's on
+// the page. A picked option is added to the native select if it isn't there
+// yet, so it submits, and stays chosen when it drops out of later results.
+const SEARCH_DELAY = 250;
+const SLOW_SEARCH = 200;
+
+type Result = { value: string; label: string };
 export default class extends Controller<HTMLElement> {
-  static targets = ['trigger', 'value', 'panel', 'listbox', 'option', 'native', 'search', 'empty'];
-  static values = { multiple: Boolean, summary: String, placeholder: String };
+  static targets = ['trigger', 'value', 'panel', 'listbox', 'option', 'native', 'search', 'empty', 'status', 'template'];
+  static values = {
+    multiple: Boolean, summary: String, placeholder: String,
+    url: String, param: { type: String, default: 'q' }, searching: String, failed: String,
+  };
 
   declare readonly triggerTarget: HTMLButtonElement;
   declare readonly valueTarget: HTMLElement;
@@ -27,6 +38,15 @@ export default class extends Controller<HTMLElement> {
   declare readonly multipleValue: boolean;
   declare readonly summaryValue: string;
   declare readonly placeholderValue: string;
+  declare readonly listboxTarget: HTMLElement;
+  declare readonly hasStatusTarget: boolean;
+  declare readonly statusTarget: HTMLElement;
+  declare readonly templateTarget: HTMLTemplateElement;
+  declare readonly hasUrlValue: boolean;
+  declare readonly urlValue: string;
+  declare readonly paramValue: string;
+  declare readonly searchingValue: string;
+  declare readonly failedValue: string;
 
   private isOpen = false;
   private active: HTMLElement | null = null;
@@ -34,6 +54,10 @@ export default class extends Controller<HTMLElement> {
   private typedAt = 0;
   private floatingCleanup: (() => void) | null = null;
   private dismissCleanup: (() => void) | null = null;
+  private request: AbortController | null = null;
+  private searchTimer?: number;
+  private slowTimer?: number;
+  private resultCount = 0;
   private onReset = () => requestAnimationFrame(() => this.sync());
   private onInvalid = () => this.triggerTarget.setAttribute('aria-invalid', 'true');
 
@@ -46,6 +70,7 @@ export default class extends Controller<HTMLElement> {
   disconnect() {
     this.nativeTarget.form?.removeEventListener('reset', this.onReset);
     this.nativeTarget.removeEventListener('invalid', this.onInvalid);
+    this.cancelSearch();
     this.teardown();
   }
 
@@ -63,6 +88,12 @@ export default class extends Controller<HTMLElement> {
       if (['ArrowDown', 'ArrowUp', 'Enter', ' '].includes(event.key)) {
         event.preventDefault();
         this.open(event.key === 'ArrowUp' ? 'last' : 'first');
+      } else if (this.isPrintable(event) && this.remote) {
+        // Typing on a closed server-searched select starts a search with it.
+        event.preventDefault();
+        this.open();
+        this.searchTarget.value = event.key;
+        this.filter();
       } else if (this.isPrintable(event) && !this.multipleValue) {
         this.typeahead(event.key, true);
       }
@@ -108,6 +139,11 @@ export default class extends Controller<HTMLElement> {
 
   filter() {
     if (!this.hasSearchTarget) return;
+    if (this.remote) {
+      window.clearTimeout(this.searchTimer);
+      this.searchTimer = window.setTimeout(() => this.fetchResults(this.searchTarget.value.trim()), SEARCH_DELAY);
+      return;
+    }
 
     const query = this.searchTarget.value.trim().toLowerCase();
     this.optionTargets.forEach((option) => {
@@ -154,7 +190,9 @@ export default class extends Controller<HTMLElement> {
 
     if (this.hasSearchTarget) {
       this.searchTarget.value = '';
-      this.filter();
+      // A server-searched list starts with what the server offers for nothing typed.
+      if (this.remote) this.fetchResults('');
+      else this.filter();
       this.searchTarget.focus();
     }
 
@@ -167,6 +205,7 @@ export default class extends Controller<HTMLElement> {
     if (!this.isOpen) return;
 
     this.teardown();
+    this.cancelSearch();
     this.panelTarget.hidden = true;
     this.panelTarget.dataset.state = 'closed';
     this.triggerTarget.setAttribute('aria-expanded', 'false');
@@ -181,9 +220,15 @@ export default class extends Controller<HTMLElement> {
     const native = this.nativeTarget;
     const before = Array.from(native.selectedOptions).map((o) => o.value).join('\n');
 
+    // A fetched option the native select hasn't seen yet joins it, so it submits.
+    let item = Array.from(native.options).find((o) => o.value === value);
+    if (!item) {
+      item = new Option(this.label(option), value);
+      native.add(item);
+    }
+
     if (this.multipleValue) {
-      const item = Array.from(native.options).find((o) => o.value === value);
-      if (item) item.selected = !item.selected;
+      item.selected = !item.selected;
     } else {
       native.value = value;
     }
@@ -207,9 +252,10 @@ export default class extends Controller<HTMLElement> {
       if (check) check.hidden = !on;
     });
 
-    const labels = this.optionTargets
-      .filter((o) => o.dataset.value !== '' && chosen.has(o.dataset.value ?? ''))
-      .map((o) => this.label(o));
+    // Named from the native select, which also holds choices no longer in the list.
+    const labels = Array.from(this.nativeTarget.selectedOptions)
+      .filter((o) => o.value !== '')
+      .map((o) => o.text.trim());
     const text = labels.length > 2 ? this.summaryValue.replace('%{count}', String(labels.length)) : labels.join(', ');
     this.valueTarget.textContent = text || this.placeholderValue;
     this.valueTarget.classList.toggle('text-muted-foreground', !text);
@@ -246,6 +292,96 @@ export default class extends Controller<HTMLElement> {
 
     if (closed) this.pick(match);
     else this.highlight(match);
+  }
+
+  // ── Searching the server ─────────────────────────────────────────────────
+
+  private get remote(): boolean {
+    return this.hasUrlValue && this.urlValue !== '' && this.hasSearchTarget;
+  }
+
+  // Asks for the options matching `query`, dropping any answer still on its
+  // way: only the newest search may fill the list.
+  private async fetchResults(query: string) {
+    this.cancelSearch();
+    const request = new AbortController();
+    this.request = request;
+    const url = new URL(this.urlValue, window.location.href);
+    url.searchParams.set(this.paramValue, query);
+
+    this.listboxTarget.setAttribute('aria-busy', 'true');
+    this.slowTimer = window.setTimeout(() => this.showStatus(this.searchingValue, true), SLOW_SEARCH);
+    try {
+      const response = await fetch(url, { headers: { Accept: 'application/json' }, signal: request.signal });
+      if (!response.ok) throw new Error(`${response.status}`);
+      const results = this.normalise(await response.json());
+      if (this.request !== request) return;
+
+      this.showResults(results);
+      this.showStatus(null);
+    } catch (error) {
+      if (request.signal.aborted) return;
+      this.showResults([]);
+      if (this.hasEmptyTarget) this.emptyTarget.hidden = true;
+      this.showStatus(this.failedValue);
+    } finally {
+      if (this.request === request) {
+        this.request = null;
+        window.clearTimeout(this.slowTimer);
+        this.listboxTarget.removeAttribute('aria-busy');
+      }
+    }
+  }
+
+  // Accepts [{ value, label }] or [[label, value]], as the server prefers.
+  private normalise(data: unknown): Result[] {
+    if (!Array.isArray(data)) return [];
+
+    return data.flatMap((item) => {
+      if (Array.isArray(item)) return [{ label: String(item[0] ?? ''), value: String(item[1] ?? '') }];
+      if (item && typeof item === 'object') {
+        const { value, label } = item as { value?: unknown; label?: unknown };
+        return [{ value: String(value ?? ''), label: String(label ?? value ?? '') }];
+      }
+      return [];
+    });
+  }
+
+  // Swaps the listed options for the new results. The empty "prompt" option,
+  // if there is one, stays first.
+  private showResults(results: Result[]) {
+    this.optionTargets.filter((o) => o.dataset.value !== '').forEach((o) => o.remove());
+    const base = this.listboxTarget.id;
+    results.forEach((result) => {
+      const option = this.templateTarget.content.firstElementChild!.cloneNode(true) as HTMLElement;
+      option.id = `${base}-result-${this.resultCount++}`;
+      option.dataset.value = result.value;
+      option.querySelector('.truncate')!.textContent = result.label;
+      this.listboxTarget.append(option);
+    });
+
+    this.sync();
+    if (this.hasEmptyTarget) this.emptyTarget.hidden = results.length > 0;
+    const visible = this.visible();
+    const chosen = visible.find((o) => o.getAttribute('aria-selected') === 'true' && o.dataset.value !== '');
+    this.highlight(chosen ?? visible.find((o) => o.dataset.value !== '') ?? visible[0] ?? null);
+  }
+
+  private showStatus(text: string | null, busy = false) {
+    if (!this.hasStatusTarget) return;
+
+    window.clearTimeout(this.slowTimer);
+    this.statusTarget.textContent = text ?? '';
+    this.statusTarget.hidden = !text;
+    if (busy && this.hasEmptyTarget) this.emptyTarget.hidden = true;
+  }
+
+  private cancelSearch() {
+    window.clearTimeout(this.searchTimer);
+    window.clearTimeout(this.slowTimer);
+    this.request?.abort();
+    this.request = null;
+    if (this.hasStatusTarget) this.statusTarget.hidden = true;
   }
 
   private visible() {

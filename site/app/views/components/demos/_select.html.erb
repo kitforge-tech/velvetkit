@@ -1,0 +1,6 @@
+<%# The list comes from the server, as you type; this page brings an endpoint to ask. %>
+<div class="grid max-w-xl gap-6 rounded-xl border bg-background p-6 sm:grid-cols-2">
+  <%= render(UI::Select.new(name: "customer_id", url: demo_customers_path, label: "Customer", prompt: "Find a customer")) %>
+  <%= render(UI::Select.new(name: "customer_ids", url: demo_customers_path, label: "Copy invoices to", multiple: true,
+                            options: [ [ "Aditi Rao Traders", 2001 ] ], selected: [ 2001 ])) %>
+</div>
