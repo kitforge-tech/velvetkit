@@ -1,0 +1,3 @@
+<%= render(UI::Gallery.new(label: "Photo of the ceramic mug", class: "max-w-sm")) do |gallery| %>
+  <% gallery.with_image(src: UI::GalleryPreview.photos.first.last, alt: "Ceramic mug: Front") %>
+<% end %>
