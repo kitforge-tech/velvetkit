@@ -31,6 +31,15 @@ class LlmsController < ApplicationController
       - [Icons](#{doc_url("icons")})
       - [Lookbook](#{doc_url("lookbook")})
 
+      ## Charts
+
+      - [Overview](#{charts_url}): line, bar, pie and donut charts, their data, formats, colours and accessibility
+      - [Line chart](#{chart_doc_url("line")}): change over time
+      - [Bar chart](#{chart_doc_url("bar")}): comparing categories
+      - [Stacked bar chart](#{chart_doc_url("stacked_bar")}): a total split into its parts
+      - [Pie chart](#{chart_doc_url("pie")}): one total split into a few parts, at a glance
+      - [Donut chart](#{chart_doc_url("donut")}): a pie with the total in its middle
+
       ## Components
 
       #{components.join("\n")}

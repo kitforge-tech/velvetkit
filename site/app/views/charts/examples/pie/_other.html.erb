@@ -1,0 +1,8 @@
+<%# Seven categories is too many slices to tell apart, so the smallest three
+    are added up into "Other" first. %>
+<% sales = { "Mugs" => 4820, "Plates" => 3110, "Bowls" => 2240, "Glasses" => 1730,
+             "Cutlery" => 410, "Linen" => 260, "Candles" => 190 } %>
+<% top = sales.max_by(4, &:last).to_h %>
+<% top["Other"] = sales.except(*top.keys).values.sum %>
+<%= render(UI::Chart.new(type: :pie, format: :currency, label: "Sales by category this month", height: 240,
+      labels: top.keys, series: [ { name: "Sales", data: top.values } ])) %>

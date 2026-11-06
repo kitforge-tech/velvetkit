@@ -1,0 +1,86 @@
+<article class="max-w-3xl space-y-12">
+  <%= render "charts/header", page: "overview", lead: "Line, bar, pie and donut charts for dashboards and reports, drawn by one component: UI::Chart. Pass the labels and the numbers; the colours, legend, tooltips, keyboard access and a table of the data come with it." %>
+
+  <div data-outline-skip class="rounded-xl border bg-background p-4 sm:p-6"><%= render "charts/examples/overview/hero" %></div>
+
+  <section class="space-y-4">
+    <h2 id="install" class="text-2xl font-semibold tracking-tight">Install</h2>
+    <%= code_block("bin/rails generate velvetkit:add chart") %>
+    <p>This copies the component, its Stimulus controller and <code class="font-mono text-sm">app/javascript/chart_js.ts</code>, and installs Chart.js. That file is built on its own, so only pages with a chart download Chart.js (about 57 KB gzipped). Add it to your JavaScript build, next to <code class="font-mono text-sm">application.js</code>:</p>
+    <%= code_block(%({\n  "scripts": {\n    "build": "bun build ./app/javascript/application.js ./app/javascript/chart_js.ts --outdir ./app/assets/builds"\n  }\n}), label: "package.json") %>
+  </section>
+
+  <section class="space-y-4">
+    <h2 id="choosing" class="text-2xl font-semibold tracking-tight">Choosing a chart</h2>
+    <ul class="space-y-2">
+      <li><%= link_to "Line chart", chart_doc_path("line"), class: "text-primary underline-offset-4 hover:underline dark:text-fuchsia-300" %>: how something changes over time, such as sales by day or month.</li>
+      <li><%= link_to "Bar chart", chart_doc_path("bar"), class: "text-primary underline-offset-4 hover:underline dark:text-fuchsia-300" %>: amounts side by side, such as stock by category or sales by store.</li>
+      <li><%= link_to "Stacked bar chart", chart_doc_path("stacked_bar"), class: "text-primary underline-offset-4 hover:underline dark:text-fuchsia-300" %>: a total and what it's made of, day by day, such as takings by payment method.</li>
+      <li><%= link_to "Pie chart", chart_doc_path("pie"), class: "text-primary underline-offset-4 hover:underline dark:text-fuchsia-300" %> and <%= link_to "donut chart", chart_doc_path("donut"), class: "text-primary underline-offset-4 hover:underline dark:text-fuchsia-300" %>: one total split into up to five parts, at a glance, such as today's takings by payment method.</li>
+    </ul>
+    <p class="text-muted-foreground">When the point is a single number, like today's sales, show the number itself rather than a chart of one bar.</p>
+  </section>
+
+  <section class="space-y-4">
+    <h2 id="data" class="text-2xl font-semibold tracking-tight">Your data</h2>
+    <p>A chart takes its <code class="font-mono text-sm">labels:</code>, one for each point along the bottom, and its <code class="font-mono text-sm">series:</code>, each a name and one value per label. Give it a <code class="font-mono text-sm">label:</code> as well: screen readers announce it, and it captions the table of the data.</p>
+    <%= code_block(snippet("charts_data.html.erb"), label: "app/views/reports/sales.html.erb") %>
+    <p>A series with the wrong number of values raises an error, rather than drawing something misleading. A <code class="font-mono text-sm">nil</code> leaves a gap.</p>
+  </section>
+
+  <section class="space-y-4">
+    <h2 id="formats" class="text-2xl font-semibold tracking-tight">Numbers and money</h2>
+    <p><code class="font-mono text-sm">format:</code> is <code class="font-mono text-sm">:number</code> (the default), <code class="font-mono text-sm">:currency</code> or <code class="font-mono text-sm">:percent</code>, for values from 0 to 100. The tooltip and the table write each value the way Rails does in the app's locale, and the axis shortens big numbers ($80K). For a currency other than the locale's, pass its sign with <code class="font-mono text-sm">unit: "₹"</code>.</p>
+  </section>
+
+  <section class="space-y-4">
+    <h2 id="colours" class="text-2xl font-semibold tracking-tight">Colours</h2>
+    <p>Each series takes the next of five colours, in this order. They come from the <code class="font-mono text-sm">--chart-1</code> to <code class="font-mono text-sm">--chart-5</code> theme variables, so they follow dark mode and your <%= link_to "theme", doc_path("theming"), class: "text-primary underline-offset-4 hover:underline dark:text-fuchsia-300" %>. They were checked with a colour-vision simulator, so neighbouring colours stay apart for colour-blind readers too.</p>
+    <ul class="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+      <% [ [ "bg-chart-1", "Velvet" ], [ "bg-chart-2", "Orange" ], [ "bg-chart-3", "Aqua" ], [ "bg-chart-4", "Blue" ], [ "bg-chart-5", "Magenta" ] ].each_with_index do |(swatch, name), index| %>
+        <li class="flex items-center gap-2"><%= tag.span class: "size-3 rounded-sm #{swatch}" %><span><%= index + 1 %>. <%= name %></span></li>
+      <% end %>
+    </ul>
+    <p>A series keeps its colour by its place in the list. If a chart sometimes leaves a series out, give each one its <code class="font-mono text-sm">color:</code> (1 to 5) so the rest don't change colour; <%= link_to "Stacked bar chart", chart_doc_path("stacked_bar", anchor: "pinned"), class: "text-primary underline-offset-4 hover:underline dark:text-fuchsia-300" %> has an example. There's no sixth colour: fold the smallest series into one called "Other".</p>
+  </section>
+
+  <section class="space-y-4">
+    <h2 id="reading" class="text-2xl font-semibold tracking-tight">Reading the values</h2>
+    <ul class="list-disc space-y-2 pl-5">
+      <li>Two or more series get a legend. One series doesn't need one: its heading says what it is.</li>
+      <li>Hovering shows every series' value at that point. A line chart also shows a hairline down to the point, and each line ends with its last value.</li>
+      <li>From the keyboard, Tab to the chart and use the arrow keys, Home and End to read each point. Escape clears it.</li>
+      <li>"Show the data" opens a table of every value. Screen readers can reach it too, and the chart is announced by its <code class="font-mono text-sm">label:</code>.</li>
+    </ul>
+  </section>
+
+  <section class="space-y-4">
+    <h2 id="animation" class="text-2xl font-semibold tracking-tight">Animation</h2>
+    <p>A chart is drawn when it scrolls into view, so its entrance is seen: bars grow up from the baseline, one after another, a line draws itself from left to right, and a pie or donut sweeps round. Nothing moves when the system asks for reduced motion, and switching between light and dark redraws in place.</p>
+  </section>
+
+  <section class="space-y-4">
+    <h2 id="options" class="text-2xl font-semibold tracking-tight">Options</h2>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead><tr class="border-b text-left"><th class="py-2 pr-4 font-medium">Option</th><th class="py-2 pr-4 font-medium">Default</th><th class="py-2 font-medium">What it does</th></tr></thead>
+        <tbody>
+          <% [ [ "labels:", "required", "One per point along the bottom." ],
+               [ "series:", "required", "Up to five, each { name:, data:, color: }. color: is optional, 1 to 5. A pie or donut takes one, with a slice per label." ],
+               [ "type:", ":line", ":line, :bar, :pie or :donut." ],
+               [ "stacked:", "false", "Piles a bar chart's series on top of each other." ],
+               [ "label:", "\"Chart\"", "What the chart shows, for screen readers and the table's caption." ],
+               [ "format:", ":number", ":number, :currency or :percent." ],
+               [ "unit:", "the locale's", "The currency sign, with format: :currency." ],
+               [ "height:", "288", "The chart's height in pixels; it fills the width it's given." ],
+               [ "class:", "", "Classes for the chart's outer element, such as a max width." ] ].each do |name, default, text| %>
+            <tr class="border-b last:border-0 align-top"><td class="py-2 pr-4 font-mono whitespace-nowrap"><%= name %></td><td class="py-2 pr-4 font-mono whitespace-nowrap text-muted-foreground"><%= default %></td><td class="py-2"><%= text %></td></tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-muted-foreground">The <%= link_to "Chart component page", component_path("chart"), class: "text-primary underline-offset-4 hover:underline dark:text-fuchsia-300" %> has the full signature and notes.</p>
+  </section>
+
+  <%= render "docs/pager", previous_page: nil, next_page: [ "Line chart", chart_doc_path("line") ] %>
+</article>

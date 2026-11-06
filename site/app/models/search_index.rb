@@ -20,7 +20,7 @@ class SearchIndex
   def entries
     all = Entry.new(group: "Components", title: "All components", url: routes.components_path,
                     description: "Every component, with search.", keywords: "list browse overview")
-    guides + [ all ] + components
+    guides + charts + [ all ] + components
   end
 
   private
@@ -30,6 +30,12 @@ class SearchIndex
       summary, keywords = GUIDES.fetch(page)
       url = page == "getting_started" ? routes.docs_path : routes.doc_path(page)
       Entry.new(group: "Guides", title: title, url: url, description: summary, keywords: keywords)
+    end
+  end
+
+  def charts
+    ChartsController::PAGES.map do |page, (title, summary, keywords)|
+      Entry.new(group: "Charts", title: title, url: ChartsController.path_for(page, routes), description: summary, keywords: keywords)
     end
   end
 

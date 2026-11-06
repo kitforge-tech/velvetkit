@@ -1,0 +1,23 @@
+<article class="max-w-3xl space-y-12">
+  <%= render "charts/header", page: "pie", lead: "One total split into a few parts, at a glance: today's takings by payment method, sales by category. Each slice's value and share are in the legend beside it." %>
+
+  <section class="space-y-10">
+    <h2 id="examples" class="text-2xl font-semibold tracking-tight">Examples</h2>
+    <%= render "charts/example", id: "parts", title: "Parts of a total", example: "pie/basic",
+               text: "type: :pie with one series: a slice for each label, in the order given." %>
+    <%= render "charts/example", id: "other", title: "Folding the rest into Other", example: "pie/other",
+               text: "A pie draws up to five slices. With more categories, keep the biggest four and add up the rest." %>
+  </section>
+
+  <section class="space-y-4">
+    <h2 id="notes" class="text-2xl font-semibold tracking-tight">Notes</h2>
+    <ul class="list-disc space-y-2 pl-5">
+      <li>A pie is one series. Each slice takes the next of the five chart colours, so a pie has at most five slices, and none can be below zero.</li>
+      <li>Angles are hard to compare when the parts are close in size; the legend gives each one's value and share, so nobody has to judge them by eye. When comparing the parts is the point, a <%= link_to "bar chart", chart_doc_path("bar"), class: "text-primary underline-offset-4 hover:underline dark:text-fuchsia-300" %> reads more exactly.</li>
+      <li>For how the split changes from day to day, use a <%= link_to "stacked bar chart", chart_doc_path("stacked_bar"), class: "text-primary underline-offset-4 hover:underline dark:text-fuchsia-300" %>: one pie only shows one moment.</li>
+      <li>A <%= link_to "donut", chart_doc_path("donut"), class: "text-primary underline-offset-4 hover:underline dark:text-fuchsia-300" %> is the same chart with the total in its middle.</li>
+    </ul>
+  </section>
+
+  <%= render "docs/pager", previous_page: [ "Stacked bar chart", chart_doc_path("stacked_bar") ], next_page: [ "Donut chart", chart_doc_path("donut") ] %>
+</article>

@@ -1,0 +1,25 @@
+<article class="max-w-3xl space-y-12">
+  <%= render "charts/header", page: "bar", lead: "Amounts side by side: stock by category, sales by store, cash in and out by month. Use bars when the reader compares one thing with another." %>
+
+  <section class="space-y-10">
+    <h2 id="examples" class="text-2xl font-semibold tracking-tight">Examples</h2>
+    <%= render "charts/example", id: "one-series", title: "One series", example: "bar/basic",
+               text: "Every bar takes the same colour; the bar's length is what changes, so a second colour would only repeat it." %>
+    <%= render "charts/example", id: "grouped", title: "Side by side", example: "bar/grouped",
+               text: "With two or more series, each label gets a group of bars, one per series, and the legend says which is which." %>
+    <%= render "charts/example", id: "negative", title: "Below zero", example: "bar/negative",
+               text: "Negative values hang below the baseline, which suits money in and out." %>
+  </section>
+
+  <section class="space-y-4">
+    <h2 id="notes" class="text-2xl font-semibold tracking-tight">Notes</h2>
+    <ul class="list-disc space-y-2 pl-5">
+      <li>The axis always starts at zero, so a bar's length is honest: a bar twice as long is twice as much.</li>
+      <li>Bars stay thin however wide the chart is, with room between groups.</li>
+      <li>Sort the categories when their order doesn't mean anything, so the biggest and smallest are easy to find.</li>
+      <li>For parts of a total, stack the series instead: <%= link_to "Stacked bar chart", chart_doc_path("stacked_bar"), class: "text-primary underline-offset-4 hover:underline dark:text-fuchsia-300" %>.</li>
+    </ul>
+  </section>
+
+  <%= render "docs/pager", previous_page: [ "Line chart", chart_doc_path("line") ], next_page: [ "Stacked bar chart", chart_doc_path("stacked_bar") ] %>
+</article>

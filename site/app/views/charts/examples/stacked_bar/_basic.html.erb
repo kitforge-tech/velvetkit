@@ -1,0 +1,7 @@
+<%= render(UI::Chart.new(type: :bar, stacked: true, format: :currency, label: "Takings this week, by payment",
+      labels: %w[Mon Tue Wed Thu Fri Sat Sun],
+      series: [
+        { name: "Card", data: [ 1840, 2210, 1960, 2480, 3120, 4260, 3380 ] },
+        { name: "Cash", data: [ 620, 540, 710, 680, 940, 1310, 1020 ] },
+        { name: "UPI", data: [ 410, 520, 480, 610, 760, 980, 830 ] }
+      ])) %>

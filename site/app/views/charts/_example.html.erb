@@ -1,0 +1,32 @@
+<%# One example: a heading, what it shows, then the chart, its code and its
+    numbers in tabs. The code shown is the partial itself, so it can't drift
+    from the preview. The chart's own "Show the data" table moves into the Data
+    tab here; in an app it stays under the chart. %>
+<% file = Rails.root.join("app/views/charts/examples/#{File.dirname(example)}/_#{File.basename(example)}.html.erb") %>
+<% chart = Nokogiri::HTML5.fragment(render("charts/examples/#{example}")) %>
+<% details = chart.at_css("details") %>
+<% table = details&.at_css("table") %>
+<% details&.remove %>
+<section class="space-y-3">
+  <%= tag.h3 title, id: id, class: "text-lg font-semibold tracking-tight" %>
+  <% if local_assigns[:text] %><p class="text-muted-foreground"><%= text %></p><% end %>
+  <%= render(UI::Tabs.new(default_value: "preview", size: :sm)) do |tabs| %>
+    <% tabs.with_list do |list| %>
+      <% list.with_trigger(value: "preview") do |trigger| %><% trigger.with_leading_icon(name: "eye") %>Preview<% end %>
+      <% list.with_trigger(value: "code") do |trigger| %><% trigger.with_leading_icon(name: "code") %>Code<% end %>
+      <% if table %><% list.with_trigger(value: "data") do |trigger| %><% trigger.with_leading_icon(name: "table") %>Data<% end %><% end %>
+    <% end %>
+    <% tabs.with_panel(value: "preview", class: "pt-3") do %>
+      <%# Rendered by our own partial and re-serialised, not user input. %>
+      <div data-outline-skip class="rounded-xl border bg-background p-4 sm:p-6"><%= chart.to_html.html_safe %></div>
+    <% end %>
+    <% tabs.with_panel(value: "code", class: "pt-3") do %>
+      <%= code_block(file.read, label: "app/views/reports/_#{File.basename(example)}.html.erb") %>
+    <% end %>
+    <% if table %>
+      <% tabs.with_panel(value: "data", class: "pt-3") do %>
+        <div data-outline-skip class="overflow-x-auto rounded-xl border bg-background px-4 py-2 sm:px-6"><%= table.to_html.html_safe %></div>
+      <% end %>
+    <% end %>
+  <% end %>
+</section>

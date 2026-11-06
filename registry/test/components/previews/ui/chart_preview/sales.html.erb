@@ -1,0 +1,6 @@
+<div class="max-w-2xl space-y-1">
+  <h3 class="font-semibold">Sales, this year and last</h3>
+  <%= render(UI::Chart.new(type: :line, format: :currency, label: "Sales, this year and last",
+        labels: UI::ChartPreview::MONTHS,
+        series: [ { name: "This year", data: UI::ChartPreview::THIS_YEAR }, { name: "Last year", data: UI::ChartPreview::LAST_YEAR } ])) %>
+</div>

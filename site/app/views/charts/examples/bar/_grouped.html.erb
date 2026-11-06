@@ -1,0 +1,6 @@
+<%= render(UI::Chart.new(type: :bar, format: :currency, label: "Sales by store, this quarter and last",
+      labels: [ "Indiranagar", "Koramangala", "Whitefield", "Jayanagar", "Online" ],
+      series: [
+        { name: "This quarter", data: [ 184_000, 211_500, 132_800, 98_400, 256_900 ] },
+        { name: "Last quarter", data: [ 171_200, 198_300, 141_600, 92_100, 219_400 ] }
+      ])) %>

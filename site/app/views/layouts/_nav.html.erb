@@ -7,6 +7,12 @@
     <% end %>
   </div>
   <div class="space-y-0.5">
+    <p class="mb-2 px-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Charts</p>
+    <% ChartsController::PAGES.each do |page, (title, _)| %>
+      <%= nav_link title, ChartsController.path_for(page) %>
+    <% end %>
+  </div>
+  <div class="space-y-0.5">
     <p class="mb-2 px-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Components</p>
     <%= nav_link "All components", components_path %>
     <%# The form components, and the guide to using them, form one branch; it
@@ -21,7 +27,8 @@
         <%= nav_link component.title, component_path(component) %>
       <% end %>
     <% end %>
-    <% ComponentDoc.all.reject(&:form?).each do |component| %>
+    <%# Chart has a section of its own, above. %>
+    <% ComponentDoc.all.reject { _1.form? || _1.name == "chart" }.each do |component| %>
       <%= nav_link component.title, component_path(component) %>
     <% end %>
   </div>

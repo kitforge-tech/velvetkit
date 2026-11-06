@@ -1,0 +1,6 @@
+<div class="max-w-2xl space-y-1">
+  <h3 class="font-semibold">Stock by warehouse</h3>
+  <%= render(UI::Chart.new(type: :donut, label: "Units in stock by warehouse", height: 240,
+        labels: [ "Bengaluru", "Mumbai", "Delhi", "Chennai", "Other" ],
+        series: [ { name: "Units", data: [ 1840, 1320, 960, 610, 270 ] } ])) %>
+</div>

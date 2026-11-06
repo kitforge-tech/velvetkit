@@ -1,0 +1,7 @@
+<%# Each channel keeps its colour whether or not the others are shown, so a
+    filter never repaints the bars that are left. %>
+<% channels = { "In store" => 1, "Website" => 2, "Marketplace" => 3 } %>
+<% orders = { "In store" => [ 120, 134, 128, 141 ], "Marketplace" => [ 64, 71, 80, 77 ] } %>
+<%= render(UI::Chart.new(type: :bar, stacked: true, label: "Orders by channel, website left out",
+      labels: [ "Week 1", "Week 2", "Week 3", "Week 4" ],
+      series: orders.map { |name, data| { name: name, data: data, color: channels.fetch(name) } })) %>

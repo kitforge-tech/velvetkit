@@ -1,0 +1,4 @@
+<%# June wasn't closed off yet, so it has no figure: nil leaves a gap. %>
+<%= render(UI::Chart.new(type: :line, format: :percent, height: 240, label: "Gross margin by month",
+      labels: %w[Jan Feb Mar Apr May Jun Jul Aug Sep],
+      series: [ { name: "Gross margin", data: [ 38.2, 39.5, 37.1, 40.8, 41.6, nil, 42.3, 43.9, 44.1 ] } ])) %>

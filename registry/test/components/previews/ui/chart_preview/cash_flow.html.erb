@@ -1,0 +1,6 @@
+<div class="max-w-2xl space-y-1">
+  <h3 class="font-semibold">Net cash flow</h3>
+  <%= render(UI::Chart.new(type: :bar, format: :currency, label: "Net cash flow by month",
+        labels: UI::ChartPreview::MONTHS.first(8),
+        series: [ { name: "Net cash flow", data: [ 4200, -1800, 2600, 3900, -2400, 1500, 5100, -600 ] } ])) %>
+</div>

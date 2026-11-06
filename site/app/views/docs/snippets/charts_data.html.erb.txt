@@ -1,0 +1,6 @@
+<%= render(UI::Chart.new(type: :line, label: "Sales, this year and last",
+      labels: @months.map { |month| l(month, format: "%b") },
+      series: [
+        { name: "This year", data: @this_year.values },
+        { name: "Last year", data: @last_year.values }
+      ])) %>

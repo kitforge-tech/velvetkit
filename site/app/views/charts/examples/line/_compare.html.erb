@@ -1,0 +1,6 @@
+<%= render(UI::Chart.new(type: :line, format: :currency, label: "Sales, this year and last",
+      labels: %w[Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec],
+      series: [
+        { name: "This year", data: [ 42_800, 39_100, 47_600, 51_200, 49_800, 56_300, 61_900, 58_400, 63_700, 66_100, 71_800, 84_500 ] },
+        { name: "Last year", data: [ 38_200, 36_900, 41_300, 44_800, 46_100, 48_700, 52_300, 51_900, 55_400, 57_800, 62_100, 73_200 ] }
+      ])) %>

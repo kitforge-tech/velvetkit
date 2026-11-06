@@ -14,6 +14,7 @@ class Sitemap
     def paths
       [ root_path, docs_path ] +
         DocsController::PAGES.keys.excluding("getting_started").map { |page| doc_path(page) } +
+        ChartsController::PAGES.keys.map { |page| ChartsController.path_for(page) } +
         [ components_path ] + ComponentDoc.names.map { |name| component_path(name) }
     end
 
@@ -29,6 +30,8 @@ class Sitemap
       when root_path then [ "site/app/views/pages" ]
       when docs_path then [ "site/app/views/docs/getting_started.html.erb" ]
       when components_path then [ "site/app/views/components/index.html.erb" ]
+      when charts_path then chart_sources("overview")
+      when %r{\A/docs/charts/([a-z_]+)\z} then chart_sources(Regexp.last_match(1))
       when %r{\A/docs/components/([a-z_]+)\z} then component_sources(Regexp.last_match(1))
       when %r{\A/docs/([a-z_]+)\z} then Dir.glob("site/app/views/docs/#{Regexp.last_match(1)}{.html.erb,/**/*}", base: repo_root)
       else []
@@ -38,6 +41,10 @@ class Sitemap
     def repo_root = Rails.root.join("..")
 
     private
+
+    def chart_sources(page)
+      Dir.glob("site/app/views/charts/{#{page}.html.erb,examples/#{page}/*}", base: repo_root)
+    end
 
     def component_sources(name)
       registry = Velvetkit.registry

@@ -93,3 +93,6 @@ application.register("ui--number-input", UI__NumberInputController)
 
 import UI__GalleryController from "./ui/gallery_controller"
 application.register("ui--gallery", UI__GalleryController)
+
+import UI__ChartController from "./ui/chart_controller"
+application.register("ui--chart", UI__ChartController)

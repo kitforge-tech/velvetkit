@@ -1,0 +1,3 @@
+<%= render(UI::Chart.new(type: :donut, format: :currency, unit: "₹", label: "This month's spending", height: 240,
+      labels: [ "Stock", "Rent", "Wages", "Utilities" ],
+      series: [ { name: "Spending", data: [ 182_400, 65_000, 94_500, 12_300 ] } ])) %>
