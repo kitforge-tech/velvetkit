@@ -1,0 +1,6 @@
+<div class="max-w-2xl space-y-1">
+  <h3 class="font-semibold">Today's takings, by payment</h3>
+  <%= render(UI::Chart.new(type: :pie, format: :currency, label: "Today's takings, by payment", height: 240,
+        labels: [ "Card", "Cash", "UPI", "Store credit" ],
+        series: [ { name: "Takings", data: [ 4260, 1310, 980, 240 ] } ])) %>
+</div>

@@ -1,0 +1,6 @@
+<div class="max-w-2xl space-y-1">
+  <h3 class="font-semibold">Gross margin</h3>
+  <%= render(UI::Chart.new(type: :line, format: :percent, label: "Gross margin by month", height: 220,
+        labels: UI::ChartPreview::MONTHS.first(9),
+        series: [ { name: "Gross margin", data: [ 38.2, 39.5, 37.1, 40.8, 41.6, nil, 42.3, 43.9, 44.1 ] } ])) %>
+</div>

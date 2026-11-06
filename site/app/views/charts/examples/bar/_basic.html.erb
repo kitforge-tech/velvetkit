@@ -1,0 +1,3 @@
+<%= render(UI::Chart.new(type: :bar, label: "Units in stock by category",
+      labels: [ "Mugs", "Plates", "Bowls", "Glasses", "Cutlery", "Linen" ],
+      series: [ { name: "In stock", data: [ 148, 96, 121, 64, 212, 38 ] } ])) %>

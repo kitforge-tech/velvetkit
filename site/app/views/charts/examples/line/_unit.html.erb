@@ -1,0 +1,3 @@
+<%= render(UI::Chart.new(type: :line, format: :currency, unit: "₹", label: "Cash in the till at closing",
+      labels: [ "1 Nov", "2 Nov", "3 Nov", "4 Nov", "5 Nov", "6 Nov", "7 Nov" ],
+      series: [ { name: "Closing cash", data: [ 18_400, 21_250, 19_900, 24_600, 31_800, 42_300, 37_150 ] } ])) %>

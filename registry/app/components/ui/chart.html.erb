@@ -1,0 +1,47 @@
+<%= tag.div(**root_attrs) do %>
+  <%= tag.div class: body_classes do %>
+    <% if legend? %>
+      <%= tag.ul class: legend_classes, aria: { hidden: true } do %>
+        <% if circular? %>
+          <% slices.each do |slice| %>
+            <li class="flex items-center gap-2"><%= tag.span class: slice_swatch(slice) %><span class="min-w-0 flex-1 break-words text-muted-foreground"><%= slice.label %></span><span class="font-medium tabular-nums"><%= slice.text %></span><span class="w-10 text-end tabular-nums text-muted-foreground"><%= slice.share %></span></li>
+          <% end %>
+        <% else %>
+          <% series.each do |entry| %>
+            <li class="flex items-center gap-2"><%= tag.span class: swatch_classes(entry) %><%= entry.name %></li>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+    <%= tag.div class: frame_classes, style: frame_style do %>
+      <%= tag.canvas(**canvas_attrs) %>
+      <%# It glides from point to point and fades in and out, rather than jumping. %>
+      <%= tag.div aria: { hidden: true }, data: { "ui--chart-target": "tooltip" },
+                  class: "pointer-events-none invisible absolute left-0 top-0 z-10 min-w-32 rounded-md border bg-popover px-3 py-2 text-xs text-popover-foreground opacity-0 shadow-md transition-[opacity,transform,visibility] duration-150 ease-out data-[shown]:visible data-[shown]:opacity-100 motion-reduce:transition-none" %>
+    <% end %>
+  <% end %>
+  <details class="group/data text-sm">
+    <%= tag.summary t("ui.chart.show_data", default: "Show the data"), class: "w-fit cursor-pointer rounded-sm text-muted-foreground hover:text-foreground #{UI::Base::FOCUS_RING}" %>
+    <div class="mt-2 overflow-x-auto">
+      <table class="w-full text-sm tabular-nums">
+        <%= tag.caption label, class: "sr-only" %>
+        <thead>
+          <tr class="border-b">
+            <%= tag.th t("ui.chart.category", default: "Category"), scope: "col", class: "py-2 pe-4 text-start font-medium text-muted-foreground" %>
+            <% series.each do |entry| %><%= tag.th entry.name, scope: "col", class: "py-2 ps-4 text-end font-medium text-muted-foreground" %><% end %>
+            <% if circular? %><%= tag.th t("ui.chart.share", default: "Share"), scope: "col", class: "py-2 ps-4 text-end font-medium text-muted-foreground" %><% end %>
+          </tr>
+        </thead>
+        <tbody>
+          <% labels.each_with_index do |row, index| %>
+            <tr class="border-b last:border-0">
+              <%= tag.th row, scope: "row", class: "py-2 pe-4 text-start font-normal" %>
+              <% series.each do |entry| %><%= tag.td formatted(entry.data[index]), class: "py-2 ps-4 text-end" %><% end %>
+              <% if circular? %><%= tag.td share_text(series.first.data[index]), class: "py-2 ps-4 text-end text-muted-foreground" %><% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </details>
+<% end %>

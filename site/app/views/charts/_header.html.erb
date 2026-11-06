@@ -1,0 +1,15 @@
+<% title, summary = ChartsController::PAGES[page] %>
+<% content_for :title, page == "overview" ? "Charts" : title %>
+<header class="space-y-3">
+  <%= render(UI::Breadcrumb.new(size: :sm)) do |bc| %>
+    <% bc.with_item(href: docs_path, text: "Docs") %>
+    <% if page == "overview" %>
+      <% bc.with_item(href: charts_path, text: "Charts", current: true) %>
+    <% else %>
+      <% bc.with_item(href: charts_path, text: "Charts") %>
+      <% bc.with_item(href: chart_doc_path(page), text: title, current: true) %>
+    <% end %>
+  <% end %>
+  <h1 class="text-4xl font-bold tracking-tight"><%= page == "overview" ? "Charts" : title %></h1>
+  <p class="text-lg text-muted-foreground"><%= lead %></p>
+</header>

@@ -13,6 +13,14 @@ en:
       hint: 'Type the date as %{pattern}, or use the calendar'
       previous: 'Previous month'
       next: 'Next month'
+    chart:
+      label: 'Chart'
+      keyboard: 'Use the arrow keys to read each value.'
+      show_data: 'Show the data'
+      category: 'Category'
+      missing: '—'
+      total: 'Total'
+      share: 'Share'
     confirm_dialog:
       confirm: 'Confirm'
       cancel: 'Cancel'

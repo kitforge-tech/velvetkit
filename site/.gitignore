@@ -4,6 +4,7 @@
 /app/javascript/controllers/ui/
 /app/javascript/ag_grid.ts
 /app/javascript/cally.ts
+/app/javascript/chart_js.ts
 /app/assets/icons/
 /app/assets/tailwind/
 /app/views/layouts/_theme_script.html.erb

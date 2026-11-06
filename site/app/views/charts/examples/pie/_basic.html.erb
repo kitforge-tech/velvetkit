@@ -1,0 +1,3 @@
+<%= render(UI::Chart.new(type: :pie, format: :currency, label: "Today's takings, by payment", height: 240,
+      labels: [ "Card", "Cash", "UPI", "Store credit" ],
+      series: [ { name: "Takings", data: [ 4260, 1310, 980, 240 ] } ])) %>

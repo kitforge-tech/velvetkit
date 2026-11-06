@@ -1,0 +1,26 @@
+<article class="max-w-3xl space-y-12">
+  <%= render "charts/header", page: "line", lead: "How something changes over time: sales by month, orders by day, cash at closing. Use a line when the points are in order and the reader wants the trend." %>
+
+  <section class="space-y-10">
+    <h2 id="examples" class="text-2xl font-semibold tracking-tight">Examples</h2>
+    <%= render "charts/example", id: "one-series", title: "One series", example: "line/basic",
+               text: "With one series there's no legend; the heading says what the line is." %>
+    <%= render "charts/example", id: "compare", title: "Comparing series", example: "line/compare",
+               text: "Two or three lines compare well, such as this year against last. Each gets a colour and a place in the legend, and ends with its latest value." %>
+    <%= render "charts/example", id: "gaps", title: "Percentages, with a gap", example: "line/gaps",
+               text: "format: :percent takes values from 0 to 100. A nil breaks the line rather than dropping it to zero." %>
+    <%= render "charts/example", id: "unit", title: "Another currency", example: "line/unit",
+               text: "format: :currency writes money the way the app's locale does. unit: changes the sign." %>
+  </section>
+
+  <section class="space-y-4">
+    <h2 id="notes" class="text-2xl font-semibold tracking-tight">Notes</h2>
+    <ul class="list-disc space-y-2 pl-5">
+      <li>Every line shares one axis, starting at zero. If two measures are on very different scales, such as orders and revenue, draw two charts rather than squeezing one onto the other's scale.</li>
+      <li>Past four or five lines the chart gets hard to read; show the few that matter and fold the rest into "Other".</li>
+      <li>An end label is left out where it would sit on top of another, rather than being pushed away from its line. The legend, the tooltip and the table still have it.</li>
+    </ul>
+  </section>
+
+  <%= render "docs/pager", previous_page: [ "Overview", charts_path ], next_page: [ "Bar chart", chart_doc_path("bar") ] %>
+</article>

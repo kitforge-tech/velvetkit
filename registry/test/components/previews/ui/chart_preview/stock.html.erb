@@ -1,0 +1,6 @@
+<div class="max-w-2xl space-y-1">
+  <h3 class="font-semibold">Units in stock</h3>
+  <%= render(UI::Chart.new(type: :bar, label: "Units in stock by category",
+        labels: [ "Mugs", "Plates", "Bowls", "Glasses", "Cutlery", "Linen" ],
+        series: [ { name: "In stock", data: [ 148, 96, 121, 64, 212, 38 ] } ])) %>
+</div>

@@ -7,6 +7,7 @@ class HtmlTest < ActionDispatch::IntegrationTest
   test "every page parses without stray or misnested tags" do
     paths = [ root_path, docs_path, components_path ] +
             DocsController::PAGES.keys.excluding("getting_started").map { |page| doc_path(page) } +
+            ChartsController::PAGES.keys.map { |page| ChartsController.path_for(page) } +
             ComponentDoc.names.map { |name| component_path(name) }
 
     problems = paths.flat_map do |path|

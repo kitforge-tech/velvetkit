@@ -1,0 +1,22 @@
+<article class="max-w-3xl space-y-12">
+  <%= render "charts/header", page: "stacked_bar", lead: "A total and what it's made of: takings by payment method, orders by channel. Each bar is the whole, split into its parts." %>
+
+  <section class="space-y-10">
+    <h2 id="examples" class="text-2xl font-semibold tracking-tight">Examples</h2>
+    <%= render "charts/example", id: "parts", title: "Parts of a total", example: "stacked_bar/basic",
+               text: "type: :bar with stacked: true. The tooltip lists every part at that bar, and a thin gap separates the parts." %>
+    <%= render "charts/example", id: "pinned", title: "Keeping colours when a series is left out", example: "stacked_bar/pinned",
+               text: "Here the website's orders are filtered out. Each channel names its colour, so the others keep theirs instead of moving up." %>
+  </section>
+
+  <section class="space-y-4">
+    <h2 id="notes" class="text-2xl font-semibold tracking-tight">Notes</h2>
+    <ul class="list-disc space-y-2 pl-5">
+      <li>Only the bottom part of each bar sits on a straight baseline, so it's the easiest to compare. Put the part that matters most first.</li>
+      <li>Two to four parts read best. Past five, fold the smallest into "Other".</li>
+      <li>Stacking adds the parts up, so it suits amounts. For shares that don't add to a total, such as a margin, use a <%= link_to "line chart", chart_doc_path("line"), class: "text-primary underline-offset-4 hover:underline dark:text-fuchsia-300" %>.</li>
+    </ul>
+  </section>
+
+  <%= render "docs/pager", previous_page: [ "Bar chart", chart_doc_path("bar") ], next_page: [ "Pie chart", chart_doc_path("pie") ] %>
+</article>

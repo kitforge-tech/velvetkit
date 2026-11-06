@@ -9,6 +9,9 @@ Rails.application.routes.draw do
   get "llms-full.txt", to: "llms#full", as: :llms_full, format: false
 
   get "docs", to: "docs#show", as: :docs, defaults: { page: "getting_started" }
+  get "docs/charts", to: "charts#show", as: :charts, defaults: { page: "overview" }
+  get "docs/charts/:page", to: "charts#show", as: :chart_doc,
+                           constraints: { page: Regexp.union(ChartsController::PAGES.keys.excluding("overview")) }
   get "docs/components", to: "components#index", as: :components
   get "docs/components/:id", to: "components#show", as: :component, constraints: { format: /html|md/ }
   post "docs/forms/sign_in", to: "form_demos#sign_in", as: :form_demo_sign_in
