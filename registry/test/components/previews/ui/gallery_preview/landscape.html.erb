@@ -1,0 +1,5 @@
+<%= render(UI::Gallery.new(label: "Photos of the workshop", aspect: :landscape, fit: :cover, class: "max-w-xl")) do |gallery| %>
+  <% UI::GalleryPreview::PHOTOS.first(3).each do |title, color, background| %>
+    <% gallery.with_image(src: UI::GalleryPreview.photo(title, color, background, width: 1600, height: 1000), alt: "Workshop: #{title}") %>
+  <% end %>
+<% end %>

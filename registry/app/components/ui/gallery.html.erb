@@ -1,0 +1,52 @@
+<%= tag.div(**root_attrs) do %>
+  <%= tag.div class: "relative min-w-0" do %>
+    <%= tag.ul class: track_classes, data: { "ui--gallery-target": "track", action: "scroll->ui--gallery#scrolled pointerdown->ui--gallery#released" } do %>
+      <% images.each_with_index do |image, index| %>
+        <%= tag.li class: slide_classes, data: { "ui--gallery-target": "slide", zoom_src: asset_path(image.zoom_src), alt: image.alt } do %>
+          <%= tag.button(**slide_button_attrs(image, index)) do %>
+            <%= render(UI::Image.new(src: image.src, alt: image.alt, rounded: :none, loading: image_loading(index), class: image_classes, draggable: "false")) %>
+            <%= tag.span class: "pointer-events-none absolute end-2 top-2 flex rounded-full bg-background/90 p-1.5 text-foreground", aria: { hidden: true } do %><%= render(UI::Icon.new(name: "zoom-in", size: :sm)) %><% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+    <% if hover_zoom? %>
+      <%= tag.div aria: { hidden: true }, class: cn(UI::Gallery::HOVER_REVEAL, "left-0 top-0 z-10 rounded-sm border border-primary/50 bg-primary/15"), data: { "ui--gallery-target": "lens" } %>
+      <%= tag.div aria: { hidden: true }, class: cn(UI::Gallery::HOVER_REVEAL, "start-full top-0 z-50 ms-4 origin-[0_50%] scale-95 overflow-hidden rounded-lg border bg-background bg-no-repeat shadow-lg data-[inside]:start-0 data-[inside]:ms-0 data-[shown]:scale-100 rtl:origin-[100%_50%]"), data: { "ui--gallery-target": "pane" } %>
+    <% end %>
+    <% if multiple? %>
+      <%= render(UI::Button.new(**nav_button_attrs(:previous))) do %><%= render(UI::Icon.new(name: "chevron-left", size: :sm, class: "rtl:rotate-180")) %><% end %>
+      <%= render(UI::Button.new(**nav_button_attrs(:next))) do %><%= render(UI::Icon.new(name: "chevron-right", size: :sm, class: "rtl:rotate-180")) %><% end %>
+    <% end %>
+  <% end %>
+  <%= tag.p position_text, class: "sr-only", aria: { live: "polite" }, data: { "ui--gallery-target": "status" } %>
+  <% if multiple? %>
+    <%= tag.ul class: thumbnail_strip_classes do %>
+      <% images.each_with_index do |image, index| %>
+        <li class="shrink-0"><%= tag.button(**thumbnail_attrs(index)) do %><%= render(UI::Image.new(src: image.thumbnail_src, alt: "", rounded: :none, class: "size-full object-cover", draggable: "false")) %><% end %></li>
+      <% end %>
+    <% end %>
+  <% end %>
+  <%= tag.dialog class: dialog_classes, tabindex: -1,
+                 aria: { label: t("ui.gallery.dialog", default: "Zoomed image") },
+                 data: { "ui--gallery-target": "dialog", action: "close->ui--gallery#closed cancel->ui--gallery#cancel" } do %>
+    <%= tag.div class: viewport_classes,
+                data: { "ui--gallery-target": "viewport",
+                        action: "click->ui--gallery#viewportClick pointerdown->ui--gallery#panStart pointermove->ui--gallery#panMove " \
+                                "pointerup->ui--gallery#panEnd pointercancel->ui--gallery#panEnd wheel->ui--gallery#wheel" } do %>
+      <%= tag.img alt: "", draggable: "false",
+                  class: "m-auto max-w-none shrink-0 cursor-zoom-in select-none group-data-[zoomed]/viewport:cursor-grab",
+                  data: { "ui--gallery-target": "zoomImage", action: "load->ui--gallery#layout" } %>
+    <% end %>
+    <%= tag.p position_text, class: "sr-only", aria: { live: "polite" }, data: { "ui--gallery-target": "zoomStatus" } %>
+    <%= tag.div class: "absolute start-4 top-4 z-10 flex gap-2" do %>
+      <%= render(UI::Button.new(**zoom_button_attrs(:out, "Zoom out"))) do %><%= render(UI::Icon.new(name: "zoom-out", size: :sm)) %><% end %>
+      <%= render(UI::Button.new(**zoom_button_attrs(:in, "Zoom in"))) do %><%= render(UI::Icon.new(name: "zoom-in", size: :sm)) %><% end %>
+    <% end %>
+    <%= render(UI::Button.new(variant: :ghost, size: :icon, class: cn(UI::Gallery::OVERLAY_BUTTON, "absolute end-4 top-4 z-10"), aria: { label: t("ui.gallery.close", default: "Close") }, data: { action: "ui--gallery#close" })) do %><%= render(UI::Icon.new(name: "x", size: :sm)) %><% end %>
+    <% if multiple? %>
+      <%= render(UI::Button.new(**overlay_nav_attrs(:previous))) do %><%= render(UI::Icon.new(name: "chevron-left", size: :sm, class: "rtl:rotate-180")) %><% end %>
+      <%= render(UI::Button.new(**overlay_nav_attrs(:next))) do %><%= render(UI::Icon.new(name: "chevron-right", size: :sm, class: "rtl:rotate-180")) %><% end %>
+    <% end %>
+  <% end %>
+<% end %>

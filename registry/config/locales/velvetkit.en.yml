@@ -94,6 +94,18 @@ en:
       error: 'Failed'
     toast:
       close_label: 'Dismiss'
+    gallery:
+      label: 'Image gallery'
+      roledescription: 'gallery'
+      dialog: 'Zoomed image'
+      previous: 'Previous image'
+      next: 'Next image'
+      close: 'Close'
+      zoom: 'Zoom image %{current}: %{alt}'
+      zoom_in: 'Zoom in'
+      zoom_out: 'Zoom out'
+      thumbnail: 'Show image %{current}'
+      position: 'Image %{current} of %{total}'
     file_field:
       browse: 'Click to upload'
       drop: 'or drag and drop'

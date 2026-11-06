@@ -75,3 +75,5 @@ user: { tabler: user, phosphor: user }
 users: { tabler: users, phosphor: users }
 workflow: { tabler: sitemap, phosphor: flow-arrow }
 x: { tabler: x, phosphor: x }
+zoom-in: { tabler: zoom-in, phosphor: magnifying-glass-plus }
+zoom-out: { tabler: zoom-out, phosphor: magnifying-glass-minus }

@@ -1,0 +1,13 @@
+<div class="grid max-w-3xl gap-8 sm:grid-cols-2">
+  <%= render(UI::Gallery.new(label: "Photos of the ceramic mug")) do |gallery| %>
+    <% UI::GalleryPreview.photos.each do |title, src| %>
+      <% gallery.with_image(src: src, alt: "Ceramic mug: #{title}") %>
+    <% end %>
+  <% end %>
+  <div class="space-y-3">
+    <h2 class="text-xl font-semibold">Ceramic mug</h2>
+    <p class="text-lg">$14.00</p>
+    <p class="text-sm text-muted-foreground">Hand-glazed stoneware that holds 350 ml. Click the photo to see it over the page and zoom in.</p>
+    <%= render(UI::Button.new) { "Add to cart" } %>
+  </div>
+</div>

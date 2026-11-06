@@ -60,6 +60,8 @@ components:
     description: A drag-and-drop file picker with a label, hint and error message, standalone or with a form builder.
   form_field:
     description: A label, hint and error message wired to any form control.
+  gallery:
+    description: A product's photos, with thumbnails, swiping, and a full-screen view to zoom in.
   icon:
     description: An SVG icon from your chosen icon library, drawn inline on the server.
   image:

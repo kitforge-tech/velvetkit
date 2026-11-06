@@ -90,3 +90,6 @@ application.register("ui--stepper", UI__StepperController)
 
 import UI__NumberInputController from "./ui/number_input_controller"
 application.register("ui--number-input", UI__NumberInputController)
+
+import UI__GalleryController from "./ui/gallery_controller"
+application.register("ui--gallery", UI__GalleryController)
