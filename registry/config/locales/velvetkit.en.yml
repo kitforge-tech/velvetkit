@@ -13,6 +13,23 @@ en:
       hint: 'Type the date as %{pattern}, or use the calendar'
       previous: 'Previous month'
       next: 'Next month'
+    date_range_picker:
+      from: 'Start date'
+      to: 'End date'
+      open: 'Open the calendar'
+      dialog: 'Choose dates'
+      hint: 'Type the dates as %{pattern}, or use the calendar'
+      previous: 'Previous month'
+      next: 'Next month'
+      presets_label: 'Quick ranges'
+      presets:
+        today: 'Today'
+        yesterday: 'Yesterday'
+        last_7_days: 'Last 7 days'
+        last_30_days: 'Last 30 days'
+        this_month: 'This month'
+        last_month: 'Last month'
+        this_year: 'This year'
     chart:
       label: 'Chart'
       keyboard: 'Use the arrow keys to read each value.'

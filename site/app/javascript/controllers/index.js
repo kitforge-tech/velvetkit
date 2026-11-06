@@ -96,3 +96,6 @@ application.register("ui--gallery", UI__GalleryController)
 
 import UI__ChartController from "./ui/chart_controller"
 application.register("ui--chart", UI__ChartController)
+
+import UI__DateRangePickerController from "./ui/date_range_picker_controller"
+application.register("ui--date-range-picker", UI__DateRangePickerController)

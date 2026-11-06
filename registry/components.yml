@@ -53,6 +53,8 @@ components:
     description: A sortable, filterable, server-paged table on AG Grid.
   date_picker:
     description: A typed date field with a calendar, on Cally.
+  date_range_picker:
+    description: Two dates, from and to, typed or picked on a calendar, with presets for report filters.
   dialog:
     description: A modal dialog on the native <dialog> element.
   divider:

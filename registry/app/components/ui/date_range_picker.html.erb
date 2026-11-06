@@ -1,0 +1,59 @@
+<%= tag.div(**root_attrs) do %>
+  <% if render_label? %>
+    <%= tag.label for: from_id, class: "mb-1.5 block text-sm font-medium text-foreground" do %><%= label %><% if required? %><span class="ml-0.5 text-destructive">*</span><% end %><% end %>
+  <% end %>
+
+  <%= tag.div class: group_classes do %>
+    <%# What people type. Not named: only the hidden ISO fields are submitted. %>
+    <%= tag.input(**input_attrs(:from)) %>
+    <span class="shrink-0 text-muted-foreground" aria-hidden="true">–</span>
+    <%= tag.input(**input_attrs(:to)) %>
+    <%= tag.button type: "button", disabled: disabled?, aria: { haspopup: "dialog", expanded: "false", controls: panel_id,
+                                                               label: t("ui.date_range_picker.open", default: "Open the calendar") },
+                   class: "flex h-full w-9 shrink-0 items-center justify-center rounded-r-md text-muted-foreground hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                   data: { "ui--date-range-picker-target": "toggle", action: "ui--date-range-picker#toggle" } do %>
+      <%= render(UI::Icon.new(name: "calendar", size: :sm)) %>
+    <% end %>
+  <% end %>
+  <%= tag.input type: "hidden", name: from_name, value: from_iso, data: { "ui--date-range-picker-target": "fromHidden" } %>
+  <%= tag.input type: "hidden", name: to_name, value: to_iso, data: { "ui--date-range-picker-target": "toHidden" } %>
+
+  <% if render_hint? %>
+    <%= tag.p t("ui.date_range_picker.hint", pattern: placeholder, default: "Type the dates as %{pattern}, or use the calendar"),
+              id: hint_id, class: "mt-1 text-xs text-muted-foreground" %>
+  <% end %>
+  <% if wrapper.error_message %>
+    <%= tag.p wrapper.error_message, id: wrapper.error_id, class: "mt-1 text-xs text-destructive" %>
+  <% end %>
+
+  <%= tag.div id: panel_id, role: "dialog", hidden: true, aria: { label: t("ui.date_range_picker.dialog", default: "Choose dates") },
+              class: "absolute z-30 mt-1 flex max-w-[calc(100vw-2rem)] flex-col rounded-md border bg-popover text-popover-foreground shadow-md sm:flex-row",
+              data: { "ui--date-range-picker-target": "panel" } do %>
+    <% if preset_list.any? %>
+      <%= tag.ul class: "flex gap-1 overflow-x-auto border-b p-2 sm:flex-col sm:overflow-visible sm:border-b-0 sm:border-e",
+                 aria: { label: t("ui.date_range_picker.presets_label", default: "Quick ranges") } do %>
+        <% preset_list.each do |name, from, to| %>
+          <li class="shrink-0"><%= tag.button name, type: "button", aria: { pressed: (from == from_iso && to == to_iso).to_s },
+                                              class: "w-full whitespace-nowrap rounded-md px-3 py-1.5 text-start text-sm hover:bg-accent hover:text-accent-foreground aria-pressed:bg-primary/10 aria-pressed:font-medium aria-pressed:text-primary dark:aria-pressed:text-foreground #{UI::Base::FOCUS_RING}",
+                                              data: { action: "ui--date-range-picker#preset", "ui--date-range-picker-from-param": from,
+                                                      "ui--date-range-picker-to-param": to, "ui--date-range-picker-target": "preset" } %></li>
+        <% end %>
+      <% end %>
+    <% end %>
+    <%= tag.send(:"calendar-range",
+                 safe_join([
+                   tag.span(safe_join([ render(UI::Icon.new(name: "chevron-left", size: :sm)),
+                                        tag.span(t("ui.date_range_picker.previous", default: "Previous month"), class: "sr-only") ]),
+                            slot: "previous", class: "inline-flex"),
+                   tag.span(safe_join([ render(UI::Icon.new(name: "chevron-right", size: :sm)),
+                                        tag.span(t("ui.date_range_picker.next", default: "Next month"), class: "sr-only") ]),
+                            slot: "next", class: "inline-flex"),
+                   tag.span(slot: "heading"),
+                   tag.div(safe_join([ tag.send(:"calendar-month", data: { "ui--date-range-picker-target": "firstMonth" }),
+                                       tag.send(:"calendar-month", offset: 1,
+                                                data: { "ui--date-range-picker-target": "secondMonth" }) ]),
+                           class: "flex gap-6")
+                 ]),
+                 class: "block p-3", **calendar_attrs) %>
+  <% end %>
+<% end %>

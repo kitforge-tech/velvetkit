@@ -1,4 +1,5 @@
 import { Controller } from '@hotwired/stimulus';
+import { toIso, toTyped } from './_internal/date_format.js';
 
 // Connects to data-controller="ui--date-picker"
 //
@@ -12,11 +13,7 @@ import { Controller } from '@hotwired/stimulus';
 // The written order is not decided here. Ruby derives it from
 // date.formats.typed in the locale and passes it in as "DMY" plus a
 // separator, so one locale file governs what the field accepts, what it shows
-// and what the hint says.
-const ISO = /^(\d{4})-(\d{2})-(\d{2})$/;
-// Any of / - . or a space between the parts: people type what is in front of
-// them, and being strict about the separator only creates work.
-const PARTS = /^(\d{1,4})[/\-. ](\d{1,4})[/\-. ](\d{1,4})$/;
+// and what the hint says. The parsing itself is in _internal/date_format.
 
 export default class extends Controller<HTMLElement> {
   static targets = ['input', 'hidden', 'calendar', 'panel', 'toggle'];
@@ -108,34 +105,11 @@ export default class extends Controller<HTMLElement> {
     return typed !== '' && this.toIso(typed) === null;
   }
 
-  // The locale's order in, ISO out. Rejects 31/02 rather than rolling it into
-  // the 3rd of March, which is what Date does and how a wrong birth date gets
-  // stored without anyone seeing an error.
   private toIso(typed: string): string | null {
-    const match = PARTS.exec(typed.trim());
-    if (!match) return null;
-
-    const order = this.orderValue.split('');
-    const day = match[order.indexOf('D') + 1];
-    const month = match[order.indexOf('M') + 1];
-    const year = match[order.indexOf('Y') + 1];
-    if (!day || !month || !year || year.length !== 4) return null;
-
-    const iso = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-    const date = new Date(`${iso}T00:00:00`);
-    if (Number.isNaN(date.getTime())) return null;
-
-    // Round-tripped, because Date accepts the 31st of February and quietly
-    // returns the 3rd of March.
-    return date.getDate() === Number(day) && date.getMonth() + 1 === Number(month) ? iso : null;
+    return toIso(typed, this.orderValue);
   }
 
   private toTyped(iso: string): string {
-    const match = ISO.exec((iso ?? '').trim());
-    if (!match) return '';
-
-    const [, year, month, day] = match;
-    const parts: Record<string, string> = { D: day, M: month, Y: year };
-    return this.orderValue.split('').map((key) => parts[key]).join(this.separatorValue);
+    return toTyped(iso, this.orderValue, this.separatorValue);
   }
 }

@@ -54,8 +54,7 @@ class UI::DatePicker < UI::Base
 
   # The value the form submits, always ISO, whatever was typed.
   def iso_value
-    raw = @value || (@form && @field && @form.object&.public_send(@field))
-    raw.respond_to?(:strftime) ? raw.strftime("%Y-%m-%d") : raw.presence
+    self.class.iso(@value || (@form && @field && @form.object&.public_send(@field)))
   end
 
   def label_text
@@ -90,30 +89,41 @@ class UI::DatePicker < UI::Base
     )
   end
 
-  # The one string everything else here is derived from.
-  def date_format = I18n.t("date.formats.typed")
+  # The one string everything else here is derived from. Class methods, so
+  # UI::DateRangePicker reads the same format.
+  def self.date_format = I18n.t("date.formats.typed")
 
   # "%d/%m/%Y" -> "DD/MM/YYYY". Shown as the placeholder and in the hint, so
   # what the user is told matches what the parser accepts by construction.
-  def placeholder
+  def self.placeholder
     date_format.gsub("%d", "DD").gsub("%m", "MM").gsub("%Y", "YYYY").gsub("%y", "YY")
   end
 
   # "%d/%m/%Y" -> "DMY". The controller builds its parser from this rather
   # than assuming an order.
-  def part_order = date_format.scan(/%([dmyY])/).flatten.map(&:upcase).join
+  def self.part_order = date_format.scan(/%([dmyY])/).flatten.map(&:upcase).join
 
-  def separator = date_format[/[^%a-zA-Z]/] || "/"
+  def self.separator = date_format[/[^%a-zA-Z]/] || "/"
 
-  # Rendered server-side in the locale's format, so the field is already right
-  # before any JavaScript has loaded.
-  def typed_value
-    iso = iso_value
-    return nil if iso.blank?
+  # A date or ISO string in the locale's written format, rendered server-side
+  # so the field is already right before any JavaScript has loaded.
+  def self.typed(value)
+    return nil if value.blank?
 
-    date = iso.respond_to?(:strftime) ? iso : Date.parse(iso.to_s)
+    date = value.respond_to?(:strftime) ? value : Date.parse(value.to_s)
     I18n.l(date, format: :typed)
   rescue Date::Error
-    iso
+    value
   end
+
+  # An ISO date, for the hidden field, from a Date or a string.
+  def self.iso(value)
+    value.respond_to?(:strftime) ? value.strftime("%Y-%m-%d") : value.presence
+  end
+
+  def date_format = self.class.date_format
+  def placeholder = self.class.placeholder
+  def part_order = self.class.part_order
+  def separator = self.class.separator
+  def typed_value = self.class.typed(iso_value)
 end

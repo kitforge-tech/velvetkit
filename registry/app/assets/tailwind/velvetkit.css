@@ -302,6 +302,37 @@ calendar-month::part(selected) {
   font-weight: 600;
 }
 
+/* A range: its ends look chosen, and the days between take a tint of the
+   accent, joined into a band. Hovering a second day previews the range. */
+calendar-month::part(range-inner) {
+  border-radius: 0;
+  background: color-mix(in oklab, var(--primary) 12%, transparent);
+  color: var(--popover-foreground);
+}
+
+calendar-month::part(range-start) {
+  border-start-end-radius: 0;
+  border-end-end-radius: 0;
+}
+
+calendar-month::part(range-end) {
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
+}
+
+calendar-month::part(range-start range-end) {
+  border-radius: var(--radius-md);
+}
+
+/* Two months side by side each name themselves, since there are no month and
+   year selects over them. */
+calendar-range calendar-month::part(heading) {
+  display: block;
+  margin-bottom: 0.5rem;
+  text-align: center;
+  font-weight: 500;
+}
+
 /* Month and year: the reason this library was chosen, since reaching a birth
    year is one click rather than a hundred and seventy. Styled like the kit's
    fields; the open list is the platform's own. */

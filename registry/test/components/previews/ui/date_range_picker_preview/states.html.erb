@@ -1,0 +1,6 @@
+<div class="flex max-w-sm flex-col gap-6">
+  <%= render(UI::DateRangePicker.new(label: "No presets", presets: false)) %>
+  <%= render(UI::DateRangePicker.new(label: "Required", required: true)) %>
+  <%= render(UI::DateRangePicker.new(label: "With an error", error: "Choose a period of a year or less", from: "2025-01-01", to: "2026-06-30")) %>
+  <%= render(UI::DateRangePicker.new(label: "Disabled", disabled: true, from: "2026-11-01", to: "2026-11-30")) %>
+</div>
