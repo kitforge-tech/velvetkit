@@ -35,4 +35,30 @@ class AnalyticsTest < ActionDispatch::IntegrationTest
       assert_equal "velvetkit.com,www.velvetkit.com", tag["data-domains"]
     end
   end
+
+  test "code blocks name what copying them means" do
+    get root_path
+    assert_select "[data-clipboard-track-value=copy_gem]", minimum: 1
+    assert_select "[data-clipboard-track-value=copy_install]", minimum: 1
+    assert_select "[data-clipboard-track-value=copy_add]", minimum: 1
+
+    get doc_path("ai")
+    assert_select "[data-clipboard-track-value=copy_agent_prompt]", count: 1
+    assert_select "[data-clipboard-track-value=copy_snippet]", minimum: 1
+
+    get component_path("dialog")
+    assert_select "[data-clipboard-track-value=copy_add]", minimum: 1
+    assert_select "[data-clipboard-track-value=copy_markdown]", count: 1
+  end
+
+  test "copy_event reads the source" do
+    helper = ApplicationController.helpers
+    assert_equal "copy_install", helper.copy_event("bin/rails g velvetkit:install")
+    assert_equal "copy_install", helper.copy_event("bin/rails generate velvetkit:install --icons=phosphor")
+    assert_equal "copy_add", helper.copy_event("bin/rails generate velvetkit:add dialog")
+    assert_equal "copy_gem", helper.copy_event(%(gem "velvetkit", group: :development))
+    assert_equal "copy_agent_prompt", helper.copy_event(ApplicationHelper::SETUP_PROMPT)
+    assert_equal "copy_snippet", helper.copy_event("bin/rails generate velvetkit:icons rocket")
+    assert_equal "copy_snippet", helper.copy_event("bundle install")
+  end
 end

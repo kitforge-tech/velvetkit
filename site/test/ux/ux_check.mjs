@@ -286,6 +286,26 @@ ws.onopen = async () => {
       await key("Escape", "Escape", 0, 27);
       await sleep(300);
     }
+
+    // Analytics: what gets reported, against a stand-in for the tracker.
+    const stub = `window.__events = []; window.umami = { track: (n, d) => window.__events.push([n, d ?? null]) }; 1`;
+    const reveal = (sel) => run(`document.querySelector(${JSON.stringify(sel)}).scrollIntoView({ block: "center" }); 1`);
+
+    await send("Page.navigate", { url: `${BASE}/docs` });
+    await sleep(2500);
+    await reveal("[data-clipboard-track-value=copy_gem]");
+    await sleep(300);
+    await click("[data-clipboard-track-value=copy_gem] button");
+    await sleep(300);
+    check("copying works with no tracker loaded", await run(`document.querySelector("[data-clipboard-track-value=copy_gem]").hasAttribute("data-copied")`));
+
+    await run(stub);
+    await reveal("[data-clipboard-track-value=copy_install]");
+    await sleep(300);
+    await click("[data-clipboard-track-value=copy_install] button");
+    await sleep(300);
+    const reported = await run(`JSON.stringify(window.__events)`);
+    check("copying the install command reports it", reported === '[["copy_install",null]]', reported);
   } catch (error) {
     console.log("ERROR", error.message);
     results.push(false);

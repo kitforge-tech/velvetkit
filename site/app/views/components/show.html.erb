@@ -17,7 +17,7 @@
       <%= render(UI::Badge.new(variant: :outline, class: "font-mono")) { @component.class_name } %>
     </div>
     <p class="max-w-2xl text-lg text-muted-foreground"><%= @component.description %></p>
-<div data-controller="clipboard" data-clipboard-copied-value="Markdown copied" class="flex flex-wrap items-center gap-2">
+<div data-controller="clipboard" data-clipboard-copied-value="Markdown copied" data-clipboard-track-value="copy_markdown" class="flex flex-wrap items-center gap-2">
   <span hidden data-clipboard-target="source"><%= @component.page_markdown %></span>
   <%= render(UI::Menu.new) do |menu| %>
     <% menu.with_trigger(variant: :outline, size: :sm) do %>

@@ -13,4 +13,16 @@ module AnalyticsHelper
     tag.script(src: script_url, async: true,
                data: { website_id: website_id, domains: ANALYTICS_DOMAINS, exclude_search: "true", exclude_hash: "true" })
   end
+
+  # The event a code block reports when copied. Each is its own event, not one
+  # with a property, so any of them can be a funnel step.
+  def copy_event(source)
+    case source
+    when ApplicationHelper::SETUP_PROMPT then "copy_agent_prompt"
+    when /\Agem "velvetkit"/ then "copy_gem"
+    when %r{\Abin/rails (g|generate) velvetkit:install} then "copy_install"
+    when %r{\Abin/rails (g|generate) velvetkit:add} then "copy_add"
+    else "copy_snippet"
+    end
+  end
 end

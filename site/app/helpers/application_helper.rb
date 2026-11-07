@@ -42,7 +42,7 @@ module ApplicationHelper
   def code_block(source, label: nil, wrap: false, language: nil)
     source = source.strip
     html = highlight(source, language || language_for(source, label, wrap))
-    render "shared/code", html: html, label: label, wrap: wrap
+    render "shared/code", html: html, label: label, wrap: wrap, track: copy_event(source)
   end
 
   # Prose stays plain. Otherwise the label's file name decides, then the
