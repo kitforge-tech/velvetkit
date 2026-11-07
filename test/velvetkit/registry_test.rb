@@ -74,7 +74,8 @@ class Velvetkit::RegistryTest < Minitest::Test
       app/javascript/controllers/ui/_internal/use_dismiss.ts
     ].sort, registry.javascript_files("popover").sort
 
-    assert_includes registry.javascript_files("date_picker"), "app/javascript/cally.ts"
+    assert_includes registry.javascript_files("date_picker"), "app/javascript/vanilla_calendar.ts"
+    assert_includes registry.javascript_files("date_picker"), "app/javascript/controllers/ui/_internal/date_format.ts"
     assert_equal %w[app/javascript/controllers/ui/dialog_controller.ts], registry.stimulus_controllers("sheet")
   end
 
