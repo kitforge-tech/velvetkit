@@ -2,8 +2,9 @@
 // it's optional, and blocked in many browsers.
 export const track = (name, data) => window.umami?.track(name, data)
 
-// Text that could identify someone: an email address, a card or phone number.
-export const looksPersonal = (text) => text.includes("@") || /\d{4}/.test(text.replace(/\s/g, ""))
+// Text that could identify someone: an email address, a card or phone number, a
+// date. Digits count however they're split up, so 06-12-34 is caught too.
+export const looksPersonal = (text) => text.includes("@") || text.replace(/\D/g, "").length >= 4
 
 // A search query fit to report, or null. Anything that looks personal stays in
 // the browser.

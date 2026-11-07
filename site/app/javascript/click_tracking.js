@@ -2,7 +2,8 @@ import { looksPersonal, track } from "./analytics"
 
 // Which controls get clicked, across the whole site. It only watches, so a click
 // goes on to do what it always did. It reports what a control says, never what's
-// been typed into one.
+// been typed into one. Live demos report no text at all: what their controls say
+// can be what a visitor typed, like a tab they've renamed.
 const ROLES = [ "button", "link", "tab", "menuitem", "menuitemcheckbox", "menuitemradio", "option", "switch", "checkbox", "radio" ]
 const INPUTS = [ "checkbox", "radio", "submit", "button" ]
 const CLICKABLE = [
@@ -50,7 +51,8 @@ function describeClick(target) {
   const control = target.closest?.(CLICKABLE)
   if (!control || control.disabled || control.getAttribute("aria-disabled") === "true") return null
 
-  const data = { element: element(control), label: label(control), area: area(control) }
+  const where = area(control)
+  const data = { element: element(control), label: where === "demo" ? "(demo)" : label(control), area: where }
   if (control.matches("a[href]")) data.href = destination(control)
   return data
 }

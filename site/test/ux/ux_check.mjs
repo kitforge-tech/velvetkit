@@ -299,7 +299,7 @@ ws.onopen = async () => {
     await sleep(300);
     await click("[data-clipboard-track-value=copy_gem] button");
     await sleep(300);
-    check("copying works with no tracker loaded", await run(`document.querySelector("[data-clipboard-track-value=copy_gem]").hasAttribute("data-copied")`));
+    check("copying works with no tracker loaded", await run(`window.umami === undefined && document.querySelector("[data-clipboard-track-value=copy_gem]").hasAttribute("data-copied")`));
 
     await run(stub);
     await reveal("[data-clipboard-track-value=copy_install]");
@@ -328,7 +328,7 @@ ws.onopen = async () => {
     check("the same miss isn't reported twice", sent === 1, String(sent));
 
     await run(`window.__events.length = 0; 1`);
-    for (const text of ["me@example.com", "4111 1111 1111 1111", "x"]) await typeSearch(text);
+    for (const text of ["me@example.com", "4111 1111 1111 1111", "06-12-34-56-78", "12/05/85", "~"]) await typeSearch(text);
     await typeSearch("dialog");
     sent = await run(`JSON.stringify(window.__events)`);
     check("emails, numbers, stray letters and hits are never sent", sent === "[]", sent);
@@ -371,6 +371,22 @@ ws.onopen = async () => {
     depths = await named("scroll_depth");
     check("depth starts again after a Turbo visit", depths.includes('"depth":90'), depths);
 
+    await run(`window.__events.length = 0; history.back(); 1`);
+    await sleep(1800);
+    depths = await named("scroll_depth");
+    check("restoring scroll on Back isn't a scroll", depths === "[]", depths);
+
+    await send("Page.navigate", { url: `${BASE}/docs/namespacing` });
+    await sleep(2500);
+    await run(stub);
+    await scrollPage(1);
+    await run(`(() => { const i = document.querySelector("input[name=namespace]"); i.value = "Acme"; i.dispatchEvent(new Event("input", { bubbles: true })); })()`);
+    await sleep(1800);
+    await scrollPage(0);
+    await scrollPage(1);
+    depths = await named("scroll_depth");
+    check("the playground's frame visits don't restart depth", depths === '[["scroll_depth",{"depth":50}],["scroll_depth",{"depth":90}]]', depths);
+
     await send("Page.navigate", { url: `${BASE}/` });
     await sleep(2500);
     await run(stub);
@@ -406,7 +422,14 @@ ws.onopen = async () => {
     await run(`(() => { const b = document.createElement("button"); b.textContent = "Probe"; b.id = "probe-demo"; b.disabled = false; const wrap = document.querySelector("[data-outline-skip]"); wrap.append(b); })()`);
     await run(`document.getElementById("probe-demo").click(); 1`);
     seen = await clicks();
-    check("clicks inside a live example count as demo clicks", seen === '[{"element":"button","label":"Probe","area":"demo"}]', seen);
+    check("clicks inside a live example count as demo clicks, without their text", seen === '[{"element":"button","label":"(demo)","area":"demo"}]', seen);
+
+    await send("Page.navigate", { url: `${BASE}/docs/components/session_tabs` });
+    await sleep(2500);
+    await run(stub);
+    await run(`(() => { const t = document.querySelector("[data-outline-skip] [role=tab]"); t.textContent = "Jane Doe payroll"; t.click(); })()`);
+    seen = await clicks();
+    check("a renamed tab's text never leaves the browser", seen.includes('"area":"demo"') && !seen.includes("Jane"), seen);
 
     await run(`window.__events.length = 0; document.querySelector("main header button").click(); 1`);
     await key("Escape", "Escape", 0, 27);
