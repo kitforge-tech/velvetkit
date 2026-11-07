@@ -3,7 +3,7 @@
 /app/components/ui/
 /app/javascript/controllers/ui/
 /app/javascript/ag_grid.ts
-/app/javascript/cally.ts
+/app/javascript/vanilla_calendar.ts
 /app/javascript/chart_js.ts
 /app/assets/icons/
 /app/assets/tailwind/

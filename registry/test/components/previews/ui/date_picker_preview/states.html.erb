@@ -1,7 +1,8 @@
-<div class="flex max-w-xs flex-col gap-6">
+<div class="flex max-w-sm flex-col gap-6">
   <%= render(UI::DatePicker.new(name: "a", label: "Empty")) %>
   <%= render(UI::DatePicker.new(name: "b", label: "Required", required: true)) %>
-  <%= render(UI::DatePicker.new(name: "c", label: "With an error", error: true, value: Date.new(2026, 10, 21))) %>
+  <%= render(UI::DatePicker.new(name: "c", label: "With an error", error: "Pick a date this year", value: Date.new(2025, 10, 21))) %>
   <%= render(UI::DatePicker.new(name: "d", label: "Disabled", disabled: true, value: Date.new(2026, 10, 21))) %>
-  <%= render(UI::DatePicker.new(name: "e", label: "Without the hint", hint: false)) %>
+  <%= render(UI::DatePicker.new(range: true, label: "A range without presets", presets: false)) %>
+  <%= render(UI::DatePicker.new(range: true, label: "A range with an error", error: "A year at most", from: "2025-01-01", to: "2026-06-30")) %>
 </div>

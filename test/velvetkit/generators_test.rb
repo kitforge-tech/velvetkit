@@ -185,7 +185,7 @@ class Velvetkit::GeneratorsTest < Minitest::Test
     add "--all", "--skip-tests", "--skip-previews"
 
     assert exist?("app/components/kit/data_grid.rb")
-    assert exist?("app/javascript/cally.ts")
+    assert exist?("app/javascript/vanilla_calendar.ts")
   end
 
   def test_install_imports_tokens_into_a_cssbundling_entry_point
