@@ -17,8 +17,14 @@ import { useDismiss } from './_internal/use_dismiss.js';
 // yet, so it submits, and stays chosen when it drops out of later results.
 const SEARCH_DELAY = 250;
 const SLOW_SEARCH = 200;
+// How long a search's results are reused instead of asked for again.
+const REMEMBER_FOR = 60_000;
 
 type Result = { value: string; label: string };
+
+// Results by URL, shared by every select on the page that asks the same
+// server the same thing, so reopening a list or retyping a search is instant.
+const remembered = new Map<string, { at: number; results: Result[] }>();
 export default class extends Controller<HTMLElement> {
   static targets = ['trigger', 'value', 'panel', 'listbox', 'option', 'native', 'search', 'empty', 'status', 'template', 'searchIcon', 'spinner'];
   static values = {
@@ -58,6 +64,7 @@ export default class extends Controller<HTMLElement> {
   private floatingCleanup: (() => void) | null = null;
   private dismissCleanup: (() => void) | null = null;
   private request: AbortController | null = null;
+  private requestKey = '';
   private searchTimer?: number;
   private slowTimer?: number;
   private resultCount = 0;
@@ -208,7 +215,7 @@ export default class extends Controller<HTMLElement> {
     if (!this.isOpen) return;
 
     this.teardown();
-    this.cancelSearch();
+    this.pauseSearch();
     this.panelTarget.hidden = true;
     this.panelTarget.dataset.state = 'closed';
     this.triggerTarget.setAttribute('aria-expanded', 'false');
@@ -303,14 +310,32 @@ export default class extends Controller<HTMLElement> {
     return this.hasUrlValue && this.urlValue !== '' && this.hasSearchTarget;
   }
 
-  // Asks for the options matching `query`, dropping any answer still on its
-  // way: only the newest search may fill the list.
+  // Asks for the options matching `query`. Results from the last minute are
+  // reused without asking; a search already on its way for the same thing is
+  // waited for rather than started again; anything else on its way is dropped,
+  // so only the newest search fills the list.
   private async fetchResults(query: string) {
+    const url = new URL(this.urlValue, window.location.href);
+    url.searchParams.set(this.paramValue, query);
+    const key = url.toString();
+
+    const known = remembered.get(key);
+    if (known && Date.now() - known.at < REMEMBER_FOR) {
+      this.cancelSearch();
+      this.showResults(known.results);
+      this.showStatus(null);
+      return;
+    }
+    if (this.request && this.requestKey === key) {
+      this.listboxTarget.setAttribute('aria-busy', 'true');
+      this.slowTimer = window.setTimeout(() => this.showStatus(this.searchingValue, true), SLOW_SEARCH);
+      return;
+    }
+
     this.cancelSearch();
     const request = new AbortController();
     this.request = request;
-    const url = new URL(this.urlValue, window.location.href);
-    url.searchParams.set(this.paramValue, query);
+    this.requestKey = key;
 
     this.listboxTarget.setAttribute('aria-busy', 'true');
     this.slowTimer = window.setTimeout(() => this.showStatus(this.searchingValue, true), SLOW_SEARCH);
@@ -318,18 +343,20 @@ export default class extends Controller<HTMLElement> {
       const response = await fetch(url, { headers: { Accept: 'application/json' }, signal: request.signal });
       if (!response.ok) throw new Error(`${response.status}`);
       const results = this.normalise(await response.json());
-      if (this.request !== request) return;
+      remembered.set(key, { at: Date.now(), results });
+      if (this.request !== request || !this.isOpen) return;
 
       this.showResults(results);
       this.showStatus(null);
     } catch (error) {
-      if (request.signal.aborted) return;
+      if (request.signal.aborted || !this.isOpen) return;
       this.showResults([]);
       if (this.hasEmptyTarget) this.emptyTarget.hidden = true;
       this.showStatus(this.failedValue);
     } finally {
       if (this.request === request) {
         this.request = null;
+        this.requestKey = '';
         window.clearTimeout(this.slowTimer);
         this.listboxTarget.removeAttribute('aria-busy');
       }
@@ -392,11 +419,22 @@ export default class extends Controller<HTMLElement> {
     this.searchIconTarget.classList.toggle('flex', !on);
   }
 
+  // Closing stops what's waiting to be asked and the spinner, but lets a
+  // search already on its way finish, so its results are there on reopening.
+  private pauseSearch() {
+    window.clearTimeout(this.searchTimer);
+    window.clearTimeout(this.slowTimer);
+    this.setSpinning(false);
+    this.listboxTarget.removeAttribute('aria-busy');
+    if (this.hasStatusTarget) this.statusTarget.hidden = true;
+  }
+
   private cancelSearch() {
     window.clearTimeout(this.searchTimer);
     window.clearTimeout(this.slowTimer);
     this.request?.abort();
     this.request = null;
+    this.requestKey = '';
     this.setSpinning(false);
     if (this.hasStatusTarget) this.statusTarget.hidden = true;
   }
