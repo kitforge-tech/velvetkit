@@ -11,7 +11,7 @@
 
 <%= render "pages/hero" %>
 
-<section class="border-b">
+<section data-analytics-section="agents" class="border-b">
   <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-10 gap-y-3 px-4 py-6 text-sm text-muted-foreground sm:px-6">
     <span class="font-medium text-foreground">Written for agents too</span>
     <% [ [ "file-text", "llms.txt", llms_path ], [ "book-open", "A reference in your repo", doc_path("ai") ], [ "terminal", "Claude Code skill", doc_path("ai") ], [ "files", "Markdown for every page", component_path("dialog", format: :md) ] ].each do |icon, text, path| %>
@@ -22,7 +22,7 @@
   </div>
 </section>
 
-<section class="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+<section data-analytics-section="how_it_works" class="mx-auto max-w-6xl px-4 py-20 sm:px-6">
   <div class="max-w-2xl">
     <p class="text-sm font-semibold text-primary dark:text-fuchsia-300">How it works</p>
     <h2 class="mt-2 text-3xl font-bold tracking-tight">Three commands, then it's your code</h2>
@@ -69,7 +69,7 @@
   </div>
 </section>
 
-<section class="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+<section data-analytics-section="catalogue" class="mx-auto max-w-6xl px-4 py-20 sm:px-6">
   <div class="relative overflow-hidden rounded-2xl bg-[#1c0a30] px-6 py-14 text-center text-white sm:px-12">
     <div aria-hidden="true" class="absolute inset-0 bg-[radial-gradient(80%_100%_at_50%_0%,#4D1A7F_0%,transparent_70%)]"></div>
     <div class="relative">

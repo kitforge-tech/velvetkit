@@ -90,4 +90,11 @@ class AnalyticsTest < ActionDispatch::IntegrationTest
     end
     assert_operator tracked, :>, 0
   end
+
+  test "the home page marks the sections worth watching" do
+    get root_path
+    %w[agents how_it_works catalogue].each do |section|
+      assert_select "section[data-analytics-section=#{section}]", count: 1
+    end
+  end
 end

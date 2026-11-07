@@ -343,6 +343,39 @@ ws.onopen = async () => {
     await sleep(1800);
     sent = await run(`JSON.stringify(window.__events)`);
     check("a failed component filter reports its source", sent === '[["search_miss",{"query":"kanban","source":"components"}]]', sent);
+
+    const scrollPage = async (fraction) => {
+      await run(`window.scrollTo(0, (document.documentElement.scrollHeight - innerHeight) * ${fraction}); 1`);
+      await sleep(400);
+    };
+    const named = (name) => run(`JSON.stringify(window.__events.filter(([n]) => n === ${JSON.stringify(name)}))`);
+
+    await send("Page.navigate", { url: `${BASE}/docs/components/dialog` });
+    await sleep(2500);
+    await run(stub);
+    let depths = await named("scroll_depth");
+    check("no scroll event before a scroll", depths === "[]", depths);
+
+    await scrollPage(1);
+    await scrollPage(0);
+    await scrollPage(1);
+    depths = await named("scroll_depth");
+    check("each depth reports once per page view", depths === '[["scroll_depth",{"depth":50}],["scroll_depth",{"depth":90}]]', depths);
+
+    await run(`window.Turbo.visit("/docs/theming"); 1`);
+    await sleep(2000);
+    await run(`window.__events.length = 0; 1`);
+    await scrollPage(1);
+    depths = await named("scroll_depth");
+    check("depth starts again after a Turbo visit", depths.includes('"depth":90'), depths);
+
+    await send("Page.navigate", { url: `${BASE}/` });
+    await sleep(2500);
+    await run(stub);
+    await reveal("[data-analytics-section=how_it_works]");
+    await sleep(600);
+    const sections = await named("section_view");
+    check("a home section reports when it comes into view", sections.includes('"section":"how_it_works"'), sections);
   } catch (error) {
     console.log("ERROR", error.message);
     results.push(false);
