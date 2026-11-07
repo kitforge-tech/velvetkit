@@ -11,7 +11,7 @@ require "securerandom"
 #
 # People who know a date type it; the rest pick it. The field takes digits
 # only and puts the separators in as you go, in the locale's order
-# (`date.formats.typed`, DD/MM/YYYY in English), and the form gets an ISO date
+# (`date.formats.typed`, dd/mm/yyyy in English), and the form gets an ISO date
 # in a hidden field, so a date typed for a British office isn't read the
 # American way. Clicking or tabbing into the field opens the calendar, whose
 # month and year headings jump to a month or a year.
@@ -68,10 +68,11 @@ class UI::DatePicker < UI::Base
   # The one string everything else is derived from.
   def self.date_format = I18n.t("date.formats.typed")
 
-  # "%d/%m/%Y" -> "DD/MM/YYYY": the placeholder and the hint, so what people
-  # are told matches what the field accepts by construction.
+  # "%d/%m/%Y" -> "dd/mm/yyyy": the placeholder and the hint, so what people
+  # are told matches what the field accepts by construction. Lower case, as
+  # browsers write it, which also takes about the width of a typed date.
   def self.placeholder
-    date_format.gsub("%d", "DD").gsub("%m", "MM").gsub("%Y", "YYYY").gsub("%y", "YY")
+    date_format.gsub("%d", "dd").gsub("%m", "mm").gsub("%Y", "yyyy").gsub("%y", "yy")
   end
 
   # "%d/%m/%Y" -> "DMY", for the controller's mask and parser.
@@ -147,15 +148,27 @@ class UI::DatePicker < UI::Base
                                                          "click->ui--date-picker#open keydown->ui--date-picker#keydown" } }
   end
 
-  # Sized to the date rather than stretched, so a range reads "01/09/2026 – 30/09/2026".
+  # Sized to a date, so a range reads "01/09/2026 – 30/09/2026" with nothing
+  # between the dates and the buttons.
+  # A range on a phone is snugger, so both dates fit beside the clear button.
   def input_classes
-    cn("h-full min-w-0 bg-transparent px-3 tabular-nums outline-none placeholder:text-muted-foreground",
-       "disabled:cursor-not-allowed", range? ? "w-[calc(10ch+1.75rem)]" : "w-full")
+    cn("h-full w-[calc(10ch+1.5rem)] min-w-0 bg-transparent px-3 tabular-nums outline-none",
+       "placeholder:text-muted-foreground disabled:cursor-not-allowed",
+       { "max-sm:w-[calc(10ch+1rem)] max-sm:px-2" => range? })
   end
 
-  # The typed fields share one border, lit while either has focus.
+  # On a phone, a range drops the calendar icon: tapping a date opens the
+  # calendar anyway, and the room goes to the dates.
+  def toggle_classes
+    cn("flex h-full w-9 items-center justify-center rounded-r-md text-muted-foreground hover:text-foreground focus:outline-none",
+       { "max-sm:hidden" => range? })
+  end
+
+  # The typed fields share one border, lit while either has focus. It's as
+  # wide as what's in it, since a date is always the same length; it shrinks
+  # with a narrow screen.
   def group_classes
-    cn("flex h-9 w-full items-center rounded-md border border-input bg-background text-sm text-foreground",
+    cn("flex h-9 w-fit max-w-full items-center rounded-md border border-input bg-background text-sm text-foreground",
        "transition-all ring-offset-background has-[input:focus]:ring-2 has-[input:focus]:ring-primary has-[input:focus]:ring-offset-1",
        "has-[[aria-invalid=true]]:border-destructive",
        { "border-destructive" => wrapper.error?, "cursor-not-allowed opacity-50" => disabled? })

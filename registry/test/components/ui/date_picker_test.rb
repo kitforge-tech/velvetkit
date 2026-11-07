@@ -34,7 +34,7 @@ class UI::DatePickerTest < ViewComponent::TestCase
   def test_the_typed_field_shows_the_locale_format
     render_picker(name: "d", value: "2026-08-15")
     assert_equal "15/08/2026", typed.first.value
-    assert_equal "DD/MM/YYYY", typed.first[:placeholder]
+    assert_equal "dd/mm/yyyy", typed.first[:placeholder]
     assert_equal "10", typed.first[:maxlength]
     assert_equal "numeric", typed.first[:inputmode]
   end
@@ -62,7 +62,7 @@ class UI::DatePickerTest < ViewComponent::TestCase
   def test_a_different_locale_format_changes_the_placeholder_and_the_parser
     with_format("%m-%d-%Y") do
       render_picker(name: "d", value: "2026-08-15")
-      assert_equal "MM-DD-YYYY", typed.first[:placeholder]
+      assert_equal "mm-dd-yyyy", typed.first[:placeholder]
       assert_equal "08-15-2026", typed.first.value
       assert_equal "MDY", root["data-ui--date-picker-order-value"]
       assert_equal "-", root["data-ui--date-picker-separator-value"]
@@ -118,7 +118,7 @@ class UI::DatePickerTest < ViewComponent::TestCase
 
   def test_the_hint_explains_the_format_and_can_be_turned_off
     render_picker(name: "d")
-    assert_text "Type the date as DD/MM/YYYY"
+    assert_text "Type the date as dd/mm/yyyy"
     assert_includes typed.first["aria-describedby"], "-hint"
     render_picker(name: "d", hint: false)
     assert_no_text "Type the date as"

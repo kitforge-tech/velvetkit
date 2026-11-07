@@ -10,7 +10,7 @@
       <% if index.positive? %><span class="shrink-0 text-muted-foreground" aria-hidden="true">–</span><% end %>
       <%= tag.input(**input_attrs(target, iso)) %>
     <% end %>
-    <span class="ml-auto flex h-full shrink-0 items-center">
+    <span class="flex h-full shrink-0 items-center">
       <%= tag.button type: "button", hidden: !value? || required? || disabled?,
                      aria: { label: t("ui.date_picker.clear", default: "Clear") },
                      class: "flex size-7 items-center justify-center rounded-sm text-muted-foreground hover:text-foreground #{UI::Base::FOCUS_RING}",
@@ -19,7 +19,7 @@
       <% end %>
       <%= tag.button type: "button", disabled: disabled?, tabindex: -1,
                      aria: { haspopup: "dialog", expanded: "false", controls: panel_id, label: t("ui.date_picker.open", default: "Open the calendar") },
-                     class: "flex h-full w-9 items-center justify-center rounded-r-md text-muted-foreground hover:text-foreground focus:outline-none",
+                     class: toggle_classes,
                      data: { "ui--date-picker-target": "toggle", action: "ui--date-picker#toggle" } do %>
         <%= render(UI::Icon.new(name: "calendar", size: :sm)) %>
       <% end %>
