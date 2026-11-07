@@ -35,6 +35,8 @@ Then:
 - Environment:
   - `SECRET_KEY_BASE`, required: generate one with `openssl rand -hex 64`.
   - `SITE_URL`, if the site isn't served at https://velvetkit.com.
+  - `UMAMI_SCRIPT_URL` and `UMAMI_WEBSITE_ID`, optional: the site loads the
+    Umami tracker only when both are set.
 - Domains: `velvetkit.com` on container port **80**, with HTTPS on. Traefik
   terminates TLS and the app trusts it (`assume_ssl`).
 - Health check: the image declares one against `GET /up`.

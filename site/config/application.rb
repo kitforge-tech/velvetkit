@@ -38,6 +38,10 @@ module Site
     # robots.txt. Set SITE_URL where it differs (a staging host).
     config.x.site_url = ENV.fetch("SITE_URL", "https://velvetkit.com")
 
+    # Page analytics, off unless both are set (AnalyticsHelper).
+    config.x.umami_script_url = ENV["UMAMI_SCRIPT_URL"].presence
+    config.x.umami_website_id = ENV["UMAMI_WEBSITE_ID"].presence
+
     # Where the version badge reads the latest release from (ReleasedVersion).
     config.x.rubygems_latest_url = "https://rubygems.org/api/v1/versions/velvetkit/latest.json"
 
