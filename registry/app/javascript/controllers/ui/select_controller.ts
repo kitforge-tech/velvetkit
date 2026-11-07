@@ -20,7 +20,7 @@ const SLOW_SEARCH = 200;
 
 type Result = { value: string; label: string };
 export default class extends Controller<HTMLElement> {
-  static targets = ['trigger', 'value', 'panel', 'listbox', 'option', 'native', 'search', 'empty', 'status', 'template'];
+  static targets = ['trigger', 'value', 'panel', 'listbox', 'option', 'native', 'search', 'empty', 'status', 'template', 'searchIcon', 'spinner'];
   static values = {
     multiple: Boolean, summary: String, placeholder: String,
     url: String, param: { type: String, default: 'q' }, searching: String, failed: String,
@@ -42,6 +42,9 @@ export default class extends Controller<HTMLElement> {
   declare readonly hasStatusTarget: boolean;
   declare readonly statusTarget: HTMLElement;
   declare readonly templateTarget: HTMLTemplateElement;
+  declare readonly hasSpinnerTarget: boolean;
+  declare readonly spinnerTarget: HTMLElement;
+  declare readonly searchIconTarget: HTMLElement;
   declare readonly hasUrlValue: boolean;
   declare readonly urlValue: string;
   declare readonly paramValue: string;
@@ -367,13 +370,26 @@ export default class extends Controller<HTMLElement> {
     this.highlight(chosen ?? visible.find((o) => o.dataset.value !== '') ?? visible[0] ?? null);
   }
 
+  // A slow search shows as a spinner in the search box, where people are
+  // looking, and is said to screen readers; a failure is written out for all.
   private showStatus(text: string | null, busy = false) {
     if (!this.hasStatusTarget) return;
 
     window.clearTimeout(this.slowTimer);
     this.statusTarget.textContent = text ?? '';
     this.statusTarget.hidden = !text;
+    this.statusTarget.classList.toggle('sr-only', busy);
+    this.setSpinning(busy);
     if (busy && this.hasEmptyTarget) this.emptyTarget.hidden = true;
+  }
+
+  private setSpinning(on: boolean) {
+    if (!this.hasSpinnerTarget) return;
+
+    this.spinnerTarget.classList.toggle('hidden', !on);
+    this.spinnerTarget.classList.toggle('flex', on);
+    this.searchIconTarget.classList.toggle('hidden', on);
+    this.searchIconTarget.classList.toggle('flex', !on);
   }
 
   private cancelSearch() {
@@ -381,6 +397,7 @@ export default class extends Controller<HTMLElement> {
     window.clearTimeout(this.slowTimer);
     this.request?.abort();
     this.request = null;
+    this.setSpinning(false);
     if (this.hasStatusTarget) this.statusTarget.hidden = true;
   }
 

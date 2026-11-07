@@ -13,7 +13,13 @@
                      "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95") do %>
     <% if searchable? %>
       <div class="flex items-center gap-2 border-b px-3 py-2">
-        <%= render(UI::Icon.new(name: "search", size: :sm, class: "shrink-0 text-muted-foreground")) %>
+        <% if remote? %>
+          <%# The magnifying glass turns into a spinner while a search is slow. %>
+          <span class="flex shrink-0 text-muted-foreground" data-ui--select-target="searchIcon"><%= render(UI::Icon.new(name: "search", size: :sm)) %></span>
+          <span class="hidden shrink-0 text-muted-foreground" data-ui--select-target="spinner" aria-hidden="true"><%= render(UI::Icon.new(name: "loader", size: :sm, class: "animate-spin motion-reduce:animate-[spin_1.5s_linear_infinite]")) %></span>
+        <% else %>
+          <%= render(UI::Icon.new(name: "search", size: :sm, class: "shrink-0 text-muted-foreground")) %>
+        <% end %>
         <%= tag.input(type: "search", id: search_id, autocomplete: "off",
                       placeholder: t("ui.select.search", default: "Search"),
                       class: "w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground [&::-webkit-search-cancel-button]:hidden",

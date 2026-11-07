@@ -220,6 +220,12 @@ class UI::SelectTest < ViewComponent::TestCase
     assert_selector "[data-ui--select-target='status'][role='status']", visible: :all
   end
 
+  def test_remote_search_box_has_a_spinner_in_waiting
+    render_remote
+    assert_selector "[data-ui--select-target='searchIcon'] svg[data-icon='search']", visible: :all
+    assert_selector "[data-ui--select-target='spinner'].hidden[aria-hidden='true'] svg[data-icon='loader'].animate-spin", visible: :all
+  end
+
   def test_remote_options_are_built_from_a_template_with_the_options_classes
     render_remote
     template = rendered_content[%r{<template data-ui--select-target="template">.*?</template>}m]
@@ -245,6 +251,7 @@ class UI::SelectTest < ViewComponent::TestCase
     root = page.find("[data-controller='ui--select']")
     assert_nil root["data-ui--select-url-value"]
     assert_no_selector "template", visible: :all
+    assert_no_selector "[data-ui--select-target='spinner']", visible: :all
     assert_no_selector "[data-ui--select-target='status']", visible: :all
   end
 end
