@@ -1,0 +1,22 @@
+<%# For lists too long to send to the page. Opening it asks the url for a
+    starting list, and typing asks again with ?q=. In a slow search the
+    magnifying glass turns into a spinner. The docs site answers /demo/customers;
+    point url: at your own endpoint, which can look like this:
+
+      # config/routes.rb
+      get "customers/search", to: "customers#search"
+
+      # app/controllers/customers_controller.rb
+      def search
+        query = Customer.sanitize_sql_like(params[:q].to_s)
+        customers = Customer.where("name ILIKE ?", "%#{query}%").order(:name).limit(20)
+        render json: customers.map { |customer| { value: customer.id, label: customer.name } }
+      end
+
+    On an edit form, pass the current choice as options:, so it's named before
+    anything is fetched. %>
+<div class="grid max-w-xl gap-6 sm:grid-cols-2">
+  <%= render(UI::Select.new(name: "customer_id", url: "/demo/customers", label: "Customer", prompt: "Find a customer")) %>
+  <%= render(UI::Select.new(name: "customer_ids", url: "/demo/customers", label: "Copy invoices to", multiple: true,
+                            options: [ [ "Aditi Rao Traders", 2001 ] ], selected: [ 2001 ])) %>
+</div>

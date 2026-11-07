@@ -14,9 +14,10 @@ class SelectDemoTest < ActionDispatch::IntegrationTest
     assert_equal 20, response.parsed_body.size
   end
 
-  test "the select page shows the live demo" do
+  test "server search is one of the select's examples, with its code" do
     get component_path("select")
-    assert_select "#demo"
+    assert_select "#demo", 0
     assert_select "[data-ui--select-url-value='#{demo_customers_path}']", 2
+    assert_select "code", text: /def search/
   end
 end
