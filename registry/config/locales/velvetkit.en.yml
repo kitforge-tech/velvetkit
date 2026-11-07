@@ -87,6 +87,8 @@ en:
       search: 'Search'
       search_label: 'Search the options'
       no_matches: 'No matches'
+      searching: 'Searching…'
+      failed: "Couldn't load the results. Try again."
       # Shown on a multiple select once more than two options are ticked.
       selected: '%{count} selected'
     session_tabs:
