@@ -1,7 +1,7 @@
 # When each sitemap page's content last changed. Written by `bin/rails seo:lastmod`;
 # re-run it after changing a page or component and commit the result.
 ---
-"/": '2026-10-26'
+"/": '2026-11-07'
 "/docs": '2026-11-02'
 "/docs/ai": '2026-10-21'
 "/docs/namespacing": '2026-10-21'
