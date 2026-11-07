@@ -20,6 +20,7 @@ Rails.application.routes.draw do
   get "docs/:page", to: "docs#show", as: :doc, constraints: { page: Regexp.union(DocsController::PAGES.keys) }
 
   get "demo/rows", to: "demo_rows#index", as: :demo_rows, defaults: { format: :json }
+  get "demo/customers", to: "demo_options#index", as: :demo_customers, defaults: { format: :json }
 
   mount Lookbook::Engine, at: "/lookbook"
 
