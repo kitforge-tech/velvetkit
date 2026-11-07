@@ -1,0 +1,11 @@
+<%# With a form builder, the fields take their names and values from the model. %>
+<% promotion = Struct.new(:starts_on, :ends_on, :announced_on) do
+     def self.model_name = ActiveModel::Name.new(self, nil, "Promotion")
+     def model_name = self.class.model_name
+     def to_model = self
+     def persisted? = false
+   end.new(Date.current + 7, Date.current + 21, Date.current) %>
+<%= form_with model: promotion, url: "/demo/promotions", class: "flex max-w-sm flex-col gap-6" do |f| %>
+  <%= render(UI::DatePicker.new(form: f, field: :announced_on, label: "Announced on")) %>
+  <%= render(UI::DatePicker.new(range: true, form: f, from_field: :starts_on, to_field: :ends_on, label: "Runs", presets: false)) %>
+<% end %>

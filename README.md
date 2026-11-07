@@ -160,7 +160,7 @@ bin/rails generate velvetkit:add --all            # everything
 
 - copies the component, its templates and sub-components
 - copies its Stimulus controllers and any lazily-loaded entry points (AG Grid
-  for `data_grid`, Cally for `date_picker`)
+  for `data_grid`, Chart.js for `chart`, Vanilla Calendar Pro for `date_picker`)
 - copies the SVG of every icon it draws into `app/assets/icons`, named for
   your icon library
 - copies its Minitest tests and Lookbook previews. A preview that shows

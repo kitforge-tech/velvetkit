@@ -9,10 +9,26 @@ en:
   ui:
     date_picker:
       open: 'Open the calendar'
+      clear: 'Clear'
+      dialog: 'Choose a date'
+      dialog_range: 'Choose dates'
+      from: 'Start date'
+      to: 'End date'
       # `format` is a reserved I18n interpolation key, hence `pattern`.
       hint: 'Type the date as %{pattern}, or use the calendar'
+      hint_range: 'Type the dates as %{pattern}, or pick them'
+      pick_end: 'Now pick an end date'
       previous: 'Previous month'
       next: 'Next month'
+      presets_label: 'Quick ranges'
+      presets:
+        today: 'Today'
+        yesterday: 'Yesterday'
+        last_7_days: 'Last 7 days'
+        last_30_days: 'Last 30 days'
+        this_month: 'This month'
+        last_month: 'Last month'
+        this_year: 'This year'
     chart:
       label: 'Chart'
       keyboard: 'Use the arrow keys to read each value.'
