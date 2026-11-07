@@ -25,6 +25,8 @@ type Result = { value: string; label: string };
 // Results by URL, shared by every select on the page that asks the same
 // server the same thing, so reopening a list or retyping a search is instant.
 const remembered = new Map<string, { at: number; results: Result[] }>();
+// Searches on their way, by URL, so the same one is never asked for twice.
+const pending = new Map<string, Promise<Result[]>>();
 export default class extends Controller<HTMLElement> {
   static targets = ['trigger', 'value', 'panel', 'listbox', 'option', 'native', 'search', 'empty', 'status', 'template', 'searchIcon', 'spinner'];
   static values = {
@@ -63,8 +65,9 @@ export default class extends Controller<HTMLElement> {
   private typedAt = 0;
   private floatingCleanup: (() => void) | null = null;
   private dismissCleanup: (() => void) | null = null;
-  private request: AbortController | null = null;
-  private requestKey = '';
+  // The search whose results the list is waiting for. An older one still on
+  // its way finishes and is remembered, but doesn't fill the list.
+  private latestKey = '';
   private searchTimer?: number;
   private slowTimer?: number;
   private resultCount = 0;
@@ -80,7 +83,7 @@ export default class extends Controller<HTMLElement> {
   disconnect() {
     this.nativeTarget.form?.removeEventListener('reset', this.onReset);
     this.nativeTarget.removeEventListener('invalid', this.onInvalid);
-    this.cancelSearch();
+    this.stopSearch();
     this.teardown();
   }
 
@@ -215,7 +218,7 @@ export default class extends Controller<HTMLElement> {
     if (!this.isOpen) return;
 
     this.teardown();
-    this.pauseSearch();
+    this.stopSearch();
     this.panelTarget.hidden = true;
     this.panelTarget.dataset.state = 'closed';
     this.triggerTarget.setAttribute('aria-expanded', 'false');
@@ -310,57 +313,61 @@ export default class extends Controller<HTMLElement> {
     return this.hasUrlValue && this.urlValue !== '' && this.hasSearchTarget;
   }
 
-  // Asks for the options matching `query`. Results from the last minute are
-  // reused without asking; a search already on its way for the same thing is
-  // waited for rather than started again; anything else on its way is dropped,
-  // so only the newest search fills the list.
+  // Asks for the options matching `query`: from the last minute's results if
+  // it can, joining the same search if it's already on its way, otherwise
+  // from the server. Nothing is cancelled, since the server has the request
+  // either way; an outdated answer is kept for later but only the newest
+  // search fills the list.
   private async fetchResults(query: string) {
     const url = new URL(this.urlValue, window.location.href);
     url.searchParams.set(this.paramValue, query);
     const key = url.toString();
+    this.latestKey = key;
+    window.clearTimeout(this.slowTimer);
 
     const known = remembered.get(key);
     if (known && Date.now() - known.at < REMEMBER_FOR) {
-      this.cancelSearch();
       this.showResults(known.results);
       this.showStatus(null);
       return;
     }
-    if (this.request && this.requestKey === key) {
-      this.listboxTarget.setAttribute('aria-busy', 'true');
-      this.slowTimer = window.setTimeout(() => this.showStatus(this.searchingValue, true), SLOW_SEARCH);
-      return;
-    }
-
-    this.cancelSearch();
-    const request = new AbortController();
-    this.request = request;
-    this.requestKey = key;
 
     this.listboxTarget.setAttribute('aria-busy', 'true');
     this.slowTimer = window.setTimeout(() => this.showStatus(this.searchingValue, true), SLOW_SEARCH);
     try {
-      const response = await fetch(url, { headers: { Accept: 'application/json' }, signal: request.signal });
-      if (!response.ok) throw new Error(`${response.status}`);
-      const results = this.normalise(await response.json());
-      remembered.set(key, { at: Date.now(), results });
-      if (this.request !== request || !this.isOpen) return;
+      const results = await this.ask(url, key);
+      if (this.latestKey !== key || !this.isOpen) return;
 
       this.showResults(results);
       this.showStatus(null);
-    } catch (error) {
-      if (request.signal.aborted || !this.isOpen) return;
+    } catch {
+      if (this.latestKey !== key || !this.isOpen) return;
+
       this.showResults([]);
       if (this.hasEmptyTarget) this.emptyTarget.hidden = true;
       this.showStatus(this.failedValue);
     } finally {
-      if (this.request === request) {
-        this.request = null;
-        this.requestKey = '';
-        window.clearTimeout(this.slowTimer);
-        this.listboxTarget.removeAttribute('aria-busy');
-      }
+      if (this.latestKey === key) this.listboxTarget.removeAttribute('aria-busy');
     }
+  }
+
+  private ask(url: URL, key: string): Promise<Result[]> {
+    let request = pending.get(key);
+    if (!request) {
+      request = fetch(url, { headers: { Accept: 'application/json' } })
+        .then((response) => {
+          if (!response.ok) throw new Error(`${response.status}`);
+          return response.json();
+        })
+        .then((data) => {
+          const results = this.normalise(data);
+          remembered.set(key, { at: Date.now(), results });
+          return results;
+        })
+        .finally(() => pending.delete(key));
+      pending.set(key, request);
+    }
+    return request;
   }
 
   // Accepts [{ value, label }] or [[label, value]], as the server prefers.
@@ -419,23 +426,15 @@ export default class extends Controller<HTMLElement> {
     this.searchIconTarget.classList.toggle('flex', !on);
   }
 
-  // Closing stops what's waiting to be asked and the spinner, but lets a
-  // search already on its way finish, so its results are there on reopening.
-  private pauseSearch() {
+  // Closing, or leaving the page, stops the search waiting to be asked and
+  // the spinner. One already on its way still finishes and is remembered, so
+  // its results are there on reopening; it just doesn't fill a closed list.
+  private stopSearch() {
     window.clearTimeout(this.searchTimer);
     window.clearTimeout(this.slowTimer);
+    this.latestKey = '';
     this.setSpinning(false);
     this.listboxTarget.removeAttribute('aria-busy');
-    if (this.hasStatusTarget) this.statusTarget.hidden = true;
-  }
-
-  private cancelSearch() {
-    window.clearTimeout(this.searchTimer);
-    window.clearTimeout(this.slowTimer);
-    this.request?.abort();
-    this.request = null;
-    this.requestKey = '';
-    this.setSpinning(false);
     if (this.hasStatusTarget) this.statusTarget.hidden = true;
   }
 
