@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import { missReporter, track } from "../analytics"
 
 // The header search. Every guide and component is already in the list; typing
 // hides what doesn't match and moves title matches to the top of each group.
@@ -7,6 +8,7 @@ export default class extends Controller {
   static targets = ["input", "group", "result", "empty"]
 
   connect() {
+    this.miss = missReporter("header")
     this.onShortcut = (event) => {
       const typing = event.target.closest("input, textarea, select, [contenteditable]")
       const k = (event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k"
@@ -21,6 +23,7 @@ export default class extends Controller {
 
   disconnect() {
     document.removeEventListener("keydown", this.onShortcut)
+    this.miss.cancel()
   }
 
   filter() {
@@ -41,6 +44,9 @@ export default class extends Controller {
     const visible = this.visible()
     this.emptyTarget.hidden = visible.length > 0
     this.activate(visible[0])
+
+    if (visible.length) this.miss.cancel()
+    else this.miss.report(this.inputTarget.value)
   }
 
   // Within a group: titles that start with the query, then titles containing
@@ -63,6 +69,7 @@ export default class extends Controller {
       this.activate(visible[Math.max(index - 1, 0)])
     } else if (event.key === "Enter" && this.active) {
       event.preventDefault()
+      this.reportPick(this.active)
       window.Turbo.visit(this.active.getAttribute("href"))
     } else if (event.key === "Escape") {
       // A search field spends the first Escape clearing itself, so the dialog
@@ -70,6 +77,14 @@ export default class extends Controller {
       event.preventDefault()
       this.element.closest("dialog")?.close()
     }
+  }
+
+  pick(event) {
+    this.reportPick(event.currentTarget)
+  }
+
+  reportPick(result) {
+    track("search_select", { result: result.getAttribute("href") })
   }
 
   hover(event) {

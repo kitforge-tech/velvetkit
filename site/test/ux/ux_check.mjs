@@ -5,7 +5,7 @@
 //   UX_BASE_URL=http://localhost:3311 bin/ux-check
 const [, , wsUrl] = process.argv;
 const BASE = process.env.UX_BASE_URL || "http://localhost:3000";
-setTimeout(() => { console.log("TIMED OUT"); process.exit(1); }, 90000);
+setTimeout(() => { console.log("TIMED OUT"); process.exit(1); }, 180000);
 
 const ws = new WebSocket(wsUrl);
 let id = 0;
@@ -306,6 +306,43 @@ ws.onopen = async () => {
     await sleep(300);
     const reported = await run(`JSON.stringify(window.__events)`);
     check("copying the install command reports it", reported === '[["copy_install",null]]', reported);
+
+    const typeSearch = async (text) => {
+      await run(`(() => { const i = document.querySelector("[data-search-target=input]"); i.value = ${JSON.stringify(text)}; i.dispatchEvent(new Event("input", { bubbles: true })); })()`);
+      await sleep(1800);
+    };
+    await send("Page.navigate", { url: `${BASE}/docs` });
+    await sleep(2500);
+    await run(stub);
+    await key("k", "KeyK", 2, 75);
+    await sleep(300);
+
+    await typeSearch("  Kanban   Board ");
+    let sent = await run(`JSON.stringify(window.__events)`);
+    check("a failed search reports the cleaned query", sent === '[["search_miss",{"query":"kanban board","source":"header"}]]', sent);
+
+    await typeSearch("kanban board");
+    sent = await run(`window.__events.length`);
+    check("the same miss isn't reported twice", sent === 1, String(sent));
+
+    await run(`window.__events.length = 0; 1`);
+    for (const text of ["me@example.com", "4111 1111 1111 1111", "x"]) await typeSearch(text);
+    await typeSearch("dialog");
+    sent = await run(`JSON.stringify(window.__events)`);
+    check("emails, numbers, stray letters and hits are never sent", sent === "[]", sent);
+
+    await key("Enter", "Enter", 0, 13);
+    await sleep(1500);
+    sent = await run(`JSON.stringify(window.__events)`);
+    check("opening a result reports its path", /"search_select",\{"result":"\/docs/.test(sent), sent);
+
+    await send("Page.navigate", { url: `${BASE}/docs/components` });
+    await sleep(2500);
+    await run(stub);
+    await run(`(() => { const i = document.querySelector("[data-action*='filter#filter']"); i.value = "kanban"; i.dispatchEvent(new Event("input", { bubbles: true })); })()`);
+    await sleep(1800);
+    sent = await run(`JSON.stringify(window.__events)`);
+    check("a failed component filter reports its source", sent === '[["search_miss",{"query":"kanban","source":"components"}]]', sent);
   } catch (error) {
     console.log("ERROR", error.message);
     results.push(false);
