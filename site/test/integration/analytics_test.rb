@@ -97,4 +97,15 @@ class AnalyticsTest < ActionDispatch::IntegrationTest
       assert_select "section[data-analytics-section=#{section}]", count: 1
     end
   end
+
+  test "demos are marked, so their clicks can be told from the site's own" do
+    get root_path
+    assert_select "[data-analytics-area=demo]", count: 1
+
+    get doc_path("forms")
+    assert_select "[data-analytics-area=demo] form, [data-outline-skip] form", minimum: 2
+
+    get component_path("stepper")
+    assert_select "[data-analytics-area=demo] form, [data-outline-skip] form", minimum: 1
+  end
 end

@@ -2,12 +2,15 @@
 // it's optional, and blocked in many browsers.
 export const track = (name, data) => window.umami?.track(name, data)
 
-// A search query fit to report, or null. Whatever someone types stays in the
-// browser if it could be personal: an email address, a card or phone number.
+// Text that could identify someone: an email address, a card or phone number.
+export const looksPersonal = (text) => text.includes("@") || /\d{4}/.test(text.replace(/\s/g, ""))
+
+// A search query fit to report, or null. Anything that looks personal stays in
+// the browser.
 export function cleanQuery(raw) {
   const query = raw.trim().toLowerCase().replace(/\s+/g, " ")
   if (query.length < 2 || query.length > 40) return null
-  if (query.includes("@") || /\d{4}/.test(query.replace(/\s/g, ""))) return null
+  if (looksPersonal(query)) return null
   return query
 }
 

@@ -290,6 +290,8 @@ ws.onopen = async () => {
     // Analytics: what gets reported, against a stand-in for the tracker.
     const stub = `window.__events = []; window.umami = { track: (n, d) => window.__events.push([n, d ?? null]) }; 1`;
     const reveal = (sel) => run(`document.querySelector(${JSON.stringify(sel)}).scrollIntoView({ block: "center" }); 1`);
+    // Every click also reports ui_click; these checks are about the named events.
+    const namedEvents = () => run(`JSON.stringify(window.__events.filter(([n]) => n !== "ui_click"))`);
 
     await send("Page.navigate", { url: `${BASE}/docs` });
     await sleep(2500);
@@ -304,7 +306,7 @@ ws.onopen = async () => {
     await sleep(300);
     await click("[data-clipboard-track-value=copy_install] button");
     await sleep(300);
-    const reported = await run(`JSON.stringify(window.__events)`);
+    const reported = await namedEvents();
     check("copying the install command reports it", reported === '[["copy_install",null]]', reported);
 
     const typeSearch = async (text) => {
@@ -318,11 +320,11 @@ ws.onopen = async () => {
     await sleep(300);
 
     await typeSearch("  Kanban   Board ");
-    let sent = await run(`JSON.stringify(window.__events)`);
+    let sent = await namedEvents();
     check("a failed search reports the cleaned query", sent === '[["search_miss",{"query":"kanban board","source":"header"}]]', sent);
 
     await typeSearch("kanban board");
-    sent = await run(`window.__events.length`);
+    sent = await run(`window.__events.filter(([n]) => n === "search_miss").length`);
     check("the same miss isn't reported twice", sent === 1, String(sent));
 
     await run(`window.__events.length = 0; 1`);
@@ -376,6 +378,40 @@ ws.onopen = async () => {
     await sleep(600);
     const sections = await named("section_view");
     check("a home section reports when it comes into view", sections.includes('"section":"how_it_works"'), sections);
+
+    const clicks = () => run(`JSON.stringify(window.__events.filter(([n]) => n === "ui_click").map(([, d]) => d))`);
+
+    await send("Page.navigate", { url: `${BASE}/` });
+    await sleep(2500);
+    await run(stub);
+    await click("[data-focus-scope=header] a[href='/docs/components']");
+    await sleep(1500);
+    let seen = await clicks();
+    check("a link click reports its label, area and path", seen === '[{"element":"link","label":"Components","area":"header","href":"/docs/components"}]', seen);
+    check("Turbo still handles tracked links", await run(`window.__events !== undefined && location.pathname === "/docs/components"`));
+
+    await send("Page.navigate", { url: `${BASE}/docs/components/dialog` });
+    await sleep(2500);
+    await run(stub);
+    await run(`(() => { const a = document.createElement("a"); a.href = "https://example.com/new?q=secret"; a.target = "_blank"; a.textContent = "me@example.com"; a.id = "probe"; a.addEventListener("click", (e) => e.preventDefault()); document.querySelector("main").append(a); })()`);
+    await run(`document.getElementById("probe").click(); 1`);
+    seen = await clicks();
+    check("external links send only the host, and hide personal-looking labels", seen.includes('"href":"example.com"') && seen.includes('"label":"(hidden)"') && !seen.includes("secret") && !seen.includes("me@example"), seen);
+
+    await run(`window.__events.length = 0; (() => { const i = document.createElement("input"); i.type = "text"; i.value = "typed"; i.id = "probe-input"; document.querySelector("main").append(i); })()`);
+    await run(`document.getElementById("probe-input").click(); 1`);
+    seen = await clicks();
+    check("clicking a text field sends nothing", seen === "[]", seen);
+
+    await run(`(() => { const b = document.createElement("button"); b.textContent = "Probe"; b.id = "probe-demo"; b.disabled = false; const wrap = document.querySelector("[data-outline-skip]"); wrap.append(b); })()`);
+    await run(`document.getElementById("probe-demo").click(); 1`);
+    seen = await clicks();
+    check("clicks inside a live example count as demo clicks", seen === '[{"element":"button","label":"Probe","area":"demo"}]', seen);
+
+    await run(`window.__events.length = 0; document.querySelector("main header button").click(); 1`);
+    await key("Escape", "Escape", 0, 27);
+    seen = await clicks();
+    check("a page's own header counts as the page, not the site header", seen.includes('"area":"main"'), seen);
   } catch (error) {
     console.log("ERROR", error.message);
     results.push(false);
