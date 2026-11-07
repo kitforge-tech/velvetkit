@@ -36,7 +36,7 @@
       <% end %>
       <% content.with_divider %>
       <% ask_ai_links(component_url(@component, format: :md), @component.title).each do |assistant, url| %>
-        <% content.with_item(href: url, target: "_blank", rel: "noopener") do %>
+        <% content.with_item(href: url, target: "_blank", rel: "noopener", data: { umami_event: "open_in_ai", umami_event_assistant: assistant.downcase }) do %>
           <%= render(UI::Icon.new(name: "external-link", size: :sm)) %>Open in <%= assistant %>
         <% end %>
       <% end %>

@@ -61,4 +61,33 @@ class AnalyticsTest < ActionDispatch::IntegrationTest
     assert_equal "copy_snippet", helper.copy_event("bin/rails generate velvetkit:icons rocket")
     assert_equal "copy_snippet", helper.copy_event("bundle install")
   end
+
+  test "outbound links say where they go and where they sit" do
+    get root_path
+    assert_select "header a[data-umami-event=outbound_click][data-umami-event-target=github][data-umami-event-placement=header]", count: 1
+    assert_select "footer a[data-umami-event-target=github][data-umami-event-placement=footer]", minimum: 2
+    assert_select "footer a[data-umami-event-target=rubygems][data-umami-event-placement=footer]", count: 1
+    assert_select "footer a[data-umami-event-target=built_by][data-umami-event-placement=footer]", count: 1
+  end
+
+  test "Ask AI links name the assistant" do
+    get component_path("dialog")
+    %w[claude chatgpt].each do |assistant|
+      assert_select "a[data-umami-event=open_in_ai][data-umami-event-assistant=#{assistant}]", count: 1
+    end
+  end
+
+  # Umami takes over same-tab links it tracks, which bypasses Turbo.
+  test "only links that open a new tab carry a Umami event" do
+    paths = [ root_path, docs_path, components_path, component_path("dialog") ] +
+            DocsController::PAGES.keys.excluding("getting_started").map { |page| doc_path(page) }
+
+    tracked = paths.sum do |path|
+      get path
+      links = css_select("a[data-umami-event]")
+      links.each { |link| assert_equal "_blank", link["target"], "#{path}: #{link["href"]}" }
+      links.size
+    end
+    assert_operator tracked, :>, 0
+  end
 end

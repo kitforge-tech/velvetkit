@@ -1,5 +1,6 @@
 module AnalyticsHelper
   ANALYTICS_DOMAINS = "velvetkit.com,www.velvetkit.com"
+  OUTBOUND_TARGETS = { ApplicationHelper::GITHUB_URL => "github", ApplicationHelper::RUBYGEMS_URL => "rubygems" }.freeze
 
   # The tracker, when the app is told where it lives. async rather than defer:
   # a deferred script holds up DOMContentLoaded, and Stimulus with it, so a slow
@@ -24,5 +25,12 @@ module AnalyticsHelper
     when %r{\Abin/rails (g|generate) velvetkit:add} then "copy_add"
     else "copy_snippet"
     end
+  end
+
+  # A link's outbound click, for its data: option. Only for links that open a
+  # new tab: on a same-tab link the tracker takes over the click, which skips
+  # Turbo and makes the visit wait for the report.
+  def outbound_data(target, placement)
+    { umami_event: "outbound_click", umami_event_target: target, umami_event_placement: placement }
   end
 end
