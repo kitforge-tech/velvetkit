@@ -17,6 +17,25 @@ require "securerandom"
 # `searchable: true` adds a search box that filters the list; `multiple: true`
 # lets people pick several, posting `name[]` like a native multiple select.
 #
+# `url:` searches on the server instead, for lists too long to send to the
+# page, such as products, customers or suppliers. Opening the list asks
+# `GET url?q=` for a starting list, and typing asks again with what was typed,
+# a moment after the typing stops. The server answers with JSON, either
+# `[{ "value": 7, "label": "Acme Traders" }, ...]` or `[["Acme Traders", 7], ...]`;
+# it decides what matches and how many come back. `param:` renames `q`.
+# `options:` are what show before then, so pass the current choice, or an edit
+# form opens with nothing named:
+#
+#   <%= render(UI::Select.new(form: f, field: :customer_id, url: customers_search_path,
+#                             options: [[@order.customer&.name, @order.customer_id]].reject { _1.first.nil? },
+#                             prompt: "Find a customer")) %>
+#
+#   # app/controllers/customers_controller.rb
+#   def search
+#     customers = Customer.where("name ILIKE ?", "%#{Customer.sanitize_sql_like(params[:q].to_s)}%").order(:name).limit(20)
+#     render json: customers.map { { value: _1.id, label: _1.name } }
+#   end
+#
 # UI::NativeSelect is the browser's own control, for when a phone's system
 # picker is the better fit.
 #
@@ -42,7 +61,7 @@ class UI::Select < UI::Base
   )
 
   def initialize(name: nil, options: [], selected: nil, prompt: nil,
-                 label: nil, hint: nil, size: :default, searchable: false, multiple: false,
+                 label: nil, hint: nil, size: :default, searchable: false, multiple: false, url: nil, param: "q",
                  required: false, error: nil, disabled: false,
                  form: nil, field: nil,
                  class: nil, **html_attrs)
@@ -52,7 +71,9 @@ class UI::Select < UI::Base
     @prompt     = prompt
     @label      = label
     @size       = size
-    @searchable = searchable
+    @url        = url
+    @param      = param
+    @searchable = searchable || url.present?
     @multiple   = multiple
     @required   = required
     @error      = error
@@ -73,6 +94,7 @@ class UI::Select < UI::Base
   delegate :render_label?, :label_text, :label_component, to: :wrapper
 
   def searchable? = @searchable
+  def remote? = @url.present?
   def multiple? = @multiple
 
   def trigger_id = "ui-select-#{@uid}"
@@ -138,9 +160,26 @@ class UI::Select < UI::Base
   def summary = t("ui.select.selected", default: "%{count} selected", count: "%{count}")
 
   def root_data
-    { controller: "ui--select", "ui--select-multiple-value": multiple?.to_s,
-      "ui--select-summary-value": summary,
-      "ui--select-placeholder-value": prompt || t("ui.select.placeholder", default: "Choose…") }
+    data = { controller: "ui--select", "ui--select-multiple-value": multiple?.to_s,
+             "ui--select-summary-value": summary,
+             "ui--select-placeholder-value": prompt || t("ui.select.placeholder", default: "Choose…") }
+    return data unless remote?
+
+    data.merge("ui--select-url-value": @url, "ui--select-param-value": @param)
+  end
+
+  # What a fetched option is built from: one rendered here, so it has the same
+  # classes as the options the page arrived with.
+  def option_classes(value)
+    "relative flex cursor-default select-none items-center rounded-sm py-1.5 pr-8 pl-2 #{size == :sm ? "text-xs" : "text-sm"} " \
+      "outline-none data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground aria-selected:font-medium " \
+      "#{value.to_s.empty? ? "text-muted-foreground" : ""}"
+  end
+
+  # Said while a search is on its way, and when one fails.
+  def status_texts
+    { "ui--select-searching-value": t("ui.select.searching", default: "Searching…"),
+      "ui--select-failed-value": t("ui.select.failed", default: "Couldn't load the results. Try again.") }
   end
 
   # The hidden native select. Everything the caller passed beyond our own
