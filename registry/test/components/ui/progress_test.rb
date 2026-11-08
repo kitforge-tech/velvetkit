@@ -92,6 +92,64 @@ class UI::ProgressTest < ViewComponent::TestCase
     assert_selector "[role='progressbar'][data-ui--progress-target='bar'] [data-ui--progress-target='indicator']"
   end
 
+  def render_storage(**opts)
+    render_inline(UI::Progress.new(max: 15, label: "Storage", value_text: "%{value} GB of %{max} GB",
+                                   segment_text: "%{value} GB", show_value: true, **opts)) do |progress|
+      progress.with_segment(value: 6.4, label: "Photos")
+      progress.with_segment(value: 3.1, label: "Mail")
+      progress.with_segment(value: 2, label: "Documents", color: 5)
+    end
+  end
+
+  def test_segments_add_up_to_the_bars_value
+    render_storage
+    assert_selector "[role='progressbar'][aria-valuenow='11.5'][aria-valuetext='11.5 GB of 15 GB']"
+    assert_selector "[data-ui--progress-target='text']", text: "11.5 GB of 15 GB"
+    assert_selector "[data-slot='progress-indicator'][style='width: 76%']"
+    assert_selector "[data-ui--progress-value-value='11.5']"
+  end
+
+  def test_each_segment_is_sized_by_its_share_and_coloured_in_turn
+    render_storage
+    segments = page.all("[data-slot='progress-indicator'] > [data-slot='progress-segment']")
+    assert_equal [ "flex: 6.4 1 0%", "flex: 3.1 1 0%", "flex: 2 1 0%" ], segments.map { |s| s["style"] }
+    assert_equal %w[bg-chart-1 bg-chart-2 bg-chart-5], segments.map { |s| s["class"][/bg-chart-\d/] }
+    assert_equal "Photos: 6.4 GB", segments.first["title"]
+    assert_selector "[data-slot='progress-indicator'].flex:not(.bg-primary)"
+  end
+
+  def test_a_legend_names_each_segment_with_its_amount
+    render_storage
+    items = page.all("[data-slot='progress-legend'] li").map { |li| li.text.squish }
+    assert_equal [ "Photos 6.4 GB", "Mail 3.1 GB", "Documents 2 GB" ], items
+    assert_selector "[data-slot='progress-legend'] li span.bg-chart-5.rounded-full", count: 1
+  end
+
+  def test_the_legend_can_be_left_out_and_the_amounts_written_per_segment
+    render_inline(UI::Progress.new(legend: false, segment_text: "%{percent}%")) do |progress|
+      progress.with_segment(value: 30, label: "Done")
+      progress.with_segment(value: 10, label: "In review", value_text: "10 tasks")
+    end
+    assert_no_selector "[data-slot='progress-legend']"
+    assert_equal [ "Done: 30%", "In review: 10 tasks" ], page.all("[data-slot='progress-segment']").map { |s| s["title"] }
+  end
+
+  def test_segments_past_max_are_capped_at_a_full_bar
+    render_inline(UI::Progress.new(max: 10)) do |progress|
+      progress.with_segment(value: 8, label: "A")
+      progress.with_segment(value: 7, label: "B")
+      progress.with_segment(value: -3, label: "C")
+    end
+    assert_selector "[role='progressbar'][aria-valuenow='10'][data-state='complete']"
+  end
+
+  def test_a_single_bar_has_no_segments_or_legend
+    render_progress(value: 40, label: "Upload")
+    assert_no_selector "[data-slot='progress-segment']"
+    assert_no_selector "[data-slot='progress-legend']"
+    assert_selector "[data-slot='progress-indicator'].bg-primary"
+  end
+
   def test_passes_class_and_attributes_through
     render_progress(value: 1, id: "upload", class: "max-w-sm", data: { turbo_permanent: true })
     assert_selector "#upload.w-full.max-w-sm[data-turbo-permanent][data-controller='ui--progress']"

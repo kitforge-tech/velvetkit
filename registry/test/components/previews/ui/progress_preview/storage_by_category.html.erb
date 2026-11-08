@@ -1,0 +1,7 @@
+<%= render(UI::Progress.new(max: 15, label: "Storage", value_text: "%{value} GB of %{max} GB", segment_text: "%{value} GB",
+                            show_value: true, class: "max-w-md")) do |progress| %>
+  <% progress.with_segment(value: 6.4, label: "Photos") %>
+  <% progress.with_segment(value: 3.1, label: "Mail") %>
+  <% progress.with_segment(value: 2, label: "Documents") %>
+  <% progress.with_segment(value: 0.6, label: "Other") %>
+<% end %>

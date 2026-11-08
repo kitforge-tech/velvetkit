@@ -10,6 +10,19 @@ require "securerandom"
 #   <%= render(UI::Progress.new(value: 3, max: 12, label: "Importing", value_text: "%{value} of %{max} files", show_value: true)) %>
 #   <%= render(UI::Progress.new(label: "Preparing your export")) %>
 #
+# Split by category, it adds up its segments and shows a legend:
+#
+#   <%= render(UI::Progress.new(max: 15, label: "Storage", value_text: "%{value} GB of %{max} GB",
+#                               segment_text: "%{value} GB", show_value: true)) do |progress| %>
+#     <% progress.with_segment(value: 6.4, label: "Photos") %>
+#     <% progress.with_segment(value: 3.1, label: "Mail") %>
+#   <% end %>
+#
+# Segments take the chart colours in order. The legend names them, since a
+# colour alone doesn't say which is which; `legend: false` leaves it out when
+# the page already says. `segment_text:` is each one's amount in the legend,
+# with %{value} and %{percent} (its share of max).
+#
 # `value_text:` is what's shown (with `show_value: true`) and what a screen
 # reader hears. It can use %{value}, %{max} and %{percent}, and defaults to
 # "40%". `tone:` colours the bar (:success, :warning, :destructive) for a bar
@@ -35,10 +48,16 @@ class UI::Progress < UI::Base
                   "motion-reduce:w-full motion-reduce:animate-none motion-reduce:opacity-50"
   DETERMINATE = "h-full transition-[width] duration-300 ease-out motion-reduce:transition-none"
 
+  SWATCHES = { 1 => "bg-chart-1", 2 => "bg-chart-2", 3 => "bg-chart-3", 4 => "bg-chart-4", 5 => "bg-chart-5" }.freeze
+
+  renders_many :segments, UI::Progress::Segment
+
   def initialize(value: nil, max: 100, label: nil, value_text: nil, show_value: false, size: :default,
-                 tone: :default, class: nil, **html_attrs)
+                 tone: :default, legend: true, segment_text: "%{value}", class: nil, **html_attrs)
     @max        = max.to_f.positive? ? max : 100
     @value      = value&.clamp(0, @max)
+    @legend     = legend
+    @segment_text = segment_text
     @label      = label
     @value_text = value_text
     @show_value = show_value
@@ -52,13 +71,22 @@ class UI::Progress < UI::Base
 
   attr_reader :label, :label_id
 
-  def indeterminate? = @value.nil?
+  # With segments, their total; the bar's own value: is ignored.
+  def value
+    return @value unless segmented?
+
+    segments.sum(&:value).clamp(0, @max)
+  end
+
+  def segmented? = segments.any?
+
+  def indeterminate? = value.nil?
 
   # Rounded down, so it never says 100% before it's done.
   def percent
     return nil if indeterminate?
 
-    (@value.to_f / @max * 100).floor
+    (value.to_f / @max * 100).floor
   end
 
   def text_format = @value_text || t("ui.progress.value_text", default: "%{percent}%")
@@ -66,7 +94,7 @@ class UI::Progress < UI::Base
   def value_text
     return nil if indeterminate?
 
-    text_format.gsub("%{value}", number(@value)).gsub("%{max}", number(@max)).gsub("%{percent}", percent.to_s)
+    text_format.gsub("%{value}", number(value)).gsub("%{max}", number(@max)).gsub("%{percent}", percent.to_s)
   end
 
   def header? = @label.present? || (@show_value && !indeterminate?)
@@ -77,31 +105,50 @@ class UI::Progress < UI::Base
               "ui--progress-format-value": text_format,
               "ui--progress-determinate-class": DETERMINATE, "ui--progress-indeterminate-class": INDETERMINATE,
               **(@html_attrs[:data] || {}),
-              **(indeterminate? ? {} : { "ui--progress-value-value": @value }) } }
+              **(indeterminate? ? {} : { "ui--progress-value-value": number(value) }) } }
   end
 
   def bar_attrs
     named = @label.present? ? { labelledby: label_id } : { label: t("ui.progress.label", default: "Progress") }
     { role: "progressbar", class: cn("relative w-full overflow-hidden rounded-full", SIZES[@size], TONES[@tone][:track]),
       data: { state: state, "ui--progress-target": "bar" },
-      aria: { valuemin: 0, valuemax: number(@max), valuenow: (number(@value) unless indeterminate?),
+      aria: { valuemin: 0, valuemax: number(@max), valuenow: (number(value) unless indeterminate?),
               valuetext: value_text, busy: (true if state != "complete"), **named, **@aria }.compact }
   end
 
   def indicator_attrs
-    { class: cn("rounded-full", TONES[@tone][:bar], indeterminate? ? INDETERMINATE : DETERMINATE),
+    colour = segmented? ? "flex gap-0.5 overflow-hidden" : TONES[@tone][:bar]
+    { class: cn("rounded-full", colour, indeterminate? ? INDETERMINATE : DETERMINATE),
       style: ("width: #{percent}%" unless indeterminate?),
       data: { slot: "progress-indicator", "ui--progress-target": "indicator" } }.compact
   end
 
   def show_value? = @show_value && !indeterminate?
 
+  def legend? = segmented? && @legend
+
+  # Each segment's share of the filled part, so together they fill it; a
+  # small one keeps a sliver, so it doesn't vanish.
+  def segment_attrs(segment, index)
+    { class: cn("h-full min-w-1", swatch(segment, index), segment.user_class),
+      style: "flex: #{number(segment.value)} 1 0%", title: "#{segment.label}: #{segment_text(segment)}",
+      data: { slot: "progress-segment" } }
+  end
+
+  def swatch(segment, index) = SWATCHES[segment.color] || SWATCHES[(index % SWATCHES.size) + 1]
+
+  def segment_text(segment)
+    segment.value_text ||
+      @segment_text.gsub("%{value}", number(segment.value))
+                   .gsub("%{percent}", (segment.value / @max.to_f * 100).floor.to_s)
+  end
+
   private
 
   def state
     return "indeterminate" if indeterminate?
 
-    @value >= @max ? "complete" : "loading"
+    value >= @max ? "complete" : "loading"
   end
 
   # 3, not 3.0; 2.5 stays 2.5.

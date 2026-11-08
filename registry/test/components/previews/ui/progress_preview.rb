@@ -26,6 +26,12 @@ class UI::ProgressPreview < ViewComponent::Preview
   # @label Storage Used
   def storage; render_with_template; end
 
+  # @label Storage by Category
+  def storage_by_category; render_with_template; end
+
+  # @label Tasks by Status
+  def tasks_by_status; render_with_template; end
+
   # @label Steps Done
   def steps; render_with_template; end
 
