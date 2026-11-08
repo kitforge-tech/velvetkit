@@ -6,8 +6,7 @@
   <section class="space-y-4">
     <h2 id="install" class="text-2xl font-semibold tracking-tight">Install</h2>
     <%= code_block("bin/rails generate velvetkit:add chart") %>
-    <p>This copies the component, its Stimulus controller and <code class="font-mono text-sm">app/javascript/chart_js.ts</code>, and installs Chart.js. That file is built on its own, so only pages with a chart download Chart.js (about 57 KB gzipped). Add it to your JavaScript build, next to <code class="font-mono text-sm">application.js</code>:</p>
-    <%= code_block(%({\n  "scripts": {\n    "build": "bun build ./app/javascript/application.js ./app/javascript/chart_js.ts --outdir ./app/assets/builds"\n  }\n}), label: "package.json") %>
+    <p>This copies the component, its Stimulus controller and <code class="font-mono text-sm">app/javascript/chart_js.ts</code>, installs Chart.js, and adds that file to your JavaScript build as an entry point of its own, so only pages with a chart download Chart.js (about 61 KB gzipped). If <code class="font-mono text-sm">add</code> can't tell how your app builds, it says what to add.</p>
   </section>
 
   <section class="space-y-4">
