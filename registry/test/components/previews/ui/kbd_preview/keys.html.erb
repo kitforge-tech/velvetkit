@@ -1,0 +1,12 @@
+<%# On a Mac these show ⌘ ⌥ ⇧ symbols; elsewhere Ctrl, Alt and Shift, with a +. %>
+<dl class="grid max-w-md grid-cols-[1fr_auto] items-center gap-x-8 gap-y-3 text-sm">
+  <% [["One key", "k"], ["Escape", "esc"], ["Enter", "enter"], ["Arrows", "up"], ["A combination", "mod+k"],
+      ["Three keys", "mod+shift+p"], ["Option, or Alt", "alt+n"], ["A symbol", "?"], ["Function key", "F5"]].each do |name, keys| %>
+    <dt class="text-muted-foreground"><%= name %></dt>
+    <dd><%= render(UI::Kbd.new(keys)) %></dd>
+  <% end %>
+  <dt class="text-muted-foreground">A sequence</dt>
+  <dd><%= render(UI::Kbd.new(%w[g i])) %></dd>
+  <dt class="text-muted-foreground">Written as given</dt>
+  <dd><%= render(UI::Kbd.new) { "Fn" } %></dd>
+</dl>

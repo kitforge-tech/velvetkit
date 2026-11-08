@@ -1,0 +1,17 @@
+<%= render(UI::Card.new(class: "max-w-md")) do |card| %>
+  <% card.with_header do |header| %>
+    <% header.with_title { "Keyboard shortcuts" } %>
+    <% header.with_description { "Press ? to see this list again." } %>
+  <% end %>
+  <% card.with_content do %>
+    <% [["Navigation", [["Go to inbox", %w[g i]], ["Go to drafts", %w[g d]], ["Search", "/"]]],
+        ["Messages", [["New message", "c"], ["Reply", "r"], ["Send", "mod+enter"], ["Archive", "e"]]]].each do |group, rows| %>
+      <h4 class="mt-4 mb-2 text-xs font-medium tracking-wide text-muted-foreground uppercase first:mt-0"><%= group %></h4>
+      <dl class="divide-y text-sm">
+        <% rows.each do |action, keys| %>
+          <div class="flex items-center justify-between py-2"><dt><%= action %></dt><dd><%= render(UI::Kbd.new(keys)) %></dd></div>
+        <% end %>
+      </dl>
+    <% end %>
+  <% end %>
+<% end %>
