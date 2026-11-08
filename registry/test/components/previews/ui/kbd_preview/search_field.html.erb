@@ -1,0 +1,8 @@
+<%# Press / anywhere on the page (not in a field) to jump to the search box. %>
+<div class="max-w-sm">
+  <%= render(UI::InputGroup.new) do |g| %>
+    <%= g.with_addon(align: "inline-start") { |a| a.with_icon(name: "search") } %>
+    <%= g.with_field(id: "kbd-demo-search", type: :search, placeholder: "Search docs…", aria: { label: "Search docs" }) %>
+    <%= g.with_addon(align: "inline-end") { render(UI::Kbd.new("/", bind: "#kbd-demo-search")) } %>
+  <% end %>
+</div>

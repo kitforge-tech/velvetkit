@@ -1,0 +1,14 @@
+<%# The key takes its colours from where it sits: dark tooltip, filled or outline button. %>
+<div class="flex flex-wrap items-center gap-4">
+  <%= render(UI::Tooltip.new) do |tooltip| %>
+    <% tooltip.with_trigger do %>
+      <%= render(UI::Button.new(variant: :outline, size: :icon, aria: { label: "Bold" })) { render(UI::Icon.new(name: "bold", size: :sm)) } %>
+    <% end %>
+    <% tooltip.with_content do %>
+      <span class="flex items-center gap-2">Bold <%= render(UI::Kbd.new("mod+b", size: :sm)) %></span>
+    <% end %>
+  <% end %>
+  <%= render(UI::Button.new) do %>New note <%= render(UI::Kbd.new("n", size: :sm)) %><% end %>
+  <%= render(UI::Button.new(variant: :outline)) do %>Cancel <%= render(UI::Kbd.new("esc", size: :sm)) %><% end %>
+  <%= render(UI::Button.new(variant: :secondary)) do %>Send <%= render(UI::Kbd.new("mod+enter", size: :sm)) %><% end %>
+</div>

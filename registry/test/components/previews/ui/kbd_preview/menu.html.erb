@@ -1,0 +1,13 @@
+<%= render(UI::Menu.new) do |menu| %>
+  <% menu.with_trigger(variant: :outline) { "Edit" } %>
+  <% menu.with_content(class: "w-56") do |content| %>
+    <% content.with_item do %>Undo<%= render(UI::Kbd.new("mod+z", size: :sm, class: "ms-auto")) %><% end %>
+    <% content.with_item do %>Redo<%= render(UI::Kbd.new("mod+shift+z", size: :sm, class: "ms-auto")) %><% end %>
+    <% content.with_divider %>
+    <% content.with_item do %>Cut<%= render(UI::Kbd.new("mod+x", size: :sm, class: "ms-auto")) %><% end %>
+    <% content.with_item do %>Copy<%= render(UI::Kbd.new("mod+c", size: :sm, class: "ms-auto")) %><% end %>
+    <% content.with_item do %>Paste<%= render(UI::Kbd.new("mod+v", size: :sm, class: "ms-auto")) %><% end %>
+    <% content.with_divider %>
+    <% content.with_item(variant: :destructive) do %>Delete<%= render(UI::Kbd.new("backspace", size: :sm, class: "ms-auto")) %><% end %>
+  <% end %>
+<% end %>

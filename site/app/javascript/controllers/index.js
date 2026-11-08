@@ -99,3 +99,6 @@ application.register("ui--chart", UI__ChartController)
 
 import UI__ProgressController from "./ui/progress_controller"
 application.register("ui--progress", UI__ProgressController)
+
+import UI__KbdController from "./ui/kbd_controller"
+application.register("ui--kbd", UI__KbdController)

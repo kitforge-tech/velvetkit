@@ -1,0 +1,23 @@
+<%# A point-of-sale screen, where cashiers keep their hands on the keyboard. The keys work. %>
+<div id="kbd-till-demo" class="max-w-lg space-y-3 rounded-lg border p-4">
+  <div class="flex items-baseline justify-between">
+    <span class="text-sm text-muted-foreground">Sale #1042 · 3 items</span>
+    <span class="text-2xl font-semibold tabular-nums">$27.40</span>
+  </div>
+  <div class="grid grid-cols-2 gap-2 sm:grid-cols-4">
+    <%= render(UI::Button.new(variant: :outline, class: "justify-between", data: { demo: "New sale" })) do %>New sale <%= render(UI::Kbd.new("F2", size: :sm, bind: true)) %><% end %>
+    <%= render(UI::Button.new(variant: :outline, class: "justify-between", data: { demo: "Discount" })) do %>Discount <%= render(UI::Kbd.new("F6", size: :sm, bind: true)) %><% end %>
+    <%= render(UI::Button.new(variant: :outline, class: "justify-between", data: { demo: "Cancelled" })) do %>Cancel <%= render(UI::Kbd.new("esc", size: :sm, bind: true)) %><% end %>
+    <%= render(UI::Button.new(class: "justify-between", data: { demo: "Paid" })) do %>Pay <%= render(UI::Kbd.new("F4", size: :sm, bind: true)) %><% end %>
+  </div>
+  <p class="text-sm text-muted-foreground" data-demo="status" role="status">Press a key.</p>
+</div>
+<script>
+  (() => {
+    const root = document.getElementById("kbd-till-demo");
+    const status = root.querySelector('[data-demo="status"]');
+    root.querySelectorAll("button[data-demo]").forEach((button) => {
+      button.addEventListener("click", () => { status.textContent = button.dataset.demo; });
+    });
+  })();
+</script>

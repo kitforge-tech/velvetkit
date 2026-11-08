@@ -54,6 +54,8 @@ en:
       label: 'Loading'
     dialog:
       close_label: 'Close'
+    kbd:
+      then: 'then'
     number_input:
       decrement: 'Decrease'
       increment: 'Increase'

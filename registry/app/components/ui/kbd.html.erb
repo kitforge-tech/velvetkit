@@ -1,0 +1,22 @@
+<%# frozen_string_literal: true %>
+<%= tag.kbd(**root_attrs) do %>
+  <% if written? %>
+    <%= tag.kbd(content, class: key_class) %>
+  <% else %>
+    <% steps.each_with_index do |combo, step| %>
+      <% if step.positive? %><span class="text-[0.85em] opacity-70"><%= t("ui.kbd.then", default: "then") %></span><% end %>
+      <span class="inline-flex items-center gap-0.5">
+        <% combo.each_with_index do |key, index| %>
+          <% if index.positive? %><span class="opacity-60 group-data-[platform=mac]/kbd:hidden" aria-hidden="true">+</span><% end %>
+          <% mac, mac_name, other, other_name = key_labels(key) %>
+          <% if mac == other && mac_name == other_name %>
+            <%= key_tag(mac, mac_name) %>
+          <% else %>
+            <%= key_tag(mac, mac_name, "hidden group-data-[platform=mac]/kbd:inline-flex") %>
+            <%= key_tag(other, other_name, "group-data-[platform=mac]/kbd:hidden") %>
+          <% end %>
+        <% end %>
+      </span>
+    <% end %>
+  <% end %>
+<% end %>

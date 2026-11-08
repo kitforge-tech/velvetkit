@@ -1,0 +1,20 @@
+<%# bind: true makes the shortcut press the button the hint is in. Try them. %>
+<div id="kbd-bound-demo" class="max-w-md space-y-4">
+  <%= render(UI::Textarea.new(name: "note", rows: 3, placeholder: "Write something, then save with the shortcut…", aria: { label: "Note" })) %>
+  <div class="flex flex-wrap items-center gap-3">
+    <%= render(UI::Button.new(data: { demo: "save" })) do %>Save <%= render(UI::Kbd.new("mod+s", size: :sm, bind: true)) %><% end %>
+    <%= render(UI::Button.new(variant: :outline, data: { demo: "clear" })) do %>Clear <%= render(UI::Kbd.new("alt+c", size: :sm, bind: true)) %><% end %>
+    <span class="text-sm text-muted-foreground" data-demo="status" role="status"></span>
+  </div>
+</div>
+<script>
+  (() => {
+    const root = document.getElementById("kbd-bound-demo");
+    const status = root.querySelector('[data-demo="status"]');
+    const note = root.querySelector("textarea");
+    root.querySelector('[data-demo="save"]').addEventListener("click", () => {
+      status.textContent = `Saved at ${new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit", second: "2-digit" })}`;
+    });
+    root.querySelector('[data-demo="clear"]').addEventListener("click", () => { note.value = ""; status.textContent = "Cleared"; note.focus(); });
+  })();
+</script>

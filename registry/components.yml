@@ -74,6 +74,8 @@ components:
     description: A text field with label, hint and error message, standalone or with a form builder.
   input_group:
     description: A text field with addons before or after it.
+  kbd:
+    description: A keyboard key or shortcut, shown as each reader's computer labels it.
   label:
     description: A form label with a required marker.
   link:
