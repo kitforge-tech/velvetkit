@@ -1,0 +1,5 @@
+<%# Picking a range or a preset fires change on the field, so a filter form can send itself. %>
+<form class="flex max-w-xl flex-wrap items-end gap-3" action="/demo/report" method="get">
+  <%= render(UI::DatePicker.new(range: true, label: "Period", hint: false, from: Date.current - 6, to: Date.current, class: "w-auto")) %>
+  <%= render(UI::Button.new(type: :submit, variant: :outline)) { "Show sales" } %>
+</form>

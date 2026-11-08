@@ -1,73 +1,67 @@
-<div class="<%= classes %>" data-controller="ui--date-picker"
-     data-ui--date-picker-module-url-value="<%= helpers.asset_path('cally.js') %>"
-     data-ui--date-picker-order-value="<%= part_order %>"
-     data-ui--date-picker-separator-value="<%= separator %>"
-     data-action="click@window->ui--date-picker#closeOnOutsideClick keydown@window->ui--date-picker#closeOnEscape"
-     <%= tag.attributes(@html_attrs) %>>
+<%= tag.div(**root_attrs) do %>
   <% if render_label? %>
-    <label for="<%= input_id %>" class="mb-1.5 block text-sm font-medium text-foreground">
-      <%= label_text %><% if @required %><span class="ml-0.5 text-destructive">*</span><% end %>
-    </label>
+    <%= tag.label for: input_id, class: "mb-1.5 block text-sm font-medium text-foreground" do %><%= label_text %><% if required? %><span class="ml-0.5 text-destructive">*</span><% end %><% end %>
   <% end %>
 
-  <div class="relative">
-    <%# What the user types. Not name'd: it is never submitted, so a
-        half-typed date cannot reach the server. %>
-    <input type="text" id="<%= input_id %>" inputmode="numeric" autocomplete="off"
-           placeholder="<%= placeholder %>" class="<%= input_classes %>"
-           value="<%= typed_value %>"
-           <%= "required" if @required %> <%= "disabled" if @disabled %>
-           <%= tag.attributes("aria-describedby": describedby, "aria-invalid": ("true" if wrapper.error?)) %>
-           data-ui--date-picker-target="input"
-           data-action="input->ui--date-picker#typed">
-
-    <%# What the form submits. %>
-    <input type="hidden" name="<%= field_name %>" value="<%= iso_value %>"
-           data-ui--date-picker-target="hidden">
-
-    <button type="button" aria-haspopup="dialog" aria-expanded="false"
-            aria-controls="<%= panel_id %>"
-            aria-label="<%= t("ui.date_picker.open") %>"
-            class="absolute inset-y-0 right-0 flex w-9 items-center justify-center rounded-r-md text-muted-foreground hover:text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-            <%= "disabled" if @disabled %>
-            data-ui--date-picker-target="toggle"
-            data-action="ui--date-picker#toggle">
-      <%= render(UI::Icon.new(name: "calendar", class: "size-4")) %>
-    </button>
-  </div>
+  <%= tag.div class: group_classes do %>
+    <%# What people type. Not named: only the hidden ISO fields are submitted,
+        so a half-typed date can't reach the server. %>
+    <% fields.each_with_index do |(target, _, iso), index| %>
+      <% if index.positive? %><span class="shrink-0 text-muted-foreground" aria-hidden="true">–</span><% end %>
+      <%= tag.input(**input_attrs(target, iso)) %>
+    <% end %>
+    <span class="flex h-full shrink-0 items-center">
+      <%= tag.button type: "button", hidden: !value? || required? || disabled?,
+                     aria: { label: t("ui.date_picker.clear", default: "Clear") },
+                     class: "flex size-7 items-center justify-center rounded-sm text-muted-foreground hover:text-foreground #{UI::Base::FOCUS_RING}",
+                     data: { "ui--date-picker-target": "clear", action: "ui--date-picker#clear" } do %>
+        <%= render(UI::Icon.new(name: "x", size: :sm)) %>
+      <% end %>
+      <%= tag.button type: "button", disabled: disabled?, tabindex: -1,
+                     aria: { haspopup: "dialog", expanded: "false", controls: panel_id, label: t("ui.date_picker.open", default: "Open the calendar") },
+                     class: toggle_classes,
+                     data: { "ui--date-picker-target": "toggle", action: "ui--date-picker#toggle" } do %>
+        <%= render(UI::Icon.new(name: "calendar", size: :sm)) %>
+      <% end %>
+    </span>
+  <% end %>
+  <% fields.each do |target, name, iso| %>
+    <%= tag.input type: "hidden", name: name, value: iso, data: { "ui--date-picker-target": "hidden", field: target } %>
+  <% end %>
 
   <% if render_hint? %>
-    <p id="<%= input_id %>-hint" class="mt-1 text-xs text-muted-foreground">
-      <%= t("ui.date_picker.hint", pattern: placeholder) %>
-    </p>
+    <%= tag.p hint_text, id: hint_id, class: "mt-1 text-xs text-muted-foreground" %>
   <% end %>
   <% if wrapper.error_message %>
-    <%= tag.p(wrapper.error_message, id: wrapper.error_id, class: "mt-1 text-xs text-destructive") %>
+    <%= tag.p wrapper.error_message, id: wrapper.error_id, class: "mt-1 text-xs text-destructive" %>
   <% end %>
 
-  <div id="<%= panel_id %>" role="dialog" hidden
-       class="absolute z-30 mt-1 rounded-md border bg-popover p-3 text-popover-foreground shadow-md"
-       data-ui--date-picker-target="panel">
-    <%# calendar-select-year is why this library was chosen: reaching 2012 for
-        a date of birth is one click, not a hundred and seventy. %>
-    <%# Cally puts each arrow inside its own button, so ours are icons with
-        words for screen readers; the month and year selects fill its heading
-        slot, between the arrows. %>
-    <%= tag.send(:"calendar-date",
-                 safe_join([
-                   tag.span(safe_join([ render(UI::Icon.new(name: "chevron-left", size: :sm)),
-                                        tag.span(t("ui.date_picker.previous"), class: "sr-only") ]),
-                            slot: "previous", class: "inline-flex"),
-                   tag.span(safe_join([ render(UI::Icon.new(name: "chevron-right", size: :sm)),
-                                        tag.span(t("ui.date_picker.next"), class: "sr-only") ]),
-                            slot: "next", class: "inline-flex"),
-                   tag.div(safe_join([ tag.send(:"calendar-select-month"), tag.send(:"calendar-select-year") ]),
-                           slot: "heading", class: "flex items-center gap-1.5"),
-                   tag.send(:"calendar-month")
-                 ]),
-                 locale: I18n.locale == :en ? "en-IN" : I18n.locale.to_s,
-                 "first-day-of-week": 1, min: @min, max: @max,
-                 data: { "ui--date-picker-target": "calendar",
-                         action: "change->ui--date-picker#picked" }) %>
-  </div>
-</div>
+  <%# Below the field, or a sheet from the bottom of the screen on a phone. %>
+  <%= tag.div id: panel_id, role: "dialog", hidden: true,
+              aria: { label: t(range? ? "ui.date_picker.dialog_range" : "ui.date_picker.dialog", default: range? ? "Choose dates" : "Choose a date") },
+              class: "absolute left-0 top-full z-40 mt-1 flex w-max flex-col rounded-md border bg-popover text-popover-foreground shadow-md " \
+                     "sm:flex-row max-sm:fixed max-sm:inset-x-0 max-sm:top-auto max-sm:bottom-0 max-sm:mt-0 max-sm:w-auto " \
+                     "max-sm:max-h-[85dvh] max-sm:overflow-y-auto max-sm:rounded-b-none max-sm:border-x-0 max-sm:border-b-0",
+              data: { "ui--date-picker-target": "panel" } do %>
+    <% if preset_list.any? %>
+      <%= tag.ul class: "flex gap-1 overflow-x-auto border-b p-2 sm:flex-col sm:overflow-visible sm:border-b-0 sm:border-e",
+                 aria: { label: t("ui.date_picker.presets_label", default: "Quick ranges") } do %>
+        <% preset_list.each do |name, from, to| %>
+          <li class="shrink-0"><%= tag.button name, type: "button", aria: { pressed: preset_pressed?(from, to).to_s },
+                                              class: "w-full whitespace-nowrap rounded-md px-3 py-1.5 text-start text-sm hover:bg-accent hover:text-accent-foreground " \
+                                                     "aria-pressed:bg-primary/10 aria-pressed:font-medium aria-pressed:text-primary dark:aria-pressed:text-foreground #{UI::Base::FOCUS_RING}",
+                                              data: { action: "ui--date-picker#preset", "ui--date-picker-from-param": from,
+                                                      "ui--date-picker-to-param": to, "ui--date-picker-target": "preset" } %></li>
+        <% end %>
+      <% end %>
+    <% end %>
+    <div class="flex min-w-0 flex-col">
+      <%# The calendar replaces the classes of the element it's given, so the
+          kit's colours sit on this wrapper instead. %>
+      <div class="velvetkit-calendar p-2"><%= tag.div data: { "ui--date-picker-target": "calendar" } %></div>
+      <% if range? %>
+        <%= tag.p "", role: "status", class: "min-h-5 px-4 pb-3 text-xs text-muted-foreground", data: { "ui--date-picker-target": "status" } %>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>

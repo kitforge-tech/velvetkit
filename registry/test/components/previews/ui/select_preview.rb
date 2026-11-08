@@ -38,6 +38,11 @@ class UI::SelectPreview < ViewComponent::Preview
     render_with_template
   end
 
+  # @label Searching the Server
+  def server_search
+    render_with_template
+  end
+
   # @label Multiple
   def multiple
     render_with_template

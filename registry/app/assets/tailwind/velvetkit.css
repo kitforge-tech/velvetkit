@@ -187,159 +187,85 @@ select:-webkit-autofill {
   transition: background-color 100000s ease-in-out 0s;
 }
 
-/* The date picker calendar.
- *
- * Cally renders in a shadow root, so it is reachable only through the custom
- * properties and ::part() names it publishes. All of them are pointed at the
- * kit's tokens, which is what makes the calendar follow dark mode with no
- * JavaScript.
- *
- * Layout: ‹ [May ▾] [2012 ▾] › in one header row. The selects sit in Cally's
- * heading slot (see date_picker.html.erb), so its own heading and the month's
- * heading would only repeat them.
+/* The date picker's calendar: Vanilla Calendar Pro, with its light theme's
+ * colours pointed at the kit's tokens. The theme reads every colour from a
+ * --vc-* variable, so these follow dark mode and any retheme with no
+ * JavaScript. The library's own stylesheet loads with it (vanilla_calendar.ts),
+ * so a page without a date picker pays nothing for these.
  */
-calendar-date,
-calendar-range {
-  --color-accent: var(--primary);
-  --color-text-on-accent: var(--primary-foreground);
+.velvetkit-calendar {
+  --vc-bg: var(--popover);
+  --vc-color: var(--popover-foreground);
+  --vc-header-color: var(--popover-foreground);
+  --vc-title-color: var(--popover-foreground);
+  --vc-title-color-hover: var(--muted-foreground);
+  --vc-title-color-disabled: var(--muted-foreground);
+  --vc-focus-outline-color: var(--ring);
+  --vc-week-day-color: var(--muted-foreground);
+  --vc-week-day-color-hover: var(--foreground);
+  --vc-week-day-off-color: var(--muted-foreground);
+  --vc-week-day-off-color-hover: var(--foreground);
+  --vc-date-bg: transparent;
+  --vc-date-color: var(--popover-foreground);
+  --vc-date-bg-hover: var(--accent);
+  --vc-date-hover-bg: var(--accent);
+  --vc-date-hover-edge-bg: color-mix(in oklab, var(--primary) 20%, transparent);
+  --vc-date-outside-color: var(--muted-foreground);
+  --vc-date-disabled-color: color-mix(in oklab, var(--muted-foreground) 50%, transparent);
+  --vc-date-today-bg: var(--accent);
+  --vc-date-today-color: var(--primary);
+  --vc-date-today-outside-color: var(--muted-foreground);
+  --vc-date-selected-bg: var(--primary);
+  --vc-date-selected-color: var(--primary-foreground);
+  --vc-date-selected-outside-bg: color-mix(in oklab, var(--primary) 20%, transparent);
+  --vc-date-selected-outside-color: var(--muted-foreground);
+  /* The days inside a range: a tint, so the two ends stand out. */
+  --vc-date-range-middle-bg: color-mix(in oklab, var(--primary) 12%, transparent);
+  --vc-date-range-middle-color: var(--popover-foreground);
+  --vc-date-range-middle-outside-bg: color-mix(in oklab, var(--primary) 6%, transparent);
+  --vc-date-range-middle-outside-color: var(--muted-foreground);
+  --vc-date-range-middle-weekend-bg: var(--vc-date-range-middle-bg);
+  --vc-date-range-middle-weekend-color: var(--vc-date-range-middle-color);
+  --vc-date-range-tooltip-bg: var(--popover);
+  --vc-date-range-tooltip-color: var(--muted-foreground);
+  --vc-date-popup-bg: var(--popover);
+  --vc-date-popup-color: var(--popover-foreground);
+  /* Weekends look like any other day: in a shop, Saturday is a working day. */
+  --vc-date-weekend-color: var(--vc-date-color);
+  --vc-date-weekend-bg-hover: var(--accent);
+  --vc-date-weekend-hover-bg: var(--accent);
+  --vc-date-weekend-hover-edge-bg: var(--vc-date-hover-edge-bg);
+  --vc-date-weekend-selected-bg: var(--primary);
+  --vc-date-weekend-selected-color: var(--primary-foreground);
+  --vc-date-weekend-today-color: var(--primary);
+  --vc-date-weekend-outside-color: var(--muted-foreground);
+  --vc-date-weekend-outside-bg: transparent;
+  --vc-date-weekend-outside-bg-hover: var(--accent);
+  --vc-date-weekend-outside-hover-bg: var(--accent);
+  --vc-date-weekend-disabled-color: var(--vc-date-disabled-color);
+  --vc-date-weekend-disabled-outside-color: var(--vc-date-disabled-color);
+  --vc-date-weekend-today-disabled-color: var(--vc-date-disabled-color);
+  --vc-date-weekend-today-outside-color: var(--muted-foreground);
+  --vc-months-years-bg: transparent;
+  --vc-months-years-bg-hover: var(--accent);
+  --vc-months-years-bg-selected: var(--primary);
+  --vc-months-years-color: var(--popover-foreground);
+  --vc-months-years-color-selected: var(--primary-foreground);
+  --vc-months-years-color-disabled: var(--vc-date-disabled-color);
+  --vc-collapse-color: var(--border);
   font-family: inherit;
-  font-size: 0.875rem;
-  color: var(--popover-foreground);
 }
 
-calendar-date::part(header),
-calendar-range::part(header) {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.25rem;
-  margin-bottom: 0.5rem;
+.velvetkit-calendar .vc {
+  font-family: inherit;
 }
 
-/* The arrows: ghost icon buttons. */
-calendar-date::part(button),
-calendar-range::part(button) {
-  display: inline-grid;
-  place-items: center;
-  width: 2rem;
-  height: 2rem;
-  padding: 0;
-  border: 0;
-  border-radius: var(--radius-md);
-  background: transparent;
-  color: var(--muted-foreground);
-  cursor: pointer;
+/* Only the two ends of a range are bold. */
+.velvetkit-calendar [data-vc-date-selected="middle"] .vc-date__btn {
+  font-weight: 400;
 }
 
-calendar-date::part(button):hover,
-calendar-range::part(button):hover {
-  background: var(--accent);
-  color: var(--accent-foreground);
-}
-
-calendar-date::part(button):focus-visible,
-calendar-range::part(button):focus-visible {
-  outline: 2px solid var(--ring);
-  outline-offset: 1px;
-}
-
-calendar-date::part(disabled),
-calendar-range::part(disabled) {
-  opacity: 0.35;
-  cursor: default;
-}
-
-calendar-month::part(heading) {
-  display: none;
-}
-
-calendar-month::part(th) {
-  padding-bottom: 0.25rem;
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: var(--muted-foreground);
-}
-
-/* Days. */
-calendar-month::part(button) {
-  width: 2.25rem;
-  height: 2.25rem;
-  border: 0;
-  border-radius: var(--radius-md);
-  background: transparent;
-  color: var(--popover-foreground);
-  font-size: 0.875rem;
-  cursor: pointer;
-}
-
-calendar-month::part(button):hover {
-  background: var(--accent);
-  color: var(--accent-foreground);
-}
-
-calendar-month::part(button):focus-visible {
-  outline: 2px solid var(--ring);
-  outline-offset: 1px;
-}
-
-calendar-month::part(outside) {
-  color: var(--muted-foreground);
-  opacity: 0.6;
-}
-
-/* Today: a quiet tint rather than a hard box. */
-calendar-month::part(today) {
-  outline: none;
-  background: var(--accent);
-  color: var(--primary);
-  font-weight: 600;
-}
-
-/* The chosen day, after today so it wins when they're the same. */
-calendar-month::part(selected) {
-  background: var(--primary);
-  color: var(--primary-foreground);
-  font-weight: 600;
-}
-
-/* Month and year: the reason this library was chosen, since reaching a birth
-   year is one click rather than a hundred and seventy. Styled like the kit's
-   fields; the open list is the platform's own. */
-calendar-select-month::part(select),
-calendar-select-year::part(select) {
-  appearance: none;
-  height: 2rem;
-  padding: 0 1.75rem 0 0.625rem;
-  border: 1px solid var(--input);
-  border-radius: var(--radius-md);
-  background: var(--background)
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a8a93' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")
-    no-repeat right 0.5rem center / 0.875rem;
-  color: var(--foreground);
-  font: inherit;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-calendar-select-month::part(select):hover,
-calendar-select-year::part(select):hover {
-  background-color: var(--accent);
-}
-
-calendar-select-month::part(select):focus-visible,
-calendar-select-year::part(select):focus-visible {
-  outline: 2px solid var(--ring);
-  outline-offset: 1px;
-}
-
-/* The "Month" and "Year" labels stay for screen readers only. */
-calendar-select-month::part(label),
-calendar-select-year::part(label) {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
+/* The arrows are drawn dark by the theme; lighten them on a dark page. */
+.dark .velvetkit-calendar .vc-arrow::before {
+  filter: invert(1);
 }
