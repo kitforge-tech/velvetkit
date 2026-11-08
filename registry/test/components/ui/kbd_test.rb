@@ -14,9 +14,19 @@ class UI::KbdTest < ViewComponent::TestCase
     render_inline(UI::Kbd.new(*args, **opts), &block)
   end
 
-  def test_a_single_key_is_a_kbd_in_capitals
-    render_kbd("k")
-    assert_selector "kbd[data-slot='kbd'][data-controller='ui--kbd'] > span > kbd", text: "K"
+  def test_a_letter_on_its_own_is_lowercase_since_that_is_what_you_type
+    render_kbd("K")
+    assert_selector "kbd[data-slot='kbd'][data-controller='ui--kbd'] > span > kbd", exact_text: "k"
+  end
+
+  def test_a_letter_with_a_modifier_is_a_capital_and_shift_is_written_out
+    render_kbd("mod+k")
+    assert_selector "kbd", exact_text: "K"
+    render_kbd("shift+g")
+    assert_selector "span.sr-only", text: "Shift", visible: :all
+    assert_selector "kbd", exact_text: "G"
+    render_kbd("alt+n")
+    assert_selector "kbd", exact_text: "N"
   end
 
   def test_guesses_the_platform_from_the_user_agent
@@ -72,7 +82,7 @@ class UI::KbdTest < ViewComponent::TestCase
   def test_a_sequence_says_then_between_its_steps
     render_kbd(%w[g i])
     assert_selector "[data-slot='kbd'] > span", text: "then"
-    assert_equal %w[G I], page.all("[data-slot='kbd'] kbd").map(&:text)
+    assert_equal %w[g i], page.all("[data-slot='kbd'] kbd").map(&:text)
   end
 
   def test_a_written_key_is_shown_as_given
