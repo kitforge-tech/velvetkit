@@ -145,6 +145,3 @@ en:
       waiting: 'Waiting for the uploads to finish…'
       added: '%{name} added'
       removed: '%{name} removed'
-      images: 'Images'
-      up_to: 'up to %{size}'
-      up_to_each: 'up to %{size} each'
