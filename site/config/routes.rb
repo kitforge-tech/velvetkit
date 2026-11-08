@@ -21,6 +21,10 @@ Rails.application.routes.draw do
 
   get "demo/rows", to: "demo_rows#index", as: :demo_rows, defaults: { format: :json }
   get "demo/customers", to: "demo_options#index", as: :demo_customers, defaults: { format: :json }
+  # Where Active Storage's browser code sends direct uploads, so the File
+  # Field demo works as in an app; DemoUploadsController keeps nothing.
+  post "rails/active_storage/direct_uploads", to: "demo_uploads#create", as: :rails_direct_uploads
+  put "demo/uploads/:key", to: "demo_uploads#update", as: :demo_upload
 
   mount Lookbook::Engine, at: "/lookbook"
 
