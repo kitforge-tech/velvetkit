@@ -90,6 +90,27 @@ module Velvetkit
         end
       end
 
+      # Bundles a component loads only when it's on the page (Chart.js,
+      # Vanilla Calendar Pro, AG Grid) are entry points of their own, so the
+      # app's JavaScript build has to know about them. Added where the build
+      # lists its entry points; an esbuild glob already takes them; anything
+      # else is told what to add.
+      def wire_entry_points
+        entry_points.each do |entry|
+          if exists?("bun.config.js") && read("bun.config.js").match?(/entrypoints:\s*\[/)
+            add_to_bun_config(entry)
+          elsif exists?("webpack.config.js") && read("webpack.config.js").match?(/entry:\s*\{/)
+            add_to_webpack_config(entry)
+          elsif build_script&.match?(%r{app/javascript/\*})
+            say_status :build, "#{entry} is built by the build script's app/javascript/* already", :blue
+          elsif build_script&.match?(%r{app/javascript/application\.[jt]s})
+            add_to_build_script(entry)
+          else
+            say_status :build, "add #{entry} to your JavaScript build as an entry point of its own, like application.js", :yellow
+          end
+        end
+      end
+
       def add_gems
         gemfile = File.read(File.join(destination_root, "Gemfile"))
         resolved.flat_map { |name| registry.gems(name).to_a }.uniq.each do |name, version|
@@ -125,6 +146,43 @@ module Velvetkit
       def controllers
         resolved.flat_map { |name| registry.stimulus_controllers(name) }.uniq
       end
+
+      # app/javascript/chart_js.ts and the like: JavaScript that isn't a
+      # Stimulus controller or one of their shared helpers.
+      def entry_points
+        resolved.flat_map { |name| registry.javascript_files(name) }.uniq
+                .select { |file| file.start_with?("app/javascript/") && !file.start_with?("app/javascript/controllers/") }
+      end
+
+      def build_script
+        return nil unless exists?("package.json")
+
+        JSON.parse(read("package.json")).dig("scripts", "build")
+      rescue JSON::ParserError
+        nil
+      end
+
+      def add_to_bun_config(entry)
+        return if read("bun.config.js").include?(entry)
+
+        gsub_file "bun.config.js", /(entrypoints:\s*\[)/, %(\\1"#{entry}", )
+      end
+
+      def add_to_webpack_config(entry)
+        return if read("webpack.config.js").include?(entry)
+
+        gsub_file "webpack.config.js", /(entry:\s*\{\s*\n)/, %(\\1    #{File.basename(entry, ".*")}: "./#{entry}",\n)
+      end
+
+      # After application.js in the build script, written the same way ("./" or not).
+      def add_to_build_script(entry)
+        return if build_script.include?(entry)
+
+        gsub_file "package.json", %r{((?:\./)?)app/javascript/application\.[jt]s}, "\\0 \\1#{entry}"
+      end
+
+      def exists?(file) = File.exist?(File.join(destination_root, file))
+      def read(file) = File.read(File.join(destination_root, file))
     end
   end
 end
