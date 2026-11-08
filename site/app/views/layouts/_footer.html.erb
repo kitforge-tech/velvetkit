@@ -17,7 +17,8 @@
           <%= render(UI::Badge.new(variant: :outline)) { "v#{ReleasedVersion.current}" } %>
           <%= render(UI::Link.new(href: ApplicationHelper::GITHUB_URL, variant: :ghost, size: :sm, button_variant: true,
                                   class: "size-7 rounded-md px-0 text-foreground",
-                                  target: "_blank", rel: "noopener", aria: { label: "VelvetKit on GitHub" })) do %>
+                                  target: "_blank", rel: "noopener", aria: { label: "VelvetKit on GitHub" },
+                                  data: outbound_data("github", "footer"))) do %>
             <%= render(UI::Icon.new(name: "github", size: :sm)) %>
           <% end %>
         </div>
@@ -31,7 +32,8 @@
               <% external = href.start_with?("http") %>
               <li>
                 <%= link_to href, class: "inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground",
-                                  target: (external ? "_blank" : nil), rel: (external ? "noopener" : nil) do %>
+                                  target: (external ? "_blank" : nil), rel: (external ? "noopener" : nil),
+                                  data: (outbound_data(AnalyticsHelper::OUTBOUND_TARGETS.fetch(href), "footer") if external) do %>
                   <%= title %>
                   <% if external %><%= render(UI::Icon.new(name: "arrow-up-right", size: :xs, class: "opacity-60")) %><% end %>
                 <% end %>

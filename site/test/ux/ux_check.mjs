@@ -5,7 +5,7 @@
 //   UX_BASE_URL=http://localhost:3311 bin/ux-check
 const [, , wsUrl] = process.argv;
 const BASE = process.env.UX_BASE_URL || "http://localhost:3000";
-setTimeout(() => { console.log("TIMED OUT"); process.exit(1); }, 90000);
+setTimeout(() => { console.log("TIMED OUT"); process.exit(1); }, 180000);
 
 const ws = new WebSocket(wsUrl);
 let id = 0;
@@ -286,6 +286,155 @@ ws.onopen = async () => {
       await key("Escape", "Escape", 0, 27);
       await sleep(300);
     }
+
+    // Analytics: what gets reported, against a stand-in for the tracker.
+    const stub = `window.__events = []; window.umami = { track: (n, d) => window.__events.push([n, d ?? null]) }; 1`;
+    const reveal = (sel) => run(`document.querySelector(${JSON.stringify(sel)}).scrollIntoView({ block: "center" }); 1`);
+    // Every click also reports ui_click; these checks are about the named events.
+    const namedEvents = () => run(`JSON.stringify(window.__events.filter(([n]) => n !== "ui_click"))`);
+
+    await send("Page.navigate", { url: `${BASE}/docs` });
+    await sleep(2500);
+    await reveal("[data-clipboard-track-value=copy_gem]");
+    await sleep(300);
+    await click("[data-clipboard-track-value=copy_gem] button");
+    await sleep(300);
+    check("copying works with no tracker loaded", await run(`window.umami === undefined && document.querySelector("[data-clipboard-track-value=copy_gem]").hasAttribute("data-copied")`));
+
+    await run(stub);
+    await reveal("[data-clipboard-track-value=copy_install]");
+    await sleep(300);
+    await click("[data-clipboard-track-value=copy_install] button");
+    await sleep(300);
+    const reported = await namedEvents();
+    check("copying the install command reports it", reported === '[["copy_install",null]]', reported);
+
+    const typeSearch = async (text) => {
+      await run(`(() => { const i = document.querySelector("[data-search-target=input]"); i.value = ${JSON.stringify(text)}; i.dispatchEvent(new Event("input", { bubbles: true })); })()`);
+      await sleep(1800);
+    };
+    await send("Page.navigate", { url: `${BASE}/docs` });
+    await sleep(2500);
+    await run(stub);
+    await key("k", "KeyK", 2, 75);
+    await sleep(300);
+
+    await typeSearch("  Kanban   Board ");
+    let sent = await namedEvents();
+    check("a failed search reports the cleaned query", sent === '[["search_miss",{"query":"kanban board","source":"header"}]]', sent);
+
+    await typeSearch("kanban board");
+    sent = await run(`window.__events.filter(([n]) => n === "search_miss").length`);
+    check("the same miss isn't reported twice", sent === 1, String(sent));
+
+    await run(`window.__events.length = 0; 1`);
+    for (const text of ["me@example.com", "4111 1111 1111 1111", "06-12-34-56-78", "12/05/85", "~"]) await typeSearch(text);
+    await typeSearch("dialog");
+    sent = await run(`JSON.stringify(window.__events)`);
+    check("emails, numbers, stray letters and hits are never sent", sent === "[]", sent);
+
+    await key("Enter", "Enter", 0, 13);
+    await sleep(1500);
+    sent = await run(`JSON.stringify(window.__events)`);
+    check("opening a result reports its path", /"search_select",\{"result":"\/docs/.test(sent), sent);
+
+    await send("Page.navigate", { url: `${BASE}/docs/components` });
+    await sleep(2500);
+    await run(stub);
+    await run(`(() => { const i = document.querySelector("[data-action*='filter#filter']"); i.value = "kanban"; i.dispatchEvent(new Event("input", { bubbles: true })); })()`);
+    await sleep(1800);
+    sent = await run(`JSON.stringify(window.__events)`);
+    check("a failed component filter reports its source", sent === '[["search_miss",{"query":"kanban","source":"components"}]]', sent);
+
+    const scrollPage = async (fraction) => {
+      await run(`window.scrollTo(0, (document.documentElement.scrollHeight - innerHeight) * ${fraction}); 1`);
+      await sleep(400);
+    };
+    const named = (name) => run(`JSON.stringify(window.__events.filter(([n]) => n === ${JSON.stringify(name)}))`);
+
+    await send("Page.navigate", { url: `${BASE}/docs/components/dialog` });
+    await sleep(2500);
+    await run(stub);
+    let depths = await named("scroll_depth");
+    check("no scroll event before a scroll", depths === "[]", depths);
+
+    await scrollPage(1);
+    await scrollPage(0);
+    await scrollPage(1);
+    depths = await named("scroll_depth");
+    check("each depth reports once per page view", depths === '[["scroll_depth",{"depth":50}],["scroll_depth",{"depth":90}]]', depths);
+
+    await run(`window.Turbo.visit("/docs/theming"); 1`);
+    await sleep(2000);
+    await run(`window.__events.length = 0; 1`);
+    await scrollPage(1);
+    depths = await named("scroll_depth");
+    check("depth starts again after a Turbo visit", depths.includes('"depth":90'), depths);
+
+    await run(`window.__events.length = 0; history.back(); 1`);
+    await sleep(1800);
+    depths = await named("scroll_depth");
+    check("restoring scroll on Back isn't a scroll", depths === "[]", depths);
+
+    await send("Page.navigate", { url: `${BASE}/docs/namespacing` });
+    await sleep(2500);
+    await run(stub);
+    await scrollPage(1);
+    await run(`(() => { const i = document.querySelector("input[name=namespace]"); i.value = "Acme"; i.dispatchEvent(new Event("input", { bubbles: true })); })()`);
+    await sleep(1800);
+    await scrollPage(0);
+    await scrollPage(1);
+    depths = await named("scroll_depth");
+    check("the playground's frame visits don't restart depth", depths === '[["scroll_depth",{"depth":50}],["scroll_depth",{"depth":90}]]', depths);
+
+    await send("Page.navigate", { url: `${BASE}/` });
+    await sleep(2500);
+    await run(stub);
+    await reveal("[data-analytics-section=how_it_works]");
+    await sleep(600);
+    const sections = await named("section_view");
+    check("a home section reports when it comes into view", sections.includes('"section":"how_it_works"'), sections);
+
+    const clicks = () => run(`JSON.stringify(window.__events.filter(([n]) => n === "ui_click").map(([, d]) => d))`);
+
+    await send("Page.navigate", { url: `${BASE}/` });
+    await sleep(2500);
+    await run(stub);
+    await click("[data-focus-scope=header] a[href='/docs/components']");
+    await sleep(1500);
+    let seen = await clicks();
+    check("a link click reports its label, area and path", seen === '[{"element":"link","label":"Components","area":"header","href":"/docs/components"}]', seen);
+    check("Turbo still handles tracked links", await run(`window.__events !== undefined && location.pathname === "/docs/components"`));
+
+    await send("Page.navigate", { url: `${BASE}/docs/components/dialog` });
+    await sleep(2500);
+    await run(stub);
+    await run(`(() => { const a = document.createElement("a"); a.href = "https://example.com/new?q=secret"; a.target = "_blank"; a.textContent = "me@example.com"; a.id = "probe"; a.addEventListener("click", (e) => e.preventDefault()); document.querySelector("main").append(a); })()`);
+    await run(`document.getElementById("probe").click(); 1`);
+    seen = await clicks();
+    check("external links send only the host, and hide personal-looking labels", seen.includes('"href":"example.com"') && seen.includes('"label":"(hidden)"') && !seen.includes("secret") && !seen.includes("me@example"), seen);
+
+    await run(`window.__events.length = 0; (() => { const i = document.createElement("input"); i.type = "text"; i.value = "typed"; i.id = "probe-input"; document.querySelector("main").append(i); })()`);
+    await run(`document.getElementById("probe-input").click(); 1`);
+    seen = await clicks();
+    check("clicking a text field sends nothing", seen === "[]", seen);
+
+    await run(`(() => { const b = document.createElement("button"); b.textContent = "Probe"; b.id = "probe-demo"; b.disabled = false; const wrap = document.querySelector("[data-outline-skip]"); wrap.append(b); })()`);
+    await run(`document.getElementById("probe-demo").click(); 1`);
+    seen = await clicks();
+    check("clicks inside a live example count as demo clicks, without their text", seen === '[{"element":"button","label":"(demo)","area":"demo"}]', seen);
+
+    await send("Page.navigate", { url: `${BASE}/docs/components/session_tabs` });
+    await sleep(2500);
+    await run(stub);
+    await run(`(() => { const t = document.querySelector("[data-outline-skip] [role=tab]"); t.textContent = "Jane Doe payroll"; t.click(); })()`);
+    seen = await clicks();
+    check("a renamed tab's text never leaves the browser", seen.includes('"area":"demo"') && !seen.includes("Jane"), seen);
+
+    await run(`window.__events.length = 0; document.querySelector("main header button").click(); 1`);
+    await key("Escape", "Escape", 0, 27);
+    seen = await clicks();
+    check("a page's own header counts as the page, not the site header", seen.includes('"area":"main"'), seen);
   } catch (error) {
     console.log("ERROR", error.message);
     results.push(false);

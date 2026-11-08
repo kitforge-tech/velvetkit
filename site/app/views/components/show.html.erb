@@ -17,7 +17,7 @@
       <%= render(UI::Badge.new(variant: :outline, class: "font-mono")) { @component.class_name } %>
     </div>
     <p class="max-w-2xl text-lg text-muted-foreground"><%= @component.description %></p>
-<div data-controller="clipboard" data-clipboard-copied-value="Markdown copied" class="flex flex-wrap items-center gap-2">
+<div data-controller="clipboard" data-clipboard-copied-value="Markdown copied" data-clipboard-track-value="copy_markdown" class="flex flex-wrap items-center gap-2">
   <span hidden data-clipboard-target="source"><%= @component.page_markdown %></span>
   <%= render(UI::Menu.new) do |menu| %>
     <% menu.with_trigger(variant: :outline, size: :sm) do %>
@@ -36,7 +36,7 @@
       <% end %>
       <% content.with_divider %>
       <% ask_ai_links(component_url(@component, format: :md), @component.title).each do |assistant, url| %>
-        <% content.with_item(href: url, target: "_blank", rel: "noopener") do %>
+        <% content.with_item(href: url, target: "_blank", rel: "noopener", data: { umami_event: "open_in_ai", umami_event_assistant: assistant.downcase }) do %>
           <%= render(UI::Icon.new(name: "external-link", size: :sm)) %>Open in <%= assistant %>
         <% end %>
       <% end %>
