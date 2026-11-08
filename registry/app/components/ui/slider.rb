@@ -39,32 +39,38 @@ require "securerandom"
 # JavaScript, dispatch `input` on it after, and the track follows.
 class UI::Slider < UI::Base
   SIZES = {
-    sm:      { thumb: "0.875rem", track: "h-1" },
-    default: { thumb: "1rem", track: "h-1.5" },
-    lg:      { thumb: "1.5rem", track: "h-2" }
+    sm:      { thumb: "1.375rem", thumb_height: "1rem", track: "h-1.5" },
+    default: { thumb: "1.75rem", thumb_height: "1.25rem", track: "h-2.5" },
+    lg:      { thumb: "2.25rem", thumb_height: "1.625rem", track: "h-3.5" }
   }.freeze
 
   # The thumb is drawn by the browser, styled the same for WebKit and Firefox,
-  # with every class written out in full so Tailwind finds it. The input sits
-  # over the track, as tall as the thumb, so the thumb is centred on it with
-  # no offsets. Pointer events go to the track (see the controller); the input
+  # with every class written out in full so Tailwind finds it: a white pill,
+  # --thumb wide and --thumb-h tall, lifted by a shadow rather than outlined. The input sits over the track, as
+  # tall as the thumb, so the thumb is centred on it with no offsets. Pointer events go to the track (see the controller); the input
   # still takes focus and the keyboard.
   INPUT = [
-    "pointer-events-none absolute inset-0 m-0 h-(--thumb) w-full appearance-none bg-transparent outline-none",
+    "pointer-events-none absolute inset-0 m-0 h-(--thumb-h) w-full appearance-none bg-transparent outline-none",
     "[&::-webkit-slider-runnable-track]:h-full [&::-webkit-slider-runnable-track]:bg-transparent",
     "[&::-moz-range-track]:bg-transparent",
-    "[&::-webkit-slider-thumb]:size-(--thumb) [&::-webkit-slider-thumb]:appearance-none " \
-    "[&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 " \
-    "[&::-webkit-slider-thumb]:border-primary [&::-webkit-slider-thumb]:bg-background " \
-    "[&::-webkit-slider-thumb]:shadow-sm [&::-webkit-slider-thumb]:transition-[box-shadow,scale] " \
-    "[&::-webkit-slider-thumb]:duration-150 motion-reduce:[&::-webkit-slider-thumb]:transition-none",
-    "[&::-moz-range-thumb]:box-border [&::-moz-range-thumb]:size-(--thumb) [&::-moz-range-thumb]:rounded-full " \
-    "[&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-primary [&::-moz-range-thumb]:bg-background " \
-    "[&::-moz-range-thumb]:shadow-sm [&::-moz-range-thumb]:transition-[box-shadow,scale] " \
-    "[&::-moz-range-thumb]:duration-150 motion-reduce:[&::-moz-range-thumb]:transition-none",
+    "[&::-webkit-slider-thumb]:h-(--thumb-h) [&::-webkit-slider-thumb]:w-(--thumb) " \
+    "[&::-webkit-slider-thumb]:box-border [&::-webkit-slider-thumb]:appearance-none " \
+    "[&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-3 " \
+    "[&::-webkit-slider-thumb]:border-transparent [&::-webkit-slider-thumb]:bg-white " \
+    "[&::-webkit-slider-thumb]:shadow-[0_1px_3px_rgb(0_0_0/0.3),0_0_0_0.5px_rgb(0_0_0/0.08)] " \
+    "[&::-webkit-slider-thumb]:transition-[border-color,box-shadow,scale] [&::-webkit-slider-thumb]:duration-150 " \
+    "motion-reduce:[&::-webkit-slider-thumb]:transition-none",
+    "[&::-moz-range-thumb]:h-(--thumb-h) [&::-moz-range-thumb]:w-(--thumb) " \
+    "[&::-moz-range-thumb]:box-border [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-3 " \
+    "[&::-moz-range-thumb]:border-transparent [&::-moz-range-thumb]:bg-white " \
+    "[&::-moz-range-thumb]:shadow-[0_1px_3px_rgb(0_0_0/0.3),0_0_0_0.5px_rgb(0_0_0/0.08)] " \
+    "[&::-moz-range-thumb]:transition-[border-color,box-shadow,scale] [&::-moz-range-thumb]:duration-150 " \
+    "motion-reduce:[&::-moz-range-thumb]:transition-none",
     "focus-visible:[&::-webkit-slider-thumb]:ring-3 focus-visible:[&::-webkit-slider-thumb]:ring-ring/40",
     "focus-visible:[&::-moz-range-thumb]:ring-3 focus-visible:[&::-moz-range-thumb]:ring-ring/40",
-    "data-active:[&::-webkit-slider-thumb]:scale-110 data-active:[&::-moz-range-thumb]:scale-110"
+    # While dragged: a thick, faint ring in place of the shadow.
+    "data-active:[&::-webkit-slider-thumb]:border-foreground/15 data-active:[&::-moz-range-thumb]:border-foreground/15",
+    "data-active:[&::-webkit-slider-thumb]:shadow-none data-active:[&::-moz-range-thumb]:shadow-none"
   ].join(" ").freeze
 
   # The ends sit flush with the track's ends; the rest centre on their value.
@@ -121,7 +127,7 @@ class UI::Slider < UI::Base
   def root_attrs
     { **@html_attrs, class: cn("w-full space-y-2", disabled? && "opacity-50", @user_class),
       role: ("group" if range?), aria: ({ labelledby: (label_id if label_text), **@aria }.compact if range?),
-      style: "--thumb: #{SIZES[@size][:thumb]}; --from: #{number(fraction(lower))}; --to: #{number(fraction(upper))}",
+      style: "--thumb: #{SIZES[@size][:thumb]}; --thumb-h: #{SIZES[@size][:thumb_height]}; --from: #{number(fraction(lower))}; --to: #{number(fraction(upper))}",
       data: { slot: "slider", controller: "ui--slider", "ui--slider-format-value": text_format,
               "ui--slider-range-format-value": range_format, "ui--slider-labels-value": labels.to_json,
               **(@html_attrs[:data] || {}) } }.compact
@@ -135,12 +141,12 @@ class UI::Slider < UI::Base
   end
 
   def track_attrs
-    { class: cn("relative h-(--thumb) touch-pan-y select-none", disabled? ? "cursor-not-allowed" : "cursor-pointer"),
+    { class: cn("relative h-(--thumb-h) touch-pan-y select-none", disabled? ? "cursor-not-allowed" : "cursor-pointer"),
       data: { "ui--slider-target": "track",
               action: ("pointerdown->ui--slider#press" unless disabled?) } }.compact
   end
 
-  def track_class = cn("absolute inset-x-0 top-1/2 -translate-y-1/2 overflow-hidden rounded-full bg-primary/15",
+  def track_class = cn("absolute inset-x-0 top-1/2 -translate-y-1/2 overflow-hidden rounded-full bg-foreground/10",
                        SIZES[@size][:track])
 
   def input_attrs(handle)

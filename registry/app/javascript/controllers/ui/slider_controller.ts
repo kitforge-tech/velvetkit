@@ -79,7 +79,7 @@ export default class extends Controller<HTMLElement> {
     const input = this.nearest(value) ?? this.inputTargets[0];
     const before = input.value;
     this.moveTo(input, value);
-    input.focus();
+    input.focus({ focusVisible: false } as FocusOptions);
     if (input.value !== before) input.dispatchEvent(new Event('change', { bubbles: true }));
   }
 
@@ -121,7 +121,8 @@ export default class extends Controller<HTMLElement> {
     if (high && input === high) next = Math.max(next, low.valueAsNumber);
 
     input.dataset.active = '';
-    input.focus({ preventScroll: true });
+    // Focused for the keyboard to carry on from, without the keyboard's ring.
+    input.focus({ preventScroll: true, focusVisible: false } as FocusOptions);
     if (String(next) === input.value) return;
 
     input.value = String(next);
@@ -146,7 +147,7 @@ export default class extends Controller<HTMLElement> {
   private valueAt(clientX: number): number {
     const input = this.inputTargets[0];
     const rect = this.trackTarget.getBoundingClientRect();
-    const thumb = input.offsetHeight;
+    const thumb = this.thumbWidth;
     let fraction = (clientX - rect.left - thumb / 2) / Math.max(1, rect.width - thumb);
     fraction = Math.min(1, Math.max(0, fraction));
     if (this.rtl) fraction = 1 - fraction;
@@ -176,6 +177,15 @@ export default class extends Controller<HTMLElement> {
 
   private decimals(step: number): number {
     return (String(step).split('.')[1] ?? '').length;
+  }
+
+  // --thumb, in pixels: a custom property comes back as written, "0.5rem".
+  private get thumbWidth(): number {
+    const written = getComputedStyle(this.element).getPropertyValue('--thumb').trim();
+    const size = parseFloat(written) || 0;
+    if (!written.endsWith('rem')) return size;
+
+    return size * parseFloat(getComputedStyle(document.documentElement).fontSize);
   }
 
   private get rtl(): boolean {

@@ -46,10 +46,10 @@ class UI::SliderTest < ViewComponent::TestCase
 
   def test_sizes_set_the_thumb_and_track
     render_slider(size: :lg)
-    assert_includes root[:style], "--thumb: 1.5rem"
-    assert_selector ".h-2.rounded-full"
+    assert_includes root[:style], "--thumb: 2.25rem; --thumb-h: 1.625rem"
+    assert_selector ".h-3\\.5.rounded-full"
     render_slider(size: :nonsense)
-    assert_includes root[:style], "--thumb: 1rem"
+    assert_includes root[:style], "--thumb: 1.75rem; --thumb-h: 1.25rem"
   end
 
   def test_label_points_at_the_input
