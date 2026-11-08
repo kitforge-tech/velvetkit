@@ -42,14 +42,11 @@ class UI::FileField < UI::Base
     @direct_upload = direct_upload
     @max_size      = max_size
     @existing      = existing
-    @hint          = hint
     @required      = required
     @disabled      = disabled
     @user_class    = binding.local_variable_get(:class)
     @html_attrs    = html_attrs
-    # The hint is shown inside the card, under the drop prompt, so the
-    # wrapper keeps only the label and the error.
-    @wrapper       = UI::FormField.new(label: label, error: error,
+    @wrapper       = UI::FormField.new(label: label, hint: hint, error: error,
                                        required: required, disabled: disabled,
                                        label_size: label_size, label_weight: label_weight,
                                        form: form, field: field)
@@ -64,38 +61,15 @@ class UI::FileField < UI::Base
   def preview? = @preview
   def direct_upload? = @direct_upload
 
-  # The field is a card, like UI::Card: the drop area at the top and the
-  # chosen files under it.
-  def card_classes
-    cn("w-full rounded-xl border bg-card p-2 text-card-foreground shadow-sm",
-       { "border-destructive" => wrapper.error?, "opacity-50" => @disabled }, @user_class)
-  end
-
   def dropzone_classes
-    cn("relative flex cursor-pointer flex-col items-center gap-3 rounded-lg border border-dashed border-input",
-       "bg-muted/40 px-6 py-8 text-center transition-colors hover:bg-muted/70",
-       "has-[input:focus-visible]:ring-2 has-[input:focus-visible]:ring-primary has-[input:focus-visible]:ring-offset-1 ring-offset-card",
-       "data-[drag=true]:border-primary data-[drag=true]:bg-primary/5",
-       { "pointer-events-none" => @disabled })
-  end
-
-  # What the field takes, under the drop prompt: the hint, or else one made
-  # from `accept:` and `max_size:` ("Images, up to 5 MB each").
-  def requirements
-    return @hint if @hint.present?
-
-    kinds = accepted_kinds
-    size = (t(@multiple ? "ui.file_field.up_to_each" : "ui.file_field.up_to", size: human_size(@max_size),
-              default: @multiple ? "up to %{size} each" : "up to %{size}") if @max_size)
-    return nil unless kinds || size
-
-    [ kinds, size ].compact.join(", ").upcase_first
-  end
-
-  def requirements_id = "#{@input_id}-requirements"
-
-  def describedby
-    [ (requirements_id if requirements), (wrapper.error_id if wrapper.error_message.present?) ].compact.join(" ").presence
+    cn(
+      "relative flex cursor-pointer flex-col items-center gap-2 rounded-lg border-2 border-dashed p-6 text-center transition-colors",
+      "border-input hover:bg-accent/50",
+      "data-[drag=true]:border-primary data-[drag=true]:bg-primary/5",
+      { "border-destructive" => wrapper.error?,
+        "pointer-events-none opacity-50" => @disabled },
+      @user_class
+    )
   end
 
   def root_data
@@ -124,7 +98,7 @@ class UI::FileField < UI::Base
     opts[:"data-ui--file-field-target"] = "input"
     opts[:"data-action"]   = "change->ui--file-field#chosen"
     opts[:"aria-invalid"]  = "true" if wrapper.error?
-    opts[:"aria-describedby"] = describedby if describedby
+    opts[:"aria-describedby"] = wrapper.describedby if wrapper.describedby
     opts
   end
 
@@ -173,46 +147,41 @@ class UI::FileField < UI::Base
   end
 
   def tile_classes
-    "group flex min-w-0 items-center gap-3 rounded-lg border bg-background p-2 transition-colors " \
-      "data-[state=error]:border-destructive/40 data-[state=error]:bg-destructive/5"
+    "group relative flex min-w-0 flex-col overflow-hidden rounded-lg border bg-card text-card-foreground " \
+      "data-[state=error]:border-destructive"
   end
 
-  # One file, as a row: its thumbnail or an icon, its name, its size and
-  # where it's got to, a progress bar while it uploads, and a button to take
-  # it out. The controller fills in a blank one for each file chosen; the
-  # tick and the warning show by the row's state, with no script.
+  # One file: its thumbnail or an icon, a button to take it out, a progress
+  # bar for an upload, its name and size, and the signed id that keeps it. The
+  # controller fills in a blank one for each file chosen.
   def tile(name: "", size: nil, url: nil, image: false, signed_id: nil, state: "kept")
     thumb = image && url.present?
     tag.li(class: tile_classes, data: { "ui--file-field-target": "item", state: state }) do
       safe_join([
-        tag.div(class: "relative flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-md bg-muted text-muted-foreground") do
+        tag.div(class: "relative aspect-square bg-muted") do
           safe_join([
             tag.img(src: url, alt: "", class: "size-full object-cover", hidden: !thumb, data: { role: "thumb" }),
-            tag.span(render(UI::Icon.new(name: "file", size: :sm)), hidden: thumb, data: { role: "icon" })
-          ])
-        end,
-        tag.div(class: "min-w-0 flex-1") do
-          safe_join([
-            tag.p(name, title: name, class: "truncate text-sm font-medium", data: { role: "name" }),
-            tag.div(class: "flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground group-data-[state=error]:text-destructive") do
-              safe_join([
-                render(UI::Icon.new(name: "check", size: :xs, class: "hidden shrink-0 text-primary group-data-[state=uploaded]:block")),
-                render(UI::Icon.new(name: "circle-alert", size: :xs, class: "hidden shrink-0 group-data-[state=error]:block")),
-                tag.span(size ? human_size(size) : "", class: "truncate", data: { role: "meta" }),
-                tag.button(labels[:retry], type: "button", hidden: true, data: { action: "ui--file-field#retry", role: "retry" },
-                                           class: "shrink-0 rounded-sm font-medium text-primary underline-offset-4 hover:underline #{UI::Base::FOCUS_RING}")
-              ])
-            end,
-            tag.div(tag.div(class: "h-full w-0 rounded-full bg-primary transition-[width] duration-200", data: { role: "bar" }),
+            tag.span(render(UI::Icon.new(name: "file", size: :lg)), hidden: thumb, data: { role: "icon" },
+                                                                    class: "absolute inset-0 flex items-center justify-center text-muted-foreground"),
+            tag.button(render(UI::Icon.new(name: "x", size: :xs)), type: "button",
+                       aria: { label: labels[:remove].sub("%{name}", name.to_s) },
+                       class: "absolute end-1.5 top-1.5 flex size-6 items-center justify-center rounded-full border bg-background/90 " \
+                              "text-foreground shadow-sm hover:bg-background #{UI::Base::FOCUS_RING}",
+                       data: { action: "ui--file-field#remove", role: "remove" }),
+            tag.div(tag.div(class: "h-full w-0 bg-primary transition-[width] duration-200", data: { role: "bar" }),
                     hidden: true, role: "progressbar", aria: { valuemin: 0, valuemax: 100, label: name },
-                    class: "mt-1.5 h-1 overflow-hidden rounded-full bg-muted", data: { role: "progress" })
+                    class: "absolute inset-x-0 bottom-0 h-1 bg-foreground/10", data: { role: "progress" })
           ])
         end,
-        tag.button(render(UI::Icon.new(name: "x", size: :sm)), type: "button",
-                   aria: { label: labels[:remove].sub("%{name}", name.to_s) },
-                   class: "flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground " \
-                          "hover:bg-accent hover:text-foreground #{UI::Base::FOCUS_RING}",
-                   data: { action: "ui--file-field#remove", role: "remove" }),
+        tag.div(class: "min-w-0 p-2") do
+          safe_join([
+            tag.p(name, title: name, class: "truncate text-xs font-medium", data: { role: "name" }),
+            tag.p(size ? human_size(size) : "", class: "line-clamp-2 text-xs text-muted-foreground group-data-[state=error]:text-destructive",
+                                                data: { role: "meta" }),
+            tag.button(labels[:retry], type: "button", hidden: true, data: { action: "ui--file-field#retry", role: "retry" },
+                                       class: "mt-1 rounded-sm text-xs font-medium text-primary underline-offset-4 hover:underline #{UI::Base::FOCUS_RING}")
+          ])
+        end,
         (tag.input(type: "hidden", name: signed_id_name, value: signed_id, data: { role: "signed" }) if signed_id)
       ])
     end
@@ -226,16 +195,6 @@ class UI::FileField < UI::Base
     units = I18n.t("number.human.storage_units.units", default: {})
     { byte: (units[:byte].is_a?(Hash) ? units[:byte][:other] : units[:byte]) || "Bytes",
       kb: units[:kb] || "KB", mb: units[:mb] || "MB", gb: units[:gb] || "GB" }
-  end
-
-  # "Images", or "PDF, DOCX" for extensions, from `accept:`.
-  def accepted_kinds
-    return nil if @accept.blank?
-
-    rules = @accept.split(",").map(&:strip)
-    return t("ui.file_field.images", default: "Images") if rules == [ "image/*" ]
-
-    rules.map { |rule| rule.start_with?(".") ? rule.delete_prefix(".").upcase : rule.split("/").last.upcase }.join(", ")
   end
 
   def bound_attachments

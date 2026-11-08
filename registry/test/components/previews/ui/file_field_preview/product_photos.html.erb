@@ -5,7 +5,7 @@
     record: render(UI::FileField.new(form: f, field: :photos, ...)). %>
 <form action="/demo/products/1" method="post" class="flex max-w-xl flex-col items-start gap-4">
   <input type="hidden" name="_method" value="patch">
-  <%= render(UI::FileField.new(name: "product[photos][]", label: "Photos",
+  <%= render(UI::FileField.new(name: "product[photos][]", label: "Photos", hint: "PNG or JPG, up to 5 MB each",
                                multiple: true, accept: "image/*", max_size: 5.megabytes, direct_upload: true,
                                existing: UI::FileFieldPreview.kept_photos)) %>
   <%= render(UI::Button.new(type: :submit)) { "Save product" } %>
