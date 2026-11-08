@@ -126,7 +126,7 @@ class UI::ProgressTest < ViewComponent::TestCase
   end
 
   def test_the_legend_can_be_left_out_and_the_amounts_written_per_segment
-    render_inline(UI::Progress.new(legend: false, segment_text: "%{percent}%")) do |progress|
+    render_inline(UI::Progress.new(max: 100, legend: false, segment_text: "%{percent}%")) do |progress|
       progress.with_segment(value: 30, label: "Done")
       progress.with_segment(value: 10, label: "In review", value_text: "10 tasks")
     end
@@ -141,6 +141,37 @@ class UI::ProgressTest < ViewComponent::TestCase
       progress.with_segment(value: -3, label: "C")
     end
     assert_selector "[role='progressbar'][aria-valuenow='10'][data-state='complete']"
+  end
+
+  def test_segments_with_no_max_fill_the_bar_as_shares_of_a_whole
+    render_inline(UI::Progress.new(label: "Visits by source")) do |progress|
+      progress.with_segment(value: 5_210, label: "Search")
+      progress.with_segment(value: 2_870, label: "Direct")
+      progress.with_segment(value: 1_420, label: "Social")
+    end
+    assert_selector "[role='progressbar'][aria-valuenow='9500'][aria-valuemax='9500'][data-state='complete']"
+    assert_selector "[data-slot='progress-indicator'][style='width: 100%']"
+    assert_selector "[data-ui--progress-max-value='9500']"
+    assert_no_selector "[aria-busy]"
+    items = page.all("[data-slot='progress-legend'] li").map { |li| li.text.squish }
+    assert_equal [ "Search 55%", "Direct 30%", "Social 15%" ], items
+  end
+
+  def test_shares_of_a_whole_can_still_show_their_values
+    render_inline(UI::Progress.new(segment_text: "%{value} visits")) do |progress|
+      progress.with_segment(value: 30, label: "Search")
+      progress.with_segment(value: 10, label: "Direct")
+    end
+    assert_equal [ "Search 30 visits", "Direct 10 visits" ],
+                 page.all("[data-slot='progress-legend'] li").map { |li| li.text.squish }
+  end
+
+  def test_segments_that_add_up_to_nothing_leave_the_bar_empty
+    render_inline(UI::Progress.new(label: "Nothing yet")) do |progress|
+      progress.with_segment(value: 0, label: "Search")
+    end
+    assert_selector "[role='progressbar'][aria-valuenow='0'][aria-valuemax='100'][data-state='loading']"
+    assert_selector "[data-slot='progress-indicator'][style='width: 0%']"
   end
 
   def test_a_single_bar_has_no_segments_or_legend

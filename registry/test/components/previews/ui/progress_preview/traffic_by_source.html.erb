@@ -1,0 +1,15 @@
+<%# No max:, so the segments fill the bar and the legend shows each one's share. %>
+<%= render(UI::Card.new(class: "max-w-md")) do |card| %>
+  <% card.with_header do |header| %>
+    <% header.with_title { "Where visitors came from" } %>
+    <% header.with_description { "9,500 visits in the last 30 days" } %>
+  <% end %>
+  <% card.with_content do %>
+    <%= render(UI::Progress.new(size: :lg, aria: { label: "Visits by source" })) do |progress| %>
+      <% progress.with_segment(value: 5_210, label: "Search") %>
+      <% progress.with_segment(value: 2_870, label: "Direct") %>
+      <% progress.with_segment(value: 1_045, label: "Social") %>
+      <% progress.with_segment(value: 375, label: "Email") %>
+    <% end %>
+  <% end %>
+<% end %>

@@ -32,6 +32,9 @@ class UI::ProgressPreview < ViewComponent::Preview
   # @label Tasks by Status
   def tasks_by_status; render_with_template; end
 
+  # @label Traffic by Source, Shares of a Whole
+  def traffic_by_source; render_with_template; end
+
   # @label Steps Done
   def steps; render_with_template; end
 

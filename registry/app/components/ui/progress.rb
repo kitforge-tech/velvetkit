@@ -18,10 +18,20 @@ require "securerandom"
 #     <% progress.with_segment(value: 3.1, label: "Mail") %>
 #   <% end %>
 #
+# With `max:` the segments fill as far as their total and the rest of the track
+# is what's left: free space, tasks to do. Leave `max:` out and they fill the
+# bar as shares of a whole, like traffic by source:
+#
+#   <%= render(UI::Progress.new(label: "Visits by source")) do |progress| %>
+#     <% progress.with_segment(value: 5_210, label: "Search") %>
+#     <% progress.with_segment(value: 2_870, label: "Direct") %>
+#   <% end %>
+#
 # Segments take the chart colours in order. The legend names them, since a
 # colour alone doesn't say which is which; `legend: false` leaves it out when
 # the page already says. `segment_text:` is each one's amount in the legend,
-# with %{value} and %{percent} (its share of max).
+# with %{value} and %{percent} (its share of max). It defaults to the value
+# against a max, and to the percentage for shares of a whole.
 #
 # `value_text:` is what's shown (with `show_value: true`) and what a screen
 # reader hears. It can use %{value}, %{max} and %{percent}, and defaults to
@@ -52,10 +62,10 @@ class UI::Progress < UI::Base
 
   renders_many :segments, UI::Progress::Segment
 
-  def initialize(value: nil, max: 100, label: nil, value_text: nil, show_value: false, size: :default,
-                 tone: :default, legend: true, segment_text: "%{value}", class: nil, **html_attrs)
-    @max        = max.to_f.positive? ? max : 100
-    @value      = value&.clamp(0, @max)
+  def initialize(value: nil, max: nil, label: nil, value_text: nil, show_value: false, size: :default,
+                 tone: :default, legend: true, segment_text: nil, class: nil, **html_attrs)
+    @given_max  = max if max.to_f.positive?
+    @value      = value&.clamp(0, @given_max || 100)
     @legend     = legend
     @segment_text = segment_text
     @label      = label
@@ -71,11 +81,23 @@ class UI::Progress < UI::Base
 
   attr_reader :label, :label_id
 
+  # 100 unless given; with segments and no max:, their total, so they fill the
+  # bar as shares of a whole.
+  def max
+    return @given_max if @given_max
+
+    total = segments.sum(&:value)
+    whole? ? total : 100
+  end
+
+  # Segments with no max: shares of a whole, not parts of a limit.
+  def whole? = @given_max.nil? && segmented? && segments.sum(&:value).positive?
+
   # With segments, their total; the bar's own value: is ignored.
   def value
     return @value unless segmented?
 
-    segments.sum(&:value).clamp(0, @max)
+    segments.sum(&:value).clamp(0, max)
   end
 
   def segmented? = segments.any?
@@ -86,7 +108,7 @@ class UI::Progress < UI::Base
   def percent
     return nil if indeterminate?
 
-    (value.to_f / @max * 100).floor
+    (value.to_f / max * 100).floor
   end
 
   def text_format = @value_text || t("ui.progress.value_text", default: "%{percent}%")
@@ -94,14 +116,14 @@ class UI::Progress < UI::Base
   def value_text
     return nil if indeterminate?
 
-    text_format.gsub("%{value}", number(value)).gsub("%{max}", number(@max)).gsub("%{percent}", percent.to_s)
+    text_format.gsub("%{value}", number(value)).gsub("%{max}", number(max)).gsub("%{percent}", percent.to_s)
   end
 
   def header? = @label.present? || (@show_value && !indeterminate?)
 
   def root_attrs
-    { **@html_attrs, class: cn("w-full", header? && "space-y-1.5", @user_class),
-      data: { slot: "progress", controller: "ui--progress", "ui--progress-max-value": @max,
+    { **@html_attrs, class: cn("w-full", (header? || legend?) && "space-y-1.5", @user_class),
+      data: { slot: "progress", controller: "ui--progress", "ui--progress-max-value": number(max),
               "ui--progress-format-value": text_format,
               "ui--progress-determinate-class": DETERMINATE, "ui--progress-indeterminate-class": INDETERMINATE,
               **(@html_attrs[:data] || {}),
@@ -112,7 +134,7 @@ class UI::Progress < UI::Base
     named = @label.present? ? { labelledby: label_id } : { label: t("ui.progress.label", default: "Progress") }
     { role: "progressbar", class: cn("relative w-full overflow-hidden rounded-full", SIZES[@size], TONES[@tone][:track]),
       data: { state: state, "ui--progress-target": "bar" },
-      aria: { valuemin: 0, valuemax: number(@max), valuenow: (number(value) unless indeterminate?),
+      aria: { valuemin: 0, valuemax: number(max), valuenow: (number(value) unless indeterminate?),
               valuetext: value_text, busy: (true if state != "complete"), **named, **@aria }.compact }
   end
 
@@ -139,8 +161,9 @@ class UI::Progress < UI::Base
 
   def segment_text(segment)
     segment.value_text ||
-      @segment_text.gsub("%{value}", number(segment.value))
-                   .gsub("%{percent}", (segment.value / @max.to_f * 100).floor.to_s)
+      (@segment_text || (whole? ? "%{percent}%" : "%{value}"))
+      .gsub("%{value}", number(segment.value))
+      .gsub("%{percent}", share(segment).to_s)
   end
 
   private
@@ -148,8 +171,11 @@ class UI::Progress < UI::Base
   def state
     return "indeterminate" if indeterminate?
 
-    value >= @max ? "complete" : "loading"
+    value >= max ? "complete" : "loading"
   end
+
+  # Rounded, not down: shares of a whole should add up to about 100.
+  def share(segment) = (segment.value / max.to_f * 100).round
 
   # 3, not 3.0; 2.5 stays 2.5.
   def number(n) = (n.to_f % 1).zero? ? n.to_i.to_s : n.to_s
