@@ -29,14 +29,23 @@ Changes:
   form, it shows the record's attachments.
 - The chart colours, `--chart-1` to `--chart-5`, are now velvet, orange,
   aqua, blue and magenta, checked for colour-blind readers in both themes.
+- `velvetkit:add` puts the bundles Chart, Date Picker and Data Grid load on
+  demand (`chart_js.ts`, `vanilla_calendar.ts`, `ag_grid.ts`) into the app's
+  JavaScript build: `bun.config.js`, `webpack.config.js`, or a build script
+  that lists `application.js`. Before, they were copied but never built, so
+  those components failed to load their library.
 
 Upgrading an app: re-run `velvetkit:add` for `date_picker`, `select` and
 `file_field`, and copy the new `--chart-*` values into your `velvetkit.css`.
 `date_picker` now needs `vanilla-calendar-pro` instead of `cally`, and loads
 `app/javascript/vanilla_calendar.ts` as its own entry point; `file_field`
-needs `@rails/activestorage`.
+needs `@rails/activestorage`. If you added `chart_js.ts`,
+`vanilla_calendar.ts` or `ag_grid.ts` to your build by hand, `add` leaves
+it as it is.
 
 - Fix: Rails 8.1.4.1, for security advisories in Active Storage and Action Pack.
+- Fix: the docs site shows a component added to the catalog without a server
+  restart.
 
 ## 0.3.0 — 2026-11-03
 
