@@ -1,0 +1,4 @@
+<%# One file: choosing another replaces it. Without direct_upload the file goes with the form. %>
+<div class="max-w-xs">
+  <%= render(UI::FileField.new(name: "store[logo]", label: "Store logo", hint: "Square works best", accept: "image/*")) %>
+</div>
