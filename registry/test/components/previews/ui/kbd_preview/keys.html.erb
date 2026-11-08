@@ -1,7 +1,8 @@
-<%# On a Mac these show ⌘ ⌥ ⇧ symbols; elsewhere Ctrl, Alt and Shift, with a +. %>
+<%# On a Mac these show ⌘ ⌥ ⇧ symbols; elsewhere Ctrl, Alt and Shift, with a +.
+    cmd is ⌘ on a Mac, the Windows key on Windows, and Super on Linux. %>
 <dl class="grid max-w-md grid-cols-[1fr_auto] items-center gap-x-8 gap-y-3 text-sm">
   <% [["One key", "k"], ["Escape", "esc"], ["Enter", "enter"], ["Arrows", "up"], ["A combination", "mod+k"],
-      ["Three keys", "mod+shift+p"], ["Option, or Alt", "alt+n"], ["A symbol", "?"], ["Function key", "F5"]].each do |name, keys| %>
+      ["Three keys", "mod+shift+p"], ["Option, or Alt", "alt+n"], ["Command, Win or Super", "cmd+l"], ["A symbol", "?"], ["Function key", "F5"]].each do |name, keys| %>
     <dt class="text-muted-foreground"><%= name %></dt>
     <dd><%= render(UI::Kbd.new(keys)) %></dd>
   <% end %>

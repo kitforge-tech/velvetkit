@@ -23,9 +23,21 @@ const ARIA_NAMES: Record<string, string> = {
 
 export type Shortcut = { mods: Set<Modifier>; key: string };
 
-export const isApple = () => {
+const platformName = () => {
   const nav = navigator as Navigator & { userAgentData?: { platform?: string } };
-  return /mac|iphone|ipad|ipod/i.test(nav.userAgentData?.platform || navigator.platform || navigator.userAgent);
+  return nav.userAgentData?.platform || navigator.platform || navigator.userAgent;
+};
+
+export const isApple = () => /mac|iphone|ipad|ipod/i.test(platformName());
+
+// What to label keys for: a Mac, a Linux desktop (where the Windows key is
+// Super), or anything else. Android and ChromeOS report Linux too.
+export const keyboardPlatform = (): 'mac' | 'linux' | 'other' => {
+  if (isApple()) return 'mac';
+  const name = platformName();
+  const agent = navigator.userAgent;
+  if (/linux|x11/i.test(name) && !/android|cros/i.test(agent)) return 'linux';
+  return 'other';
 };
 
 export const parseShortcut = (keys: string): Shortcut => {
