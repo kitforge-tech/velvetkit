@@ -18,6 +18,13 @@ module Velvetkit
     @registry ||= Registry.new(File.expand_path("../registry", __dir__))
   end
 
+  # Forgets the catalog, so the next call reads components.yml again. The docs
+  # site calls it on each code reload in development, so a component added to
+  # the catalog shows up without restarting the server.
+  def self.reload_registry!
+    @registry = nil
+  end
+
   # Everything an AI agent needs to build UI in an app: the rules, then a
   # reference for each component, all in the app's namespace.
   def self.agent_guide(components, namespace: Namespace.new(Namespace::CANONICAL))

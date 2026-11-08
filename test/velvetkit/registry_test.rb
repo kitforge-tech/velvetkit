@@ -8,6 +8,13 @@ require "fileutils"
 class Velvetkit::RegistryTest < Minitest::Test
   def registry = Velvetkit.registry
 
+  def test_reload_registry_reads_the_catalog_again
+    before = Velvetkit.registry
+    Velvetkit.reload_registry!
+    refute_same before, Velvetkit.registry
+    assert_equal before.names, Velvetkit.registry.names
+  end
+
   def test_every_component_directory_is_in_the_catalog
     on_disk = Dir.glob("*.rb", base: File.join(registry.root, Velvetkit::Registry::COMPONENTS)).map { |f| File.basename(f, ".rb") }
     on_disk += Dir.glob("*/", base: File.join(registry.root, Velvetkit::Registry::COMPONENTS)).map { |d| d.chomp("/") }
