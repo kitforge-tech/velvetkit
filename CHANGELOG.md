@@ -1,5 +1,76 @@
 # Changelog
 
+## Unreleased
+
+New components:
+
+- `Timeline`: dated entries down the page (order status, stock history, an
+  activity log), drawn as circles, dots or circles in a colour each.
+- `NumberInput`: a number field with - and + buttons that keep counting while
+  held; `change` fires once on release, so a cart row submits once.
+- `Gallery`: product photos with thumbnails and swiping, opening over the
+  page to zoom and pan, or `zoom: :hover` for a lens and a magnified pane.
+- `Chart`: line, bar, stacked bar, pie and donut charts on Chart.js, with a
+  legend, tooltips, keyboard reading, a table of the numbers, and animation.
+  The docs site has a Charts section with a page for each.
+
+Changes:
+
+- `Select` searches the server as you type with `url:` (JSON back), with a
+  spinner when it's slow, results remembered for a minute, and choices kept
+  when later searches no longer list them.
+- `DatePicker` moves from Cally to Vanilla Calendar Pro and takes
+  `range: true` for From and To, with presets such as Last 7 days, two months
+  side by side, and a hover preview. Typed dates take digits only, the
+  separators go in as you type, and the calendar opens on click or focus.
+- `FileField` shows a tile for each chosen file, checks `accept:` and
+  `max_size:`, and with `direct_upload: true` sends each file to storage
+  through Active Storage as it's chosen, with a progress bar. Bound to a
+  form, it shows the record's attachments.
+- The chart colours, `--chart-1` to `--chart-5`, are now velvet, orange,
+  aqua, blue and magenta, checked for colour-blind readers in both themes.
+
+Upgrading an app: re-run `velvetkit:add` for `date_picker`, `select` and
+`file_field`, and copy the new `--chart-*` values into your `velvetkit.css`.
+`date_picker` now needs `vanilla-calendar-pro` instead of `cally`, and loads
+`app/javascript/vanilla_calendar.ts` as its own entry point; `file_field`
+needs `@rails/activestorage`.
+
+- Fix: Rails 8.1.4.1, for security advisories in Active Storage and Action Pack.
+
+## 0.3.0 — 2026-11-03
+
+- `Stepper`: the steps of a multi-step form, done, current or to come, with
+  dots, centred labels, panels moved between in the browser, and links back
+  to done steps.
+- `ConfirmDialog`: a styled dialog that answers `data-turbo-confirm`, so every
+  existing confirm uses it.
+- `ToggleGroup`: a row of buttons choosing one or several, posting like
+  radios or checkboxes.
+- `EmptyState`: an icon, title, text and actions for a page with nothing to
+  list.
+- Icons come from Lucide, Tabler or Phosphor, chosen with
+  `velvetkit:install --icons=`, and are drawn as inline SVG.
+
+## 0.2.2 — 2026-11-02
+
+- Fix: the `plus`, `search`, `ellipsis-vertical` and `grip-vertical` icons were
+  missing from installs.
+
+## 0.2.1 — 2026-11-01
+
+- `NavigationMenu`: site navigation with links and panels of rich links that
+  open on hover or click.
+
+## 0.2.0 — 2026-11-01
+
+- `Toast`: stacked messages that dismiss themselves.
+- `SessionTabs`: tabs for open sessions, with a button to add one.
+- `Skeleton` and `FileField`.
+- Fix: `Menu` content positions itself with the fixed strategy, so it isn't
+  clipped by a scrolling container.
+- Fix: dependencies updated for security advisories in `addressable` and `rack`.
+
 ## 0.1.0.beta — 2026-10-26
 
 - First release of the component library.
