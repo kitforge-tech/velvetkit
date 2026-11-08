@@ -82,7 +82,7 @@ class UI::Kbd < UI::Base
   def platform = apple? ? "mac" : "other"
 
   # [mac label, mac name, other label, other name] for one key of a combo.
-  def key_labels(key, combo = [key])
+  def key_labels(key, combo = [ key ])
     name = ALIASES.fetch(key.downcase, key.downcase)
     return KEYS[name] if KEYS.key?(name)
 
