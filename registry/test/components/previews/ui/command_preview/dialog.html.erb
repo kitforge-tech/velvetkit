@@ -1,0 +1,24 @@
+<%# Press ⌘K (Ctrl+K off a Mac) anywhere on the page, or click the button. %>
+<div>
+  <%= render(UI::Command.new(dialog: true)) do |command| %>
+    <% command.with_trigger(class: "w-72") %>
+    <% command.with_group(heading: "Pages") do |group| %>
+      <% group.with_item(label: "Dashboard", href: "/dashboard", icon: "layout-dashboard", shortcut: %w[g d]) %>
+      <% group.with_item(label: "Projects", href: "/projects", icon: "folder", shortcut: %w[g p]) %>
+      <% group.with_item(label: "Calendar", href: "/calendar", icon: "calendar") %>
+      <% group.with_item(label: "Reports", href: "/reports", icon: "chart-column", description: "Revenue, usage and growth") %>
+      <% group.with_item(label: "Settings", href: "/settings", icon: "settings", shortcut: "mod+,") %>
+    <% end %>
+    <% command.with_group(heading: "Actions") do |group| %>
+      <% group.with_item(label: "New project", value: "new-project", icon: "plus", keywords: "create add") %>
+      <% group.with_item(label: "Invite people", value: "invite", icon: "user-plus", keywords: "team member colleague") %>
+      <% group.with_item(label: "Switch theme", value: "theme", icon: "sun-moon", keywords: "dark light mode") %>
+      <% group.with_item(label: "Export data", value: "export", icon: "download", disabled: true, description: "Available on the Team plan") %>
+    <% end %>
+    <% command.with_group(heading: "Help") do |group| %>
+      <% group.with_item(label: "Keyboard shortcuts", value: "shortcuts", icon: "keyboard", shortcut: "?") %>
+      <% group.with_item(label: "Contact support", value: "support", icon: "life-buoy", keywords: "help chat email") %>
+    <% end %>
+  <% end %>
+  <%= render "ui/command_preview/picked" %>
+</div>

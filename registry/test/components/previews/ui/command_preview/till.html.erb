@@ -1,0 +1,17 @@
+<%# A point-of-sale till: F3 opens it, type part of a product's name or code, Enter adds it. %>
+<div>
+  <%= render(UI::Command.new(dialog: true, shortcut: "F3", placeholder: "Product name or code…", label: "Add to sale")) do |command| %>
+    <% command.with_trigger(label: "Add a product", class: "w-64") %>
+    <% command.with_group(heading: "Products") do |group| %>
+      <% [["Basmati rice, 5 kg", "RIC-005", "$12.40"], ["Toor dal, 1 kg", "DAL-001", "$3.10"], ["Sunflower oil, 1 L", "OIL-101", "$2.85"],
+          ["Ghee, 500 g", "GHE-500", "$7.20"], ["Masala chai, 250 g", "TEA-250", "$4.50"], ["Wheat flour, 10 kg", "ATA-010", "$9.90"]].each do |name, code, price| %>
+        <% group.with_item(label: name, value: code, keywords: code, description: "#{code} · #{price}") %>
+      <% end %>
+    <% end %>
+    <% command.with_group(heading: "Sale") do |group| %>
+      <% group.with_item(label: "Hold this sale", value: "hold", icon: "pause") %>
+      <% group.with_item(label: "Apply a discount", value: "discount", icon: "percent", shortcut: "F6") %>
+    <% end %>
+  <% end %>
+  <%= render "ui/command_preview/picked" %>
+</div>

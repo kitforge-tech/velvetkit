@@ -102,3 +102,6 @@ application.register("ui--progress", UI__ProgressController)
 
 import UI__KbdController from "./ui/kbd_controller"
 application.register("ui--kbd", UI__KbdController)
+
+import UI__CommandController from "./ui/command_controller"
+application.register("ui--command", UI__CommandController)

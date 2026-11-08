@@ -1,0 +1,16 @@
+<%# Not in a dialog: a search box with its list, on the page, like a help centre's. %>
+<div class="max-w-md">
+  <%= render(UI::Command.new(placeholder: "Search help articles…", label: "Help articles")) do |command| %>
+    <% command.with_group(heading: "Getting started") do |group| %>
+      <% group.with_item(label: "Create your account", href: "#account", icon: "file-text") %>
+      <% group.with_item(label: "Invite your team", href: "#team", icon: "file-text", keywords: "colleagues members") %>
+      <% group.with_item(label: "Import from a spreadsheet", href: "#import", icon: "file-text", keywords: "csv excel upload") %>
+    <% end %>
+    <% command.with_group(heading: "Billing") do |group| %>
+      <% group.with_item(label: "Change your plan", href: "#plan", icon: "file-text", keywords: "upgrade downgrade") %>
+      <% group.with_item(label: "Download invoices", href: "#invoices", icon: "file-text", keywords: "receipt pdf") %>
+      <% group.with_item(label: "Cancel your subscription", href: "#cancel", icon: "file-text") %>
+    <% end %>
+  <% end %>
+  <%= render "ui/command_preview/picked" %>
+</div>

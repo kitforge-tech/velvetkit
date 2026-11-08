@@ -54,6 +54,17 @@ en:
       label: 'Loading'
     dialog:
       close_label: 'Close'
+    command:
+      placeholder: 'Type a command or search…'
+      label: 'Command menu'
+      trigger: 'Search…'
+      results: 'Results'
+      empty: 'No results found.'
+      searching: 'Searching…'
+      failed: "Couldn't search. Try again."
+      to_move: 'to move'
+      to_pick: 'to pick'
+      to_close: 'to close'
     kbd:
       then: 'then'
     number_input:
