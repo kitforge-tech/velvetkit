@@ -1,0 +1,4 @@
+<div class="grid max-w-sm gap-6">
+  <%= render(UI::Progress.new(label: "Preparing your export")) %>
+  <%= render(UI::Progress.new(size: :sm, aria: { label: "Loading results" })) %>
+</div>

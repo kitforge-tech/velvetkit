@@ -1,0 +1,4 @@
+<div class="max-w-sm space-y-2 rounded-lg border p-4">
+  <p class="text-sm"><span class="font-medium">$12.50 more</span> for free shipping</p>
+  <%= render(UI::Progress.new(value: 37.5, max: 50, size: :sm, value_text: "$%{value} of $%{max}", aria: { label: "Towards free shipping" })) %>
+</div>

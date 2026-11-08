@@ -91,6 +91,8 @@ components:
     description: A password field with a show/hide toggle.
   popover:
     description: Floating content anchored to a trigger.
+  progress:
+    description: A bar showing how far along a task is, or that it's still going.
   radio_group:
     description: A set of radio buttons.
   native_select:

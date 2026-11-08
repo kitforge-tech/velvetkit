@@ -1,0 +1,14 @@
+<%# Two segments of a total, with the rest left as the track: "to do". %>
+<%= render(UI::Card.new(class: "max-w-md")) do |card| %>
+  <% card.with_header do |header| %>
+    <% header.with_title { "Website relaunch" } %>
+    <% header.with_description { "40 tasks, due Friday" } %>
+  <% end %>
+  <% card.with_content do %>
+    <%= render(UI::Progress.new(max: 40, size: :lg, label: "Tasks", value_text: "%{value} of %{max} underway or done",
+                                segment_text: "%{value} tasks", show_value: true)) do |progress| %>
+      <% progress.with_segment(value: 22, label: "Done", color: 3) %>
+      <% progress.with_segment(value: 9, label: "In review", color: 4) %>
+    <% end %>
+  <% end %>
+<% end %>

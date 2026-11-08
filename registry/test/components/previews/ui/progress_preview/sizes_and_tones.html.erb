@@ -1,0 +1,8 @@
+<div class="grid max-w-sm gap-6">
+  <%= render(UI::Progress.new(value: 30, size: :sm, label: "Small", show_value: true)) %>
+  <%= render(UI::Progress.new(value: 55, label: "Default", show_value: true)) %>
+  <%= render(UI::Progress.new(value: 80, size: :lg, label: "Large", show_value: true)) %>
+  <%= render(UI::Progress.new(value: 100, tone: :success, label: "Success", show_value: true)) %>
+  <%= render(UI::Progress.new(value: 85, tone: :warning, label: "Warning", show_value: true)) %>
+  <%= render(UI::Progress.new(value: 97, tone: :destructive, label: "Destructive", show_value: true)) %>
+</div>

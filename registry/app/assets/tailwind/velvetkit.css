@@ -269,3 +269,9 @@ select:-webkit-autofill {
 .dark .velvetkit-calendar .vc-arrow::before {
   filter: invert(1);
 }
+
+/* UI::Progress with no value: a short bar sliding across the track. */
+@keyframes velvetkit-progress {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(250%); }
+}

@@ -96,3 +96,6 @@ application.register("ui--gallery", UI__GalleryController)
 
 import UI__ChartController from "./ui/chart_controller"
 application.register("ui--chart", UI__ChartController)
+
+import UI__ProgressController from "./ui/progress_controller"
+application.register("ui--progress", UI__ProgressController)

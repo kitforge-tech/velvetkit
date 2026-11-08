@@ -1,0 +1,36 @@
+<%# Stands in for a real upload: DirectUpload's progress event would set the same attribute. %>
+<div id="progress-upload-demo" class="grid max-w-sm gap-4">
+  <%= render(UI::Progress.new(value: 0, max: 4.2, label: "quarterly-report.pdf", value_text: "%{value} of %{max} MB",
+                              show_value: true, data: { demo: "bar" })) %>
+  <div class="flex items-center gap-3">
+    <%= render(UI::Button.new(size: :sm, data: { demo: "start" })) { "Upload" } %>
+    <span class="text-sm text-muted-foreground" data-demo="status" role="status"></span>
+  </div>
+</div>
+<script>
+  (() => {
+    const root = document.getElementById("progress-upload-demo");
+    const bar = root.querySelector('[data-demo="bar"]');
+    const status = root.querySelector('[data-demo="status"]');
+    const start = root.querySelector('[data-demo="start"]');
+    let timer;
+
+    start.addEventListener("click", () => {
+      clearInterval(timer);
+      let sent = 0;
+      start.disabled = true;
+      status.textContent = "";
+      bar.setAttribute("data-ui--progress-value-value", "0");
+      timer = setInterval(() => {
+        sent = Math.min(4.2, sent + 0.15 + Math.random() * 0.35);
+        bar.setAttribute("data-ui--progress-value-value", sent.toFixed(1));
+      }, 250);
+    });
+
+    bar.addEventListener("ui--progress:complete", () => {
+      clearInterval(timer);
+      start.disabled = false;
+      status.textContent = "Uploaded";
+    });
+  })();
+</script>
