@@ -59,6 +59,28 @@ class UI::CommandTest < ViewComponent::TestCase
     assert_no_selector "button[data-action='ui--command#open'] [data-slot='kbd']"
   end
 
+  def test_more_than_one_shortcut_the_trigger_showing_the_first
+    render_inline(UI::Command.new(dialog: true, shortcut: [ "mod+k", "/" ])) { |c| c.with_trigger }
+    assert_selector "[data-ui--command-shortcut-value='mod+k /']"
+    assert_selector "button[data-action='ui--command#open'] [data-slot='kbd']", count: 1
+    assert_selector "button [data-slot='kbd'] kbd", text: "K"
+  end
+
+  def test_the_trigger_keeps_its_own_aria_and_data
+    render_inline(UI::Command.new(dialog: true)) do |c|
+      c.with_trigger(aria: { label: "Search the docs" }, data: { testid: "open", action: "click->other#thing" })
+    end
+    assert_selector "button[aria-label='Search the docs'][aria-haspopup='dialog'][data-testid='open']"
+    assert_selector "button[data-action='ui--command#open click->other#thing']"
+  end
+
+  def test_sorting_groups_and_saying_what_empty_means
+    render_command(sort_groups: true, empty: "Nothing like that here.")
+    assert_selector "[data-ui--command-sort-groups-value='true'][data-ui--command-empty-value='Nothing like that here.']"
+    render_command
+    assert_selector "[data-ui--command-sort-groups-value='false'][data-ui--command-empty-value='No results found.']"
+  end
+
   def test_a_trigger_with_its_own_label_or_content
     render_inline(UI::Command.new(dialog: true)) { |c| c.with_trigger(label: "Jump to…", class: "w-64") }
     assert_selector "button.w-64", text: "Jump to…"

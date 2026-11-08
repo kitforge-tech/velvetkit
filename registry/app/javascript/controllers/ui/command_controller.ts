@@ -1,5 +1,5 @@
 import { Controller } from '@hotwired/stimulus';
-import { isApple, isTyping, matchesShortcut, parseShortcut, type Shortcut } from './_internal/shortcut.js';
+import { isApple, isTyping, matchesShortcut, parseShortcut, usableWhileTyping, type Shortcut } from './_internal/shortcut.js';
 
 // Connects to data-controller="ui--command"
 //
@@ -27,7 +27,7 @@ type Turbo = { visit: (url: string) => void };
 export default class extends Controller<HTMLElement> {
   static targets = ['dialog', 'panel', 'input', 'list', 'group', 'item', 'results', 'empty', 'status', 'template', 'searchIcon', 'spinner'];
   static values = {
-    dialog: Boolean, shortcut: String, url: String, param: { type: String, default: 'q' },
+    dialog: Boolean, shortcut: String, sortGroups: Boolean, url: String, param: { type: String, default: 'q' },
     resultsHeading: String, empty: String, searching: String, failed: String,
   };
 
@@ -45,6 +45,7 @@ export default class extends Controller<HTMLElement> {
   declare readonly spinnerTarget: HTMLElement;
   declare readonly dialogValue: boolean;
   declare readonly shortcutValue: string;
+  declare readonly sortGroupsValue: boolean;
   declare readonly urlValue: string;
   declare readonly paramValue: string;
   declare readonly resultsHeadingValue: string;
@@ -52,7 +53,7 @@ export default class extends Controller<HTMLElement> {
   declare readonly searchingValue: string;
   declare readonly failedValue: string;
 
-  private shortcut?: Shortcut;
+  private shortcuts: Shortcut[] = [];
   private apple = false;
   private highlighted: HTMLElement | null = null;
   private searchTimer?: number;
@@ -63,11 +64,10 @@ export default class extends Controller<HTMLElement> {
   connect() {
     this.apple = isApple();
     this.itemTargets.forEach((item, index) => { item.dataset.order = String(index); });
+    this.groupTargets.forEach((group, index) => { group.dataset.order = String(index); });
     if (this.dialogValue && this.hasDialogTarget) {
-      if (this.shortcutValue) {
-        this.shortcut = parseShortcut(this.shortcutValue);
-        document.addEventListener('keydown', this.onShortcut);
-      }
+      this.shortcuts = this.shortcutValue.split(/\s+/).filter(Boolean).map(parseShortcut);
+      if (this.shortcuts.length) document.addEventListener('keydown', this.onShortcut);
       this.dialogTarget.addEventListener('click', this.onBackdrop);
       this.dialogTarget.addEventListener('close', this.onClose);
     }
@@ -101,12 +101,12 @@ export default class extends Controller<HTMLElement> {
   }
 
   private onShortcut = (event: KeyboardEvent) => {
-    if (event.defaultPrevented || event.repeat || event.isComposing || !this.shortcut) return;
-    if (!matchesShortcut(event, this.shortcut, this.apple)) return;
-    // A bare-key shortcut, like "/", is typing when in a field: unless the
-    // field is this search box.
-    const bare = !['mod', 'cmd', 'ctrl', 'alt'].some((m) => this.shortcut!.mods.has(m as never));
-    if (bare && isTyping(event.target) && event.target !== this.inputTarget) return;
+    if (event.defaultPrevented || event.repeat || event.isComposing) return;
+    const shortcut = this.shortcuts.find((s) => matchesShortcut(event, s, this.apple));
+    if (!shortcut) return;
+    // A bare-key shortcut, like "/", is typing when in a field, this search
+    // box included: there it's a "/" in the query, not a way to close.
+    if (isTyping(event.target) && !usableWhileTyping(shortcut)) return;
 
     event.preventDefault();
     if (this.dialogTarget.open) this.close();
@@ -126,6 +126,7 @@ export default class extends Controller<HTMLElement> {
   search() {
     const query = this.inputTarget.value.trim();
     this.filter(query);
+    this.announce();
     if (!this.remote) return;
 
     window.clearTimeout(this.searchTimer);
@@ -139,9 +140,11 @@ export default class extends Controller<HTMLElement> {
   }
 
   // Hides what doesn't match, best matches first in each group; an empty
-  // query puts everything back as written.
+  // query puts everything back as written. With sortGroups, the groups follow
+  // their best match too.
   private filter(query: string) {
     const words = query.toLowerCase().split(/\s+/).filter(Boolean);
+    const best = new Map<HTMLElement, number>();
 
     this.groupTargets.forEach((group) => {
       const items = this.itemTargets.filter((item) => item.closest('[data-ui--command-target="group"]') === group);
@@ -151,7 +154,15 @@ export default class extends Controller<HTMLElement> {
         .sort((a, b) => (words.length ? b.score - a.score : 0) || Number(a.item.dataset.order) - Number(b.item.dataset.order))
         .forEach(({ item }) => group.append(item));
       group.hidden = scored.every(({ score }) => score <= 0);
+      best.set(group, Math.max(0, ...scored.map(({ score }) => score)));
     });
+
+    if (this.sortGroupsValue) {
+      const results = this.resultsTarget;
+      [...this.groupTargets]
+        .sort((a, b) => (words.length ? best.get(b)! - best.get(a)! : 0) || Number(a.dataset.order) - Number(b.dataset.order))
+        .forEach((group) => results.before(group));
+    }
 
     this.updateEmpty();
     this.highlight(this.visible()[0] ?? null);
@@ -279,6 +290,15 @@ export default class extends Controller<HTMLElement> {
       .filter((item) => !item.hidden && !item.closest('[hidden]') && item.getAttribute('aria-disabled') !== 'true');
   }
 
+  // For analytics and the like: what was searched and how much it found,
+  // server results included once they're in.
+  private announce() {
+    const query = this.inputTarget.value.trim();
+    const matches = [...this.listTarget.querySelectorAll<HTMLElement>('[role="option"]')]
+      .filter((item) => !item.hidden && !item.closest('[hidden]')).length;
+    this.dispatch('search', { detail: { query, matches } });
+  }
+
   private updateEmpty() {
     const query = this.inputTarget.value.trim();
     const searching = this.listTarget.getAttribute('aria-busy') === 'true';
@@ -315,6 +335,7 @@ export default class extends Controller<HTMLElement> {
       if (this.latestKey !== key) return;
       this.listTarget.removeAttribute('aria-busy');
       this.showResults(results);
+      this.announce();
     } catch {
       if (this.latestKey !== key) return;
       this.listTarget.removeAttribute('aria-busy');
