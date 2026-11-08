@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+    <%= analytics_tag %>
   </head>
 
   <body class="min-h-screen antialiased">
@@ -50,7 +51,8 @@
           <%= render(UI::Badge.new(variant: :outline, class: "hidden sm:inline-flex")) { "v#{ReleasedVersion.current}" } %>
           <%= render(UI::Link.new(href: ApplicationHelper::GITHUB_URL, variant: :ghost, size: :sm, button_variant: true,
                                   class: "size-7 rounded-md px-0 text-foreground",
-                                  target: "_blank", rel: "noopener", aria: { label: "VelvetKit on GitHub" })) do %>
+                                  target: "_blank", rel: "noopener", aria: { label: "VelvetKit on GitHub" },
+                                  data: outbound_data("github", "header"))) do %>
             <%= render(UI::Icon.new(name: "github", size: :sm)) %>
           <% end %>
           <%= render(UI::ThemeToggle.new) %>

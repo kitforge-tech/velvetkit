@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import { track } from "../analytics"
 
 // Copies the source target's text and says so: the copy icon becomes a tick,
 // a "Copied" label shows for a moment, and screen readers hear it through the
@@ -8,9 +9,11 @@ import { Controller } from "@hotwired/stimulus"
 // Icons are <svg>s, and `.hidden` is an HTMLElement property that an SVG
 // ignores, so the hidden *attribute* is toggled; Tailwind's base styles
 // enforce it.
+//
+// The track value names the analytics event for a successful copy.
 export default class extends Controller {
   static targets = ["source", "idle", "done", "label", "status"]
-  static values = { copied: { type: String, default: "Copied" }, failed: { type: String, default: "Press ⌘C or Ctrl+C to copy" } }
+  static values = { copied: { type: String, default: "Copied" }, failed: { type: String, default: "Press ⌘C or Ctrl+C to copy" }, track: String }
 
   async copy(event) {
     event?.preventDefault()
@@ -19,6 +22,7 @@ export default class extends Controller {
     try {
       await navigator.clipboard.writeText(text)
       this.show(this.copiedValue, true)
+      if (this.trackValue) track(this.trackValue)
     } catch {
       this.select()
       this.show(this.failedValue, false)
