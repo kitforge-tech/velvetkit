@@ -13,8 +13,10 @@
 #
 # Names: mod, cmd (meta), ctrl, alt (option), shift, enter, esc, tab, space,
 # backspace, delete, up, down, left, right; anything else (k, /, F5) is shown
-# as written, a single letter in capitals. Screen readers hear the key's name,
-# "Command", not the symbol.
+# as written. A letter is lowercase on its own (n, g then i), since that's what
+# you type, and a capital with a modifier (⌘K), the way menus show it; Shift
+# is always written out (⇧G), so a capital never means Shift. Screen readers
+# hear the key's name, "Command", not the symbol.
 #
 # The Mac or not guess comes from the browser's user agent, so the page
 # doesn't change once it's loaded; the controller corrects it if a cached
@@ -60,6 +62,8 @@ class UI::Kbd < UI::Base
 
   APPLE = /Macintosh|Mac OS X|iPhone|iPad|iPod/
 
+  MODIFIERS = %w[mod cmd ctrl alt shift].freeze
+
   def initialize(keys = nil, size: :default, bind: nil, class: nil, **html_attrs)
     @keys       = keys
     @size       = SIZES.key?(size.to_sym) ? size.to_sym : :default
@@ -77,16 +81,18 @@ class UI::Kbd < UI::Base
 
   def platform = apple? ? "mac" : "other"
 
-  # [mac label, mac name, other label, other name] for one key.
-  def key_labels(key)
+  # [mac label, mac name, other label, other name] for one key of a combo.
+  def key_labels(key, combo = [ key ])
     name = ALIASES.fetch(key.downcase, key.downcase)
     return KEYS[name] if KEYS.key?(name)
 
-    label = key.length == 1 ? key.upcase : key
+    label = key.length == 1 ? (modified?(combo) ? key.upcase : key.downcase) : key
     [ label, label, label, label ]
   end
 
   def key_class = cn(KEY, SIZES[@size])
+
+  def modified?(combo) = combo.any? { |key| MODIFIERS.include?(ALIASES.fetch(key.downcase, key.downcase)) }
 
   # One key: the symbol shown, its name for screen readers. A key that's
   # already a word (Esc, F5) is just the word.

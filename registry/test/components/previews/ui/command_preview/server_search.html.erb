@@ -1,0 +1,24 @@
+<%#
+  Pages and actions are on the page; customers come from the server as you
+  type. Try "rao" or "kapoor". The endpoint answers GET /search?q=… like this:
+
+    def search
+      customers = Customer.where("name ILIKE ?", "%#{params[:q]}%").limit(6)
+      render json: customers.map { |c|
+        { label: c.name, href: customer_path(c), description: c.email, group: "Customers" }
+      }
+    end
+%>
+<div>
+  <%= render(UI::Command.new(dialog: true, url: "/demo/search", placeholder: "Search customers, pages and actions…")) do |command| %>
+    <% command.with_trigger(label: "Search customers…", class: "w-72") %>
+    <% command.with_group(heading: "Pages") do |group| %>
+      <% group.with_item(label: "Customers", href: "/customers", icon: "users") %>
+      <% group.with_item(label: "Invoices", href: "/invoices", icon: "receipt", keywords: "bills") %>
+    <% end %>
+    <% command.with_group(heading: "Actions") do |group| %>
+      <% group.with_item(label: "New customer", value: "new-customer", icon: "user-plus", keywords: "add create") %>
+    <% end %>
+  <% end %>
+  <%= render "ui/command_preview/picked" %>
+</div>

@@ -1,0 +1,41 @@
+<%# frozen_string_literal: true %>
+<% panel = capture do %>
+  <div class="<%= panel_class %>" data-ui--command-target="panel">
+    <div class="flex items-center gap-2 border-b px-3">
+      <%# The magnifying glass turns into a spinner while a server search is slow. %>
+      <span class="flex shrink-0 text-muted-foreground" data-ui--command-target="searchIcon" aria-hidden="true"><%= render(UI::Icon.new(name: "search", size: :sm)) %></span>
+      <span class="hidden shrink-0 text-muted-foreground" data-ui--command-target="spinner" aria-hidden="true"><%= render(UI::Icon.new(name: "loader", size: :sm, class: "animate-spin motion-reduce:animate-[spin_1.5s_linear_infinite]")) %></span>
+      <%= tag.input(type: "text", id: input_id, role: "combobox", autocomplete: "off", spellcheck: "false", placeholder: placeholder,
+                    class: "h-11 w-full min-w-0 bg-transparent text-sm outline-none placeholder:text-muted-foreground",
+                    aria: { label: label, expanded: "true", controls: listbox_id, autocomplete: "list" },
+                    data: { "ui--command-target": "input", action: "input->ui--command#search keydown->ui--command#navigate" }) %>
+    </div>
+    <div id="<%= listbox_id %>" role="listbox" aria-label="<%= label %>" class="min-h-0 flex-1 scroll-py-1 overflow-y-auto overscroll-contain p-1 <%= "max-h-80" unless dialog? %>"
+         data-ui--command-target="list" data-action="click->ui--command#pick pointermove->ui--command#hover">
+      <% groups.each do |group| %><%= group %><% end %>
+      <div data-ui--command-target="results"></div>
+      <p class="py-6 text-center text-sm text-muted-foreground" data-ui--command-target="empty" hidden></p>
+      <p class="py-6 text-center text-sm text-muted-foreground" data-ui--command-target="status" role="status" hidden></p>
+    </div>
+    <% if dialog? %>
+      <%# Key hints, so hidden where there's rarely a keyboard. %>
+      <div class="hidden items-center gap-4 border-t px-3 py-2 text-xs text-muted-foreground sm:flex" aria-hidden="true">
+        <span class="flex items-center gap-1.5"><%= render(UI::Kbd.new("up", size: :sm)) %><%= render(UI::Kbd.new("down", size: :sm)) %><%= t("ui.command.to_move", default: "to move") %></span>
+        <span class="flex items-center gap-1.5"><%= render(UI::Kbd.new("enter", size: :sm)) %><%= t("ui.command.to_pick", default: "to pick") %></span>
+        <span class="ms-auto flex items-center gap-1.5"><%= render(UI::Kbd.new("esc", size: :sm)) %><%= t("ui.command.to_close", default: "to close") %></span>
+      </div>
+    <% end %>
+    <%# A server result, copied for each one. %>
+    <template data-ui--command-target="template">
+      <%= render(UI::Command::Item.new(label: "", id: "", data: { remote: true })) %>
+    </template>
+  </div>
+<% end %>
+<%= tag.div(**root_attrs) do %>
+  <% if dialog? %>
+    <%= trigger %>
+    <dialog class="<%= UI::Command::DIALOG %>" aria-label="<%= label %>" data-ui--command-target="dialog"><%= panel %></dialog>
+  <% else %>
+    <%= panel %>
+  <% end %>
+<% end %>

@@ -1,0 +1,12 @@
+<%# bind: true makes an item's shortcut pick it from anywhere, with the palette closed. Try ⌥N or ⌥I (Alt off a Mac). %>
+<div>
+  <%= render(UI::Command.new(dialog: true)) do |command| %>
+    <% command.with_trigger(class: "w-72") %>
+    <% command.with_group(heading: "Actions") do |group| %>
+      <% group.with_item(label: "New document", value: "new-document", icon: "file-plus", shortcut: "alt+n", bind: true) %>
+      <% group.with_item(label: "Invite people", value: "invite", icon: "user-plus", shortcut: "alt+i", bind: true) %>
+      <% group.with_item(label: "Print", value: "print", icon: "printer", shortcut: "alt+p", bind: true, disabled: true, description: "Nothing to print yet") %>
+    <% end %>
+  <% end %>
+  <%= render "ui/command_preview/picked" %>
+</div>

@@ -1,0 +1,15 @@
+<div>
+  <%= render(UI::Command.new(dialog: dialog, placeholder: placeholder, class: ("max-w-md" unless dialog))) do |command| %>
+    <% command.with_trigger(class: "w-64") if dialog %>
+    <% command.with_group(heading: "Pages") do |group| %>
+      <% group.with_item(label: "Dashboard", href: "/dashboard", icon: "layout-dashboard") %>
+      <% group.with_item(label: "Projects", href: "/projects", icon: "folder") %>
+      <% group.with_item(label: "Calendar", href: "/calendar", icon: "calendar") %>
+    <% end %>
+    <% command.with_group(heading: "Actions") do |group| %>
+      <% group.with_item(label: "New project", value: "new-project", icon: "plus", keywords: "create add") %>
+      <% group.with_item(label: "Invite people", value: "invite", icon: "user-plus", keywords: "team member") %>
+    <% end %>
+  <% end %>
+  <%= render "ui/command_preview/picked" %>
+</div>

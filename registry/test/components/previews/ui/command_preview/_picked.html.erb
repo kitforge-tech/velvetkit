@@ -1,0 +1,14 @@
+<%# Shows what was picked, instead of going there, so the demo stays on this page. %>
+<p class="mt-4 text-sm text-muted-foreground" data-demo="picked" role="status">Nothing picked yet.</p>
+<script>
+  (() => {
+    const out = document.currentScript.previousElementSibling;
+    const root = out.parentElement;
+    root.addEventListener("ui--command:select", (event) => {
+      event.preventDefault();
+      event.target.closest("dialog")?.close();
+      const { label, value, href } = event.detail;
+      out.textContent = `Picked "${label}"${href ? `, going to ${href}` : `, value ${value}`}`;
+    });
+  })();
+</script>

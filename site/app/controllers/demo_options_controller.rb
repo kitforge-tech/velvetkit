@@ -1,4 +1,5 @@
-# Customers for the Select's server-search demo on its docs page. A real app
+# Customers for the server-search demos of Select and Command on their docs
+# pages. A real app
 # searches its database; this searches a fixed list of 300, the way an app's
 # endpoint would answer: matches only, by name, at most 20.
 class DemoOptionsController < ApplicationController
@@ -10,8 +11,25 @@ class DemoOptionsController < ApplicationController
   end.uniq { _1[:label] }.sort_by { _1[:label] }.freeze
 
   def index
+    render json: matching.first(20)
+  end
+
+  # The same customers for the Command's server search, in its shape: a label,
+  # where to go, a line under it and the group to list it in. A few, since a
+  # palette is for jumping, not browsing.
+  def search
+    return render json: [] if params[:q].to_s.strip.empty?
+
+    render json: matching.first(6).map { |customer|
+      { label: customer[:label], href: "#customer-#{customer[:value]}",
+        description: "Customer ##{customer[:value]}", group: "Customers" }
+    }
+  end
+
+  private
+
+  def matching
     query = params[:q].to_s.strip.downcase
-    matches = query.empty? ? CUSTOMERS : CUSTOMERS.select { _1[:label].downcase.include?(query) }
-    render json: matches.first(20)
+    query.empty? ? CUSTOMERS : CUSTOMERS.select { _1[:label].downcase.include?(query) }
   end
 end
