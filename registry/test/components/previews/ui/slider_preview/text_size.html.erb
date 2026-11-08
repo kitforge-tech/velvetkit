@@ -1,0 +1,16 @@
+<div id="slider-text-size-demo" class="grid max-w-md gap-4">
+  <%= render(UI::Slider.new(name: "text_size", min: 12, max: 24, value: 16, label: "Text size", value_text: "%{value}px",
+                            show_value: true, marks: [ 12, 16, 20, 24 ])) %>
+  <p class="rounded-md border p-4" data-demo="sample" style="font-size: 16px">
+    The quick brown fox jumps over the lazy dog.
+  </p>
+</div>
+<script>
+  (() => {
+    const root = document.getElementById("slider-text-size-demo");
+    const sample = root.querySelector('[data-demo="sample"]');
+    root.addEventListener("input", (event) => {
+      if (event.target.name === "text_size") sample.style.fontSize = `${event.target.value}px`;
+    });
+  })();
+</script>

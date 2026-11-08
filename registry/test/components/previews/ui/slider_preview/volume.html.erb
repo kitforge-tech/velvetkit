@@ -1,0 +1,5 @@
+<div class="flex max-w-xs items-center gap-3">
+  <%= render(UI::Icon.new(name: "volume-x", size: :sm, class: "shrink-0 text-muted-foreground")) %>
+  <%= render(UI::Slider.new(name: "volume", value: 65, label: false, aria: { label: "Volume" }, value_text: "%{value}%")) %>
+  <%= render(UI::Icon.new(name: "volume-2", size: :sm, class: "shrink-0 text-muted-foreground")) %>
+</div>

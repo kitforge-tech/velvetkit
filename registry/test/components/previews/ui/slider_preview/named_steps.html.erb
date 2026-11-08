@@ -1,0 +1,7 @@
+<div class="grid max-w-sm gap-8">
+  <%= render(UI::Slider.new(name: "digest", min: 0, max: 3, value: 1, label: "Email me about comments", show_value: true,
+                            marks: { 0 => "Never", 1 => "Weekly", 2 => "Daily", 3 => "Right away" })) %>
+  <%= render(UI::Slider.new(name: "quality", min: 1, max: 3, value: 2, label: "Video quality", show_value: true,
+                            marks: { 1 => "Low", 2 => "Medium", 3 => "High" },
+                            hint: "Higher uses more data.")) %>
+</div>

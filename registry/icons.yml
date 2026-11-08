@@ -84,6 +84,8 @@ upload: { tabler: upload, phosphor: upload-simple }
 user: { tabler: user, phosphor: user }
 user-plus: { tabler: user-plus, phosphor: user-plus }
 users: { tabler: users, phosphor: users }
+volume-2: { tabler: volume, phosphor: speaker-high }
+volume-x: { tabler: volume-3, phosphor: speaker-x }
 workflow: { tabler: sitemap, phosphor: flow-arrow }
 x: { tabler: x, phosphor: x }
 zoom-in: { tabler: zoom-in, phosphor: magnifying-glass-plus }
