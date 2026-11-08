@@ -4,6 +4,7 @@ require "minitest/autorun"
 require "minitest/mock"
 require "tmpdir"
 require "fileutils"
+require "json"
 require "generators/velvetkit/install/install_generator"
 require "generators/velvetkit/add/add_generator"
 require "generators/velvetkit/icons/icons_generator"
@@ -186,6 +187,57 @@ class Velvetkit::GeneratorsTest < Minitest::Test
 
     assert exist?("app/components/kit/data_grid.rb")
     assert exist?("app/javascript/vanilla_calendar.ts")
+  end
+
+  # ── Lazily loaded bundles in the app's build ─────────────────────────────
+
+  def test_add_puts_a_lazy_bundle_in_bun_configs_entrypoints_once
+    write "bun.config.js", %(const config = {\n  entrypoints: ["app/javascript/application.js"],\n  outdir: "app/assets/builds",\n};\n)
+    install
+    add "chart"
+    add "chart"
+    config = read("bun.config.js")
+    assert_match %(entrypoints: ["app/javascript/chart_js.ts", "app/javascript/application.js"]), config
+    assert_equal 1, config.scan("chart_js.ts").size
+  end
+
+  def test_add_appends_a_lazy_bundle_to_a_build_script_that_lists_its_files
+    write "package.json", JSON.pretty_generate(scripts: { build: "bun build ./app/javascript/application.js --outdir ./app/assets/builds" })
+    install
+    add "date_picker"
+    assert_equal "bun build ./app/javascript/application.js ./app/javascript/vanilla_calendar.ts --outdir ./app/assets/builds",
+                 JSON.parse(read("package.json")).dig("scripts", "build")
+  end
+
+  def test_add_leaves_an_esbuild_glob_alone_since_it_takes_every_entry
+    script = "esbuild app/javascript/*.* --bundle --sourcemap --format=esm --outdir=app/assets/builds --public-path=/assets"
+    write "package.json", JSON.pretty_generate(scripts: { build: script })
+    install
+    out = add("chart")
+    assert_equal script, JSON.parse(read("package.json")).dig("scripts", "build")
+    assert_match "chart_js.ts is built by the build script's app/javascript/* already", out.join
+  end
+
+  def test_add_adds_a_lazy_bundle_to_webpacks_entries
+    write "webpack.config.js", %(module.exports = {\n  entry: {\n    application: "./app/javascript/application.js"\n  },\n};\n)
+    install
+    add "data_grid"
+    assert_match %(ag_grid: "./app/javascript/ag_grid.ts",), read("webpack.config.js")
+  end
+
+  def test_add_says_what_to_add_when_it_cant_tell_how_the_app_builds
+    write "rollup.config.js", %(export default { input: "app/javascript/application.js" }\n)
+    install
+    out = add("chart")
+    assert_match "add app/javascript/chart_js.ts to your JavaScript build", out.join
+    assert_equal %(export default { input: "app/javascript/application.js" }\n), read("rollup.config.js")
+  end
+
+  def test_a_component_with_no_lazy_bundle_leaves_the_build_alone
+    write "bun.config.js", %(const config = { entrypoints: ["app/javascript/application.js"] };\n)
+    install
+    add "button"
+    assert_equal %(const config = { entrypoints: ["app/javascript/application.js"] };\n), read("bun.config.js")
   end
 
   def test_install_imports_tokens_into_a_cssbundling_entry_point

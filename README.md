@@ -160,7 +160,11 @@ bin/rails generate velvetkit:add --all            # everything
 
 - copies the component, its templates and sub-components
 - copies its Stimulus controllers and any lazily-loaded entry points (AG Grid
-  for `data_grid`, Chart.js for `chart`, Vanilla Calendar Pro for `date_picker`)
+  for `data_grid`, Chart.js for `chart`, Vanilla Calendar Pro for `date_picker`),
+  and adds those to your JavaScript build: to `bun.config.js`'s `entrypoints`,
+  `webpack.config.js`'s `entry`, or a build script that lists `application.js`.
+  esbuild's default `app/javascript/*.*` already takes them; for any other setup
+  `add` says what to add
 - copies the SVG of every icon it draws into `app/assets/icons`, named for
   your icon library
 - copies its Minitest tests and Lookbook previews. A preview that shows
