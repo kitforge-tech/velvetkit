@@ -9,9 +9,10 @@
   <%= render(wrapper) do %>
     <%= tag.div(**track_attrs) do %>
       <%= tag.div(class: track_class) do %>
-        <%= tag.div(class: "absolute inset-y-0 bg-primary", style: fill_style, data: { slot: "slider-fill" }) %>
+        <%= tag.div(class: UI::Slider::FILL, style: fill_style, data: { slot: "slider-fill" }) %>
       <% end %>
-      <% fields.each do |handle| %><%= render_input(handle) %><% end %>
+      <%# Each knob follows the input just before it; the span keeps a range's pairs apart. %>
+      <% fields.each do |handle| %><span class="contents"><%= render_input(handle) %><%= tag.span(class: UI::Slider::KNOB, style: knob_style(handle), "aria-hidden": "true", data: { slot: "slider-thumb" }) %></span><% end %>
     <% end %>
     <% if marks? %>
       <%= tag.div(class: "relative h-4 text-xs text-muted-foreground", "aria-hidden": "true") do %>

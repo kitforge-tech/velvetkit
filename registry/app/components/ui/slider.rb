@@ -44,34 +44,24 @@ class UI::Slider < UI::Base
     lg:      { thumb: "2.25rem", thumb_height: "1.625rem", track: "h-3.5" }
   }.freeze
 
-  # The thumb is drawn by the browser, styled the same for WebKit and Firefox,
-  # with every class written out in full so Tailwind finds it: a white pill,
-  # --thumb wide and --thumb-h tall, lifted by a shadow rather than outlined. The input sits over the track, as
-  # tall as the thumb, so the thumb is centred on it with no offsets. Pointer events go to the track (see the controller); the input
-  # still takes focus and the keyboard.
-  INPUT = [
-    "pointer-events-none absolute inset-0 m-0 h-(--thumb-h) w-full appearance-none bg-transparent outline-none",
-    "[&::-webkit-slider-runnable-track]:h-full [&::-webkit-slider-runnable-track]:bg-transparent",
-    "[&::-moz-range-track]:bg-transparent",
-    "[&::-webkit-slider-thumb]:h-(--thumb-h) [&::-webkit-slider-thumb]:w-(--thumb) " \
-    "[&::-webkit-slider-thumb]:box-border [&::-webkit-slider-thumb]:appearance-none " \
-    "[&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-3 " \
-    "[&::-webkit-slider-thumb]:border-transparent [&::-webkit-slider-thumb]:bg-white " \
-    "[&::-webkit-slider-thumb]:shadow-[0_1px_3px_rgb(0_0_0/0.3),0_0_0_0.5px_rgb(0_0_0/0.08)] " \
-    "[&::-webkit-slider-thumb]:transition-[border-color,box-shadow,scale] [&::-webkit-slider-thumb]:duration-150 " \
-    "motion-reduce:[&::-webkit-slider-thumb]:transition-none",
-    "[&::-moz-range-thumb]:h-(--thumb-h) [&::-moz-range-thumb]:w-(--thumb) " \
-    "[&::-moz-range-thumb]:box-border [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-3 " \
-    "[&::-moz-range-thumb]:border-transparent [&::-moz-range-thumb]:bg-white " \
-    "[&::-moz-range-thumb]:shadow-[0_1px_3px_rgb(0_0_0/0.3),0_0_0_0.5px_rgb(0_0_0/0.08)] " \
-    "[&::-moz-range-thumb]:transition-[border-color,box-shadow,scale] [&::-moz-range-thumb]:duration-150 " \
-    "motion-reduce:[&::-moz-range-thumb]:transition-none",
-    "focus-visible:[&::-webkit-slider-thumb]:ring-3 focus-visible:[&::-webkit-slider-thumb]:ring-ring/40",
-    "focus-visible:[&::-moz-range-thumb]:ring-3 focus-visible:[&::-moz-range-thumb]:ring-ring/40",
-    # While dragged: a thick, faint ring in place of the shadow.
-    "data-active:[&::-webkit-slider-thumb]:border-foreground/15 data-active:[&::-moz-range-thumb]:border-foreground/15",
-    "data-active:[&::-webkit-slider-thumb]:shadow-none data-active:[&::-moz-range-thumb]:shadow-none"
-  ].join(" ").freeze
+  # The input is there for the keyboard, the form and screen readers, and
+  # can't be seen. Its thumb could only sit on a step, so the knob is drawn
+  # separately: it follows the pointer freely while dragged, and glides onto
+  # the value otherwise. Pointer events go to the track (see the controller).
+  INPUT = "peer absolute inset-0 m-0 h-(--thumb-h) w-full cursor-[inherit] opacity-0 pointer-events-none"
+
+  # A white pill lifted by a shadow. The keyboard's focus and a drag each put
+  # a ring around it, outside its edge.
+  KNOB = "pointer-events-none absolute top-1/2 h-(--thumb-h) w-(--thumb) -translate-y-1/2 rounded-full bg-white " \
+         "shadow-[0_1px_3px_rgb(0_0_0/0.3),0_0_0_0.5px_rgb(0_0_0/0.08)] " \
+         "transition-[inset-inline-start,box-shadow] duration-150 ease-out motion-reduce:transition-none " \
+         "group-data-dragging/slider:transition-[box-shadow] " \
+         "peer-focus-visible:ring-3 peer-focus-visible:ring-ring/50 " \
+         "peer-data-active:shadow-none peer-data-active:ring-4 peer-data-active:ring-foreground/15"
+
+  # The fill glides with the knob, and keeps up with it during a drag.
+  FILL = "absolute inset-y-0 bg-primary transition-[inset-inline-start,width] duration-150 ease-out " \
+         "motion-reduce:transition-none group-data-dragging/slider:transition-none"
 
   # The ends sit flush with the track's ends; the rest centre on their value.
   MARK_PLACES = { 0.0 => { shift: "", style: "inset-inline-start: 0px" },
@@ -125,7 +115,7 @@ class UI::Slider < UI::Base
   end
 
   def root_attrs
-    { **@html_attrs, class: cn("w-full space-y-2", disabled? && "opacity-50", @user_class),
+    { **@html_attrs, class: cn("group/slider w-full space-y-2", disabled? && "opacity-50", @user_class),
       role: ("group" if range?), aria: ({ labelledby: (label_id if label_text), **@aria }.compact if range?),
       style: "--thumb: #{SIZES[@size][:thumb]}; --thumb-h: #{SIZES[@size][:thumb_height]}; --from: #{number(fraction(lower))}; --to: #{number(fraction(upper))}",
       data: { slot: "slider", controller: "ui--slider", "ui--slider-format-value": text_format,
@@ -144,6 +134,12 @@ class UI::Slider < UI::Base
     { class: cn("relative h-(--thumb-h) touch-pan-y select-none", disabled? ? "cursor-not-allowed" : "cursor-pointer"),
       data: { "ui--slider-target": "track",
               action: ("pointerdown->ui--slider#press" unless disabled?) } }.compact
+  end
+
+  # The knob's start edge: its centre is where self.at puts the value.
+  def knob_style(handle)
+    fraction = range? && handle.equal?(@fields.first) ? "var(--from)" : "var(--to)"
+    "inset-inline-start: calc((100% - var(--thumb)) * #{fraction})"
   end
 
   def track_class = cn("absolute inset-x-0 top-1/2 -translate-y-1/2 overflow-hidden rounded-full bg-foreground/10",

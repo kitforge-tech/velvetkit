@@ -18,6 +18,16 @@ class UI::SliderTest < ViewComponent::TestCase
     assert_selector "[data-ui--slider-target='track'][data-action='pointerdown->ui--slider#press']"
   end
 
+  def test_each_handle_has_a_knob_drawn_after_its_input
+    render_slider(value: 40)
+    assert_selector "span.contents > input[type='range'].peer + span[data-slot='slider-thumb'][aria-hidden='true']"
+    assert_includes page.find("[data-slot='slider-thumb']")[:style], "(100% - var(--thumb)) * var(--to)"
+    render_inline(UI::Slider.new(range: true))
+    knobs = page.all("[data-slot='slider-thumb']")
+    assert_includes knobs[0][:style], "var(--from)"
+    assert_includes knobs[1][:style], "var(--to)"
+  end
+
   def test_takes_limits_and_step
     render_slider(value: 2.5, min: 1, max: 5, step: 0.5)
     assert_selector "input[min='1'][max='5'][step='0.5'][value='2.5']"
