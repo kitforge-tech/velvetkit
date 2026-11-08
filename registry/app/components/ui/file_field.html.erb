@@ -1,14 +1,19 @@
-<%= render(wrapper) do %><%= tag.div class: "w-full", data: root_data do %>
+<%= render(wrapper) do %><%= tag.div class: card_classes, data: root_data do %>
   <%= tag.label for: @input_id, class: dropzone_classes, data: { "ui--file-field-target": "dropzone" } do %>
-    <%= render(UI::Icon.new(name: "upload", size: :lg, class: "text-muted-foreground", aria: { hidden: true })) %>
-    <p class="text-sm text-muted-foreground"><span class="font-medium text-primary"><%= t("ui.file_field.browse", default: "Click to upload") %></span> <%= t("ui.file_field.drop", default: "or drag and drop") %></p>
-    <% unless preview? %><p class="text-xs text-muted-foreground empty:hidden" data-ui--file-field-target="filenames"></p><% end %>
+    <span class="flex size-10 items-center justify-center rounded-full border bg-background text-muted-foreground shadow-sm" aria-hidden="true">
+      <%= render(UI::Icon.new(name: "upload", size: :sm)) %>
+    </span>
+    <span class="flex flex-col gap-1">
+      <span class="text-sm"><span class="font-medium text-primary dark:text-foreground"><%= t("ui.file_field.browse", default: "Click to upload") %></span> <span class="text-muted-foreground"><%= t("ui.file_field.drop", default: "or drag and drop") %></span></span>
+      <% if requirements %><%= tag.span requirements, id: requirements_id, class: "text-xs text-muted-foreground" %><% end %>
+    </span>
+    <% unless preview? %><span class="text-xs font-medium text-foreground empty:hidden" data-ui--file-field-target="filenames"></span><% end %>
     <% if form_field? %><%= @form.file_field(@field, **form_field_options) %><% else %><%= tag.input(**html_options) %><% end %>
   <% end %>
   <% if preview? %>
-    <%= tag.ul class: "mt-3 grid grid-cols-[repeat(auto-fill,minmax(7.5rem,1fr))] gap-3 empty:hidden", data: { "ui--file-field-target": "list" } do %><% existing_files.each do |file| %><%= tile(**file) %><% end %><% end %>
+    <%= tag.ul class: "flex flex-col gap-2 pt-2 empty:hidden", data: { "ui--file-field-target": "list" } do %><% existing_files.each do |file| %><%= tile(**file) %><% end %><% end %>
     <template data-ui--file-field-target="template"><%= tile(state: "chosen") %></template>
-    <p class="mt-2 text-xs text-muted-foreground empty:hidden" data-ui--file-field-target="notice"></p>
+    <p class="px-1 pt-2 text-xs text-muted-foreground empty:hidden" data-ui--file-field-target="notice"></p>
     <p class="sr-only" aria-live="polite" data-ui--file-field-target="status"></p>
   <% end %>
 <% end %><% end %>

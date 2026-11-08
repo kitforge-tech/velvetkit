@@ -59,14 +59,14 @@ class UI::FileFieldTest < ViewComponent::TestCase
   def test_disabled
     render_inline(UI::FileField.new(disabled: true))
     assert page.find("input", visible: :all)[:disabled]
-    assert_includes page.find("label")[:class], "opacity-50"
+    assert_includes root[:class], "opacity-50"
   end
 
   def test_error_true_marks_the_input_invalid
     render_inline(UI::FileField.new(error: true))
     input = page.find("input", visible: :all)
     assert_equal "true", input["aria-invalid"]
-    assert_includes page.find("label")[:class], "border-destructive"
+    assert_includes root[:class], "border-destructive"
   end
 
   # --- form-builder binding (Rails convention) ---
@@ -193,5 +193,37 @@ class UI::FileFieldTest < ViewComponent::TestCase
     render_inline(UI::FileField.new(form: builder, field: :photos, multiple: true))
     assert_selector "li input[type='hidden'][name='product[photos][]'][value='def']", visible: :all
     assert_equal "product[photos][]", root["data-ui--file-field-name-value"]
+  end
+
+  # ── The card ────────────────────────────────────────────────────────────
+
+  def test_the_field_is_a_card_with_the_drop_area_inside
+    render_inline(UI::FileField.new(name: "photos"))
+    assert_includes root[:class], "rounded-xl"
+    assert_includes root[:class], "bg-card"
+    assert_selector "[data-controller='ui--file-field'] > label.border-dashed"
+  end
+
+  def test_the_hint_shows_in_the_card_and_describes_the_input
+    render_inline(UI::FileField.new(hint: "PNG or JPG, up to 5MB"))
+    hint = page.find("[id$='-requirements']", text: "PNG or JPG, up to 5MB")
+    assert_includes page.find("input", visible: :all)["aria-describedby"], hint[:id]
+    assert_no_selector "label + *", text: "PNG or JPG, up to 5MB"
+  end
+
+  def test_without_a_hint_the_card_says_what_the_field_takes
+    render_inline(UI::FileField.new(accept: "image/*", max_size: 5.megabytes, multiple: true))
+    assert_selector "[id$='-requirements']", text: "Images, up to 5 MB each"
+    render_inline(UI::FileField.new(accept: ".pdf,.docx", max_size: 2.megabytes))
+    assert_selector "[id$='-requirements']", text: "PDF, DOCX, up to 2 MB"
+    render_inline(UI::FileField.new)
+    assert_no_selector "[id$='-requirements']"
+  end
+
+  def test_rows_show_a_tick_once_uploaded_and_a_warning_on_error_by_their_state
+    render_inline(UI::FileField.new(name: "docs[]", multiple: true, existing: kept))
+    row = page.all("li[data-ui--file-field-target='item']").first
+    assert row.has_css?("svg[data-icon='check'].group-data-\\[state\\=uploaded\\]\\:block", visible: :all)
+    assert row.has_css?("svg[data-icon='circle-alert'].group-data-\\[state\\=error\\]\\:block", visible: :all)
   end
 end
