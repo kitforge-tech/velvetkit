@@ -1,9 +1,9 @@
 <div class="grid max-w-xs gap-4">
-  <%= render(UI::MoneyInput.new(name: "small", unit: "₹", value: 499, size: :sm, label: "Small")) %>
-  <%= render(UI::MoneyInput.new(name: "default", unit: "₹", value: 4999, label: "Default")) %>
-  <%= render(UI::MoneyInput.new(name: "large", unit: "₹", value: 49999, size: :lg, label: "Large, for touch screens")) %>
-  <%= render(UI::MoneyInput.new(name: "empty", unit: "₹", label: "Empty, required", required: true, hint: "Paise are filled in when you leave the field.")) %>
-  <%= render(UI::MoneyInput.new(name: "refund", unit: "₹", value: -1200, negative: true, label: "A refund, below zero allowed")) %>
-  <%= render(UI::MoneyInput.new(name: "disabled", unit: "₹", value: 2500, label: "Disabled", disabled: true)) %>
-  <%= render(UI::MoneyInput.new(name: "invalid", unit: "₹", value: 0, label: "With an error", error: "Must be more than ₹0")) %>
+  <%= render(UI::MoneyInput.new(name: "small", unit: "$", value: 499, size: :sm, label: "Small")) %>
+  <%= render(UI::MoneyInput.new(name: "default", unit: "$", value: 4999, label: "Default")) %>
+  <%= render(UI::MoneyInput.new(name: "large", unit: "$", value: 49999, size: :lg, label: "Large, for touch screens")) %>
+  <%= render(UI::MoneyInput.new(name: "empty", unit: "$", label: "Empty, required", required: true, hint: "Cents are filled in when you leave the field.")) %>
+  <%= render(UI::MoneyInput.new(name: "refund", unit: "$", value: -1200, negative: true, label: "A refund, below zero allowed")) %>
+  <%= render(UI::MoneyInput.new(name: "disabled", unit: "$", value: 2500, label: "Disabled", disabled: true)) %>
+  <%= render(UI::MoneyInput.new(name: "invalid", unit: "$", value: 0, label: "With an error", error: "Must be more than $0")) %>
 </div>

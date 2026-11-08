@@ -5,14 +5,14 @@ class UI::MoneyInputPreview < ViewComponent::Preview
   # @param unit text
   # @param value text
   # @param precision number "Decimals: 2 for paise or cents, 0 for whole amounts"
-  # @param grouping select { choices: ["", thousands, indian] } "Blank: Indian for ₹, thousands otherwise"
+  # @param grouping select { choices: ["", thousands, indian] } "Blank: Indian for ₹, thousands otherwise. Try ₹ as the unit"
   # @param negative toggle
   # @param size select { choices: [sm, default, lg] }
   # @param label text
   # @param hint text
   # @param disabled toggle
   # @param error text
-  def playground(unit: "₹", value: "123456.5", precision: 2, grouping: "", negative: false, size: :default,
+  def playground(unit: "$", value: "123456.5", precision: 2, grouping: "", negative: false, size: :default,
                  label: "Amount", hint: "", disabled: false, error: "")
     render(UI::MoneyInput.new(name: "amount", unit: unit, value: value.presence, precision: precision,
                               grouping: grouping.presence, negative: negative, size: size.to_sym,
