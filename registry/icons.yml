@@ -31,6 +31,7 @@ ellipsis: { tabler: dots, phosphor: dots-three }
 ellipsis-vertical: { tabler: dots-vertical, phosphor: dots-three-vertical }
 eye: { tabler: eye, phosphor: eye }
 eye-off: { tabler: eye-off, phosphor: eye-slash }
+file: { tabler: file, phosphor: file }
 file-text: { tabler: file-text, phosphor: file-text }
 folder-kanban: { tabler: layout-kanban, phosphor: kanban }
 git-branch: { tabler: git-branch, phosphor: git-branch }
