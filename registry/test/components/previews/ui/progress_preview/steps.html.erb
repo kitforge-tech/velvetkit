@@ -1,0 +1,9 @@
+<%= render(UI::Card.new(class: "max-w-sm")) do |card| %>
+  <% card.with_header do |header| %>
+    <% header.with_title { "Finish setting up your profile" } %>
+    <% header.with_description { "Profiles with a photo and a bio get more replies." } %>
+  <% end %>
+  <% card.with_content do %>
+    <%= render(UI::Progress.new(value: 3, max: 5, value_text: "%{value} of %{max} done", show_value: true, label: "Profile")) %>
+  <% end %>
+<% end %>

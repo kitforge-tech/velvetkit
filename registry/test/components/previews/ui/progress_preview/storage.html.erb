@@ -1,0 +1,8 @@
+<div class="grid max-w-sm gap-6">
+  <%= render(UI::Progress.new(value: 6.4, max: 15, label: "Photos", value_text: "%{value} GB of %{max} GB", show_value: true)) %>
+  <%= render(UI::Progress.new(value: 12.9, max: 15, tone: :warning, label: "Mailbox", value_text: "%{value} GB of %{max} GB", show_value: true)) %>
+  <div class="space-y-1.5">
+    <%= render(UI::Progress.new(value: 14.8, max: 15, tone: :destructive, label: "Shared drive", value_text: "%{value} GB of %{max} GB", show_value: true)) %>
+    <p class="text-sm text-muted-foreground">Almost full. New files won't sync until you free up space.</p>
+  </div>
+</div>

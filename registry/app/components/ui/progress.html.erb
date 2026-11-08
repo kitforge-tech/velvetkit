@@ -1,0 +1,10 @@
+<%# frozen_string_literal: true %>
+<%= tag.div(**root_attrs) do %>
+  <% if header? %>
+    <div class="flex items-baseline justify-between gap-3 text-sm">
+      <% if label.present? %><span id="<%= label_id %>" class="font-medium text-foreground"><%= label %></span><% end %>
+      <span class="<%= cn("ms-auto text-muted-foreground tabular-nums", ("hidden" unless show_value?)) %>" data-ui--progress-target="text" aria-hidden="true"><%= value_text %></span>
+    </div>
+  <% end %>
+  <%= tag.div(**bar_attrs) do %><%= tag.div(**indicator_attrs) %><% end %>
+<% end %>

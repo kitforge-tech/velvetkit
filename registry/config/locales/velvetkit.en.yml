@@ -60,6 +60,9 @@ en:
     password_input:
       show: 'Show password'
       hide: 'Hide password'
+    progress:
+      label: 'Progress'
+      value_text: '%{percent}%'
     sidebar:
       toggle: 'Toggle sidebar'
     table_of_contents:
