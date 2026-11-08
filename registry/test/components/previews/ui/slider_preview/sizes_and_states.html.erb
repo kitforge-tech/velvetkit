@@ -1,0 +1,9 @@
+<div class="grid max-w-sm gap-6">
+  <%= render(UI::Slider.new(name: "small", value: 30, size: :sm, label: "Small", show_value: true)) %>
+  <%= render(UI::Slider.new(name: "default", value: 50, label: "Default", show_value: true)) %>
+  <%= render(UI::Slider.new(name: "large", value: 70, size: :lg, label: "Large, for touch screens", show_value: true)) %>
+  <%= render(UI::Slider.new(name: "disabled", value: 40, label: "Disabled", disabled: true, show_value: true)) %>
+  <%= render(UI::Slider.new(name: "alert_at", value: 30, min: 50, max: 100, step: 5, label: "Warn me when storage reaches",
+                            value_text: "%{value}%", show_value: true, hint: "We'll email you once a day until there's room.",
+                            error: "Must be at least 50%")) %>
+</div>

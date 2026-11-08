@@ -111,6 +111,8 @@ components:
     description: A collapsible application sidebar with groups and menus.
   skeleton:
     description: A pulsing placeholder shown in a piece of content's shape while it loads.
+  slider:
+    description: A handle to drag along a track for a value, or two for a range, on the browser's own range input.
   spinner:
     description: A loading indicator.
   stepper:

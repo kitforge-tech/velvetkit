@@ -76,6 +76,10 @@ en:
     progress:
       label: 'Progress'
       value_text: '%{percent}%'
+    slider:
+      from: 'Minimum'
+      to: 'Maximum'
+      range_text: '%{from} – %{to}'
     sidebar:
       toggle: 'Toggle sidebar'
     table_of_contents:

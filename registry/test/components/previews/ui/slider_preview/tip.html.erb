@@ -1,0 +1,22 @@
+<div id="slider-tip-demo" class="max-w-xs space-y-5 rounded-lg border p-5">
+  <div class="text-center">
+    <p class="text-sm text-muted-foreground">Add a tip</p>
+    <p class="text-3xl font-semibold tabular-nums" data-demo="total">$48.30</p>
+    <p class="text-sm text-muted-foreground" data-demo="breakdown">$42.00 + $6.30 tip</p>
+  </div>
+  <%= render(UI::Slider.new(name: "tip_percent", min: 0, max: 25, step: 5, value: 15, size: :lg, label: false,
+                            aria: { label: "Tip" }, value_text: "%{value}%",
+                            marks: { 0 => "None", 10 => "10%", 15 => "15%", 20 => "20%", 25 => "25%" })) %>
+</div>
+<script>
+  (() => {
+    const root = document.getElementById("slider-tip-demo");
+    const bill = 42;
+    const money = (n) => `$${n.toFixed(2)}`;
+    root.addEventListener("input", (event) => {
+      const tip = bill * Number(event.target.value) / 100;
+      root.querySelector('[data-demo="total"]').textContent = money(bill + tip);
+      root.querySelector('[data-demo="breakdown"]').textContent = tip ? `${money(bill)} + ${money(tip)} tip` : "No tip";
+    });
+  })();
+</script>

@@ -1,0 +1,23 @@
+<%# frozen_string_literal: true %>
+<%= tag.div(**root_attrs) do %>
+  <% if header? %>
+    <div class="flex items-baseline justify-between gap-3 text-sm">
+      <% if label_text %><%= tag.label(label_text, id: label_id, for: (fields.first[:id] unless range?), class: "font-medium leading-none") %><% end %>
+      <% if show_value? %><%= tag.output(output_text, class: "ms-auto tabular-nums text-muted-foreground", "aria-hidden": "true", data: { "ui--slider-target": "output" }) %><% end %>
+    </div>
+  <% end %>
+  <%= render(wrapper) do %>
+    <%= tag.div(**track_attrs) do %>
+      <%= tag.div(class: track_class) do %>
+        <%= tag.div(class: UI::Slider::FILL, style: fill_style, data: { slot: "slider-fill" }) %>
+      <% end %>
+      <%# Each knob follows the input just before it; the span keeps a range's pairs apart. %>
+      <% fields.each do |handle| %><span class="contents"><%= render_input(handle) %><%= tag.span(class: UI::Slider::KNOB, style: knob_style(handle), "aria-hidden": "true", data: { slot: "slider-thumb" }) %></span><% end %>
+    <% end %>
+    <% if marks? %>
+      <%= tag.div(class: "relative h-4 text-xs text-muted-foreground", "aria-hidden": "true") do %>
+        <% marks.each do |mark| %><%= tag.span(mark[:label], **mark_attrs(mark)) %><% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

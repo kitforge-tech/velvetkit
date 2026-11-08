@@ -13,6 +13,18 @@ New components:
 - `Chart`: line, bar, stacked bar, pie and donut charts on Chart.js, with a
   legend, tooltips, keyboard reading, a table of the numbers, and animation.
   The docs site has a Charts section with a page for each.
+- `Progress`: a bar for an upload, an import or storage used, with a value or
+  sliding while there's none yet, in tones, and split into coloured segments
+  with a legend. Setting its value attribute from JavaScript moves it live.
+- `Kbd`: a key or shortcut, shown as each reader's computer labels it (⌘ on a
+  Mac, Ctrl on Windows, Super on Linux), with `bind:` to press a button or
+  focus a field when the shortcut is pressed.
+- `Command`: a search box over pages, actions and records, inline or opened
+  with ⌘K, ranking by best match, with groups, shortcuts, and server search
+  with `url:`.
+- `Slider`: a handle to drag for a value, or two for a range such as a price
+  band, with value text, labelled marks and form binding. The knob follows
+  the pointer freely and the value keeps to the step.
 
 Changes:
 
@@ -41,8 +53,10 @@ Upgrading an app: re-run `velvetkit:add` for `date_picker`, `select` and
 `app/javascript/vanilla_calendar.ts` as its own entry point; `file_field`
 needs `@rails/activestorage`. If you added `chart_js.ts`,
 `vanilla_calendar.ts` or `ag_grid.ts` to your build by hand, `add` leaves
-it as it is.
+it as it is. `progress` needs the `velvetkit-progress` keyframes from the new
+`velvetkit.css`; without them a bar with no value doesn't move.
 
+- The docs site's search is the kit's own `Command`.
 - Fix: Rails 8.1.4.1, for security advisories in Active Storage and Action Pack.
 - Fix: the docs site shows a component added to the catalog without a server
   restart.

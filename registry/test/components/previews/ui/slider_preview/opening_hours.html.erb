@@ -1,0 +1,5 @@
+<div class="max-w-md">
+  <%= render(UI::Slider.new(range: true, label: "Open", min: 0, max: 24, from: 9, to: 17, from_name: "opens_at",
+                            to_name: "closes_at", value_text: "%{value}:00", show_value: true,
+                            marks: { 0 => "Midnight", 6 => "6:00", 12 => "Noon", 18 => "18:00", 24 => "Midnight" })) %>
+</div>

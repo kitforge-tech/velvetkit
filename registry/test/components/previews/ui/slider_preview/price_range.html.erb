@@ -1,0 +1,6 @@
+<%# A filter form submits on change, which fires once a handle is let go, not on every step of a drag. %>
+<form class="max-w-sm space-y-3" onsubmit="event.preventDefault()">
+  <%= render(UI::Slider.new(range: true, label: "Price", min: 0, max: 500, step: 10, from: 40, to: 260,
+                            from_name: "min_price", to_name: "max_price", value_text: "$%{value}", show_value: true)) %>
+  <p class="text-sm text-muted-foreground">Handles meet but don't pass each other. Press the track to grab the nearest.</p>
+</form>

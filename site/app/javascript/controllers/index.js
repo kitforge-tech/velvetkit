@@ -105,3 +105,6 @@ application.register("ui--kbd", UI__KbdController)
 
 import UI__CommandController from "./ui/command_controller"
 application.register("ui--command", UI__CommandController)
+
+import UI__SliderController from "./ui/slider_controller"
+application.register("ui--slider", UI__SliderController)
