@@ -1,0 +1,8 @@
+<%# frozen_string_literal: true %>
+<%= tag.div(**root_attrs) do %>
+  <% control = capture do %><%= render(group_component) do |g| %>
+    <% g.with_field(**field_options) %>
+    <% g.with_addon(align: unit_align) { unit } %>
+  <% end %><%= tag.input(**hidden_attrs) %><% end %>
+  <%= render(wrapper) { control } %>
+<% end %>

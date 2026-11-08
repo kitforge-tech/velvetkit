@@ -1,0 +1,23 @@
+<%# Reads the hidden fields, which hold plain numbers, so there's no comma stripping. %>
+<div id="money-invoice-demo" class="grid max-w-sm gap-4">
+  <%= render(UI::MoneyInput.new(name: "fee", unit: "₹", value: 85000, label: "Design work")) %>
+  <%= render(UI::MoneyInput.new(name: "expenses", unit: "₹", value: 12450.75, label: "Expenses", hint: "Travel and printing, at cost.")) %>
+  <dl class="grid grid-cols-2 gap-y-1 border-t pt-3 text-sm">
+    <dt class="text-muted-foreground">GST at 18% on the work</dt><dd class="text-end tabular-nums" data-demo="gst"></dd>
+    <dt class="font-medium">Total</dt><dd class="text-end font-medium tabular-nums" data-demo="total"></dd>
+  </dl>
+</div>
+<script>
+  (() => {
+    const root = document.getElementById("money-invoice-demo");
+    const money = (n) => "₹" + n.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const amount = (name) => Number(root.querySelector(`input[type=hidden][name="${name}"]`).value || 0);
+    const total = () => {
+      const gst = amount("fee") * 0.18;
+      root.querySelector('[data-demo="gst"]').textContent = money(gst);
+      root.querySelector('[data-demo="total"]').textContent = money(amount("fee") + amount("expenses") + gst);
+    };
+    root.addEventListener("input", total);
+    total();
+  })();
+</script>

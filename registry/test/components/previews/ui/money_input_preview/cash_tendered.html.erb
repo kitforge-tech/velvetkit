@@ -1,0 +1,24 @@
+<div id="money-cash-demo" class="max-w-xs space-y-4 rounded-lg border p-5">
+  <div class="flex items-baseline justify-between">
+    <span class="text-sm text-muted-foreground">To pay</span>
+    <span class="text-2xl font-semibold tabular-nums">₹1,847.00</span>
+  </div>
+  <%= render(UI::MoneyInput.new(name: "tendered", unit: "₹", size: :lg, label: "Cash received", autofocus: true)) %>
+  <div class="flex items-baseline justify-between text-sm">
+    <span class="text-muted-foreground">Change</span>
+    <span class="font-medium tabular-nums" data-demo="change" role="status">—</span>
+  </div>
+</div>
+<script>
+  (() => {
+    const root = document.getElementById("money-cash-demo");
+    const due = 1847;
+    root.addEventListener("input", () => {
+      const given = Number(root.querySelector('input[type=hidden][name="tendered"]').value || 0);
+      const out = root.querySelector('[data-demo="change"]');
+      if (!given) out.textContent = "—";
+      else if (given < due) out.textContent = "₹" + (due - given).toLocaleString("en-IN", { minimumFractionDigits: 2 }) + " short";
+      else out.textContent = "₹" + (given - due).toLocaleString("en-IN", { minimumFractionDigits: 2 });
+    });
+  })();
+</script>

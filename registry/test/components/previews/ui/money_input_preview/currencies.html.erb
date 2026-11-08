@@ -1,0 +1,7 @@
+<div class="grid max-w-xs gap-4">
+  <%= render(UI::MoneyInput.new(name: "inr", unit: "₹", value: 12345678.9, label: "Rupees, grouped in lakhs and crores")) %>
+  <%= render(UI::MoneyInput.new(name: "usd", unit: "$", value: 12345678.9, label: "Dollars, grouped in thousands")) %>
+  <%= render(UI::MoneyInput.new(name: "eur", unit: "€", value: 1234.5, separator: ",", delimiter: ".", label: "Euros, with a decimal comma")) %>
+  <%= render(UI::MoneyInput.new(name: "jpy", unit: "¥", value: 15800, precision: 0, label: "Yen, no decimals")) %>
+  <p class="text-sm text-muted-foreground">Each posts the plain number, like <code>12345678.90</code>. The sign, separators and decimals default to the app's locale.</p>
+</div>
