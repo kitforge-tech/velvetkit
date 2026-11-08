@@ -135,3 +135,13 @@ en:
     file_field:
       browse: 'Click to upload'
       drop: 'or drag and drop'
+      remove: 'Remove %{name}'
+      uploading: 'Uploading…'
+      uploaded: 'Uploaded'
+      failed: 'Upload failed'
+      retry: 'Try again'
+      too_big: 'Too big: %{max} at most'
+      wrong_type: 'Not a file this field takes'
+      waiting: 'Waiting for the uploads to finish…'
+      added: '%{name} added'
+      removed: '%{name} removed'
