@@ -47,6 +47,9 @@ class UI::Kbd < UI::Base
     "right"     => [ "→", "Right Arrow", "→", "Right Arrow" ]
   }.freeze
 
+  # Where Linux calls a key something else: the Windows key is Super there.
+  LINUX_KEYS = { "cmd" => [ "Super", "Super" ] }.freeze
+
   ALIASES = { "command" => "cmd", "meta" => "cmd", "control" => "ctrl", "option" => "alt", "opt" => "alt",
               "return" => "enter", "escape" => "esc", "del" => "delete", "arrowup" => "up",
               "arrowdown" => "down", "arrowleft" => "left", "arrowright" => "right" }.freeze
@@ -61,6 +64,9 @@ class UI::Kbd < UI::Base
         "font-sans font-medium leading-none tracking-normal whitespace-nowrap shadow-[0_1px_0] shadow-current/10"
 
   APPLE = /Macintosh|Mac OS X|iPhone|iPad|iPod/
+  # A Linux desktop; Android and ChromeOS say Linux too, but don't call it Super.
+  LINUX = /Linux|X11/
+  NOT_LINUX = /Android|CrOS/
 
   MODIFIERS = %w[mod cmd ctrl alt shift].freeze
 
@@ -79,7 +85,19 @@ class UI::Kbd < UI::Base
 
   def written? = @keys.nil?
 
-  def platform = apple? ? "mac" : "other"
+  # mac, linux, or other (Windows and the rest), as the user agent suggests.
+  def platform
+    agent = request&.user_agent.to_s
+    return "mac" if agent.match?(APPLE)
+    return "linux" if agent.match?(LINUX) && !agent.match?(NOT_LINUX)
+
+    "other"
+  rescue StandardError
+    "other"
+  end
+
+  # [label, name] for a key Linux names differently, or nil.
+  def linux_labels(key) = LINUX_KEYS[ALIASES.fetch(key.downcase, key.downcase)]
 
   # [mac label, mac name, other label, other name] for one key of a combo.
   def key_labels(key, combo = [ key ])
@@ -112,11 +130,5 @@ class UI::Kbd < UI::Base
     return {} unless @bind && steps.size == 1
 
     { "ui--kbd-keys-value": steps.first.join("+"), "ui--kbd-target-value": (@bind == true ? "" : @bind.to_s) }
-  end
-
-  def apple?
-    request&.user_agent.to_s.match?(APPLE)
-  rescue StandardError
-    false
   end
 end

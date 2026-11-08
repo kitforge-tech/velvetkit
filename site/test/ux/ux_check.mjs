@@ -122,11 +122,9 @@ ws.onopen = async () => {
     await send("Page.navigate", { url: `${BASE}/docs` });
     await sleep(2500);
     const searchState = () => run(`(() => { const d = document.querySelector('dialog[aria-label="Search the docs"]'); const i = d.querySelector('input');
-    const byOrder = (a, b) => (a.style.order || 0) - (b.style.order || 0);
-    const vis = [...d.querySelectorAll('[data-search-target=group]:not([hidden])')].sort(byOrder)
-      .flatMap(g => [...g.querySelectorAll('[role=option]:not([hidden])')].sort(byOrder));
-    return { open: d.open, focused: document.activeElement === i, first: vis[0]?.querySelector('span')?.textContent, count: vis.length,
-           selected: d.querySelector('[role=option][aria-selected=true] span')?.textContent, empty: !d.querySelector('[data-search-target=empty]').hidden }; })()`);
+    const vis = [...d.querySelectorAll('[role=option]')].filter(o => !o.hidden && !o.closest('[hidden]') && !o.closest('template'));
+    return { open: d.open, focused: document.activeElement === i, first: vis[0]?.dataset.label, count: vis.length,
+           selected: d.querySelector('[role=option][aria-selected=true]')?.dataset.label, empty: !d.querySelector('[data-ui--command-target=empty]').hidden }; })()`);
     await key("k", "KeyK", 4, 75);
     await sleep(400);
     let st = await searchState();
@@ -310,7 +308,7 @@ ws.onopen = async () => {
     check("copying the install command reports it", reported === '[["copy_install",null]]', reported);
 
     const typeSearch = async (text) => {
-      await run(`(() => { const i = document.querySelector("[data-search-target=input]"); i.value = ${JSON.stringify(text)}; i.dispatchEvent(new Event("input", { bubbles: true })); })()`);
+      await run(`(() => { const i = document.querySelector("#site-search [role=combobox]"); i.value = ${JSON.stringify(text)}; i.dispatchEvent(new Event("input", { bubbles: true })); })()`);
       await sleep(1800);
     };
     await send("Page.navigate", { url: `${BASE}/docs` });

@@ -1,5 +1,5 @@
 import { Controller } from '@hotwired/stimulus';
-import { ariaShortcut, isApple, isTyping, matchesShortcut, parseShortcut, usableWhileTyping, type Shortcut } from './_internal/shortcut.js';
+import { ariaShortcut, isApple, isTyping, keyboardPlatform, matchesShortcut, parseShortcut, usableWhileTyping, type Shortcut } from './_internal/shortcut.js';
 
 // Connects to data-controller="ui--kbd"
 //
@@ -22,7 +22,7 @@ export default class extends Controller<HTMLElement> {
 
   connect() {
     this.apple = isApple();
-    this.element.dataset.platform = this.apple ? 'mac' : 'other';
+    this.element.dataset.platform = keyboardPlatform();
     if (!this.hasKeysValue || !this.keysValue) return;
 
     this.bound = this.findTarget();

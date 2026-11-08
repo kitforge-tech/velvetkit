@@ -9,7 +9,12 @@
         <% combo.each_with_index do |key, index| %>
           <% if index.positive? %><span class="opacity-60 group-data-[platform=mac]/kbd:hidden" aria-hidden="true">+</span><% end %>
           <% mac, mac_name, other, other_name = key_labels(key, combo) %>
-          <% if mac == other && mac_name == other_name %>
+          <% linux, linux_name = linux_labels(key) %>
+          <% if linux %>
+            <%= key_tag(mac, mac_name, "hidden group-data-[platform=mac]/kbd:inline-flex") %>
+            <%= key_tag(other, other_name, "group-data-[platform=mac]/kbd:hidden group-data-[platform=linux]/kbd:hidden") %>
+            <%= key_tag(linux, linux_name, "hidden group-data-[platform=linux]/kbd:inline-flex") %>
+          <% elsif mac == other && mac_name == other_name %>
             <%= key_tag(mac, mac_name) %>
           <% else %>
             <%= key_tag(mac, mac_name, "hidden group-data-[platform=mac]/kbd:inline-flex") %>

@@ -8,6 +8,9 @@ class UI::KbdTest < ViewComponent::TestCase
 
   MAC = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/130.0 Safari/537.36"
   WINDOWS = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/130.0 Safari/537.36"
+  LINUX = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/130.0 Safari/537.36"
+  ANDROID = "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 Chrome/130.0 Mobile Safari/537.36"
+  CHROME_OS = "Mozilla/5.0 (X11; CrOS x86_64 14541.0.0) AppleWebKit/537.36 Chrome/130.0 Safari/537.36"
 
   def render_kbd(*args, agent: WINDOWS, **opts, &block)
     vc_test_request.user_agent = agent
@@ -34,6 +37,29 @@ class UI::KbdTest < ViewComponent::TestCase
     assert_selector "[data-slot='kbd'][data-platform='mac']"
     render_kbd("mod+k", agent: WINDOWS)
     assert_selector "[data-slot='kbd'][data-platform='other']"
+  end
+
+  def test_linux_is_its_own_platform_but_not_android_or_chrome_os
+    { LINUX => "linux", ANDROID => "other", CHROME_OS => "other" }.each do |agent, platform|
+      render_kbd("mod+k", agent: agent)
+      assert_selector "[data-slot='kbd'][data-platform='#{platform}']"
+    end
+  end
+
+  def test_the_windows_key_is_super_on_linux
+    render_kbd("cmd+l", agent: LINUX)
+    linux = page.find("kbd.hidden.group-data-\\[platform\\=linux\\]\\/kbd\\:inline-flex", visible: :all)
+    assert_equal "Super", linux.text(:all)
+    other = page.find("kbd.group-data-\\[platform\\=linux\\]\\/kbd\\:hidden", visible: :all)
+    assert_equal "Win", other.find("span[aria-hidden]", visible: :all).text(:all)
+    assert_includes other[:class], "group-data-[platform=mac]/kbd:hidden"
+  end
+
+  def test_other_keys_show_the_same_on_linux_as_on_windows
+    render_kbd("mod+alt+k", agent: LINUX)
+    assert_no_selector "kbd.group-data-\\[platform\\=linux\\]\\/kbd\\:inline-flex", visible: :all
+    assert_selector "kbd.group-data-\\[platform\\=mac\\]\\/kbd\\:hidden", text: "Ctrl"
+    assert_selector "kbd.group-data-\\[platform\\=mac\\]\\/kbd\\:hidden", text: "Alt"
   end
 
   def test_mod_is_command_on_a_mac_and_ctrl_elsewhere_shown_by_platform

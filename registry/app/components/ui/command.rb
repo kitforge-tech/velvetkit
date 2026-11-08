@@ -29,6 +29,13 @@ require "securerandom"
 #
 # The dialog opens on `shortcut:` (mod+k) from anywhere on the page, from the
 # trigger, or from any element with data-action="ui--command#open" inside it.
+# `shortcut:` can be a list, like ["mod+k", "/"]; the trigger shows the first.
+#
+# `sort_groups: true` puts the group with the best match first, so a strong
+# match isn't buried under a weak one in an earlier group. `empty:` says what
+# to show when nothing matches. After each search it fires
+# `ui--command:search` with the query and how many items match, for
+# analytics, say.
 class UI::Command < UI::Base
   renders_many :groups, "UI::Command::Group"
 
@@ -36,9 +43,11 @@ class UI::Command < UI::Base
   # block says otherwise. Takes UI::Button's options.
   renders_one :trigger, lambda { |label: nil, **opts, &block|
     content = block ? view_context.capture(&block) : default_trigger_content(label)
+    actions = [ "ui--command#open", opts.dig(:data, :action) ].compact.join(" ")
     render(UI::Button.new(variant: :outline, **opts,
                           class: cn("justify-between gap-6 font-normal text-muted-foreground", opts[:class]),
-                          aria: { haspopup: "dialog" }, data: { action: "ui--command#open" })) { content }
+                          aria: { haspopup: "dialog", **(opts[:aria] || {}) },
+                          data: { **(opts[:data] || {}), action: actions })) { content }
   }
 
   # The dialog sits near the top, where the eye already is, and doesn't jump
@@ -50,10 +59,12 @@ class UI::Command < UI::Base
   PANEL = "flex w-full flex-col overflow-hidden rounded-lg border bg-popover text-popover-foreground"
 
   def initialize(placeholder: nil, dialog: false, shortcut: "mod+k", url: nil, param: "q", results_heading: nil,
-                 label: nil, class: nil, **html_attrs)
+                 label: nil, empty: nil, sort_groups: false, class: nil, **html_attrs)
     @placeholder     = placeholder
     @dialog          = dialog
-    @shortcut        = shortcut
+    @shortcuts       = Array(shortcut).map(&:to_s).reject(&:empty?)
+    @empty           = empty
+    @sort_groups     = sort_groups
     @url             = url
     @param           = param
     @results_heading = results_heading
@@ -63,7 +74,10 @@ class UI::Command < UI::Base
     @id              = html_attrs[:id] || "ui-command-#{SecureRandom.hex(4)}"
   end
 
-  attr_reader :id, :shortcut
+  attr_reader :id
+
+  # The one the trigger shows.
+  def shortcut = @shortcuts.first
 
   def dialog? = @dialog
   def remote? = @url.present?
@@ -89,13 +103,15 @@ class UI::Command < UI::Base
       tag.span(class: "flex items-center gap-2") do
         safe_join([ render(UI::Icon.new(name: "search", size: :sm)), label || t("ui.command.trigger", default: "Search…") ])
       end,
-      (render(UI::Kbd.new(@shortcut, size: :sm)) if @shortcut.present?)
+      (render(UI::Kbd.new(shortcut, size: :sm)) if shortcut)
     ])
   end
 
   def controller_values
-    values = { "ui--command-dialog-value": dialog?, "ui--command-shortcut-value": (dialog? ? @shortcut.to_s : ""),
-               "ui--command-empty-value": t("ui.command.empty", default: "No results found."),
+    # Shortcuts never have spaces ("space" is the key), so they're listed with them.
+    values = { "ui--command-dialog-value": dialog?, "ui--command-shortcut-value": (dialog? ? @shortcuts.join(" ") : ""),
+               "ui--command-sort-groups-value": @sort_groups,
+               "ui--command-empty-value": @empty || t("ui.command.empty", default: "No results found."),
                "ui--command-searching-value": t("ui.command.searching", default: "Searching…"),
                "ui--command-failed-value": t("ui.command.failed", default: "Couldn't search. Try again.") }
     return values unless remote?
