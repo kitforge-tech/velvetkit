@@ -31,7 +31,7 @@
     <% end %>
 
     <%= tag.div(id: listbox_id, role: "listbox", tabindex: -1,
-                aria: { labelledby: (render_label? ? trigger_id : nil), multiselectable: (multiple? ? "true" : nil) },
+                aria: { labelledby: (named? ? trigger_id : nil), multiselectable: (multiple? ? "true" : nil) },
                 data: { "ui--select-target": "listbox", action: "mousedown->ui--select#keepFocus" },
                 class: "max-h-64 overflow-y-auto p-1") do %>
       <% listbox_options.each_with_index do |(label, value), index| %>

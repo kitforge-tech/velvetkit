@@ -81,6 +81,7 @@ class UI::Select < UI::Base
     @form       = form
     @field      = field
     @user_class = binding.local_variable_get(:class)
+    @name_attrs = take_accessible_name(html_attrs)
     @html_attrs = html_attrs
     @uid        = SecureRandom.hex(4)
     @wrapper    = UI::FormField.new(label: label, hint: hint, error: error,
@@ -115,7 +116,7 @@ class UI::Select < UI::Base
       class: trigger_classes,
       role: "combobox",
       disabled: @disabled,
-      aria: { haspopup: "listbox", expanded: "false", controls: listbox_id,
+      aria: { haspopup: "listbox", expanded: "false", controls: listbox_id, **@name_attrs,
               invalid: ("true" if wrapper.error?), describedby: wrapper.describedby },
       data: { "ui--select-target": "trigger",
               action: "click->ui--select#toggle keydown->ui--select#keydown" }
@@ -197,7 +198,21 @@ class UI::Select < UI::Base
     attrs
   end
 
+  # Whether the button has a name for the list to borrow.
+  def named? = render_label? || @name_attrs.any?
+
   def native_choices
     listbox_options.map { |label, value| [ label, value ] }
+  end
+
+  private
+
+  # `aria-label` or `aria-labelledby` names what people reach, the visible
+  # button. Left in html_attrs it would go on the native select, which is
+  # hidden from screen readers, and the button would have no name at all.
+  def take_accessible_name(attrs)
+    aria = attrs[:aria] = (attrs[:aria] || {}).dup
+    { label: attrs.delete(:"aria-label") || aria.delete(:label),
+      labelledby: attrs.delete(:"aria-labelledby") || aria.delete(:labelledby) }.compact
   end
 end
