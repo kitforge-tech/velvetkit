@@ -70,6 +70,7 @@ qr-code: { tabler: qrcode, phosphor: qr-code }
 receipt: { tabler: receipt, phosphor: receipt }
 rocket: { tabler: rocket, phosphor: rocket }
 rotate-cw: { tabler: rotate-clockwise, phosphor: arrow-clockwise }
+scan-barcode: { tabler: barcode, phosphor: barcode }
 search: { tabler: search, phosphor: magnifying-glass }
 settings: { tabler: settings, phosphor: gear }
 shield: { tabler: shield, phosphor: shield }

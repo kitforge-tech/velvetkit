@@ -30,6 +30,11 @@ New components:
   when the field is left, and the plain number (123456.78) posted in a
   hidden field. The sign, separators and decimals follow the app's locale.
   ↑ and ↓ step by one unit, or `step:`, and Shift by ten.
+- `ScanInput`: a field for barcode and QR scanners. Enter (or Tab) submits
+  the form with the code and empties the field, codes scanned while one is
+  still being sent wait their turn, and it keeps focus when focus falls to
+  the page. A `scan` event lets the page handle codes itself; `capture:`,
+  `keyboard: false` and `suffix: :tab` suit scan-only pages and handhelds.
 
 Changes:
 

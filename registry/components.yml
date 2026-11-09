@@ -103,6 +103,8 @@ components:
     description: A set of radio buttons.
   native_select:
     description: The browser's own select, styled closed; best for phones' system pickers.
+  scan_input:
+    description: A field for a barcode or QR scanner, submitting each code as it's scanned and keeping focus.
   select:
     description: A styled dropdown with keyboard navigation and type-ahead, posting like a native select.
   session_tabs:

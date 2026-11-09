@@ -1,0 +1,34 @@
+<%# keyboard: false keeps a handheld's on-screen keyboard down; its trigger button does the typing. %>
+<div class="grid max-w-sm gap-4" data-demo>
+  <%= render(UI::ScanInput.new(name: "ticket", label: "Check in", placeholder: "Scan a ticket's QR code", size: :lg, keyboard: false)) %>
+  <%= render "ui/scan_input_preview/simulate", codes: { "TKT-A-0192" => "Valid", "TKT-A-0007" => "Already used", "TKT-Z-9999" => "Not for today" } %>
+  <div class="rounded-md border p-4 text-center" role="status" data-out>
+    <p class="text-sm text-muted-foreground">Waiting for a ticket</p>
+  </div>
+</div>
+<script>
+  (() => {
+    const root = document.currentScript.previousElementSibling;
+    const used = new Set(["TKT-A-0007"]);
+    const out = root.querySelector("[data-out]");
+    const show = (title, line, tone) => {
+      out.className = `rounded-md border p-4 text-center ${tone}`;
+      out.innerHTML = "";
+      const strong = document.createElement("p");
+      strong.className = "text-lg font-semibold";
+      strong.textContent = title;
+      const small = document.createElement("p");
+      small.className = "text-sm";
+      small.textContent = line;
+      out.append(strong, small);
+    };
+    root.addEventListener("ui--scan-input:scan", (event) => {
+      event.preventDefault();
+      const { code } = event.detail;
+      if (!code.startsWith("TKT-A-")) return show("Not for today", `${code} is for another day.`, "border-amber-500/50 bg-amber-500/10");
+      if (used.has(code)) return show("Already checked in", `${code} was used at 18:42.`, "border-destructive/50 bg-destructive/10");
+      used.add(code);
+      show("Welcome", `${code}, general admission.`, "border-emerald-500/50 bg-emerald-500/10");
+    });
+  })();
+</script>
