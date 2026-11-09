@@ -14,10 +14,9 @@ class UI::Card::HeaderTest < ViewComponent::TestCase
   def test_default_classes
     render_inline(UI::Card::Header.new) { "x" }
     classes = page.find("div")[:class].split
-    assert_includes classes, "flex"
-    assert_includes classes, "flex-col"
-    assert_includes classes, "gap-1.5"
-    assert_includes classes, "p-6"
+    assert_includes classes, "grid"
+    assert_includes classes, "gap-1"
+    assert_includes classes, "px-(--card-spacing)"
   end
 
   def test_renders_with_title_slot

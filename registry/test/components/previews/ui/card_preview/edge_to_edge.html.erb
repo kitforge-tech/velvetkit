@@ -1,0 +1,19 @@
+<%# The negative margins cancel the card's inset and the gap above the footer, so they stay right at any spacing. %>
+<%= render(UI::Card.new(spacing: 6, class: "max-w-md")) do |card| %>
+  <% card.with_header do |header| %>
+    <% header.with_title { "Terms of service" } %>
+    <% header.with_description { "Please read these before carrying on." } %>
+  <% end %>
+  <% card.with_content do %>
+    <div class="-mx-(--card-spacing) -mb-(--card-spacing) max-h-40 space-y-3 overflow-y-auto border-t px-(--card-spacing) py-3 text-muted-foreground" tabindex="0">
+      <p>You keep everything you upload. We only use it to run the service for you.</p>
+      <p>You can export your data at any time, and when you close your account we delete it within 30 days.</p>
+      <p>We'll tell you a month ahead if these terms change, and you can leave before they do.</p>
+      <p>Don't use the service to break the law or to get in the way of other people using it.</p>
+    </div>
+  <% end %>
+  <% card.with_footer(class: "justify-end gap-2") do %>
+    <%= render(UI::Button.new(variant: :outline, size: :sm)) { "Decline" } %>
+    <%= render(UI::Button.new(size: :sm)) { "Accept" } %>
+  <% end %>
+<% end %>

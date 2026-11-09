@@ -6,7 +6,9 @@ class UI::Card::Footer < UI::Base
     @html_attrs = html_attrs
   end
 
-  def classes
-    cn("flex items-center p-6 pt-0", @user_class)
+  def root_attrs
+    { **@html_attrs, class: cn("flex items-center rounded-b-xl border-t bg-muted/50 p-(--card-spacing)",
+                             @user_class),
+      data: { slot: "card-footer", **(@html_attrs[:data] || {}) } }
   end
 end

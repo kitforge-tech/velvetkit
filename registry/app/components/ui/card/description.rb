@@ -6,7 +6,9 @@ class UI::Card::Description < UI::Base
     @html_attrs = html_attrs
   end
 
-  def classes
-    cn("text-sm text-muted-foreground", @user_class)
+  def root_attrs
+    { **@html_attrs, class: cn("text-sm text-muted-foreground",
+                             @user_class),
+      data: { slot: "card-description", **(@html_attrs[:data] || {}) } }
   end
 end

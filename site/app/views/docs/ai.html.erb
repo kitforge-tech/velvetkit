@@ -19,8 +19,8 @@
          [ "globe", "Docs agents can read", "llms.txt, and Markdown for every page.", "#on-the-web" ]
        ].each do |icon, title, text, anchor| %>
       <%= link_to anchor, class: "group block rounded-xl" do %>
-        <%= render(UI::Card.new(class: "h-full transition-all group-hover:border-primary/50 group-hover:shadow-md")) do |card| %>
-          <% card.with_content(class: "space-y-2 pt-6") do %>
+        <%= render(UI::Card.new(class: "h-full transition-all group-hover:ring-primary/50 group-hover:shadow-md")) do |card| %>
+          <% card.with_content(class: "space-y-2") do %>
             <%= render(UI::Icon.new(name: icon, size: :lg, class: "text-primary dark:text-fuchsia-300")) %>
             <h2 class="font-semibold"><%= title %></h2>
             <p class="text-sm text-muted-foreground"><%= text %></p>

@@ -14,10 +14,9 @@ class UI::Card::TitleTest < ViewComponent::TestCase
   def test_default_classes
     render_inline(UI::Card::Title.new) { "x" }
     classes = page.find("h3")[:class].split
-    assert_includes classes, "text-lg"
-    assert_includes classes, "font-semibold"
-    assert_includes classes, "leading-none"
-    assert_includes classes, "tracking-tight"
+    assert_includes classes, "text-base"
+    assert_includes classes, "font-medium"
+    assert_includes classes, "leading-snug"
   end
 
   def test_user_class_override

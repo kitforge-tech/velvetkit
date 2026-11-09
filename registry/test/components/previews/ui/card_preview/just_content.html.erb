@@ -1,0 +1,10 @@
+<div class="grid max-w-sm gap-4">
+  <%= render(UI::Card.new) do |card| %>
+    <% card.with_content do %>
+      <p class="text-muted-foreground">One part: the card's padding still applies.</p>
+    <% end %>
+  <% end %>
+  <%= render(UI::Card.new(class: "p-8 text-center")) do %>
+    <p class="text-muted-foreground">No parts, just a block: a bare surface, padded however you like.</p>
+  <% end %>
+</div>

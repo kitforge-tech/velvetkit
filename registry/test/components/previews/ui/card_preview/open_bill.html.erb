@@ -1,0 +1,18 @@
+<%= render(UI::Card.new(size: :sm, class: "max-w-xs")) do |card| %>
+  <% card.with_header do |header| %>
+    <% header.with_title { "Table 12" } %>
+    <% header.with_description { "Opened 19:42 by Priya" } %>
+    <% header.with_action { render(UI::Badge.new(variant: :secondary, size: :sm)) { "Open" } } %>
+  <% end %>
+  <% card.with_content do %>
+    <dl class="grid grid-cols-[1fr_auto] gap-y-1 tabular-nums">
+      <dt>2 × Masala dosa</dt><dd>₹360.00</dd>
+      <dt>1 × Filter coffee</dt><dd>₹70.00</dd>
+      <dt class="text-muted-foreground">GST at 5%</dt><dd class="text-muted-foreground">₹21.50</dd>
+    </dl>
+  <% end %>
+  <% card.with_footer(class: "justify-between") do %>
+    <span class="font-semibold tabular-nums">₹451.50</span>
+    <%= render(UI::Button.new(size: :sm)) { "Charge" } %>
+  <% end %>
+<% end %>

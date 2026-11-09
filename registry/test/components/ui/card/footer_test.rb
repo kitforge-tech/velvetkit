@@ -16,8 +16,9 @@ class UI::Card::FooterTest < ViewComponent::TestCase
     classes = page.find("div")[:class].split
     assert_includes classes, "flex"
     assert_includes classes, "items-center"
-    assert_includes classes, "p-6"
-    assert_includes classes, "pt-0"
+    assert_includes classes, "p-(--card-spacing)"
+    assert_includes classes, "border-t"
+    assert_includes classes, "bg-muted/50"
   end
 
   def test_user_class_override

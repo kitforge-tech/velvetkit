@@ -1,0 +1,17 @@
+<%= render(UI::Card.new(size: :sm, class: "max-w-xs")) do |card| %>
+  <% card.with_header do |header| %>
+    <% header.with_title { "Weekly digest" } %>
+    <% header.with_description { "One email, every Monday morning." } %>
+  <% end %>
+  <% card.with_content do %>
+    <ul class="list-disc space-y-1 ps-4 text-muted-foreground">
+      <li>New comments on your projects</li>
+      <li>Tasks due this week</li>
+      <li>Who joined your team</li>
+    </ul>
+  <% end %>
+  <% card.with_footer(class: "gap-2") do %>
+    <%= render(UI::Button.new(size: :sm)) { "Turn on" } %>
+    <%= render(UI::Button.new(variant: :ghost, size: :sm)) { "See an example" } %>
+  <% end %>
+<% end %>

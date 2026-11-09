@@ -59,7 +59,7 @@
          [ "accessibility", "Accessible by default", "Native dialog, real labels, keyboard menus and tabs, and colours that pass AA in both themes." ]
        ].each do |icon, title, text| %>
       <%= render(UI::Card.new(class: "transition-shadow hover:shadow-md")) do |card| %>
-        <% card.with_content(class: "space-y-3 pt-6") do %>
+        <% card.with_content(class: "space-y-3") do %>
           <%= render(UI::Icon.new(name: icon, size: :lg, class: "text-primary dark:text-fuchsia-300")) %>
           <h3 class="font-semibold"><%= title %></h3>
           <p class="text-sm text-muted-foreground"><%= text %></p>

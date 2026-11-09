@@ -41,7 +41,7 @@ components:
   button_to:
     description: A button that submits a one-off form, like Rails' button_to.
   card:
-    description: A bordered container with header, content and footer.
+    description: A surface for one thing, with a header and action, body, footer and optional image.
   chart:
     description: Line and bar charts, with a legend, tooltips and the numbers as a table, on Chart.js.
   checkbox:
