@@ -29,6 +29,7 @@ New components:
   rupees, 123,456.78 otherwise) with its currency sign, decimals filled in
   when the field is left, and the plain number (123456.78) posted in a
   hidden field. The sign, separators and decimals follow the app's locale.
+  ↑ and ↓ step by one unit, or `step:`, and Shift by ten.
 
 Changes:
 

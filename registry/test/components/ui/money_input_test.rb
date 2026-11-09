@@ -96,8 +96,16 @@ class UI::MoneyInputTest < ViewComponent::TestCase
     assert_equal "text", field[:type]
     assert_equal "decimal", field[:inputmode]
     assert_equal "off", field[:autocomplete]
-    assert_equal "beforeinput->ui--money-input#guard input->ui--money-input#type blur->ui--money-input#finish",
-                 field["data-action"]
+    assert_equal "beforeinput->ui--money-input#guard keydown->ui--money-input#nudge input->ui--money-input#type " \
+                 "blur->ui--money-input#finish", field["data-action"]
+    assert_equal "1", root["data-ui--money-input-step-value"]
+  end
+
+  def test_step_is_written_plainly_for_the_arrow_keys
+    render_money(step: 0.5)
+    assert_equal "0.5", root["data-ui--money-input-step-value"]
+    render_money(step: 100)
+    assert_equal "100", root["data-ui--money-input-step-value"]
   end
 
   def test_label_hint_and_error

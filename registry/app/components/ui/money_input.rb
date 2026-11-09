@@ -22,6 +22,9 @@ require "securerandom"
 # otherwise; `grouping: :indian` asks for it with any sign. `precision: 0` is
 # for whole amounts. Amounts can't be negative unless `negative: true`.
 #
+# ↑ and ↓ add or take away one whole unit, or `step:` (0.5, 100), and Shift
+# ten of them. Each press fires `input` and `change`, as a number field does.
+#
 # It takes the same label, hint, error, size and form-builder options as
 # UI::NumberInput. The visible field fires `input` and `change` as usual; read
 # the amount from the hidden field (`[data-ui--money-input-target=value]`).
@@ -35,7 +38,7 @@ class UI::MoneyInput < UI::Base
   GROUPINGS = %i[thousands indian].freeze
 
   def initialize(name: nil, value: nil, form: nil, field: nil, unit: nil, precision: nil, separator: nil,
-                 delimiter: nil, grouping: nil, negative: false, size: :default, label: nil, hint: nil,
+                 delimiter: nil, grouping: nil, negative: false, step: 1, size: :default, label: nil, hint: nil,
                  error: nil, required: false, disabled: false, placeholder: nil, class: nil, **html_attrs)
     @name        = name
     @form        = form
@@ -46,6 +49,7 @@ class UI::MoneyInput < UI::Base
     @delimiter   = delimiter || currency(:delimiter, ",")
     @grouping    = GROUPINGS.include?(grouping&.to_sym) ? grouping.to_sym : (@unit == "₹" ? :indian : :thousands)
     @negative    = negative
+    @step        = step
     @size        = SIZES.key?(size.to_sym) ? size.to_sym : :default
     @required    = required
     @disabled    = disabled
@@ -64,7 +68,8 @@ class UI::MoneyInput < UI::Base
     { class: cn("w-full", @user_class),
       data: { slot: "money-input", controller: "ui--money-input", "ui--money-input-separator-value": @separator,
               "ui--money-input-delimiter-value": @delimiter, "ui--money-input-precision-value": @precision,
-              "ui--money-input-grouping-value": @grouping, "ui--money-input-negative-value": @negative } }
+              "ui--money-input-grouping-value": @grouping, "ui--money-input-negative-value": @negative,
+              "ui--money-input-step-value": BigDecimal(@step.to_s).to_s("F").delete_suffix(".0") } }
   end
 
   def group_component
@@ -74,7 +79,8 @@ class UI::MoneyInput < UI::Base
 
   def field_options
     data = @html_attrs[:data] || {}
-    action = [ "beforeinput->ui--money-input#guard input->ui--money-input#type blur->ui--money-input#finish", data[:action] ].compact.join(" ")
+    action = [ "beforeinput->ui--money-input#guard keydown->ui--money-input#nudge input->ui--money-input#type " \
+             "blur->ui--money-input#finish", data[:action] ].compact.join(" ")
     { type: :text, inputmode: "decimal", autocomplete: "off", spellcheck: false, value: shown,
       placeholder: @placeholder || shown(BigDecimal(0)), required: @required, disabled: @disabled,
       error: wrapper.error?, "aria-describedby": wrapper.describedby, **@html_attrs, id: @input_id,

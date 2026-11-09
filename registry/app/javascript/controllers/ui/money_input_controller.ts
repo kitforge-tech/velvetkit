@@ -18,6 +18,7 @@ export default class extends Controller<HTMLElement> {
     precision: { type: Number, default: 2 },
     grouping: { type: String, default: 'thousands' },
     negative: Boolean,
+    step: { type: String, default: '1' },
   };
 
   declare readonly fieldTarget: HTMLInputElement;
@@ -27,6 +28,7 @@ export default class extends Controller<HTMLElement> {
   declare readonly precisionValue: number;
   declare readonly groupingValue: string;
   declare readonly negativeValue: boolean;
+  declare readonly stepValue: string;
 
   connect() {
     this.element.closest('form')?.addEventListener('reset', this.afterReset);
@@ -68,6 +70,38 @@ export default class extends Controller<HTMLElement> {
     } else if (event.inputType === 'deleteContentForward' && field.value[start] === this.delimiterValue) {
       field.setSelectionRange(start + 1, start + 1);
     }
+  }
+
+  // ↑ and ↓ add or take away a step (one whole unit unless `step:` says),
+  // Shift ten. Counted in paise or cents as whole numbers, so nothing drifts.
+  nudge(event: KeyboardEvent) {
+    if ((event.key !== 'ArrowUp' && event.key !== 'ArrowDown') || event.altKey || event.metaKey || event.ctrlKey) return;
+    if (this.fieldTarget.readOnly) return;
+
+    event.preventDefault();
+    const { amount } = this.read(this.fieldTarget.value, 0);
+    const scale = 10n ** BigInt(this.precisionValue);
+    let minor = this.minor(amount, scale);
+    const step = this.minor(this.read(this.stepValue.replace('.', this.separatorValue), 0).amount, scale) || scale;
+    minor += (event.key === 'ArrowUp' ? 1n : -1n) * step * (event.shiftKey ? 10n : 1n);
+    if (minor < 0n && !this.negativeValue) minor = 0n;
+
+    const digits = (minor < 0n ? -minor : minor).toString().padStart(this.precisionValue + 1, '0');
+    const cut = digits.length - this.precisionValue;
+    const next: Amount = {
+      negative: minor < 0n,
+      whole: digits.slice(0, cut),
+      fraction: digits.slice(cut),
+      point: this.precisionValue > 0,
+    };
+    const text = this.write(next);
+    if (text === this.fieldTarget.value) return;
+
+    this.fieldTarget.value = text;
+    this.fieldTarget.setSelectionRange(text.length, text.length);
+    this.valueTarget.value = this.plain(next);
+    this.fieldTarget.dispatchEvent(new Event('input', { bubbles: true }));
+    this.fieldTarget.dispatchEvent(new Event('change', { bubbles: true }));
   }
 
   // Leaving the field fills in the decimals: "1,200" becomes "1,200.00".
@@ -132,6 +166,14 @@ export default class extends Controller<HTMLElement> {
     });
 
     return { amount, kept: kept - zeros };
+  }
+
+  // An amount in paise or cents, as a whole number.
+  private minor(amount: Amount, scale: bigint): bigint {
+    const whole = BigInt(amount.whole || '0') * scale;
+    const fraction = BigInt(amount.fraction.padEnd(this.precisionValue, '0') || '0');
+    const total = whole + fraction;
+    return amount.negative ? -total : total;
   }
 
   private write(amount: Amount): string {
