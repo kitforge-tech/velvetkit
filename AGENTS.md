@@ -67,30 +67,15 @@ Files for a component named `thing`:
 
 ## Releases and CHANGELOG.md
 
-A release is a tag: pushing `v0.4.2` publishes the gem (see
-`.github/workflows/release.yml`), with no commit to main. The docs site's
-release notes page (`/docs/releases`, `site/app/models/release_notes.rb`) is
-read from `CHANGELOG.md`, so the changelog is the only place release notes
-are written:
+The docs site's release notes (`/docs/releases`) are read from
+`CHANGELOG.md`, so that's the only place they're written:
 
-- A PR that adds a component adds a line for it under `## Unreleased`, in a
-  `New components:` list: `` - `ClassName`: what it is, in one sentence. ``
-  The class name in backticks is what the page links to the component's page.
-  `test/velvetkit/changelog_test.rb` fails for a component the changelog
-  never names.
-- Anything else a consumer would notice goes under `Changes:` in the same
-  section; a fix is a bullet starting `Fix:`. A paragraph that starts
-  `Upgrading an app:` says what to re-run or change.
-- To release, run `bundle exec rake "changelog:release[X.Y.Z]"` (the tag's
-  version without the `v`). It renames `## Unreleased` to
-  `## X.Y.Z — YYYY-MM-DD` under a new, empty `## Unreleased`, dates the
-  releases page in `site/config/lastmod.yml`, and refuses a version that
-  isn't newer than the last or an Unreleased with nothing in it. Merge that
-  as a `docs(changelog): X.Y.Z` PR, then push the tag. A heading written by
-  hand in any other shape is left off the page.
-- A tag with nothing a consumer would notice (CI, README) gets no section.
-- Any other change to the changelog: run `bin/rails seo:lastmod` from `site/`
-  and commit `site/config/lastmod.yml`, as for any docs page.
+- A PR that adds a component adds `` - `ClassName`: what it is. `` under
+  `## Unreleased` > `New components:`, or `test/velvetkit/changelog_test.rb`
+  fails. Other changes go under `Changes:`, a fix starts `Fix:`, and an
+  `Upgrading an app:` paragraph says what to re-run.
+- To release, run `bundle exec rake "changelog:release[X.Y.Z]"`, merge it as
+  `docs(changelog): X.Y.Z`, then push the tag.
 
 ## Icons
 
