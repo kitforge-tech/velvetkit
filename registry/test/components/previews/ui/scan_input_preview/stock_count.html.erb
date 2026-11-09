@@ -1,0 +1,24 @@
+<%# capture: true sends keys typed with no field focused into this one, so a scan lands even after clicking elsewhere. %>
+<div class="grid max-w-md gap-4" data-demo>
+  <%= render(UI::ScanInput.new(name: "sku", label: "Count shelf B-12", capture: true,
+                               hint: "Click anywhere on the page, then scan: the code still lands here.")) %>
+  <%= render "ui/scan_input_preview/simulate", codes: { "SKU-1042" => "Cable ties", "SKU-2210" => "Hex bolts", "SKU-3307" => "Wall plugs" } %>
+  <table class="text-sm">
+    <thead><tr class="text-start text-muted-foreground"><th class="py-1 text-start font-normal">Item</th><th class="py-1 text-end font-normal">Counted</th><th class="py-1 text-end font-normal">Expected</th></tr></thead>
+    <tbody data-rows>
+      <tr data-sku="SKU-1042"><td class="py-1">Cable ties</td><td class="py-1 text-end tabular-nums" data-n>0</td><td class="py-1 text-end tabular-nums">3</td></tr>
+      <tr data-sku="SKU-2210"><td class="py-1">Hex bolts</td><td class="py-1 text-end tabular-nums" data-n>0</td><td class="py-1 text-end tabular-nums">2</td></tr>
+      <tr data-sku="SKU-3307"><td class="py-1">Wall plugs</td><td class="py-1 text-end tabular-nums" data-n>0</td><td class="py-1 text-end tabular-nums">4</td></tr>
+    </tbody>
+  </table>
+</div>
+<script>
+  (() => {
+    const root = document.currentScript.previousElementSibling;
+    root.addEventListener("ui--scan-input:scan", (event) => {
+      event.preventDefault();
+      const cell = root.querySelector(`tr[data-sku="${event.detail.code}"] [data-n]`);
+      if (cell) cell.textContent = Number(cell.textContent) + 1;
+    });
+  })();
+</script>

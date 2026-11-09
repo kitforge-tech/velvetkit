@@ -102,6 +102,8 @@ en:
       error: 'Needs attention'
       loading: 'Checking'
       summary: 'Step %{current} of %{total}'
+    scan_input:
+      placeholder: 'Scan or type a code'
     select:
       placeholder: 'Choose…'
       search: 'Search'

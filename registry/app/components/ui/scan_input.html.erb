@@ -1,0 +1,6 @@
+<%# frozen_string_literal: true %>
+<% group = capture do %><%= render(group_component) do |g| %>
+  <% g.with_field(**field_options) %>
+  <% g.with_addon(align: "inline-start") { |a| a.with_icon(name: "scan-barcode") } %>
+<% end %><% end %>
+<%= render(wrapper) { group } %>

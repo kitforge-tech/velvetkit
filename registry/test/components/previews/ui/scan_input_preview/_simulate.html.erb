@@ -1,0 +1,20 @@
+<%# What a scanner does: types the code fast, then presses the suffix key. For trying the demos without one. %>
+<div class="flex flex-wrap items-center gap-2 text-sm">
+  <span class="text-muted-foreground">Simulate a scan:</span>
+  <% codes.each do |code, label| %>
+    <%= render(UI::Button.new(variant: :outline, size: :sm, data: { simulate: code, key: local_assigns.fetch(:key, "Enter") })) { label } %>
+  <% end %>
+</div>
+<script>
+  (() => {
+    const root = document.currentScript.previousElementSibling;
+    root.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-simulate]");
+      if (!button) return;
+      const field = root.closest("[data-demo]").querySelector("[data-ui--scan-input-target=field]");
+      field.focus();
+      field.value = button.dataset.simulate;
+      field.dispatchEvent(new KeyboardEvent("keydown", { key: button.dataset.key, bubbles: true, cancelable: true }));
+    });
+  })();
+</script>

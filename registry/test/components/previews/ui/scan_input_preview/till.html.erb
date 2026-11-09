@@ -1,0 +1,9 @@
+<%# A real form: each code is posted, and the server answers with a Turbo Stream adding the line. The demo server answers slowly, so quick scans queue. %>
+<div class="grid max-w-md gap-4" data-demo>
+  <%= form_with url: "/demo/scans", class: "contents", data: { demo_live: true } do %>
+    <%= render(UI::ScanInput.new(name: "code", label: "Scan items", size: :lg)) %>
+  <% end %>
+  <%= render "ui/scan_input_preview/simulate", codes: { "8901030865278" => "Rice", "8901058851298" => "Noodles", "8901719110016" => "Dal", "1111" => "Unknown" } %>
+  <p class="text-sm text-destructive" id="scan-demo-status" role="status"></p>
+  <ul id="scan-demo-lines" class="divide-y rounded-md border px-3 text-sm"></ul>
+</div>

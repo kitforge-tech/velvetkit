@@ -1,0 +1,13 @@
+<div class="grid max-w-sm gap-4" data-demo>
+  <%= render(UI::ScanInput.new(name: "code", submit: false, **options)) %>
+  <%= render "ui/scan_input_preview/simulate", codes: { "4006381333931" => "EAN-13", "TICKET-7F3K-0192" => "QR ticket" }, key: options[:suffix] == :tab ? "Tab" : "Enter" %>
+  <p class="text-sm text-muted-foreground" role="status" data-demo-out>Nothing scanned yet.</p>
+</div>
+<script>
+  (() => {
+    const root = document.currentScript.previousElementSibling;
+    root.addEventListener("ui--scan-input:scan", (event) => {
+      root.querySelector("[data-demo-out]").textContent = `Scanned ${event.detail.code}`;
+    });
+  })();
+</script>

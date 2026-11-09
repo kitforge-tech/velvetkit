@@ -1,0 +1,30 @@
+<%# Handled in the page: the scan event is cancelled, so nothing is submitted. %>
+<div class="grid max-w-md gap-4" data-demo>
+  <%= render(UI::ScanInput.new(name: "isbn", label: "Scan each book's barcode", placeholder: "ISBN")) %>
+  <%= render "ui/scan_input_preview/simulate", codes: { "9780141439518" => "Pride and Prejudice", "9780262033848" => "Introduction to Algorithms", "9780000000000" => "Unknown" } %>
+  <p class="text-sm" role="status" data-out></p>
+  <ol class="divide-y rounded-md border text-sm" data-list></ol>
+  <p class="text-sm text-muted-foreground"><span data-count>0</span> books, due back in 14 days.</p>
+</div>
+<script>
+  (() => {
+    const root = document.currentScript.previousElementSibling;
+    const books = { "9780141439518": "Pride and Prejudice", "9780262033848": "Introduction to Algorithms", "9780316769488": "The Catcher in the Rye" };
+    const list = root.querySelector("[data-list]");
+    const say = (text) => (root.querySelector("[data-out]").textContent = text);
+    root.addEventListener("ui--scan-input:scan", (event) => {
+      event.preventDefault();
+      const { code } = event.detail;
+      const title = books[code];
+      if (!title) return say(`No book with the ISBN ${code}.`);
+      if (list.querySelector(`[data-isbn="${code}"]`)) return say(`${title} is already on this loan.`);
+      const item = document.createElement("li");
+      item.className = "px-3 py-2";
+      item.dataset.isbn = code;
+      item.textContent = title;
+      list.append(item);
+      root.querySelector("[data-count]").textContent = list.children.length;
+      say(`Added ${title}.`);
+    });
+  })();
+</script>
