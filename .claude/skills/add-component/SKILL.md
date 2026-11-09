@@ -56,7 +56,13 @@ For a new component named `thing` (swap in the real name throughout):
    `thing_preview/some_demo.html.erb` files for fixed scenarios (all
    variants side by side, a dismissible example, etc.).
 
-7. **Verify.**
+7. **Release note.** Nothing to write in `CHANGELOG.md`: the release task
+   lists the component with its `components.yml` description from step 1,
+   so make that sentence read well on its own. Open the PR from a `feat/`
+   branch titled `Thing: what it is` — see "Releases and CHANGELOG.md" in
+   `AGENTS.md`.
+
+8. **Verify.**
    ```
    bundle exec rubocop registry/app/components/ui/thing.rb registry/test/components/ui/thing_test.rb …
    bundle exec rake test

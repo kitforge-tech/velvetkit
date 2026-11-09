@@ -30,6 +30,7 @@ class LlmsController < ApplicationController
       - [Theming](#{doc_url("theming")})
       - [Icons](#{doc_url("icons")})
       - [Lookbook](#{doc_url("lookbook")})
+      - [Release notes](#{doc_url("releases")}): what each version added, changed and fixed, and what to re-run when upgrading
 
       ## Charts
 

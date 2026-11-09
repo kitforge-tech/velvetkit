@@ -4,7 +4,7 @@
 
 - Fix: `Select` puts `aria-label` and `aria-labelledby` on its visible button.
   They went on the hidden native select, which left the dropdown with no name
-  for screen readers.
+  for screen readers. (#80)
 
 ## 0.4.2 — 2026-11-09
 
@@ -100,6 +100,8 @@ it as it is. `progress` needs the `velvetkit-progress` keyframes from the new
 
 ## 0.3.0 — 2026-11-03
 
+New components:
+
 - `Stepper`: the steps of a multi-step form, done, current or to come, with
   dots, centred labels, panels moved between in the browser, and links back
   to done steps.
@@ -109,33 +111,77 @@ it as it is. `progress` needs the `velvetkit-progress` keyframes from the new
   radios or checkboxes.
 - `EmptyState`: an icon, title, text and actions for a page with nothing to
   list.
+
+Changes:
+
 - Icons come from Lucide, Tabler or Phosphor, chosen with
   `velvetkit:install --icons=`, and are drawn as inline SVG.
 
 ## 0.2.2 — 2026-11-02
+
+Changes:
 
 - Fix: the `plus`, `search`, `ellipsis-vertical` and `grip-vertical` icons were
   missing from installs.
 
 ## 0.2.1 — 2026-11-01
 
+New components:
+
 - `NavigationMenu`: site navigation with links and panels of rich links that
   open on hover or click.
 
 ## 0.2.0 — 2026-11-01
 
+New components:
+
 - `Toast`: stacked messages that dismiss themselves.
 - `SessionTabs`: tabs for open sessions, with a button to add one.
-- `Skeleton` and `FileField`.
+- `Skeleton`: a pulsing placeholder in a piece of content's shape while it
+  loads.
+- `FileField`: a drag-and-drop file picker with a label, hint and error
+  message, standalone or with a form builder.
+
+Changes:
+
 - Fix: `Menu` content positions itself with the fixed strategy, so it isn't
   clipped by a scrolling container.
 - Fix: dependencies updated for security advisories in `addressable` and `rack`.
 
+## 0.1.0 — 2026-10-29
+
+New components:
+
+- `FormField`: a label, a control, a hint and an error message in one. The
+  form controls take `hint:` and `error:` and wrap themselves in it.
+- `Textarea`: a multi-line field that can grow with its text.
+- `Collapsible`: a section that opens under its trigger.
+- `TableOfContents`: an "On this page" list that highlights the section
+  being read.
+
+Changes:
+
+- The docs site has a Building forms guide.
+- Fix: `NativeSelect` keeps the model's value when the form is rendered again.
+- Fix: `InputGroup` shows its error border, and draws one focus ring at a time.
+- Fix: `TableOfContents` doesn't animate its first highlight on page load.
+
 ## 0.1.0.beta — 2026-10-26
+
+New components:
+
+- 38 components, with their Stimulus controllers, tests and Lookbook
+  previews: `Accordion`, `Alert`, `Avatar`, `AvatarGroup`, `Badge`, `Banner`,
+  `Breadcrumb`, `Button`, `ButtonTo`, `Card`, `Checkbox`, `DataGrid`,
+  `DatePicker`, `Dialog`, `Divider`, `Icon`, `Image`, `Input`, `InputGroup`,
+  `Label`, `Link`, `Menu`, `NativeSelect`, `Pagination`, `PasswordInput`,
+  `Popover`, `RadioGroup`, `Select`, `Sheet`, `Sidebar`, `Spinner`, `Switch`,
+  `Table`, `Tabs`, `Text`, `ThemeToggle`, `Tooltip` and `Typography`.
+
+Changes:
 
 - First release of the component library.
 - `velvetkit:install` and `velvetkit:add` generators, with a configurable namespace.
-- 39 components, their Stimulus controllers, tests and Lookbook previews.
 - `Select` is a styled dropdown (listbox, keyboard, type-ahead), with
   `searchable:` and `multiple:`; it posts through a hidden native select, so
   forms work unchanged. The browser's own control is now `NativeSelect`.

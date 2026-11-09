@@ -17,6 +17,25 @@ class PagesTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "release notes list every release, with links to the components each added" do
+    get doc_path("releases")
+    ReleaseNotes.all.each { |release| assert_select "h2##{release.id}", text: release.version }
+    assert_select "##{ReleaseNotes.all.first.id} ~ span", text: "Latest"
+    assert_select "ul[aria-label='New components in 0.4.1'] a[href=?]", component_path("money_input")
+    assert_select "h2", text: "Unreleased", count: 0
+    assert_select "aside[aria-label='Upgrading an app for 0.4.2'] p", text: "Upgrading an app"
+    # Notes are read in place, not announced as the page loads.
+    assert_select "main [role=alert], main [aria-live]", count: 0
+  end
+
+  test "the version badge in the header and footer opens its release notes" do
+    get components_path
+    version = ReleasedVersion.current
+    href = doc_path("releases", anchor: ReleaseNotes.anchor(version))
+    assert_select "header a[href=?][aria-label=?]", href, "v#{version} release notes", text: "v#{version}"
+    assert_select "footer a[href=?]", href, text: "v#{version}"
+  end
+
   test "namespace playground rewrites real files" do
     get doc_path("namespacing", namespace: "Admin")
     assert_response :success

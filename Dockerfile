@@ -63,6 +63,9 @@ RUN bundle install && \
 COPY site/package.json site/bun.lock ./
 RUN bun install --frozen-lockfile
 
+# The releases page reads it (ReleaseNotes). Copied after the installs, so an
+# edit to the notes doesn't rebuild the gems and packages.
+COPY CHANGELOG.md /velvetkit/
 COPY site/ ./
 
 # Copy the kit in from the registry, as any app would, then build assets.
