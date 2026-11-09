@@ -56,13 +56,11 @@ For a new component named `thing` (swap in the real name throughout):
    `thing_preview/some_demo.html.erb` files for fixed scenarios (all
    variants side by side, a dismissible example, etc.).
 
-7. **Changelog.** Under `## Unreleased` in `CHANGELOG.md`, add the
-   component to a `New components:` list (start the list if there isn't
-   one), in the voice of the entries below it:
-   `` - `Thing`: what it does, in a sentence. `` This is what the docs
-   site's release notes show once the next version is tagged — see
-   "Releases and CHANGELOG.md" in `AGENTS.md`. A sub-part added to an
-   existing component goes under `Changes:` instead.
+7. **Release note.** Nothing to write in `CHANGELOG.md`: the release task
+   lists the component with its `components.yml` description from step 1,
+   so make that sentence read well on its own. Open the PR from a `feat/`
+   branch titled `Thing: what it is` — see "Releases and CHANGELOG.md" in
+   `AGENTS.md`.
 
 8. **Verify.**
    ```

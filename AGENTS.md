@@ -68,13 +68,17 @@ Files for a component named `thing`:
 ## Releases and CHANGELOG.md
 
 The docs site's release notes (`/docs/releases`) are read from
-`CHANGELOG.md`, so that's the only place they're written:
+`CHANGELOG.md`, which `bundle exec rake "changelog:release[X.Y.Z]"` writes
+from git: new components with their `components.yml` description, and a line
+per merged PR that changes `registry/app`, `registry/config` or `lib`, in the
+PR's title. So:
 
-- A PR that adds a component adds `` - `ClassName`: what it is. `` under
-  `## Unreleased` > `New components:`, or `test/velvetkit/changelog_test.rb`
-  fails. Other changes go under `Changes:`, a fix starts `Fix:`, and an
-  `Upgrading an app:` paragraph says what to re-run.
-- To release, run `bundle exec rake "changelog:release[X.Y.Z]"`, merge it as
+- Title a PR `Component: what changed` on a `feat/` or `fix/` branch; `docs/`,
+  `chore/`, `ci/`, `test/` and `style/` PRs are left out.
+- Write under `## Unreleased` only what a title can't say, like an
+  `Upgrading an app:` note; end a line about a PR with `(#N)` to use it in
+  place of the title.
+- To release, run the task, edit what reads badly, merge it as
   `docs(changelog): X.Y.Z`, then push the tag.
 
 ## Icons

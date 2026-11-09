@@ -31,12 +31,12 @@ module ReleasesHelper
     note.match?(UPGRADE_NOTE) ? [ "Upgrading an app", note.sub(UPGRADE_NOTE, "").upcase_first ] : [ nil, note ]
   end
 
-  # A changelog line as HTML: `code` spans become <code>, and a component's
-  # class name (`MoneyInput`) links to its page.
+  # A changelog line as HTML: `code` spans become <code>, a component's class
+  # name (`MoneyInput`) links to its page, and "(#80)" to the pull request.
   def release_text(text)
     parts = text.split(/`([^`]+)`/)
     safe_join(parts.each_with_index.map do |part, index|
-      next part if index.even?
+      next link_pull_requests(part) if index.even?
 
       code = tag.code(part, class: "font-mono text-sm")
       name = part.underscore
@@ -47,4 +47,12 @@ module ReleasesHelper
   private
 
   def component?(name) = ComponentDoc.names.include?(name)
+
+  def link_pull_requests(text)
+    safe_join(text.split(/\(#(\d+)\)/).each_with_index.map do |part, index|
+      next part if index.even?
+
+      safe_join([ "(", link_to("##{part}", "#{ApplicationHelper::GITHUB_URL}/pull/#{part}", class: "text-primary underline-offset-4 hover:underline"), ")" ])
+    end)
+  end
 end

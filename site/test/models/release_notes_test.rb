@@ -55,10 +55,4 @@ class ReleaseNotesTest < ActiveSupport::TestCase
     assert_equal [ "Icons were missing." ], release.fixes
     assert_empty release.components
   end
-
-  test "every component in the real changelog is one the site has a page for" do
-    names = ReleaseNotes.all.flat_map(&:component_names).map(&:underscore)
-    assert_empty names - ComponentDoc.names
-    assert_empty ComponentDoc.names - names, "Released but not in CHANGELOG.md"
-  end
 end

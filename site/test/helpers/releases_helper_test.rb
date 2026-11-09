@@ -22,6 +22,12 @@ class ReleasesHelperTest < ActionView::TestCase
     assert_equal [ nil, "Something else." ], release_note_parts("Something else.")
   end
 
+  test "a pull request number links to it on GitHub" do
+    render html: release_text("`Card` is redesigned (#78), in #4D1A7F")
+    assert_select "a[href='https://github.com/kitforge-tech/velvetkit/pull/78']", text: "#78"
+    assert_select "a", count: 2
+  end
+
   test "class names in a line link to their component, other code stays code" do
     render html: release_text("`Select` takes `url:`")
     assert_select "a[href='/docs/components/select'] code", text: "Select"
