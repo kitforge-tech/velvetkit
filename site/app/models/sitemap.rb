@@ -30,6 +30,7 @@ class Sitemap
       when root_path then [ "site/app/views/pages" ]
       when docs_path then [ "site/app/views/docs/getting_started.html.erb" ]
       when components_path then [ "site/app/views/components/index.html.erb" ]
+      when doc_path("releases") then [ "site/app/views/docs/releases.html.erb", "CHANGELOG.md" ]
       when charts_path then chart_sources("overview")
       when %r{\A/docs/charts/([a-z_]+)\z} then chart_sources(Regexp.last_match(1))
       when %r{\A/docs/components/([a-z_]+)\z} then component_sources(Regexp.last_match(1))

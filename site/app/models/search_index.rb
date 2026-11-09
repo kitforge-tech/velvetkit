@@ -10,7 +10,8 @@ class SearchIndex
     "theming" => [ "Colour tokens, corner radius and dark mode: retheme every component from one file.", "theme tokens colour color primary radius dark mode css tailwind velvet" ],
     "icons" => [ "Choose Lucide, Tabler or Phosphor icons, and add your own as SVG files.", "icon icons svg lucide tabler phosphor library heroicons glyph" ],
     "forms" => [ "Rails forms with VelvetKit: bind fields to a model, show its errors, and two live examples.", "form forms model validation errors error message hint form_with form builder sign in login invite field_with_errors" ],
-    "lookbook" => [ "Browse every preview, and run Lookbook in your app.", "lookbook preview previews playground storybook" ]
+    "lookbook" => [ "Browse every preview, and run Lookbook in your app.", "lookbook preview previews playground storybook" ],
+    "releases" => [ "What each version of VelvetKit added and changed: new components, changes, fixes and upgrade notes.", "release releases notes changelog version versions new what's new upgrade history" ]
   }.freeze
 
   def self.entries

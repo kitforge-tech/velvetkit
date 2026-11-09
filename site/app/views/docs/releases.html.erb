@@ -1,0 +1,79 @@
+<% content_for :title, "Release notes" %>
+<% releases = ReleaseNotes.all %>
+
+<article class="max-w-3xl space-y-12">
+  <header class="space-y-3">
+    <%= render(UI::Breadcrumb.new(size: :sm)) do |bc| %>
+      <% bc.with_item(href: docs_path, text: "Docs") %>
+      <% bc.with_item(href: doc_path("releases"), text: "Release notes", current: true) %>
+    <% end %>
+    <h1 class="text-4xl font-bold tracking-tight">Release notes</h1>
+    <p class="text-lg text-muted-foreground">What each version of VelvetKit added, changed and fixed, newest first. Components are copied into your app, so updating the gem changes nothing on its own: re-run <code class="font-mono text-base">velvetkit:add</code> for a component to pick up its changes.</p>
+  </header>
+
+  <% releases.each_with_index do |release, index| %>
+    <section class="space-y-5 border-t pt-8 first-of-type:border-t-0 first-of-type:pt-0" aria-labelledby="<%= release.id %>">
+      <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+        <h2 id="<%= release.id %>" class="text-2xl font-semibold tracking-tight">
+          <%= link_to release.version, "##{release.id}", class: "hover:underline underline-offset-4" %>
+        </h2>
+        <time datetime="<%= release.date.iso8601 %>" class="text-sm text-muted-foreground"><%= release.date.strftime("%-d %B %Y") %></time>
+        <% if index.zero? %>
+          <%= render(UI::Badge.new(variant: :secondary)) { "Latest" } %>
+        <% end %>
+      </div>
+
+      <% if release.components.any? %>
+        <div class="space-y-3">
+          <h3 class="font-semibold"><%= pluralize(release.component_names.size, "new component") %></h3>
+          <ul class="flex flex-wrap gap-2" aria-label="New components in <%= release.version %>">
+            <% release.component_names.each do |name| %>
+              <li><%= release_component_chip(name) %></li>
+            <% end %>
+          </ul>
+          <% if release.descriptions.any? %>
+            <ul class="list-disc space-y-2 pl-5 text-sm">
+              <% release.descriptions.each do |line| %>
+                <li><%= release_text(line) %></li>
+              <% end %>
+            </ul>
+          <% end %>
+        </div>
+      <% end %>
+
+      <% if release.changes.any? %>
+        <div class="space-y-3">
+          <h3 class="font-semibold">Changes</h3>
+          <ul class="list-disc space-y-2 pl-5 text-sm">
+            <% release.changes.each do |line| %>
+              <li><%= release_text(line) %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <% if release.fixes.any? %>
+        <div class="space-y-3">
+          <h3 class="font-semibold">Fixes</h3>
+          <ul class="list-disc space-y-2 pl-5 text-sm">
+            <% release.fixes.each do |line| %>
+              <li><%= release_text(line) %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <%# Not UI::Alert: that's a live region, and a screen reader would
+          announce every note on the page as it loads. %>
+      <% release.notes.each do |note| %>
+        <% title, text = release_note_parts(note) %>
+        <aside class="space-y-1 rounded-lg border bg-muted/40 px-4 py-3 text-sm" aria-label="<%= title || "Note" %> for <%= release.version %>">
+          <% if title %>
+            <p class="flex items-center gap-2 font-medium"><%= render(UI::Icon.new(name: "info", size: :sm)) %><%= title %></p>
+          <% end %>
+          <p class="text-muted-foreground"><%= release_text(text) %></p>
+        </aside>
+      <% end %>
+    </section>
+  <% end %>
+</article>

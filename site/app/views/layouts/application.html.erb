@@ -48,7 +48,7 @@
 
         <div class="ml-auto flex items-center gap-2">
           <%= render "layouts/search" %>
-          <%= render(UI::Badge.new(variant: :outline, class: "hidden sm:inline-flex")) { "v#{ReleasedVersion.current}" } %>
+          <%= version_badge(class: "hidden sm:inline-flex") %>
           <%= render(UI::Link.new(href: ApplicationHelper::GITHUB_URL, variant: :ghost, size: :sm, button_variant: true,
                                   class: "size-7 rounded-md px-0 text-foreground",
                                   target: "_blank", rel: "noopener", aria: { label: "VelvetKit on GitHub" },
