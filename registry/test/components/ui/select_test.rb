@@ -90,6 +90,27 @@ class UI::SelectTest < ViewComponent::TestCase
 
   # --- label, states, sizes ---------------------------------------------
 
+  def test_aria_label_names_the_visible_button_not_the_hidden_select
+    render_inline(UI::Select.new(name: "sort", options: TEAMS, "aria-label": "Sort by"))
+    assert_equal "Sort by", trigger["aria-label"]
+    assert_equal trigger[:id], listbox["aria-labelledby"]
+    assert_nil native["aria-label"]
+    assert_equal "true", native["aria-hidden"]
+  end
+
+  def test_the_aria_hash_names_the_button_too
+    render_inline(UI::Select.new(name: "sort", options: TEAMS, aria: { label: "Sort by" }))
+    assert_equal "Sort by", trigger["aria-label"]
+    render_inline(UI::Select.new(name: "sort", options: TEAMS, "aria-labelledby": "heading"))
+    assert_equal "heading", trigger["aria-labelledby"]
+    assert_nil native["aria-labelledby"]
+  end
+
+  def test_other_attributes_still_reach_the_native_select
+    render_inline(UI::Select.new(name: "sort", options: TEAMS, "aria-label": "Sort by", data: { testid: "s" }))
+    assert_equal "s", native["data-testid"]
+  end
+
   def test_label_is_associated_with_the_trigger
     render_inline(UI::Select.new(name: "section", options: TEAMS, label: "Team"))
     assert_equal trigger[:id], page.find("label")[:for]
