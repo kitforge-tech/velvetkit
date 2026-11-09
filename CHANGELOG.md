@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.4.1 — 2026-11-09
 
 New components:
 
@@ -40,6 +40,7 @@ New components:
 - `Command`: a search box over pages, actions and records, inline or opened
   with ⌘K, ranking by best match, with groups, shortcuts, and server search
   with `url:`.
+
 Changes:
 
 - `Select` searches the server as you type with `url:` (JSON back), with a
