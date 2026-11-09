@@ -1,5 +1,21 @@
 # Changelog
 
+## Unreleased
+
+Changes:
+
+- `Card` is redesigned: a soft ring instead of a border and shadow, tighter
+  padding, a smaller title, and a tinted footer band. It gains
+  `header.with_action` for a button or badge at the top right,
+  `card.with_image` for a picture edge to edge across the top, `size: :sm`,
+  and `spacing:`. The examples are new.
+
+Upgrading an app: re-run `velvetkit:add card`. Cards now have 16px of padding
+where they had 24px; `spacing: 6` gets the old padding back. If you colour a
+card's edge with a `border-*` class, use `ring-*` instead, and remove any
+`pt-6` added to the first part of a card, which the card now handles. A card
+with no parts, just a block, keeps its own padding as before.
+
 ## 0.4.1 — 2026-11-09
 
 New components:

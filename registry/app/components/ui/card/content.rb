@@ -6,7 +6,9 @@ class UI::Card::Content < UI::Base
     @html_attrs = html_attrs
   end
 
-  def classes
-    cn("p-6 pt-0 first:pt-6", @user_class)
+  def root_attrs
+    { **@html_attrs, class: cn("px-(--card-spacing)",
+                             @user_class),
+      data: { slot: "card-content", **(@html_attrs[:data] || {}) } }
   end
 end

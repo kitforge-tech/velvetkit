@@ -1,0 +1,11 @@
+<div class="grid gap-4 sm:grid-cols-3">
+  <% [ [ "Active users", "8,249", "+12%" ], [ "Open tickets", "37", "-4" ], [ "Storage used", "64%", "+2%" ] ].each do |label, value, change| %>
+    <%= render(UI::Card.new) do |card| %>
+      <% card.with_header do |header| %>
+        <% header.with_description { label } %>
+        <% header.with_title(class: "text-2xl font-semibold tabular-nums") { value } %>
+        <% header.with_action { render(UI::Badge.new(variant: :outline, size: :sm)) { change } } %>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>

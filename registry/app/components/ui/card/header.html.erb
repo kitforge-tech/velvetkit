@@ -1,1 +1,1 @@
-<%= tag.div class: classes, **@html_attrs do %><% if title? %><%= title %><% end %><% if description? %><%= description %><% end %><%= content %><% end %>
+<%= tag.div(**root_attrs) do %><% if title? %><%= title %><% end %><% if description? %><%= description %><% end %><% if action? %><%= action %><% end %><%= content %><% end %>

@@ -1,0 +1,12 @@
+<%= render(UI::Card.new(class: "max-w-sm")) do |card| %>
+  <% card.with_image(src: UI::CardPreview.photo("#0f766e", "#1d4ed8"), alt: "Hills under a pale sun") %>
+  <% card.with_header do |header| %>
+    <% header.with_title { "Coastal walk, Saturday" } %>
+    <% header.with_description { "Twelve kilometres along the cliffs, with lunch at the harbour." } %>
+    <% header.with_action { render(UI::Badge.new(variant: :secondary, size: :sm)) { "Featured" } } %>
+  <% end %>
+  <% card.with_footer(class: "justify-between") do %>
+    <span class="text-muted-foreground">18 going</span>
+    <%= render(UI::Button.new(size: :sm)) { "Join" } %>
+  <% end %>
+<% end %>

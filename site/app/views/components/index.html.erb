@@ -26,13 +26,11 @@
     <% @components.each do |component| %>
       <%= link_to component_path(component), class: "group block rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary",
                   data: { filter_target: "item", filter_text: "#{component.name} #{component.title} #{component.description}".downcase } do %>
-        <%= render(UI::Card.new(class: "h-full transition-all group-hover:-translate-y-0.5 group-hover:border-primary/50 group-hover:shadow-md")) do |card| %>
+        <%= render(UI::Card.new(class: "h-full transition-all group-hover:-translate-y-0.5 group-hover:ring-primary/50 group-hover:shadow-md")) do |card| %>
           <% card.with_header do |header| %>
-            <div class="flex items-center justify-between gap-2">
-              <% header.with_title { component.title } %>
-              <%= render(UI::Icon.new(name: "arrow-up-right", size: :sm, class: "text-muted-foreground transition-colors group-hover:text-primary")) %>
-            </div>
+            <% header.with_title { component.title } %>
             <% header.with_description { component.description } %>
+            <% header.with_action { render(UI::Icon.new(name: "arrow-up-right", size: :sm, class: "text-muted-foreground transition-colors group-hover:text-primary")) } %>
           <% end %>
           <% card.with_content(class: "flex flex-wrap gap-1.5") do %>
             <% if component.stimulus_controllers.any? %>

@@ -6,7 +6,9 @@ class UI::Card::Title < UI::Base
     @html_attrs = html_attrs
   end
 
-  def classes
-    cn("text-lg font-semibold leading-none tracking-tight", @user_class)
+  def root_attrs
+    { **@html_attrs, class: cn("text-base leading-snug font-medium group-data-[size=sm]/card:text-sm",
+                             @user_class),
+      data: { slot: "card-title", **(@html_attrs[:data] || {}) } }
   end
 end

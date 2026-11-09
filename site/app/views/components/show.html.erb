@@ -153,7 +153,7 @@
     <section class="space-y-4">
       <h2 id="notes" class="text-2xl font-semibold tracking-tight">Notes</h2>
       <%= render(UI::Card.new) do |card| %>
-        <% card.with_content(class: "pt-6") do %>
+        <% card.with_content do %>
           <div class="whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground"><%= @component.notes %></div>
         <% end %>
       <% end %>

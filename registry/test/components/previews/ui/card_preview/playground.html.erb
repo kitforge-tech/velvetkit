@@ -1,0 +1,17 @@
+<%= render(UI::Card.new(size: size, spacing: spacing, class: "max-w-sm")) do |card| %>
+  <% card.with_image(src: UI::CardPreview.photo("#7c3aed", "#db2777"), alt: "An abstract landscape") if show_image %>
+  <% card.with_header do |header| %>
+    <% header.with_title { title } %>
+    <% header.with_description { description } %>
+    <% header.with_action { render(UI::Badge.new(variant: :secondary, size: :sm)) { "New" } } if show_action %>
+  <% end %>
+  <% card.with_content do %>
+    <p class="text-muted-foreground">Pick a repository and we'll build it on every push.</p>
+  <% end %>
+  <% if show_footer %>
+    <% card.with_footer(class: "justify-end gap-2") do %>
+      <%= render(UI::Button.new(variant: :outline, size: :sm)) { "Cancel" } %>
+      <%= render(UI::Button.new(size: :sm)) { "Deploy" } %>
+    <% end %>
+  <% end %>
+<% end %>

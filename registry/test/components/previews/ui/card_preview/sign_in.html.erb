@@ -1,0 +1,23 @@
+<%= render(UI::Card.new(class: "max-w-sm")) do |card| %>
+  <% card.with_header do |header| %>
+    <% header.with_title { "Sign in to your workspace" } %>
+    <% header.with_description { "Use your email and password." } %>
+    <% header.with_action do %><%= render(UI::Button.new(variant: :link, size: :sm, class: "px-0")) { "Create account" } %><% end %>
+  <% end %>
+  <% card.with_content do %>
+    <div class="grid gap-4">
+      <%= render(UI::Input.new(type: :email, name: "email", label: "Email", placeholder: "you@example.com")) %>
+      <div class="grid gap-2">
+        <div class="flex items-center justify-between">
+          <%= render(UI::Label.new(for: "card-password")) { "Password" } %>
+          <a href="#" class="text-xs text-muted-foreground underline-offset-4 hover:underline">Forgot it?</a>
+        </div>
+        <%= render(UI::Input.new(type: :password, name: "password", id: "card-password")) %>
+      </div>
+    </div>
+  <% end %>
+  <% card.with_footer(class: "flex-col gap-2") do %>
+    <%= render(UI::Button.new(class: "w-full")) { "Sign in" } %>
+    <%= render(UI::Button.new(variant: :outline, class: "w-full")) { "Continue with single sign-on" } %>
+  <% end %>
+<% end %>

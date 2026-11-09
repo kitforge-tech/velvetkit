@@ -1,0 +1,13 @@
+<div class="grid gap-4 sm:grid-cols-2">
+  <% { 4 => "16px, the default", 5 => "20px", 6 => "24px", 8 => "32px" }.each do |spacing, label| %>
+    <%= render(UI::Card.new(spacing: spacing)) do |card| %>
+      <% card.with_header do |header| %>
+        <% header.with_title { "spacing: #{spacing}" } %>
+        <% header.with_description { label } %>
+      <% end %>
+      <% card.with_content do %>
+        <p class="text-muted-foreground">The gaps between the parts and their inset change together.</p>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>

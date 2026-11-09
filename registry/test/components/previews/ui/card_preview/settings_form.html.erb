@@ -1,25 +1,16 @@
-<div class="max-w-sm">
-  <%= render(UI::Card.new) do |card| %>
-    <% card.with_header do |header| %>
-      <% header.with_title { "Account Settings" } %>
-      <% header.with_description { "Update your account preferences." } %>
-    <% end %>
-    <% card.with_content do %>
-      <div class="space-y-4">
-        <div class="space-y-2">
-          <%= render(UI::Label.new(for: "name")) { "Display Name" } %>
-          <%= render(UI::Input.new(id: "name", placeholder: "Enter your name")) %>
-        </div>
-        <div class="space-y-2">
-          <%= render(UI::Label.new(for: "username")) { "Username" } %>
-          <%= render(UI::Input.new(id: "username", placeholder: "@username")) %>
-        </div>
-      </div>
-    <% end %>
-    <% card.with_footer do %>
-      <div class="flex gap-2">
-        <%= render(UI::Button.new(variant: :primary, size: :sm)) { "Save Changes" } %>
-      </div>
-    <% end %>
+<%= render(UI::Card.new(class: "max-w-md")) do |card| %>
+  <% card.with_header(class: "border-b") do |header| %>
+    <% header.with_title { "Profile" } %>
+    <% header.with_description { "This is how others see you." } %>
   <% end %>
-</div>
+  <% card.with_content do %>
+    <div class="grid gap-4">
+      <%= render(UI::Input.new(name: "display_name", label: "Display name", value: "Maya Okafor")) %>
+      <%= render(UI::Input.new(name: "username", label: "Username", value: "maya", hint: "Letters and numbers only.")) %>
+    </div>
+  <% end %>
+  <% card.with_footer(class: "justify-between") do %>
+    <span class="text-muted-foreground">Last saved 2 days ago</span>
+    <%= render(UI::Button.new(size: :sm)) { "Save" } %>
+  <% end %>
+<% end %>
