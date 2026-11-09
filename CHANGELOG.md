@@ -1,6 +1,24 @@
 # Changelog
 
-## Unreleased
+## 0.4.1 — 2026-11-09
+
+New components:
+
+- `Slider`: a handle to drag for a value, or two for a range such as a price
+  band, with value text, labelled marks and form binding. The knob follows
+  the pointer freely and the value keeps to the step.
+- `MoneyInput`: an amount of money, grouped as it's typed (1,23,456.78 for
+  rupees, 123,456.78 otherwise) with its currency sign, decimals filled in
+  when the field is left, and the plain number (123456.78) posted in a
+  hidden field. The sign, separators and decimals follow the app's locale.
+  ↑ and ↓ step by one unit, or `step:`, and Shift by ten.
+- `ScanInput`: a field for barcode and QR scanners. Enter (or Tab) submits
+  the form with the code and empties the field, codes scanned while one is
+  still being sent wait their turn, and it keeps focus when focus falls to
+  the page. A `scan` event lets the page handle codes itself; `capture:`,
+  `keyboard: false` and `suffix: :tab` suit scan-only pages and handhelds.
+
+## 0.4.0 — 2026-11-08
 
 New components:
 
@@ -22,19 +40,6 @@ New components:
 - `Command`: a search box over pages, actions and records, inline or opened
   with ⌘K, ranking by best match, with groups, shortcuts, and server search
   with `url:`.
-- `Slider`: a handle to drag for a value, or two for a range such as a price
-  band, with value text, labelled marks and form binding. The knob follows
-  the pointer freely and the value keeps to the step.
-- `MoneyInput`: an amount of money, grouped as it's typed (1,23,456.78 for
-  rupees, 123,456.78 otherwise) with its currency sign, decimals filled in
-  when the field is left, and the plain number (123456.78) posted in a
-  hidden field. The sign, separators and decimals follow the app's locale.
-  ↑ and ↓ step by one unit, or `step:`, and Shift by ten.
-- `ScanInput`: a field for barcode and QR scanners. Enter (or Tab) submits
-  the form with the code and empties the field, codes scanned while one is
-  still being sent wait their turn, and it keeps focus when focus falls to
-  the page. A `scan` event lets the page handle codes itself; `capture:`,
-  `keyboard: false` and `suffix: :tab` suit scan-only pages and handhelds.
 
 Changes:
 
@@ -56,6 +61,7 @@ Changes:
   JavaScript build: `bun.config.js`, `webpack.config.js`, or a build script
   that lists `application.js`. Before, they were copied but never built, so
   those components failed to load their library.
+- The docs site's search is the kit's own `Command`.
 
 Upgrading an app: re-run `velvetkit:add` for `date_picker`, `select` and
 `file_field`, and copy the new `--chart-*` values into your `velvetkit.css`.
@@ -66,7 +72,6 @@ needs `@rails/activestorage`. If you added `chart_js.ts`,
 it as it is. `progress` needs the `velvetkit-progress` keyframes from the new
 `velvetkit.css`; without them a bar with no value doesn't move.
 
-- The docs site's search is the kit's own `Command`.
 - Fix: Rails 8.1.4.1, for security advisories in Active Storage and Action Pack.
 - Fix: the docs site shows a component added to the catalog without a server
   restart.
