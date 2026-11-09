@@ -108,3 +108,6 @@ application.register("ui--command", UI__CommandController)
 
 import UI__SliderController from "./ui/slider_controller"
 application.register("ui--slider", UI__SliderController)
+
+import UI__MoneyInputController from "./ui/money_input_controller"
+application.register("ui--money-input", UI__MoneyInputController)

@@ -25,6 +25,11 @@ New components:
 - `Slider`: a handle to drag for a value, or two for a range such as a price
   band, with value text, labelled marks and form binding. The knob follows
   the pointer freely and the value keeps to the step.
+- `MoneyInput`: an amount of money, grouped as it's typed (1,23,456.78 for
+  rupees, 123,456.78 otherwise) with its currency sign, decimals filled in
+  when the field is left, and the plain number (123456.78) posted in a
+  hidden field. The sign, separators and decimals follow the app's locale.
+  ↑ and ↓ step by one unit, or `step:`, and Shift by ten.
 
 Changes:
 

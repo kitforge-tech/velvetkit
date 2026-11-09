@@ -84,6 +84,8 @@ components:
     description: A link styled as text or as a button.
   menu:
     description: A dropdown menu with keyboard navigation.
+  money_input:
+    description: An amount of money, grouped as it's typed with its currency sign, posting the plain number.
   navigation_menu:
     description: Site navigation with links and hover or click panels of rich links.
   number_input:
