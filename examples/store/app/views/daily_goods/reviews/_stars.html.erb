@@ -1,0 +1,6 @@
+<%# Five stars, filled to the nearest whole one. %>
+<span class="inline-flex items-center gap-0.5 text-amber-500" role="img" aria-label="<%= number_with_precision(rating, precision: 1, strip_insignificant_zeros: true) %> out of 5 stars">
+  <% 5.times do |index| %>
+    <%= render(UI::Icon.new(name: "star", class: "size-4 #{index < rating.round ? "fill-current" : "text-muted-foreground/40"}")) %>
+  <% end %>
+</span>
