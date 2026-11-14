@@ -1,5 +1,5 @@
 <% content_for :title, "Examples" %>
-<% content_for :description, "Whole pages built with VelvetKit components for Rails, each in its own theme: an online shop, with a dashboard and a sign-in flow on the way." %>
+<% content_for :description, "Whole pages built with VelvetKit components for Rails, each in its own theme: an online shop and a dashboard, with a sign-in flow on the way." %>
 
 <main class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
   <header class="max-w-2xl space-y-3">
@@ -9,43 +9,52 @@
     </p>
   </header>
 
-  <article class="mt-10 grid overflow-hidden rounded-2xl border bg-card lg:grid-cols-[3fr_2fr]">
-    <%= link_to daily_goods.root_path, class: "group overflow-hidden border-b focus:outline-none focus-visible:ring-2 focus-visible:ring-primary lg:border-r lg:border-b-0", tabindex: -1, "aria-hidden": true do %>
-      <%= image_tag "examples/store.webp", alt: "The Daily Goods shop: a sale banner, category pills, price and colour filters, and a grid of product photos",
-                    width: 1280, height: 800, class: "aspect-[16/10] w-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02]" %>
-    <% end %>
-    <div class="flex flex-col gap-5 p-6 sm:p-8">
-      <div class="space-y-2">
-        <div class="flex flex-wrap items-center gap-2">
-          <h2 class="text-2xl font-semibold tracking-tight">Daily Goods</h2>
-        </div>
-        <p class="text-muted-foreground">
-          An online shop: products that filter and sort without a page reload, a cart in a side sheet, and a soft lilac theme with a serif heading font.
-        </p>
-      </div>
-      <div class="space-y-2">
-        <p class="text-sm font-medium">Built with</p>
-        <ul class="flex flex-wrap gap-1.5" aria-label="Components used in Daily Goods">
-          <% %w[navigation_menu sheet command slider checkbox switch select toggle_group badge toast].each do |name| %>
-            <li><%= link_to ComponentDoc.find(name).title, component_path(name),
-                            class: "inline-flex rounded-full border px-2.5 py-0.5 text-xs text-muted-foreground hover:border-foreground/30 hover:text-foreground" %></li>
-          <% end %>
-        </ul>
-      </div>
-      <div class="mt-auto flex flex-wrap gap-2">
-        <%= render(UI::Link.new(href: daily_goods.root_path, button_variant: true)) do |link| %>
-          Visit the store
-          <% link.with_trailing_icon(name: "arrow-right") %>
+  <% examples = [
+       { key: "store", title: "Daily Goods", path: daily_goods.root_path, image: "examples/store.webp", visit: "Visit the store",
+         alt: "The Daily Goods shop: a sale banner, category pills, price and colour filters, and a grid of product photos",
+         text: "An online shop: a front page, products that filter and sort without a page reload, a page for each product, a cart in a side sheet, and a soft lilac theme with a serif heading font.",
+         components: %w[navigation_menu sheet command slider checkbox switch select toggle_group gallery accordion dialog toast] },
+       { key: "dashboard", title: "Helio", path: helio.root_path, image: "examples/dashboard.webp", visit: "Open the dashboard",
+         alt: "The Helio dashboard: a sidebar, four stat cards, a revenue line chart and a donut of revenue by plan",
+         text: "The admin side of a small software company: a collapsible sidebar, stat cards, charts that change with the period, top customers and recent activity, in a calm blue theme with dark mode.",
+         components: %w[sidebar chart card table timeline progress toggle_group command avatar badge theme_toggle sheet] }
+     ] %>
+  <div class="mt-10 grid gap-6">
+    <% examples.each do |example| %>
+      <article class="grid overflow-hidden rounded-2xl border bg-card lg:grid-cols-[3fr_2fr]" aria-labelledby="example-<%= example[:key] %>">
+        <%= link_to example[:path], class: "group overflow-hidden border-b focus:outline-none focus-visible:ring-2 focus-visible:ring-primary lg:border-r lg:border-b-0", tabindex: -1, "aria-hidden": true do %>
+          <%= image_tag example[:image], alt: example[:alt], width: 1280, height: 800,
+                        class: "aspect-[16/10] w-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02]" %>
         <% end %>
-        <%= render(UI::Link.new(href: "#{ApplicationHelper::GITHUB_URL}/tree/main/examples/store", button_variant: true, variant: :outline,
-                                target: "_blank", rel: "noopener", data: outbound_data("github", "examples"))) { "View source" } %>
-      </div>
-    </div>
-  </article>
+        <div class="flex flex-col gap-5 p-6 sm:p-8">
+          <div class="space-y-2">
+            <h2 id="example-<%= example[:key] %>" class="text-2xl font-semibold tracking-tight"><%= example[:title] %></h2>
+            <p class="text-muted-foreground"><%= example[:text] %></p>
+          </div>
+          <div class="space-y-2">
+            <p class="text-sm font-medium">Built with</p>
+            <ul class="flex flex-wrap gap-1.5" aria-label="Components used in <%= example[:title] %>">
+              <% example[:components].each do |name| %>
+                <li><%= link_to ComponentDoc.find(name).title, component_path(name),
+                                class: "inline-flex rounded-full border px-2.5 py-0.5 text-xs text-muted-foreground hover:border-foreground/30 hover:text-foreground" %></li>
+              <% end %>
+            </ul>
+          </div>
+          <div class="mt-auto flex flex-wrap gap-2">
+            <%= render(UI::Link.new(href: example[:path], button_variant: true)) do |link| %>
+              <%= example[:visit] %>
+              <% link.with_trailing_icon(name: "arrow-right") %>
+            <% end %>
+            <%= render(UI::Link.new(href: "#{ApplicationHelper::GITHUB_URL}/tree/main/examples/#{example[:key]}", button_variant: true, variant: :outline,
+                                    target: "_blank", rel: "noopener", data: outbound_data("github", "examples"))) { "View source" } %>
+          </div>
+        </div>
+      </article>
+    <% end %>
+  </div>
 
   <div class="mt-6 grid gap-6 sm:grid-cols-2">
-    <% [ [ "Dashboard", "A store admin with charts, stat cards and an orders table." ],
-         [ "Sign-in flow", "Sign up, sign in, password reset and two-step verification." ] ].each do |title, text| %>
+    <% [ [ "Sign-in flow", "Sign up, sign in, password reset and two-step verification." ] ].each do |title, text| %>
       <section class="rounded-2xl border border-dashed p-6" aria-labelledby="example-<%= title.parameterize %>">
         <div class="flex flex-wrap items-center gap-2">
           <h2 id="example-<%= title.parameterize %>" class="text-lg font-semibold"><%= title %></h2>

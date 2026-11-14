@@ -2,12 +2,17 @@
 
 ## Unreleased
 
+- Docs: a second example, Helio, a dashboard you can use at
+  /examples/dashboard: a sidebar that collapses to icons, stat cards and
+  charts that change with the period, top customers and recent activity, in
+  its own blue theme with dark mode.
+
 - Docs: an Examples page, linked from the header, shows apps built with
   VelvetKit. The first, Daily Goods, is a shop you can use at
   /examples/store: a front page with categories, reviews and a newsletter
   signup, filters (price, rating, colour, features) and sorting, a cart, and
   a page for each product with photos, details and reviews, all without a
-  page reload. A dashboard and a sign-in flow are on the way.
+  page reload. A sign-in flow is on the way.
 
 - Fix: `Select` puts `aria-label` and `aria-labelledby` on its visible button.
   They went on the hidden native select, which left the dropdown with no name

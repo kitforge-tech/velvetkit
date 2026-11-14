@@ -49,6 +49,7 @@ class SeoTest < ActionDispatch::IntegrationTest
     assert_includes locs, "#{SITE}/"
     assert_includes locs, "#{SITE}/examples"
     assert_includes locs, "#{SITE}/examples/store/"
+    assert_includes locs, "#{SITE}/examples/dashboard/"
     DocsController::PAGES.each_key { |page| assert_includes locs, page == "getting_started" ? "#{SITE}/docs" : "#{SITE}/docs/#{page}" }
     ComponentDoc.names.each { |name| assert_includes locs, "#{SITE}/docs/components/#{name}" }
   end
