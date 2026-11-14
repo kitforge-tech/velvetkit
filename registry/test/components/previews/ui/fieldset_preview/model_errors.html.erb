@@ -1,0 +1,22 @@
+<%# In an app, @workspace comes back from a failed save. Bound groups show its errors on their own. %>
+<% workspace = Struct.new(:plan, :layout, :channels) do
+     include ActiveModel::Validations
+     def self.model_name = ActiveModel::Name.new(self, nil, "Workspace")
+     validates :plan, :layout, :channels, presence: true
+   end.new(nil, nil, []).tap(&:validate) %>
+<%= form_with(model: workspace, url: "#", class: "flex flex-col gap-8 max-w-sm") do |f| %>
+  <%= render(UI::RadioGroup.new(form: f, field: :plan, legend: "Plan")) do |rg| %>
+    <% rg.with_item(value: "free", label: "Free") %>
+    <% rg.with_item(value: "pro", label: "Pro — $9/mo") %>
+  <% end %>
+
+  <%= render(UI::ToggleGroup.new(form: f, field: :layout, legend: "Layout")) do |group| %>
+    <% group.with_item(value: "list", label: "List") %>
+    <% group.with_item(value: "grid", label: "Grid") %>
+  <% end %>
+
+  <%= render(UI::Fieldset.new(form: f, field: :channels, legend: "Notify me by")) do %>
+    <%= render(UI::Checkbox.new(name: "workspace[channels][]", value: "email", label: "Email")) %>
+    <%= render(UI::Checkbox.new(name: "workspace[channels][]", value: "push", label: "Push notifications")) %>
+  <% end %>
+<% end %>

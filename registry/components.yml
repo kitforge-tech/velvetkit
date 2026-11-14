@@ -62,6 +62,8 @@ components:
     description: A horizontal or vertical rule, optionally labelled.
   empty_state:
     description: What a page shows when it has nothing to list yet, with a way to add the first thing.
+  fieldset:
+    description: A group of controls under one legend, with a hint and an error message for the group.
   file_field:
     description: A drag-and-drop file picker with previews, and direct upload to storage, standalone or with a form builder.
   form_field:

@@ -159,4 +159,49 @@ class UI::ToggleGroupTest < ViewComponent::TestCase
     refute_includes root[:class].split, "w-fit"
     assert_selector "label.flex-1[data-test-id='a'][data-slot='toggle-group-item']"
   end
+
+  def test_a_legend_makes_the_fieldset_the_group
+    render_inline(UI::ToggleGroup.new(name: "view", label: "View", legend: "Layout", hint: "How results are shown.")) do |group|
+      group.with_item(value: "list", label: "List")
+    end
+    fieldset = page.find("fieldset[role='radiogroup'][aria-label='View']")
+    assert_equal "#{fieldset[:id]}-legend", fieldset[:"aria-labelledby"]
+    assert_selector "fieldset > div[data-slot='toggle-group']:not([role]):not([aria-label])"
+    assert_selector "[role='radiogroup']", count: 1
+  end
+
+  def test_a_multiple_group_in_a_fieldset_is_a_group
+    render_inline(UI::ToggleGroup.new(name: "styles", multiple: true, legend: "Styles")) do |group|
+      group.with_item(value: "bold", label: "Bold")
+    end
+    assert_selector "fieldset[role='group']:not([aria-required])"
+  end
+
+  def test_a_bound_group_shows_the_models_error
+    record = Struct.new(:align) do
+      include ActiveModel::Validations
+      def self.model_name = ActiveModel::Name.new(self, nil, "Post")
+      validates :align, presence: true
+    end.new(nil).tap(&:validate)
+    form = ActionView::Helpers::FormBuilder.new(:post, record, vc_test_controller.view_context, {})
+    render_inline(UI::ToggleGroup.new(form: form, field: :align, label: "Alignment")) do |group|
+      group.with_item(value: "left", label: "Left")
+    end
+    assert_selector "fieldset[role='radiogroup'][aria-invalid='true'][aria-label='Alignment']"
+    assert_selector "p.text-destructive", text: "Align can't be blank"
+    assert_no_selector "legend"
+  end
+
+  def test_renders_no_whitespace_around_itself
+    render_group
+    assert rendered_content.start_with?("<div"), rendered_content[0, 20].inspect
+  end
+
+  def test_your_aria_attributes_move_to_the_fieldset
+    render_inline(UI::ToggleGroup.new(name: "view", hint: "How results are shown.", aria: { labelledby: "view-heading" })) do |group|
+      group.with_item(value: "list", label: "List")
+    end
+    assert_selector "fieldset[role='radiogroup'][aria-labelledby='view-heading']"
+    assert_no_selector "div[data-slot='toggle-group'][aria-labelledby]"
+  end
 end

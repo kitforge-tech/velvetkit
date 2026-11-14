@@ -1,0 +1,14 @@
+<%# RadioGroup and ToggleGroup take legend:, hint: and error: and render through UI::Fieldset themselves. %>
+<div class="flex flex-col gap-8 max-w-sm">
+  <%= render(UI::RadioGroup.new(name: "plan", value: "pro", legend: "Plan", hint: "You can change it any time.", required: true)) do |rg| %>
+    <% rg.with_item(value: "free", label: "Free") %>
+    <% rg.with_item(value: "pro", label: "Pro — $9/mo") %>
+    <% rg.with_item(value: "team", label: "Team — $29/mo") %>
+  <% end %>
+
+  <%= render(UI::ToggleGroup.new(name: "layout", value: "grid", legend: "Layout", hint: "How results are shown.")) do |group| %>
+    <% group.with_item(value: "list", label: "List") %>
+    <% group.with_item(value: "grid", label: "Grid") %>
+    <% group.with_item(value: "board", label: "Board") %>
+  <% end %>
+</div>
