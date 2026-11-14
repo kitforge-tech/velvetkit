@@ -1,3 +1,6 @@
+<%# Each chart's "Show the data" table stays for screen readers, which can't read a canvas, but
+    is hidden from view on this dashboard. %>
+<% hide_data = "[&>details]:sr-only" %>
 <% content_for :title, "Overview" %>
 <div class="flex flex-wrap items-end justify-between gap-4">
   <div>
@@ -44,7 +47,7 @@
     <% card.with_content do %>
       <% revenue = @metrics.revenue_by_month %>
       <%= render(UI::Chart.new(type: :line, label: "Monthly recurring revenue", format: :currency, labels: revenue[:labels],
-                               series: [ { name: "Revenue", data: revenue[:data] } ], height: 280)) %>
+                               series: [ { name: "Revenue", data: revenue[:data] } ], height: 280, class: hide_data)) %>
     <% end %>
   <% end %>
 
@@ -59,7 +62,7 @@
           too narrow for: keep the legend under it at every width. %>
       <%= render(UI::Chart.new(type: :donut, label: "Revenue by plan", format: :currency, labels: plans[:labels],
                                series: [ { name: "Revenue", data: plans[:data] } ], height: 220,
-                               class: "sm:[&>div]:flex-col-reverse! sm:[&>div]:items-stretch! sm:[&>div>ul]:w-auto! sm:[&>div>div]:flex-none!")) %>
+                               class: "#{hide_data} sm:[&>div]:flex-col-reverse! sm:[&>div]:items-stretch! sm:[&>div>ul]:w-auto! sm:[&>div>div]:flex-none!")) %>
     <% end %>
   <% end %>
 </div>
@@ -73,7 +76,7 @@
     <% card.with_content do %>
       <% signups = @metrics.signups_over_period %>
       <%= render(UI::Chart.new(type: :bar, label: "New sign-ups", labels: signups[:labels],
-                               series: [ { name: "Sign-ups", data: signups[:data] } ], height: 240)) %>
+                               series: [ { name: "Sign-ups", data: signups[:data] } ], height: 240, class: hide_data)) %>
     <% end %>
   <% end %>
 
