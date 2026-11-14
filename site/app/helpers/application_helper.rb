@@ -103,6 +103,7 @@ module ApplicationHelper
     return :lookbook if path.start_with?("/lookbook")
     return :components if path.start_with?("/docs/components")
     return :ai if path == doc_path("ai")
+    return :examples if path == examples_path
     return :docs if path.start_with?("/docs")
 
     nil
