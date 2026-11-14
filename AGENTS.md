@@ -126,4 +126,7 @@ this is the run that catches it.
 
 CI (`.github/workflows/ci.yml`) runs rubocop, `bundle-audit` (on both the gem
 and `site/`), Brakeman (`site/` only — the gem itself has no controllers or
-views), and the test matrix above on Ruby 3.3, 3.4 and 4.0.
+views), and the test matrix above on Ruby 3.3, 3.4 and 4.0. A `site` job copies
+the kit into the docs app, type-checks the Stimulus controllers (`bun run
+typecheck`, as Bun builds TypeScript without checking it) and runs the site's
+`bin/rails test`.
