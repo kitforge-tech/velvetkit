@@ -15,6 +15,7 @@ class Sitemap
     def paths
       [ root_path, examples_path, daily_goods.root_path ] +
         DailyGoods::Product.all.map { |product| daily_goods.product_path(product) } +
+        [ helio.root_path ] +
         [ docs_path ] +
         DocsController::PAGES.keys.excluding("getting_started").map { |page| doc_path(page) } +
         ChartsController::PAGES.keys.map { |page| ChartsController.path_for(page) } +
@@ -32,6 +33,7 @@ class Sitemap
       case path
       when root_path then [ "site/app/views/pages/home.html.erb", "site/app/views/pages/_hero.html.erb", "site/app/views/pages/showcase" ]
       when daily_goods.root_path, %r{\A/examples/store/products/} then [ "examples/store/app" ]
+      when helio.root_path then [ "examples/dashboard/app" ]
       when examples_path then [ "site/app/views/pages/examples.html.erb", "site/app/assets/images/examples" ]
       when docs_path then [ "site/app/views/docs/getting_started.html.erb" ]
       when components_path then [ "site/app/views/components/index.html.erb" ]

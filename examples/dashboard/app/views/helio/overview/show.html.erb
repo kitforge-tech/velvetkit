@@ -1,0 +1,154 @@
+<%# Each chart's "Show the data" table stays for screen readers, which can't read a canvas, but
+    is hidden from view on this dashboard. %>
+<% hide_data = "[&>details]:sr-only" %>
+<% content_for :title, "Overview" %>
+<div class="flex flex-wrap items-end justify-between gap-4">
+  <div>
+    <h1 class="text-2xl font-semibold tracking-tight">Good morning, Jordan</h1>
+    <p class="mt-1 text-sm text-muted-foreground">Here's how Helio is doing, up to <%= @metrics.today.strftime("%-d %B %Y") %>.</p>
+  </div>
+  <%= form_with url: root_path, method: :get, data: { auto_submit: true, turbo_action: "advance" } do %>
+    <%= render(UI::ToggleGroup.new(name: "range", value: @range, label: "Period")) do |group| %>
+      <% { "7d" => "7 days", "30d" => "30 days", "90d" => "90 days" }.each do |value, label| %>
+        <% group.with_item(value: value, label: label, class: "px-3") %>
+      <% end %>
+    <% end %>
+    <noscript><%= render(UI::Button.new(type: :submit, size: :sm, variant: :outline)) { "Show" } %></noscript>
+  <% end %>
+</div>
+
+<ul class="mt-6 grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
+  <% @metrics.tiles.each do |tile| %>
+    <% text, good = change(tile[:value], tile[:before], lower_is_better: tile[:lower_is_better]) %>
+    <li>
+      <%= render(UI::Card.new(class: "h-full p-4 sm:p-5")) do %>
+          <div class="flex items-center justify-between text-sm text-muted-foreground">
+            <span><%= tile[:label] %></span>
+            <%= render(UI::Icon.new(name: tile[:icon], class: "size-4")) %>
+          </div>
+          <p class="mt-2 text-2xl font-semibold tracking-tight tabular-nums sm:text-3xl"><%= tile[:format] == :currency ? money(tile[:value]) : number_with_delimiter(tile[:value]) %></p>
+          <p class="mt-1 flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
+            <span class="inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 font-medium <%= good ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400" : "bg-rose-500/10 text-rose-700 dark:text-rose-400" %>">
+              <%= render(UI::Icon.new(name: tile[:value] >= tile[:before] ? "trending-up" : "trending-down", class: "size-3")) %><%= text %>
+            </span>
+            <%= tile[:flow] ? "vs previous #{@metrics.days} days" : "vs #{@metrics.days} days ago" %>
+          </p>
+      <% end %>
+    </li>
+  <% end %>
+</ul>
+
+<div class="mt-4 grid gap-4 lg:grid-cols-3">
+  <%= render(UI::Card.new(class: "lg:col-span-2")) do |card| %>
+    <% card.with_header do |header| %>
+      <% header.with_title { "Monthly revenue" } %>
+      <% header.with_description { "Recurring revenue at the end of each month, last 12 months" } %>
+    <% end %>
+    <% card.with_content do %>
+      <% revenue = @metrics.revenue_by_month %>
+      <%= render(UI::Chart.new(type: :line, label: "Monthly recurring revenue", format: :currency, labels: revenue[:labels],
+                               series: [ { name: "Revenue", data: revenue[:data] } ], height: 280, class: hide_data)) %>
+    <% end %>
+  <% end %>
+
+  <%= render(UI::Card.new) do |card| %>
+    <% card.with_header do |header| %>
+      <% header.with_title { "Revenue by plan" } %>
+      <% header.with_description { "This month" } %>
+    <% end %>
+    <% card.with_content do %>
+      <% plans = @metrics.revenue_by_plan %>
+      <%# Chart puts a donut beside its legend from the sm breakpoint, which this one-third card is
+          too narrow for: keep the legend under it at every width. %>
+      <%= render(UI::Chart.new(type: :donut, label: "Revenue by plan", format: :currency, labels: plans[:labels],
+                               series: [ { name: "Revenue", data: plans[:data] } ], height: 220,
+                               class: "#{hide_data} sm:[&>div]:flex-col-reverse! sm:[&>div]:items-stretch! sm:[&>div>ul]:w-auto! sm:[&>div>div]:flex-none!")) %>
+    <% end %>
+  <% end %>
+</div>
+
+<div class="mt-4 grid gap-4 lg:grid-cols-3">
+  <%= render(UI::Card.new(class: "lg:col-span-2")) do |card| %>
+    <% card.with_header do |header| %>
+      <% header.with_title { "New sign-ups" } %>
+      <% header.with_description { "Last #{@metrics.days} days#{', by week' if @metrics.days > 30}" } %>
+    <% end %>
+    <% card.with_content do %>
+      <% signups = @metrics.signups_over_period %>
+      <%= render(UI::Chart.new(type: :bar, label: "New sign-ups", labels: signups[:labels],
+                               series: [ { name: "Sign-ups", data: signups[:data] } ], height: 240, class: hide_data)) %>
+    <% end %>
+  <% end %>
+
+  <%= render(UI::Card.new) do |card| %>
+    <% card.with_header do |header| %>
+      <% header.with_title { "Customers by country" } %>
+      <% header.with_description { "Paying customers" } %>
+    <% end %>
+    <% card.with_content(class: "grid gap-4") do %>
+      <% countries = @metrics.customers_by_country %>
+      <% total = countries.sum(&:last) %>
+      <% countries.each do |country, count| %>
+        <%= render(UI::Progress.new(value: count, max: total, label: country, value_text: "#{count}", show_value: true, size: :sm)) %>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>
+
+<div class="mt-4 grid gap-4 lg:grid-cols-3">
+  <%= render(UI::Card.new(class: "lg:col-span-2")) do |card| %>
+    <% card.with_header do |header| %>
+      <% header.with_title { "Top customers" } %>
+      <% header.with_description { "By monthly revenue" } %>
+      <% header.with_action { link_to "View all", customers_path, class: "text-sm font-medium text-primary hover:underline hover:underline-offset-4" } %>
+    <% end %>
+    <% card.with_content do %>
+      <%= render(UI::Table.new("aria-label": "Top customers by monthly revenue")) do |table| %>
+        <% table.with_head do |head| %>
+          <% head.with_column { "Customer" } %>
+          <% head.with_column { "Plan" } %>
+          <% head.with_column(class: "hidden sm:table-cell") { "Seats" } %>
+          <% head.with_column { "Status" } %>
+          <% head.with_column(align: :end) { "Monthly" } %>
+        <% end %>
+        <% @metrics.top_customers.each do |customer| %>
+          <% table.with_row do |row| %>
+            <% row.with_cell do %>
+              <div class="flex items-center gap-3">
+                <%= render(UI::Avatar.new(size: :sm, alt: customer.contact)) { |avatar| avatar.with_fallback { customer.initials } } %>
+                <div class="min-w-0">
+                  <p class="truncate font-medium"><%= customer.company %></p>
+                  <p class="truncate text-xs text-muted-foreground"><%= customer.contact %></p>
+                </div>
+              </div>
+            <% end %>
+            <% row.with_cell { customer.plan } %>
+            <% row.with_cell(class: "hidden tabular-nums sm:table-cell") { customer.seats.to_s } %>
+            <% row.with_cell { status_badge(customer.status) } %>
+            <% row.with_cell(align: :end, class: "font-medium tabular-nums") { money(customer.mrr) } %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%= render(UI::Card.new) do |card| %>
+    <% card.with_header do |header| %>
+      <% header.with_title { "Recent activity" } %>
+    <% end %>
+    <% card.with_content do %>
+      <%= render(UI::Timeline.new(label: "Recent activity")) do |timeline| %>
+        <% @metrics.activity.each do |event| %>
+          <% customer = event[:customer] %>
+          <% title, icon, status = case event[:kind]
+               when :signup then [ "#{customer.company} started a trial", "user-plus", :complete ]
+               when :cancelled then [ "#{customer.company} cancelled", "user-minus", :error ]
+               else [ "Payment failed for #{customer.company}", "credit-card", :error ]
+               end %>
+          <% timeline.with_item(title: title, description: "#{customer.plan}, #{pluralize(customer.seats, 'seat')}", icon: icon, status: status,
+                                time: event[:date].to_time, time_label: event[:date] == @metrics.today ? "Today" : "#{(@metrics.today - event[:date]).to_i}d ago") %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>
