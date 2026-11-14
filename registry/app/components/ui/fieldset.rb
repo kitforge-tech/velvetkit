@@ -13,7 +13,9 @@ require "securerandom"
 #     <%= render(UI::Checkbox.new(name: "notify[]", value: "push", label: "Push")) %>
 #   <% end %>
 #
-# `disabled: true` disables every control inside, natively. `error:` takes a
+# `disabled: true` disables every control inside, natively, and the browser
+# then leaves them out of the form's submission. `required: true` marks the
+# legend only; set `required` on the controls that need it. `error:` takes a
 # message, or `true` to mark the group invalid without one. Bound to a form
 # (`form:` + `field:`), the model's errors on that attribute are the message
 # and its human name is the legend (`legend:` overrides it, `legend: false`
@@ -36,7 +38,8 @@ class UI::Fieldset < UI::Base
   def hint_id = @details.hint_id
   def error_id = @details.error_id
 
-  def legend? = @details.render_label?
+  # Never an empty legend: it would name the group "".
+  def legend? = @details.render_label? && legend_text.present?
   def legend_text = @details.label_text
   def hint = @details.hint
   def error_message = @details.error_message
@@ -49,14 +52,15 @@ class UI::Fieldset < UI::Base
     # A radiogroup takes aria-required and aria-invalid; a plain fieldset is a
     # group, which takes neither.
     radiogroup = @html_attrs[:role].to_s == "radiogroup"
+    user_aria = (@html_attrs[:aria] || {}).symbolize_keys
     aria = {
-      labelledby:  (legend_id if legend?),
-      describedby: @details.describedby,
-      required:    ("true" if radiogroup && @required),
-      invalid:     ("true" if radiogroup && @details.error?)
-    }.compact
-    @html_attrs.except(:aria).merge(id: id, class: classes, disabled: @disabled,
-                                    aria: aria.merge(@html_attrs[:aria] || {}))
+      labelledby: (legend_id if legend?),
+      required:   ("true" if radiogroup && @required),
+      invalid:    ("true" if radiogroup && @details.error?)
+    }.compact.merge(user_aria)
+    # Your own aria-describedby adds to the hint's and error's ids.
+    aria[:describedby] = [ @details.describedby, user_aria[:describedby] ].compact_blank.join(" ").presence
+    @html_attrs.except(:aria).merge(id: id, class: classes, disabled: @disabled, aria: aria.compact)
   end
 
   def classes
@@ -66,7 +70,7 @@ class UI::Fieldset < UI::Base
   # The legend sits outside the fieldset's flex layout, so its own margin
   # spaces it: close to a hint, further from the controls.
   def legend_classes
-    cn("text-sm font-medium leading-none", hint.present? ? "mb-1.5" : "mb-3",
+    cn("text-sm font-medium leading-snug", hint.present? ? "mb-1.5" : "mb-3",
        { "text-muted-foreground" => @disabled })
   end
 end

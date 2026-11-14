@@ -100,4 +100,20 @@ class UI::FieldsetTest < ViewComponent::TestCase
     refute_includes fieldset[:class].split, "gap-3"
     assert fieldset[:"aria-labelledby"].present?
   end
+
+  def test_never_an_empty_legend
+    render_inline(UI::Fieldset.new(legend: true)) { "x" }
+    assert_no_selector "legend"
+    assert_no_selector "fieldset[aria-labelledby]"
+  end
+
+  def test_your_aria_describedby_adds_to_the_hint_and_error
+    render_inline(UI::Fieldset.new(legend: "Plan", hint: "Hint", id: "plan", aria: { describedby: "terms" }))
+    assert_selector "fieldset[aria-describedby='plan-hint terms']"
+  end
+
+  def test_a_long_legend_has_room_to_wrap
+    render_inline(UI::Fieldset.new(legend: "Plan"))
+    assert_includes page.find("legend")[:class].split, "leading-snug"
+  end
 end

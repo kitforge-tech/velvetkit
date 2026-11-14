@@ -6,6 +6,10 @@
   They went on the hidden native select, which left the dropdown with no name
   for screen readers. (#80)
 
+Upgrading an app: `RadioGroup` and `ToggleGroup` now render through the new
+`Fieldset`, so re-run `velvetkit:add radio_group toggle_group` to get it with
+them. Without `legend:`, `hint:` or `error:` they render as before.
+
 ## 0.4.2 — 2026-11-09
 
 Changes:

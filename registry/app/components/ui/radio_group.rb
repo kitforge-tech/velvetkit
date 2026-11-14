@@ -3,7 +3,8 @@
 # A set of radio buttons. Give it a `legend:` (and a `hint:` or `error:`) and
 # it renders through UI::Fieldset: a <fieldset role="radiogroup"> named by its
 # legend, around the radios. Bind it to a form builder with `form:` and
-# `field:`, and the model's errors on that attribute show on their own.
+# `field:`, and the model's errors on that attribute show on their own;
+# `legend: true` then uses the attribute's name.
 class UI::RadioGroup < UI::Base
   renders_many :items, ->(value:, **opts) {
     item = UI::RadioGroup::Item.new(value: value, **opts)
@@ -41,9 +42,18 @@ class UI::RadioGroup < UI::Base
   # The legend shows only when given: a bound group that's never been named
   # doesn't grow one when it has an error.
   def fieldset
-    @fieldset ||= UI::Fieldset.new(legend: @legend || false, hint: @hint, error: @error,
+    @fieldset ||= UI::Fieldset.new(legend: @legend.presence || false, hint: @hint, error: @error,
                                    form: @form, field: @field,
-                                   required: @required, disabled: @disabled, role: "radiogroup")
+                                   required: @required, disabled: @disabled,
+                                   role: "radiogroup", aria: @html_attrs[:aria])
+  end
+
+  # Inside a fieldset, the fieldset has the role and the aria attributes that
+  # name and describe the group; the radios' container keeps the rest.
+  def group_attrs
+    wrapped = fieldset.wrap?
+    attrs = wrapped ? @html_attrs.except(:id, :aria) : @html_attrs.except(:id)
+    { role: ("radiogroup" unless wrapped), id: group_id, class: classes, **attrs }
   end
 
   def form_field? = @form.present? && @field.present?

@@ -1,2 +1,1 @@
-<% group = capture do %><%= tag.div(**root_attrs) do %><% if multiple? && input_name %><%= tag.input type: "hidden", name: input_name, value: "", autocomplete: "off" %><% end %><% items.each do |item| %><%= item %><% end %><% end %><% end %>
-<% if fieldset.wrap? %><%= render(fieldset) { group } %><% else %><%= group %><% end %>
+<% group = capture do %><%= tag.div(**root_attrs) do %><% if multiple? && input_name %><%= tag.input type: "hidden", name: input_name, value: "", autocomplete: "off" %><% end %><% items.each do |item| %><%= item %><% end %><% end %><% end %><% if fieldset.wrap? %><%= render(fieldset) { group } %><% else %><%= group %><% end %>

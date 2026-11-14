@@ -9,14 +9,8 @@ class UI::FieldsetPreview < ViewComponent::Preview
   # @param disabled toggle
   def playground(legend: "Notifications", hint: "Where we tell you about replies and mentions.",
                  error: "", required: false, disabled: false)
-    render(UI::Fieldset.new(legend: legend, hint: hint.presence, error: error.presence,
-                            required: required, disabled: disabled, class: "max-w-sm")) do
-      safe_join([
-        render(UI::Checkbox.new(name: "notify[email]", checked: true, label: "Email")),
-        render(UI::Checkbox.new(name: "notify[push]", label: "Push notifications")),
-        render(UI::Checkbox.new(name: "notify[sms]", label: "Text message"))
-      ])
-    end
+    render_with_template(locals: { legend: legend, hint: hint.presence, error: error.presence,
+                                   required: required, disabled: disabled })
   end
 
   # @label Radio and toggle groups

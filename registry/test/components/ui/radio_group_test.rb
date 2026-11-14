@@ -204,4 +204,42 @@ class UI::RadioGroupTest < ViewComponent::TestCase
     assert_selector "p.text-destructive", text: "Plan can't be blank"
     assert_no_selector "legend"
   end
+
+  def test_renders_no_whitespace_around_itself
+    render_inline(UI::RadioGroup.new(name: "plan")) { |rg| rg.with_item(value: "free") }
+    assert rendered_content.start_with?("<div"), rendered_content[0, 20].inspect
+    render_inline(UI::RadioGroup.new(name: "plan", legend: "Plan")) { |rg| rg.with_item(value: "free") }
+    assert rendered_content.start_with?("<fieldset"), rendered_content[0, 20].inspect
+  end
+
+  def test_a_blank_legend_is_no_legend
+    render_inline(UI::RadioGroup.new(form: form_builder_for(Account.new("pro")), field: :plan, legend: "")) do |rg|
+      rg.with_item(value: "free")
+    end
+    assert_no_selector "fieldset"
+    assert_no_selector "legend"
+  end
+
+  def test_legend_true_uses_the_attribute_name
+    render_inline(UI::RadioGroup.new(form: form_builder_for(Account.new("pro")), field: :plan, legend: true)) do |rg|
+      rg.with_item(value: "free")
+    end
+    assert_selector "legend", text: "Plan"
+  end
+
+  def test_your_aria_attributes_move_to_the_fieldset
+    render_inline(UI::RadioGroup.new(name: "plan", hint: "Change it any time.", aria: { label: "Billing plan" })) do |rg|
+      rg.with_item(value: "free")
+    end
+    assert_selector "fieldset[role='radiogroup'][aria-label='Billing plan']"
+    assert_no_selector "div[aria-label]"
+  end
+
+  def test_error_false_hides_the_models_error
+    render_inline(UI::RadioGroup.new(form: form_builder_for(Account.new(nil).tap(&:validate)), field: :plan, error: false)) do |rg|
+      rg.with_item(value: "free")
+    end
+    assert_no_selector "fieldset"
+    assert_selector "div[role='radiogroup']"
+  end
 end

@@ -1,0 +1,5 @@
+<%= render(UI::Fieldset.new(legend: legend, hint: hint, error: error, required: required, disabled: disabled, class: "max-w-sm")) do %>
+  <%= render(UI::Checkbox.new(name: "notify[email]", checked: true, label: "Email")) %>
+  <%= render(UI::Checkbox.new(name: "notify[push]", label: "Push notifications")) %>
+  <%= render(UI::Checkbox.new(name: "notify[sms]", label: "Text message")) %>
+<% end %>

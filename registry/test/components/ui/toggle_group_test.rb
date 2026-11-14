@@ -191,4 +191,17 @@ class UI::ToggleGroupTest < ViewComponent::TestCase
     assert_selector "p.text-destructive", text: "Align can't be blank"
     assert_no_selector "legend"
   end
+
+  def test_renders_no_whitespace_around_itself
+    render_group
+    assert rendered_content.start_with?("<div"), rendered_content[0, 20].inspect
+  end
+
+  def test_your_aria_attributes_move_to_the_fieldset
+    render_inline(UI::ToggleGroup.new(name: "view", hint: "How results are shown.", aria: { labelledby: "view-heading" })) do |group|
+      group.with_item(value: "list", label: "List")
+    end
+    assert_selector "fieldset[role='radiogroup'][aria-labelledby='view-heading']"
+    assert_no_selector "div[data-slot='toggle-group'][aria-labelledby]"
+  end
 end
