@@ -97,6 +97,10 @@ jobs:
       - name: Copy the kit in from the registry
         run: bin/sync-kit
 
+      # Bun builds TypeScript without checking it.
+      - name: Type-check the Stimulus controllers
+        run: bun run typecheck
+
       - name: Build JavaScript and CSS
         run: bun run build && bun run build:css
 
