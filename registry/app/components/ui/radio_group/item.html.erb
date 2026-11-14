@@ -6,7 +6,7 @@
         <%= tag.span class: dot_size_class + " rounded-full bg-primary-foreground" %>
       <% end %>
     <% end %>
-    <%= tag.span class: label_text_classes do %><%= label %><% if required? %><%= tag.span(" *", class: "text-destructive ml-0.5") %><% end %><% end %>
+    <%= tag.span class: label_text_classes do %><%= label %><% if required_mark? %><%= tag.span(" *", class: "text-destructive ml-0.5") %><% end %><% end %>
   <% end %>
 <% else %>
   <%= tag.span class: "relative inline-flex" do %>

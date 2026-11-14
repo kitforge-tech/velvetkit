@@ -136,4 +136,72 @@ class UI::RadioGroupTest < ViewComponent::TestCase
     assert_includes classes, "peer"
     assert_includes classes, "appearance-none"
   end
+
+  Account = Struct.new(:plan, :seats) do
+    include ActiveModel::Validations
+    def self.model_name = ActiveModel::Name.new(self, nil, "Account")
+    validates :plan, presence: true
+  end
+
+  def form_builder_for(record)
+    ActionView::Helpers::FormBuilder.new(:account, record, vc_test_controller.view_context, {})
+  end
+
+  def test_a_legend_makes_the_fieldset_the_radiogroup
+    render_inline(UI::RadioGroup.new(name: "plan", legend: "Plan", hint: "Change it any time.", required: true)) do |rg|
+      rg.with_item(value: "free", label: "Free")
+    end
+    fieldset = page.find("fieldset[role='radiogroup'][aria-required='true']")
+    assert_equal "#{fieldset[:id]}-legend", fieldset[:"aria-labelledby"]
+    assert_equal "#{fieldset[:id]}-hint", fieldset[:"aria-describedby"]
+    assert_selector "legend", text: "Plan"
+    assert_selector "[role='radiogroup']", count: 1
+    assert_selector "fieldset > div.flex-col input[type='radio'][name='plan'][required]"
+    assert_selector "span.text-destructive", text: "*", count: 1
+  end
+
+  def test_without_a_legend_hint_or_error_it_is_unchanged
+    render_inline(UI::RadioGroup.new(name: "plan")) { |rg| rg.with_item(value: "free") }
+    assert_no_selector "fieldset"
+    assert_selector "div[role='radiogroup']"
+  end
+
+  def test_error_marks_the_group_invalid
+    render_inline(UI::RadioGroup.new(name: "plan", legend: "Plan", error: "Choose a plan")) { |rg| rg.with_item(value: "free") }
+    fieldset = page.find("fieldset[aria-invalid='true']")
+    assert_selector "p##{fieldset[:id]}-error", text: "Choose a plan"
+  end
+
+  def test_class_and_attrs_stay_on_the_radios_container
+    render_inline(UI::RadioGroup.new(name: "plan", legend: "Plan", id: "plans", class: "flex-row", data: { testid: "plans" })) do |rg|
+      rg.with_item(value: "free")
+    end
+    assert_selector "fieldset > div#plans.flex-row[data-testid='plans']"
+    assert_no_selector "fieldset[data-testid]"
+  end
+
+  def test_form_builder_names_and_values
+    render_inline(UI::RadioGroup.new(form: form_builder_for(Account.new("pro")), field: :plan)) do |rg|
+      rg.with_item(value: "free", label: "Free")
+      rg.with_item(value: "pro", label: "Pro")
+    end
+    assert_selector "input[name='account[plan]']", count: 2
+    assert page.find("input[value='pro']").checked?
+  end
+
+  def test_values_compare_as_strings
+    render_inline(UI::RadioGroup.new(form: form_builder_for(Account.new(nil, 5)), field: :seats)) do |rg|
+      rg.with_item(value: 5, label: "Five")
+    end
+    assert page.find("input[value='5']").checked?
+  end
+
+  def test_a_bound_group_shows_the_models_error_without_growing_a_legend
+    render_inline(UI::RadioGroup.new(form: form_builder_for(Account.new(nil).tap(&:validate)), field: :plan)) do |rg|
+      rg.with_item(value: "free", label: "Free")
+    end
+    assert_selector "fieldset[role='radiogroup'][aria-invalid='true']"
+    assert_selector "p.text-destructive", text: "Plan can't be blank"
+    assert_no_selector "legend"
+  end
 end

@@ -38,6 +38,9 @@ class UI::RadioGroup::Item < UI::Base
   def disabled?; @disabled;    end
   def required?; @group_required; end
 
+  # A legend marks the whole group required, so its items don't repeat it.
+  def required_mark?; @group_required && !@group_legend; end
+
   def input_options
     opts = @html_attrs.dup
     opts[:type]    = :radio
@@ -87,6 +90,7 @@ class UI::RadioGroup::Item < UI::Base
     @group_name     = group.name
     @group_value    = group.value
     @group_required = group.required?
+    @group_legend   = group.fieldset.legend?
     @group_disabled = group.disabled?
     @size         ||= group.size
   end
