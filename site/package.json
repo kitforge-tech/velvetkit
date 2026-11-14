@@ -4,7 +4,9 @@
   "type": "module",
   "scripts": {
     "build": "bun build ./app/javascript/application.js ./app/javascript/ag_grid.ts ./app/javascript/chart_js.ts ./app/javascript/vanilla_calendar.ts --outdir ./app/assets/builds --minify",
-    "build:css": "bunx @tailwindcss/cli -i ./app/assets/stylesheets/application.tailwind.css -o ./app/assets/builds/application.css --minify"
+    "build:css": "bun run build:css:site && bun run build:css:shop",
+    "build:css:site": "bunx @tailwindcss/cli -i ./app/assets/stylesheets/application.tailwind.css -o ./app/assets/builds/application.css --minify",
+    "build:css:shop": "bunx @tailwindcss/cli -i ./app/assets/stylesheets/daily_goods.tailwind.css -o ./app/assets/builds/daily_goods.css --minify"
   },
   "dependencies": {
     "@floating-ui/dom": "^1.7.4",

@@ -47,6 +47,8 @@ class SeoTest < ActionDispatch::IntegrationTest
     assert_equal "application/xml", response.media_type
     locs = Nokogiri::XML(response.body).remove_namespaces!.xpath("//loc").map(&:text)
     assert_includes locs, "#{SITE}/"
+    assert_includes locs, "#{SITE}/examples"
+    assert_includes locs, "#{SITE}/examples/store/"
     DocsController::PAGES.each_key { |page| assert_includes locs, page == "getting_started" ? "#{SITE}/docs" : "#{SITE}/docs/#{page}" }
     ComponentDoc.names.each { |name| assert_includes locs, "#{SITE}/docs/components/#{name}" }
   end

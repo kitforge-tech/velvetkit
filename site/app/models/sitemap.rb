@@ -10,9 +10,12 @@ class Sitemap
 
   class << self
     include Rails.application.routes.url_helpers
+    include Rails.application.routes.mounted_helpers
 
     def paths
-      [ root_path, docs_path ] +
+      [ root_path, examples_path, daily_goods.root_path ] +
+        DailyGoods::Product.all.map { |product| daily_goods.product_path(product) } +
+        [ docs_path ] +
         DocsController::PAGES.keys.excluding("getting_started").map { |page| doc_path(page) } +
         ChartsController::PAGES.keys.map { |page| ChartsController.path_for(page) } +
         [ components_path ] + ComponentDoc.names.map { |name| component_path(name) }
@@ -27,7 +30,9 @@ class Sitemap
     # Paths are relative to the repository root.
     def sources(path)
       case path
-      when root_path then [ "site/app/views/pages" ]
+      when root_path then [ "site/app/views/pages/home.html.erb", "site/app/views/pages/_hero.html.erb", "site/app/views/pages/showcase" ]
+      when daily_goods.root_path, %r{\A/examples/store/products/} then [ "examples/store/app" ]
+      when examples_path then [ "site/app/views/pages/examples.html.erb", "site/app/assets/images/examples" ]
       when docs_path then [ "site/app/views/docs/getting_started.html.erb" ]
       when components_path then [ "site/app/views/components/index.html.erb" ]
       when doc_path("releases") then [ "site/app/views/docs/releases.html.erb", "CHANGELOG.md" ]

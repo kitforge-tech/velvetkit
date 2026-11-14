@@ -1,0 +1,105 @@
+<div class="mx-auto max-w-7xl px-4 pt-3 pb-16">
+  <section class="grid gap-3 rounded-3xl bg-neutral-100 p-3 sm:h-72 sm:grid-cols-[5fr_4fr] sm:grid-rows-1 dark:bg-card">
+    <%= image_tag "daily_goods/promo.jpg", alt: "Four cream plinths on a sand-coloured backdrop",
+                  class: "h-44 w-full rounded-2xl object-cover object-[50%_85%] sm:order-last sm:h-full" %>
+    <div class="flex flex-col items-start justify-center gap-5 p-3 pb-4 sm:p-6 lg:p-10">
+      <div>
+        <p class="text-sm font-medium text-muted-foreground">Winter sale</p>
+        <h2 class="mt-1 text-3xl font-medium sm:text-4xl lg:text-5xl">20% off all skincare</h2>
+        <p class="mt-3 text-muted-foreground">Serums, creams and balms, until 31 January.</p>
+      </div>
+      <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
+        <%= render(UI::Button.new(class: "rounded-full bg-foreground text-background hover:bg-foreground/85")) { "Shop the sale" } %>
+        <p class="text-sm text-muted-foreground">Use code <span class="font-medium text-foreground">WINTER20</span></p>
+      </div>
+    </div>
+  </section>
+
+  <ul class="mt-3 grid grid-cols-2 gap-px overflow-hidden rounded-3xl border bg-border lg:grid-cols-4" aria-label="Why shop with us">
+    <% shop_promises.each do |promise| %>
+      <li class="flex items-center gap-3 bg-background p-4 sm:p-5">
+        <span class="grid size-10 shrink-0 place-items-center rounded-full bg-neutral-100 dark:bg-card"><%= render(UI::Icon.new(name: promise[:icon], class: "size-4.5")) %></span>
+        <span class="min-w-0 text-sm">
+          <span class="block font-medium"><%= promise[:title] %></span>
+          <span class="block text-muted-foreground"><%= promise[:text] %></span>
+        </span>
+      </li>
+    <% end %>
+  </ul>
+
+  <section class="mt-16" aria-labelledby="categories-heading">
+    <div class="flex items-end justify-between gap-4">
+      <h2 id="categories-heading" class="text-2xl font-medium sm:text-3xl">Shop by category</h2>
+      <%= link_to root_path(anchor: "shop"), class: "hidden items-center gap-1 text-sm font-medium hover:underline hover:underline-offset-4 sm:inline-flex" do %>
+        All products<%= render(UI::Icon.new(name: "arrow-right", class: "size-4")) %>
+      <% end %>
+    </div>
+    <ul class="mt-6 grid grid-cols-3 gap-2 sm:gap-4">
+      <% shop_categories.each do |category| %>
+        <li>
+          <%= link_to root_path(category: category[:title].downcase, anchor: "shop"), class: "group relative flex aspect-3/4 items-end overflow-hidden rounded-2xl p-3 text-white sm:aspect-4/3 sm:rounded-3xl sm:p-5 outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2" do %>
+            <%= image_tag category[:image], alt: "", loading: "lazy", class: "absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none" %>
+            <span class="absolute inset-0 bg-linear-to-t from-black/60 via-black/10 to-transparent"></span>
+            <span class="relative flex w-full items-end justify-between gap-3">
+              <span>
+                <span class="block font-heading text-lg sm:text-2xl"><%= category[:title] %></span>
+                <span class="hidden text-sm text-white/80 sm:block"><%= category[:description] %></span>
+              </span>
+              <span class="hidden size-10 shrink-0 place-items-center rounded-full bg-white sm:grid text-neutral-900 transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none">
+                <%= render(UI::Icon.new(name: "arrow-up-right", class: "size-4")) %>
+              </span>
+            </span>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </section>
+
+  <div id="shop" class="mt-16 grid scroll-mt-16 gap-x-10 lg:grid-cols-[240px_1fr]">
+    <%= form_with url: root_path, method: :get, class: "contents",
+                  data: { shop_filters: true, turbo_frame: "products", turbo_action: "advance" } do %>
+      <div class="mb-8 lg:sticky lg:top-16 lg:z-30 lg:col-span-2 lg:mb-6 lg:bg-background lg:py-4">
+        <div class="flex items-end justify-between gap-4">
+          <div class="flex items-baseline gap-3">
+            <h1 class="text-3xl font-medium whitespace-nowrap sm:text-4xl">All products</h1>
+            <span id="product-count" aria-live="polite" class="text-sm whitespace-nowrap text-muted-foreground"><%= pluralize(@products.size, "item") %></span>
+          </div>
+          <div class="flex items-center gap-2">
+            <%= render(UI::Sheet.new(class: "lg:hidden")) do |sheet| %>
+              <% sheet.with_trigger(variant: :outline, class: "rounded-full") { "Filters" } %>
+              <% sheet.with_content(side: :left) do |content| %>
+                <% content.with_title { "Filters" } %>
+                <fieldset data-media="(max-width: 1023px)" class="grid gap-7">
+                  <fieldset data-media="(max-width: 639px)" class="sm:hidden">
+                    <%= render(UI::Select.new(name: "sort", selected: @sort, label: "Sort by", options: DailyGoods::StoreController::SORTS)) %>
+                  </fieldset>
+                  <%= render "daily_goods/store/filters" %>
+                </fieldset>
+              <% end %>
+            <% end %>
+            <fieldset data-media="(min-width: 640px)" class="hidden w-48 sm:block">
+              <%= render(UI::Select.new(name: "sort", selected: @sort, "aria-label": "Sort by", options: DailyGoods::StoreController::SORTS)) %>
+            </fieldset>
+          </div>
+        </div>
+
+        <%= render(UI::ToggleGroup.new(name: "category", value: @category, label: "Category", class: "mt-5 max-w-full flex-wrap gap-2 bg-transparent p-0")) do |group| %>
+          <% DailyGoods::StoreController::CATEGORIES.each do |value| %>
+            <% group.with_item(value: value, label: value.capitalize, class: "rounded-full border border-border px-4 text-foreground hover:bg-accent has-[:checked]:border-foreground has-[:checked]:bg-foreground has-[:checked]:text-background has-[:checked]:shadow-none") %>
+          <% end %>
+        <% end %>
+      </div>
+
+      <aside class="-m-1 hidden self-start p-1 lg:sticky lg:top-53 lg:block lg:max-h-[calc(100svh-14rem)] lg:overflow-y-auto" aria-label="Filters">
+        <fieldset data-media="(min-width: 1024px)">
+          <%= render "daily_goods/store/filters" %>
+        </fieldset>
+      </aside>
+    <% end %>
+
+    <%= render "daily_goods/store/products" %>
+  </div>
+
+  <%= render "daily_goods/store/testimonials" %>
+  <%= render "daily_goods/store/newsletter" %>
+</div>

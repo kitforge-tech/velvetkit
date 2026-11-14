@@ -1,0 +1,6 @@
+<% if @errors.any? %>
+  <%= turbo_stream.replace "review-form", partial: "daily_goods/reviews/form", locals: { product: @product, draft: @draft, errors: @errors } %>
+<% else %>
+  <%= turbo_stream.replace "reviews", partial: "daily_goods/reviews/section", locals: { product: @product, reviews: @reviews } %>
+  <%= turbo_stream.append UI::Toast::Viewport::ID, render(UI::Toast.new(variant: :success, title: "Thanks for your review", duration: 3)) %>
+<% end %>
