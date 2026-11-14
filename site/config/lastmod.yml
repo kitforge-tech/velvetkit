@@ -2,6 +2,17 @@
 # re-run it after changing a page or component and commit the result.
 ---
 "/": '2026-11-09'
+"/examples": '2026-11-14'
+"/examples/store/": '2026-11-14'
+"/examples/store/products/repair-serum": '2026-11-14'
+"/examples/store/products/hand-cream": '2026-11-14'
+"/examples/store/products/night-balm": '2026-11-14'
+"/examples/store/products/body-wash": '2026-11-14'
+"/examples/store/products/bath-salts": '2026-11-14'
+"/examples/store/products/citrus-soap": '2026-11-14'
+"/examples/store/products/canvas-tote": '2026-11-14'
+"/examples/store/products/cotton-tee": '2026-11-14'
+"/examples/store/products/steel-flask": '2026-11-14'
 "/docs": '2026-11-02'
 "/docs/ai": '2026-11-09'
 "/docs/namespacing": '2026-10-21'

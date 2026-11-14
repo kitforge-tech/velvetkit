@@ -1,0 +1,18 @@
+<%= form_with url: product_reviews_path(product), scope: :review, id: "review-form", class: "grid gap-5" do |f| %>
+  <fieldset class="grid gap-2">
+    <legend class="mb-2 text-sm font-medium">Rating</legend>
+    <%= render(UI::ToggleGroup.new(name: "review[rating]", value: draft[:rating]&.to_s, label: "Rating", variant: :outline)) do |group| %>
+      <% 1.upto(5) do |stars| %>
+        <% group.with_item(value: stars.to_s, label: stars.to_s, icon: "star", class: "px-3") %>
+      <% end %>
+    <% end %>
+    <% if errors[:rating] %><p class="text-sm text-destructive"><%= errors[:rating] %></p><% end %>
+  </fieldset>
+  <%= render(UI::Input.new(name: "review[author]", value: draft[:author], label: "Your name", error: errors[:author], autocomplete: "given-name")) %>
+  <%= render(UI::Input.new(name: "review[title]", value: draft[:title], label: "Title", hint: "Optional")) %>
+  <%= render(UI::Textarea.new(name: "review[body]", value: draft[:body], label: "Review", rows: 4, error: errors[:body], maxlength: 500)) %>
+  <div class="flex justify-end gap-2">
+    <%= render(UI::Dialog::Close.new(variant: :outline, size: :default, class: "static rounded-full")) { "Cancel" } %>
+    <%= render(UI::Button.new(type: :submit, class: "rounded-full bg-foreground text-background hover:bg-foreground/85")) { "Post review" } %>
+  </div>
+<% end %>

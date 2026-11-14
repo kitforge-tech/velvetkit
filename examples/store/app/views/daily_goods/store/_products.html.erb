@@ -1,0 +1,28 @@
+<%# Links inside (a product, Clear all) go to the whole page; the filter form names this frame itself. %>
+<%= turbo_frame_tag "products", target: "_top", class: "block transition-opacity aria-busy:opacity-60" do %>
+  <%# Keeps the count beside the heading, which is outside this frame, in step. %>
+  <%= turbo_stream.update("product-count", pluralize(@products.size, "item")) if turbo_frame_request? %>
+  <% if @chips.any? %>
+    <ul class="mb-6 flex flex-wrap items-center gap-2" aria-label="Filters in use">
+      <% @chips.each do |chip| %>
+        <li>
+          <%= link_to chip[:href], class: "inline-flex h-8 items-center gap-1.5 rounded-full bg-neutral-100 ps-3 pe-2 text-sm hover:bg-neutral-200 dark:bg-card dark:hover:bg-accent",
+                                   "aria-label": "Remove filter: #{chip[:label]}" do %>
+            <%= chip[:label] %><%= render(UI::Icon.new(name: "x", class: "size-3.5 text-muted-foreground")) %>
+          <% end %>
+        </li>
+      <% end %>
+      <li><%= link_to "Clear all", root_path(anchor: "shop"), class: "ms-1 text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground" %></li>
+    </ul>
+  <% end %>
+  <% if @products.any? %>
+    <div class="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3">
+      <%= render partial: "daily_goods/store/product", collection: @products %>
+    </div>
+  <% else %>
+    <div class="rounded-3xl bg-neutral-100 px-6 py-24 text-center dark:bg-card">
+      <p class="font-medium">No products match those filters.</p>
+      <%= link_to "Clear all filters", root_path, class: "mt-2 inline-block text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground" %>
+    </div>
+  <% end %>
+<% end %>

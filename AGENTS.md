@@ -108,14 +108,10 @@ file holds the sitemap's `<lastmod>` dates, worked out from git history. The
 build can't work them out itself, because the Docker context leaves out `.git`.
 The site's SEO test fails when a page has no date.
 
-Every PR that changes what an app gets (a new component, a changed option or
-behaviour, a fix) adds its own entry to `CHANGELOG.md` under `## Unreleased`,
-in the same PR, not in a later catch-up. New components go in the "New
-components" list, other changes under "Changes", fixes as "Fix:" lines. If
-an app has to do something to get the change (re-run `velvetkit:add`, copy
-new tokens or keyframes from `velvetkit.css`, add a package), say so in the
-"Upgrading an app" paragraph. Changes only to the docs site, CI or tests
-need an entry only when someone using the kit would notice them.
+A PR doesn't edit `CHANGELOG.md`, except for an `Upgrading an app:` note when
+an app has to do something to get the change (re-run `velvetkit:add`, copy new
+tokens or keyframes from `velvetkit.css`, add a package). See "Releases and
+CHANGELOG.md".
 
 `rake test` also regenerates every component under a different namespace
 (`Kit::` instead of `UI::`) into `tmp/namespaced` and runs its tests there —

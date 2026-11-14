@@ -1,0 +1,6 @@
+<span id="cart-count">
+  <span class="sr-only">Cart, <%= pluralize(cart.count, "item") %></span>
+  <% if cart.count.positive? %>
+    <span aria-hidden="true" class="absolute -end-0.5 -top-0.5 grid size-4 place-items-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground"><%= cart.count %></span>
+  <% end %>
+</span>

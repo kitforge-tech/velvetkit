@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Docs: an Examples page, linked from the header, shows apps built with
+  VelvetKit. The first, Daily Goods, is a shop you can use at
+  /examples/store: a front page with categories, reviews and a newsletter
+  signup, filters (price, rating, colour, features) and sorting, a cart, and
+  a page for each product with photos, details and reviews, all without a
+  page reload. A dashboard and a sign-in flow are on the way.
+
 - Fix: `Select` puts `aria-label` and `aria-labelledby` on its visible button.
   They went on the hidden native select, which left the dropdown with no name
   for screen readers. (#80)
