@@ -10,6 +10,8 @@
     <% end %>
     <h1 class="text-4xl font-bold tracking-tight">Upgrading</h1>
     <p class="text-lg text-muted-foreground">Components are copied into your app, so a new version of the gem changes nothing until you add them again. Each section here takes an app from one minor version to the next, with every step in one place. The <%= link_to "release notes", doc_path("releases"), class: link %> say what each version added.</p>
+    <%= render "shared/ask_ai", markdown: @markdown, markdown_path: doc_path("upgrading", format: :md), markdown_url: doc_url("upgrading", format: :md),
+                                topic: "Upgrading", prompt: DocsController::ASK_AI["upgrading"] %>
   </header>
 
   <section class="space-y-6" aria-labelledby="from-0-4">

@@ -22,33 +22,8 @@
       <% end %>
     </div>
     <p class="max-w-2xl text-lg text-muted-foreground"><%= @component.description %></p>
-<div data-controller="clipboard" data-clipboard-copied-value="Markdown copied" data-clipboard-track-value="copy_markdown" class="flex flex-wrap items-center gap-2">
-  <span hidden data-clipboard-target="source"><%= @component.page_markdown %></span>
-  <%= render(UI::Menu.new) do |menu| %>
-    <% menu.with_trigger(variant: :outline, size: :sm) do %>
-      <%= render(UI::Icon.new(name: "sparkles", size: :sm, class: "text-primary dark:text-fuchsia-300")) %>
-      Ask AI
-      <%= render(UI::Icon.new(name: "chevron-down", size: :xs)) %>
-    <% end %>
-    <% menu.with_content(class: "w-56") do |content| %>
-      <% content.with_item(data: { action: "clipboard#copy" }) do %>
-        <%# The item itself says it worked: a tick for the icon, "Copied" for the words. %>
-        <span class="contents" data-clipboard-target="idle"><%= render(UI::Icon.new(name: "copy", size: :sm)) %>Copy as Markdown</span>
-        <span class="contents" hidden data-clipboard-target="done"><%= render(UI::Icon.new(name: "check", size: :sm, class: "text-emerald-600 dark:text-emerald-400")) %>Copied</span>
-      <% end %>
-      <% content.with_item(href: component_path(@component, format: :md)) do %>
-        <%= render(UI::Icon.new(name: "file-text", size: :sm)) %>View as Markdown
-      <% end %>
-      <% content.with_divider %>
-      <% ask_ai_links(component_url(@component, format: :md), @component.title).each do |assistant, url| %>
-        <% content.with_item(href: url, target: "_blank", rel: "noopener", data: { umami_event: "open_in_ai", umami_event_assistant: assistant.downcase }) do %>
-          <%= render(UI::Icon.new(name: "external-link", size: :sm)) %>Open in <%= assistant %>
-        <% end %>
-      <% end %>
-    <% end %>
-  <% end %>
-  <span class="sr-only" role="status" data-clipboard-target="status"></span>
-</div>
+<%= render "shared/ask_ai", markdown: @component.page_markdown, markdown_path: component_path(@component, format: :md),
+                             markdown_url: component_url(@component, format: :md), topic: @component.title %>
   </header>
 
   <%# How to add it and what comes along, in one panel. %>

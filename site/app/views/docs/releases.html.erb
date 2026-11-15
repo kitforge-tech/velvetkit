@@ -9,6 +9,8 @@
     <% end %>
     <h1 class="text-4xl font-bold tracking-tight">Release notes</h1>
     <p class="text-lg text-muted-foreground">What each version of VelvetKit added, changed and fixed, newest first. Components are copied into your app, so updating the gem changes nothing on its own: re-run <%= release_code("velvetkit:add") %> for a component to pick up its changes. Moving up a minor version? <%= link_to "Upgrading", doc_path("upgrading"), class: "text-primary underline-offset-4 hover:underline" %> has every step in one place.</p>
+    <%= render "shared/ask_ai", markdown: @markdown, markdown_path: doc_path("releases", format: :md), markdown_url: doc_url("releases", format: :md),
+                                topic: "Release notes", prompt: DocsController::ASK_AI["releases"] %>
   </header>
 
   <% releases.each_with_index do |release, index| %>

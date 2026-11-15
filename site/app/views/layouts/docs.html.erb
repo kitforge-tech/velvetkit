@@ -36,10 +36,12 @@
 <% elsif @page %>
   <% content_for :description, SearchIndex::GUIDES.dig(@page, 0) unless content_for?(:description) %>
   <% content_for :structured_data, article_structured_data(DocsController::PAGES[@page], [ [ "Docs", docs_path ], [ DocsController::PAGES[@page], request.path ] ]) %>
+  <% content_for :head_links, tag.link(rel: "alternate", type: "text/markdown", href: site_url(@page == "getting_started" ? docs_path(format: :md) : doc_path(@page, format: :md)), title: "#{DocsController::PAGES[@page]} as Markdown") %>
 <% elsif @chart_page %>
   <% title, summary = ChartsController::PAGES[@chart_page] %>
   <% content_for :description, summary unless content_for?(:description) %>
   <% content_for :structured_data, article_structured_data(title, [ [ "Docs", docs_path ], [ "Charts", charts_path ], [ title, request.path ] ]) %>
+  <% content_for :head_links, tag.link(rel: "alternate", type: "text/markdown", href: site_url(ChartsController.path_for(@chart_page).then { "#{_1}.md" }), title: "#{title} as Markdown") %>
 <% elsif @components %>
   <% content_for :structured_data, article_structured_data("Components", [ [ "Docs", docs_path ], [ "Components", components_path ] ]) %>
 <% end %>
