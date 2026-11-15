@@ -11,6 +11,7 @@ class SearchIndex
     "icons" => [ "Choose Lucide, Tabler or Phosphor icons, and add your own as SVG files.", "icon icons svg lucide tabler phosphor library heroicons glyph" ],
     "forms" => [ "Rails forms with VelvetKit: bind fields to a model, show its errors, and two live examples.", "form forms model validation errors error message hint form_with form builder sign in login invite field_with_errors" ],
     "lookbook" => [ "Browse every preview, and run Lookbook in your app.", "lookbook preview previews playground storybook" ],
+    "upgrading" => [ "Take an app from one minor version to the next: from 0.4 to 0.5, every step in one place.", "upgrade upgrading migrate migration guide breaking changes update bundle update re-add sidebar collapsible state" ],
     "releases" => [ "What each version of VelvetKit added and changed: new components, changes, fixes and upgrade notes.", "release releases notes changelog version versions new what's new upgrade history" ]
   }.freeze
 

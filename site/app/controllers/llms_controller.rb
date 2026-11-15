@@ -30,6 +30,7 @@ class LlmsController < ApplicationController
       - [Theming](#{doc_url("theming")})
       - [Icons](#{doc_url("icons")})
       - [Lookbook](#{doc_url("lookbook")})
+      - [Upgrading](#{doc_url("upgrading")}): moving an app from one minor version to the next, such as 0.4 to 0.5
       - [Release notes](#{doc_url("releases")}): what each version added, changed and fixed, and what to re-run when upgrading
 
       ## Charts

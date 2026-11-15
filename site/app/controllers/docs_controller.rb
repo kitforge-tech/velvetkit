@@ -8,6 +8,7 @@ class DocsController < ApplicationController
     "icons" => "Icons",
     "lookbook" => "Lookbook",
     "forms" => "Building forms",
+    "upgrading" => "Upgrading",
     "releases" => "Release notes"
   }.freeze
 

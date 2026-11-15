@@ -1,0 +1,68 @@
+<% content_for :title, "Upgrading" %>
+<% code = "font-mono text-sm" %>
+<% link = "text-primary underline-offset-4 hover:underline" %>
+
+<article class="max-w-3xl space-y-12">
+  <header class="space-y-3">
+    <%= render(UI::Breadcrumb.new(size: :sm)) do |bc| %>
+      <% bc.with_item(href: docs_path, text: "Docs") %>
+      <% bc.with_item(href: doc_path("upgrading"), text: "Upgrading", current: true) %>
+    <% end %>
+    <h1 class="text-4xl font-bold tracking-tight">Upgrading</h1>
+    <p class="text-lg text-muted-foreground">Components are copied into your app, so a new version of the gem changes nothing until you add them again. Each section here takes an app from one minor version to the next, with every step in one place. The <%= link_to "release notes", doc_path("releases"), class: link %> say what each version added.</p>
+  </header>
+
+  <section class="space-y-6" aria-labelledby="from-0-4">
+    <div class="space-y-2">
+      <h2 id="from-0-4" class="text-2xl font-semibold tracking-tight">From 0.4 to 0.5</h2>
+      <p>For an app on any 0.4 release, to 0.5.1. Most of it is adding components again. Only the sidebar asks you to change your own views.</p>
+    </div>
+
+    <ol class="list-decimal space-y-8 pl-5 marker:font-semibold">
+      <li class="space-y-3 pl-1">
+        <h3 class="font-semibold">Commit first</h3>
+        <p>Adding a component again replaces its files. With your work committed, <code class="<%= code %>">git diff</code> afterwards shows what changed, including any edit of your own to put back.</p>
+      </li>
+
+      <li class="space-y-3 pl-1">
+        <h3 class="font-semibold">Update the gem</h3>
+        <%= code_block("bundle update velvetkit") %>
+      </li>
+
+      <li class="space-y-3 pl-1">
+        <h3 class="font-semibold">Add the changed components again</h3>
+        <p>These are the components 0.5.0 and 0.5.1 changed. Add again only the ones your app has; the generator brings in what they use, such as the new Fieldset for radio and toggle groups. Your namespace and icon library are read from <code class="<%= code %>">config/velvetkit.yml</code>, as before.</p>
+        <%= code_block("bin/rails generate velvetkit:add base button link badge tabs accordion menu checkbox \\\n  radio_group toggle_group switch sidebar table gallery chart --force") %>
+        <p class="text-sm text-muted-foreground">Coming from 0.4.0 or 0.4.1, add <code class="<%= code %>">card</code> too (step 6).</p>
+      </li>
+
+      <li class="space-y-4 pl-1">
+        <h3 class="font-semibold">Update your sidebar</h3>
+        <p><code class="<%= code %>">collapsible:</code> used to start the sidebar collapsed. It now says what the trigger does: <code class="<%= code %>">:icon</code> (the default) shrinks it to its icons, <code class="<%= code %>">:offcanvas</code> slides it away, and <code class="<%= code %>">:none</code> keeps it open. Whether it starts collapsed is <code class="<%= code %>">state:</code>.</p>
+        <p class="text-sm font-medium">Before, in 0.4</p>
+        <%= code_block(snippet("upgrading_sidebar_0_4.html.erb"), label: "app/views/layouts/application.html.erb") %>
+        <p class="text-sm font-medium">After, in 0.5</p>
+        <%= code_block(snippet("upgrading_sidebar_0_5.html.erb"), label: "app/views/layouts/application.html.erb") %>
+        <ul class="list-disc space-y-2 pl-5">
+          <li>Leave <code class="<%= code %>">state:</code> out to start it however the reader last left it. That choice is now kept in a cookie rather than <code class="<%= code %>">localStorage</code>, so readers find it open once after the upgrade.</li>
+          <li>The sidebar is no longer <code class="<%= code %>">position: fixed</code>. If you added a <code class="<%= code %>">transform</code> to keep it inside a box, remove it and give the wrapper a height instead, such as <code class="<%= code %>">UI::Sidebar::Wrapper.new(class: "h-[calc(100svh-3rem)]")</code> under a 3rem bar.</li>
+          <li>On a phone the sidebar is now a drawer, opened by the same trigger. A sheet you added to stand in for it can go.</li>
+        </ul>
+      </li>
+
+      <li class="space-y-3 pl-1">
+        <h3 class="font-semibold">Check your radio and toggle groups</h3>
+        <p><code class="<%= code %>">RadioGroup</code> and <code class="<%= code %>">ToggleGroup</code> now render through <%= link_to "Fieldset", component_path("fieldset"), class: link %>. Without <code class="<%= code %>">legend:</code>, <code class="<%= code %>">hint:</code> or <code class="<%= code %>">error:</code> they look as before, so there's nothing to change unless you want those.</p>
+      </li>
+
+      <li class="space-y-3 pl-1">
+        <h3 class="font-semibold">From 0.4.0 or 0.4.1: cards</h3>
+        <p>0.4.2 gave cards 16px of padding where they had 24px; pass <code class="<%= code %>">spacing: 6</code> to keep the old padding. Colour a card's edge with a <code class="<%= code %>">ring-*</code> class rather than <code class="<%= code %>">border-*</code>, and remove any <code class="<%= code %>">pt-6</code> you added to a card's first part. A card with no parts, just a block, keeps its padding as before.</p>
+      </li>
+    </ol>
+
+    <p>Then look over the pages that use these components. The focus ring shows on click as well as on Tab; if it went missing after 0.5.0, adding the components again from 0.5.1 brings it back.</p>
+  </section>
+
+  <%= render "docs/pager", previous_page: [ "Lookbook", doc_path("lookbook") ], next_page: [ "Release notes", doc_path("releases") ] %>
+</article>
