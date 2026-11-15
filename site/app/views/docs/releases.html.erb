@@ -8,7 +8,7 @@
       <% bc.with_item(href: doc_path("releases"), text: "Release notes", current: true) %>
     <% end %>
     <h1 class="text-4xl font-bold tracking-tight">Release notes</h1>
-    <p class="text-lg text-muted-foreground">What each version of VelvetKit added, changed and fixed, newest first. Components are copied into your app, so updating the gem changes nothing on its own: re-run <%= release_code("velvetkit:add") %> for a component to pick up its changes.</p>
+    <p class="text-lg text-muted-foreground">What each version of VelvetKit added, changed and fixed, newest first. Components are copied into your app, so updating the gem changes nothing on its own: re-run <%= release_code("velvetkit:add") %> for a component to pick up its changes. Moving up a minor version? <%= link_to "Upgrading", doc_path("upgrading"), class: "text-primary underline-offset-4 hover:underline" %> has every step in one place.</p>
   </header>
 
   <% releases.each_with_index do |release, index| %>
