@@ -1,0 +1,18 @@
+<%# Any controls can share a legend; disabled: turns them all off at once. %>
+<div class="flex flex-col gap-8 max-w-md">
+  <%= render(UI::Fieldset.new(legend: "Shipping address", hint: "Where we send your order.")) do %>
+    <div class="grid gap-4 sm:grid-cols-2">
+      <div class="sm:col-span-2"><%= render(UI::Input.new(name: "address[line1]", label: "Street")) %></div>
+      <%= render(UI::Input.new(name: "address[city]", label: "City")) %>
+      <%= render(UI::Input.new(name: "address[postcode]", label: "Postcode")) %>
+    </div>
+  <% end %>
+
+  <%= render(UI::Fieldset.new(legend: "Billing address", hint: "Same as shipping, so there's nothing to fill in.", disabled: true)) do %>
+    <div class="grid gap-4 sm:grid-cols-2">
+      <div class="sm:col-span-2"><%= render(UI::Input.new(name: "billing[line1]", label: "Street")) %></div>
+      <%= render(UI::Input.new(name: "billing[city]", label: "City")) %>
+      <%= render(UI::Input.new(name: "billing[postcode]", label: "Postcode")) %>
+    </div>
+  <% end %>
+</div>

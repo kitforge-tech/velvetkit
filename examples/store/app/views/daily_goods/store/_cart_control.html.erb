@@ -1,0 +1,15 @@
+<%# Add to cart, then − count + once it's in. Replaced by the cart's Turbo Stream. %>
+<div id="cart-<%= product.slug %>" class="mt-3">
+  <% quantity = cart.quantity_of(product) %>
+  <% if !product.in_stock %>
+    <%= render(UI::Button.new(variant: :outline, disabled: true, class: "w-full rounded-full")) { "Sold out" } %>
+  <% elsif quantity.zero? %>
+    <%= form_with url: cart_items_path(product: product.slug), data: { cart: true } do %>
+      <%= render(UI::Button.new(type: :submit, class: "w-full rounded-full bg-foreground text-background hover:bg-foreground/85", "aria-label": "Add #{product.name} to cart")) do %>
+        <%= render(UI::Icon.new(name: "plus", class: "size-4")) %>Add to cart
+      <% end %>
+    <% end %>
+  <% else %>
+    <%= render "daily_goods/cart_items/quantity", product: product, quantity: quantity, wide: true %>
+  <% end %>
+</div>

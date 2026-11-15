@@ -1,0 +1,14 @@
+<%# Replaced by the Turbo Stream: with an error, or with the thank-you. %>
+<%= form_with url: newsletter_path, id: "newsletter-form", class: "grid gap-2" do %>
+  <div class="flex flex-col gap-2 sm:flex-row">
+    <%= render(UI::Input.new(type: :email, name: "email", value: email, placeholder: "you@example.com", required: true, autocomplete: "email",
+                             "aria-label": "Email address", "aria-invalid": (true if error), "aria-describedby": ("newsletter-error" if error),
+                             class: "h-12 rounded-full sm:flex-1 border-background/20 bg-background/10 px-5 text-background placeholder:text-background/50 focus-visible:ring-background/40")) %>
+    <%= render(UI::Button.new(type: :submit, size: :lg, class: "h-12 rounded-full bg-background px-6 text-foreground hover:bg-background/90")) { "Subscribe" } %>
+  </div>
+  <% if error %>
+    <p id="newsletter-error" class="px-5 text-sm text-red-300"><%= error %></p>
+  <% else %>
+    <p class="px-5 text-xs text-background/50">Nothing is sent: this shop is an example.</p>
+  <% end %>
+<% end %>

@@ -1,0 +1,90 @@
+<% content_for :title, @product.name %>
+<div class="mx-auto max-w-7xl px-4 pt-6 pb-16">
+  <%= render(UI::Breadcrumb.new) do |crumbs| %>
+    <% crumbs.with_item(href: root_path, text: "Shop") %>
+    <% crumbs.with_item(href: root_path(category: @product.category), text: @product.category.capitalize) %>
+    <% crumbs.with_item(href: product_path(@product), text: @product.name, current: true) %>
+  <% end %>
+
+  <div class="mt-6 grid gap-10 lg:grid-cols-2 lg:gap-16">
+    <%# Sized to the window's height on desktop, so the photo and its thumbnails fit without scrolling,
+        which also leaves room beside it for the hover zoom. Phones clip the zoom pane, which they
+        don't use. Rounds the photo's frame and the thumbnails, not the images inside them. %>
+    <%= render(UI::Gallery.new(label: "Photos of #{@product.name}", aspect: :square, fit: :cover, zoom: :hover,
+                               class: "max-lg:overflow-x-clip lg:sticky lg:top-24 lg:z-10 lg:w-[min(100%,max(20rem,calc(100svh-19rem)))] lg:self-start " \
+                                      "[&_[data-ui--gallery-target=track]]:rounded-3xl " \
+                                      "[&_[data-ui--gallery-target=thumbnail]]:size-20 [&_[data-ui--gallery-target=thumbnail]]:rounded-xl " \
+                                      "[&_[data-ui--gallery-target=thumbnail][aria-current]]:border-foreground")) do |gallery| %>
+      <% gallery.with_image(src: image_path(@product.image), alt: @product.alt) %>
+      <% gallery.with_image(src: image_path(@product.detail_image), alt: @product.info[:detail_alt]) %>
+    <% end %>
+
+    <div class="lg:sticky lg:top-24 lg:self-start">
+      <p class="text-sm font-medium text-muted-foreground"><%= @product.category.capitalize %></p>
+      <h1 class="mt-1 text-4xl font-medium sm:text-5xl"><%= @product.name %></h1>
+
+      <div class="mt-3 flex items-center gap-2 text-sm">
+        <% if @reviews.any? %>
+          <%= render "daily_goods/reviews/stars", rating: DailyGoods::Review.average(@reviews) %>
+          <a href="#reviews" class="text-muted-foreground underline-offset-4 hover:text-foreground hover:underline">
+            <%= number_with_precision(DailyGoods::Review.average(@reviews), precision: 1) %> · <%= pluralize(@reviews.size, "review") %>
+          </a>
+        <% else %>
+          <a href="#reviews" class="text-muted-foreground underline-offset-4 hover:text-foreground hover:underline">No reviews yet</a>
+        <% end %>
+      </div>
+
+      <p class="mt-5 text-2xl tabular-nums"><%= number_to_currency(@product.price, precision: 0) %></p>
+      <p class="mt-4 leading-relaxed text-muted-foreground"><%= @product.info[:description] %></p>
+
+      <dl class="mt-6 flex gap-8 text-sm">
+        <div><dt class="text-muted-foreground">Size</dt><dd class="mt-0.5 font-medium"><%= @product.info[:size] %></dd></div>
+        <div><dt class="text-muted-foreground">Colour</dt><dd class="mt-0.5 font-medium"><%= @product.colour.capitalize %></dd></div>
+        <div>
+          <dt class="text-muted-foreground">Stock</dt>
+          <dd class="mt-0.5 flex items-center gap-1.5 font-medium">
+            <span class="size-2 rounded-full <%= @product.in_stock ? "bg-emerald-500" : "bg-muted-foreground/50" %>"></span>
+            <%= @product.in_stock ? "In stock" : "Back next month" %>
+          </dd>
+        </div>
+      </dl>
+
+      <div class="mt-6 [&_button]:h-12 [&_button]:text-base [&>div>div]:h-12 [&>div>div_button]:size-12">
+        <%= render "daily_goods/store/cart_control", product: @product %>
+      </div>
+
+      <ul class="mt-6 grid gap-2.5 text-sm text-muted-foreground">
+        <li class="flex items-center gap-2.5"><%= render(UI::Icon.new(name: "truck", class: "size-4")) %>Free shipping over $50, ships the next working day</li>
+        <li class="flex items-center gap-2.5"><%= render(UI::Icon.new(name: "rotate-ccw", class: "size-4")) %>Easy 30-day returns</li>
+      </ul>
+
+      <%= render(UI::Accordion.new(default_value: "details", class: "mt-8 border-t")) do |accordion| %>
+        <% accordion.with_item(value: "details") do |item| %>
+          <% item.with_trigger(class: "py-4 text-base text-foreground hover:no-underline") { @product.category == "everyday" ? "Materials" : "Ingredients" } %>
+          <% item.with_content(class: "text-muted-foreground") { @product.info[:details] } %>
+        <% end %>
+        <% accordion.with_item(value: "use") do |item| %>
+          <% item.with_trigger(class: "py-4 text-base text-foreground hover:no-underline") { @product.category == "everyday" ? "Care" : "How to use" } %>
+          <% item.with_content(class: "text-muted-foreground") { @product.info[:use] } %>
+        <% end %>
+        <% accordion.with_item(value: "shipping") do |item| %>
+          <% item.with_trigger(class: "py-4 text-base text-foreground hover:no-underline") { "Shipping and returns" } %>
+          <% item.with_content(class: "text-muted-foreground") { "Orders over $50 ship free and leave us the next working day. Not right? Send it back unopened within 30 days for a full refund." } %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <%= render "daily_goods/reviews/section", product: @product, reviews: @reviews %>
+
+  <% if @product.related.any? %>
+    <section class="mt-20" aria-labelledby="related-heading">
+      <h2 id="related-heading" class="text-2xl font-medium sm:text-3xl">You might also like</h2>
+      <div class="mt-6 grid grid-cols-2 gap-x-4 gap-y-10 lg:grid-cols-4">
+        <% @product.related.each do |product| %>
+          <%= render "daily_goods/store/product", product: product, heading: :h3 %>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+</div>

@@ -1,0 +1,6 @@
+<%= turbo_stream.replace "cart-count", partial: "daily_goods/shared/cart_count" %>
+<%= turbo_stream.update "cart-body", partial: "daily_goods/carts/body" %>
+<%= turbo_stream.replace "cart-#{@product.slug}", partial: "daily_goods/store/cart_control", locals: { product: @product } %>
+<% if @added %>
+  <%= turbo_stream.append UI::Toast::Viewport::ID, render(UI::Toast.new(variant: :success, title: "Added to cart", description: "#{@added.name}, #{number_to_currency(@added.price, precision: 0)}", duration: 3)) %>
+<% end %>

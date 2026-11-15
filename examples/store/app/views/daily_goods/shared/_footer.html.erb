@@ -1,0 +1,36 @@
+<%# Help and About links are placeholders until their pages exist. %>
+<footer class="mt-8 border-t">
+  <div class="mx-auto grid max-w-7xl grid-cols-3 gap-x-6 gap-y-10 px-4 py-14 lg:grid-cols-[2fr_1fr_1fr_1fr]">
+    <div class="col-span-3 max-w-xs lg:col-span-1">
+      <%= link_to "Daily Goods", root_path, class: "font-heading text-2xl font-semibold tracking-tight text-primary" %>
+      <p class="mt-3 text-sm leading-relaxed text-muted-foreground">Skincare, bath and everyday things, made in small batches and sent out the next working day.</p>
+      <ul class="mt-5 grid gap-2 text-sm text-muted-foreground">
+        <% shop_promises.first(2).each do |promise| %>
+          <li class="flex items-center gap-2"><%= render(UI::Icon.new(name: promise[:icon], class: "size-4")) %><%= promise[:title] %>, <%= promise[:text].downcase %></li>
+        <% end %>
+      </ul>
+    </div>
+
+    <% columns = {
+         "Shop" => shop_links.map { |link| [ link[:title], link[:href] ] } + shop_categories.map { |category| [ category[:title], category[:href] ] },
+         "Help" => [ [ "Shipping", "#" ], [ "Returns", "#" ], [ "Track an order", "#" ], [ "Contact us", "#" ] ],
+         "About" => [ [ "Our story", "#" ], [ "Journal", "#" ], [ "Stockists", "#" ] ]
+       } %>
+    <% columns.each do |heading, links| %>
+      <nav aria-label="<%= heading %>">
+        <h2 class="text-sm font-medium"><%= heading %></h2>
+        <ul class="mt-4 grid gap-2.5 text-sm">
+          <% links.each do |label, href| %>
+            <li><%= link_to label, href, class: "text-muted-foreground hover:text-foreground" %></li>
+          <% end %>
+        </ul>
+      </nav>
+    <% end %>
+  </div>
+  <div class="border-t">
+    <div class="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-6 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+      <p>© <%= Date.current.year %> Daily Goods. An example shop built with <%= link_to "VelvetKit", main_app.root_path, class: "underline underline-offset-4 hover:text-foreground" %>.</p>
+      <p class="flex items-center gap-2"><%= render(UI::Icon.new(name: "lock", class: "size-3.5")) %>Secure checkout. Nothing here is for sale.</p>
+    </div>
+  </div>
+</footer>

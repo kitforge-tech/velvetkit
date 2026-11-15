@@ -1,0 +1,5 @@
+<% if @error %>
+  <%= turbo_stream.replace "newsletter-form", partial: "daily_goods/newsletters/form", locals: { email: @email, error: @error } %>
+<% else %>
+  <%= turbo_stream.replace "newsletter-form", partial: "daily_goods/newsletters/thanks", locals: { email: @email } %>
+<% end %>

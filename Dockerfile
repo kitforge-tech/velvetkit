@@ -54,6 +54,7 @@ RUN curl -fsSL https://bun.sh/install | bash -s -- "bun-v${BUN_VERSION}"
 COPY velvetkit.gemspec /velvetkit/
 COPY lib /velvetkit/lib
 COPY registry /velvetkit/registry
+COPY examples/store /velvetkit/examples/store
 
 COPY site/Gemfile site/Gemfile.lock ./
 RUN bundle install && \

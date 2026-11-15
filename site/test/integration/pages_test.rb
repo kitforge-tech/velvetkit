@@ -10,6 +10,17 @@ class PagesTest < ActionDispatch::IntegrationTest
     assert_select "h1", /Ship Rails UI/
   end
 
+  test "examples page lists the example apps, linked from the header" do
+    get examples_path
+    assert_response :success
+    assert_select "h1", "Examples"
+    assert_select "header nav a[href=?][aria-current=page]", examples_path, text: "Examples"
+    assert_select "main article h2", text: "Daily Goods"
+    assert_select "main article a[href=?]", "/examples/store/", text: /Visit the store/
+    assert_select "main article img[alt]"
+    assert_select "dialog a[href=?]", examples_path, text: "Examples"
+  end
+
   DocsController::PAGES.each_key do |page|
     test "#{page} guide" do
       get doc_path(page)

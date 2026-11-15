@@ -1,0 +1,33 @@
+<%# Shared by the left column and the phone sheet. %>
+<div class="grid gap-7">
+  <%= render(UI::Slider.new(range: true, label: "Price", min: DailyGoods::StoreController::PRICES.min, max: DailyGoods::StoreController::PRICES.max, step: 1,
+                            from: @min_price, to: @max_price, from_name: "min_price", to_name: "max_price",
+                            value_text: "$%{value}", show_value: true, size: :sm)) %>
+
+  <%# A menu rather than radios: the filters render twice in one form (page and phone sheet), and
+      same-named radios in one form are one group, so the two copies would clear each other. %>
+  <% ratings = [ [ "Any rating", "" ] ] + DailyGoods::StoreController::RATINGS.map do |value, label|
+       [ "★ #{label} (#{DailyGoods::Product.all.count { |product| product.rating.to_f >= value.to_f }})", value ]
+     end %>
+  <%= render(UI::Select.new(name: "rating", selected: @rating.to_s, label: "Customer rating", options: ratings)) %>
+
+  <fieldset class="grid gap-3">
+    <legend class="mb-3 text-sm font-medium">Colour</legend>
+    <% DailyGoods::StoreController::COLOURS.each do |colour| %>
+      <%= render(UI::Checkbox.new(name: "colours[]", value: colour, unchecked_value: nil, checked: @colours.include?(colour),
+                                  label: "#{colour.capitalize} (#{DailyGoods::Product.all.count { |product| product.colour == colour }})")) %>
+    <% end %>
+  </fieldset>
+
+  <fieldset class="grid gap-3">
+    <legend class="mb-3 text-sm font-medium">Features</legend>
+    <% DailyGoods::Product::FEATURES.each do |value, label| %>
+      <%= render(UI::Checkbox.new(name: "features[]", value: value, unchecked_value: nil, checked: @features.include?(value),
+                                  label: "#{label} (#{DailyGoods::Product.all.count { |product| product.features.include?(value) }})")) %>
+    <% end %>
+  </fieldset>
+
+  <%= render(UI::Switch.new(name: "in_stock", label: "In stock only", checked: @in_stock)) %>
+
+  <%= link_to "Clear all", root_path, class: "justify-self-start text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground" %>
+</div>

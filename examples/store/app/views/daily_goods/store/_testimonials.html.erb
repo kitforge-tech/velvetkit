@@ -1,0 +1,31 @@
+<%# A five-star review from each category, each linking to its product. %>
+<% picks = DailyGoods::Review::ALL.select { |review| review.rating == 5 }.uniq { |review| DailyGoods::Product.find(review.product).category }.first(3) %>
+<section class="mt-24" aria-labelledby="testimonials-heading">
+  <div class="flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <h2 id="testimonials-heading" class="text-2xl font-medium sm:text-3xl">Loved by our customers</h2>
+      <p class="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
+        <%= render "daily_goods/reviews/stars", rating: DailyGoods::Review.average(DailyGoods::Review::ALL) %>
+        <%= number_with_precision(DailyGoods::Review.average(DailyGoods::Review::ALL), precision: 1) %> from <%= pluralize(DailyGoods::Review::ALL.size, "review") %>
+      </p>
+    </div>
+  </div>
+  <ul class="mt-6 grid gap-4 md:grid-cols-3">
+    <% picks.each do |review| %>
+      <% product = DailyGoods::Product.find(review.product) %>
+      <li class="flex flex-col gap-4 rounded-3xl bg-neutral-100 p-6 dark:bg-card">
+        <%= render "daily_goods/reviews/stars", rating: review.rating %>
+        <blockquote class="flex-1">
+          <p class="font-heading text-xl leading-snug">“<%= review.title %>”</p>
+          <p class="mt-2 leading-relaxed text-muted-foreground"><%= review.body %></p>
+        </blockquote>
+        <div class="flex items-center justify-between gap-3 border-t border-foreground/10 pt-4">
+          <p class="text-sm font-medium"><%= review.author %><span class="font-normal text-muted-foreground"> · Verified buyer</span></p>
+          <%= link_to product_path(product), class: "flex items-center gap-2 text-sm hover:underline hover:underline-offset-4" do %>
+            <%= image_tag product.image, alt: "", loading: "lazy", class: "size-8 rounded-lg object-cover" %><%= product.name %>
+          <% end %>
+        </div>
+      </li>
+    <% end %>
+  </ul>
+</section>

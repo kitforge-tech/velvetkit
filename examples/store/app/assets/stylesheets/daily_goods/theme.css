@@ -1,0 +1,49 @@
+/* The Lilac theme: mostly white, deep violet for the brand, near-black pills
+   for buying, and soft pastel tiles behind products. A theme is only these
+   values; no component changes. */
+:root {
+  --radius: 0.875rem;
+  --background: #ffffff;
+  --foreground: #17171c;
+  --card: #ffffff;
+  --card-foreground: #17171c;
+  --popover: #ffffff;
+  --popover-foreground: #17171c;
+  --primary: #4422c8;
+  --primary-bolder: #371ba6;
+  --primary-hovered: #371ba6;
+  --primary-foreground: #ffffff;
+  --secondary: #f5f2fa;
+  --secondary-foreground: #17171c;
+  --muted: #f5f2fa;
+  --muted-foreground: #6e6878;
+  --accent: #f4f4f5;
+  --accent-foreground: #18181b;
+  --destructive: #c4254b;
+  --border: #e7e3ee;
+  --input: #e7e3ee;
+  --ring: #4422c8;
+}
+
+.dark {
+  --background: #16141d;
+  --foreground: #f3f0f8;
+  --card: #211e2b;
+  --card-foreground: #f3f0f8;
+  --popover: #211e2b;
+  --popover-foreground: #f3f0f8;
+  --primary: #a78bfa;
+  --primary-bolder: #c4b5fd;
+  --primary-hovered: #c4b5fd;
+  --primary-foreground: #17171c;
+  --secondary: #2a2636;
+  --secondary-foreground: #f3f0f8;
+  --muted: #2a2636;
+  --muted-foreground: #a9a3b8;
+  --accent: #27272a;
+  --accent-foreground: #fafafa;
+  --destructive: #fb7185;
+  --border: #37324a;
+  --input: #37324a;
+  --ring: #a78bfa;
+}

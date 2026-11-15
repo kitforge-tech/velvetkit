@@ -13,6 +13,11 @@
 # joins bordered buttons. Give the group a `label:` (its accessible name), and
 # give an icon-only item a `label:` too, which becomes its hidden text and
 # tooltip. Listen for `change` on the group to act as soon as the choice changes.
+#
+# For a visible name, give it a `legend:` (and a `hint:` or `error:`): it then
+# renders through UI::Fieldset, which takes the group's role and name, around
+# the buttons. Bound to a form, the model's errors on the field show on their
+# own, and `legend: true` uses the attribute's name.
 class UI::ToggleGroup < UI::Base
   variants(
     base: "inline-flex w-fit items-center",
@@ -31,7 +36,8 @@ class UI::ToggleGroup < UI::Base
   }
 
   def initialize(name: nil, value: nil, multiple: false, variant: :default, size: :default,
-                 label: nil, form: nil, field: nil, required: false, disabled: false,
+                 label: nil, legend: nil, hint: nil, error: nil,
+                 form: nil, field: nil, required: false, disabled: false,
                  class: nil, **html_attrs)
     @name       = name
     @value      = value
@@ -39,6 +45,9 @@ class UI::ToggleGroup < UI::Base
     @variant    = variant
     @size       = size
     @label      = label
+    @legend     = legend
+    @hint       = hint
+    @error      = error
     @form       = form
     @field      = field
     @required   = required
@@ -68,12 +77,26 @@ class UI::ToggleGroup < UI::Base
     Array(value).map(&:to_s)
   end
 
+  def role = multiple? ? "group" : "radiogroup"
+
+  # The legend shows only when given: a bound group that's never been named
+  # doesn't grow one when it has an error.
+  def fieldset
+    @fieldset ||= UI::Fieldset.new(legend: @legend.presence || false, hint: @hint, error: @error,
+                                   form: @form, field: @field,
+                                   required: required?, disabled: @disabled,
+                                   role: role, aria: { label: @label.presence }.compact.merge(@html_attrs[:aria] || {}))
+  end
+
+  # Inside a fieldset, the fieldset has the role and the aria attributes that
+  # name and describe the group; the buttons' track keeps the rest.
   def root_attrs
+    wrapped = fieldset.wrap?
     attrs = @html_attrs.except(:data, :aria)
-    attrs[:role] = multiple? ? "group" : "radiogroup"
+    attrs[:role] = role unless wrapped
     attrs[:class] = cn(variant_classes(variant: @variant), @user_class)
     attrs[:data] = { slot: "toggle-group", variant: @variant }.merge(@html_attrs[:data] || {})
-    attrs[:aria] = { label: @label.presence }.compact.merge(@html_attrs[:aria] || {})
+    attrs[:aria] = { label: @label.presence }.compact.merge(@html_attrs[:aria] || {}) unless wrapped
     attrs
   end
 end

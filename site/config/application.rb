@@ -18,6 +18,10 @@ require "action_view/railtie"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+# Daily Goods, the example shop, mounted at /examples/store. Its code lives
+# in examples/store, apart from the docs.
+require_relative "../../examples/store/lib/daily_goods"
+
 module Site
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.

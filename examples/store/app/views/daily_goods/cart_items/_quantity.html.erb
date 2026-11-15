@@ -1,0 +1,14 @@
+<%# The − count + pill, shared by the product card and the cart sheet. Each press is its own request. %>
+<% wide = local_assigns.fetch(:wide, false) %>
+<div class="flex items-center justify-between rounded-full border <%= "h-9" if wide %>" role="group" aria-label="Quantity of <%= product.name %>">
+  <%= button_to cart_item_path(product.slug), form: { data: { cart: true } }, method: :patch, params: { quantity: quantity - 1 },
+                class: "grid #{wide ? "size-9" : "size-8"} place-items-center rounded-full hover:bg-accent", "aria-label": "One fewer #{product.name}" do %>
+    <%= render(UI::Icon.new(name: "minus", class: "size-3.5")) %>
+  <% end %>
+  <span class="w-6 text-center text-sm tabular-nums" aria-live="polite"><%= quantity %></span>
+  <%= button_to cart_item_path(product.slug), form: { data: { cart: true } }, method: :patch, params: { quantity: quantity + 1 },
+                disabled: quantity >= DailyGoods::Cart::MAX_QUANTITY,
+                class: "grid #{wide ? "size-9" : "size-8"} place-items-center rounded-full hover:bg-accent disabled:opacity-40", "aria-label": "One more #{product.name}" do %>
+    <%= render(UI::Icon.new(name: "plus", class: "size-3.5")) %>
+  <% end %>
+</div>

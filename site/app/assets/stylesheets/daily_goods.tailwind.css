@@ -1,0 +1,21 @@
+/* The example shop's stylesheet, built beside the site's own: the kit, the
+   shop's lilac theme and fonts, and only the classes the shop uses. */
+@import "tailwindcss";
+@import "../tailwind/velvetkit.css";
+@import "../../../../examples/store/app/assets/stylesheets/daily_goods/theme.css";
+
+@source "../../../../examples/store/app";
+@source "../../../../registry/app";
+
+@theme {
+  --font-heading: "Fraunces", ui-serif, Georgia, serif;
+}
+
+body {
+  font-family: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+}
+
+h1, h2 {
+  font-family: var(--font-heading);
+  letter-spacing: -0.02em;
+}

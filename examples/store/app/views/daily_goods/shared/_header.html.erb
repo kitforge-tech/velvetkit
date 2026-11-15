@@ -1,0 +1,108 @@
+<%# The store's offer strip and navbar. Journal, search results and sign-in are placeholders until their pages exist. %>
+<%= render(UI::Banner.new(full_width: true, class: "justify-center rounded-none border-0 bg-primary px-10 py-2 text-center text-primary-foreground [&_p]:text-primary-foreground [&>button]:top-1/2 [&>button]:-translate-y-1/2 [&>button]:text-primary-foreground")) do %>
+  Free shipping over $50<span class="hidden sm:inline"> · Easy 30-day returns</span>
+<% end %>
+
+<header class="sticky top-0 z-40 bg-background">
+  <div class="mx-auto grid h-16 max-w-7xl grid-cols-[1fr_auto_1fr] items-center gap-2 px-4">
+    <div class="flex items-center">
+      <%= render(UI::Sheet.new(class: "lg:hidden")) do |sheet| %>
+        <% sheet.with_trigger(variant: :ghost, size: :icon, class: "rounded-full", aria: { label: "Menu" }) do %>
+          <%= render(UI::Icon.new(name: "menu")) %>
+        <% end %>
+        <% sheet.with_content(side: :left) do |content| %>
+          <% content.with_title { "Daily Goods" } %>
+          <nav aria-label="Shop" class="grid gap-6 text-sm">
+            <div class="grid gap-1">
+              <% shop_links.each do |link| %>
+                <%= link_to link[:href], class: "flex items-center gap-3 rounded-xl px-2 py-2 hover:bg-accent" do %>
+                  <%= render(UI::Icon.new(name: link[:icon], class: "size-4 text-muted-foreground")) %><%= link[:title] %>
+                <% end %>
+              <% end %>
+            </div>
+            <div class="grid gap-2">
+              <p class="px-2 text-xs font-medium text-muted-foreground">Categories</p>
+              <div class="grid grid-cols-3 gap-2">
+                <% shop_categories.each do |category| %>
+                  <%= link_to category[:href], class: "group grid gap-1.5 rounded-xl p-1 hover:bg-accent" do %>
+                    <%= image_tag category[:image], alt: "", class: "aspect-square w-full rounded-lg object-cover" %>
+                    <span class="px-1 font-medium"><%= category[:title] %></span>
+                  <% end %>
+                <% end %>
+              </div>
+            </div>
+            <a href="#" class="rounded-xl px-2 py-2 hover:bg-accent">Journal</a>
+          </nav>
+        <% end %>
+      <% end %>
+
+      <div class="hidden lg:block">
+        <%= render(UI::NavigationMenu.new(label: "Shop")) do |nav| %>
+          <% nav.with_item(label: "Shop", panel_class: "w-[34rem] rounded-2xl p-3") do %>
+            <div class="grid grid-cols-[1fr_13rem] gap-3">
+              <ul class="grid content-start gap-1">
+                <% shop_links.each do |link| %>
+                  <li><%= render(UI::NavigationMenu::Link.new(**link, class: "rounded-xl [&>span:first-child]:rounded-lg")) %></li>
+                <% end %>
+              </ul>
+              <%= link_to root_path(category: "skincare"), class: "group relative flex min-h-56 flex-col justify-end overflow-hidden rounded-xl p-4 text-white outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                          data: { "ui--navigation-menu-target": "link" } do %>
+                <%= image_tag "daily_goods/promo.jpg", alt: "", class: "absolute inset-0 size-full object-cover object-[50%_85%] transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none" %>
+                <span class="absolute inset-0 bg-linear-to-t from-black/60 to-transparent"></span>
+                <span class="relative text-xs font-medium text-white/80">Winter sale</span>
+                <span class="relative font-heading text-xl leading-tight">20% off all skincare</span>
+              <% end %>
+            </div>
+          <% end %>
+          <% nav.with_item(label: "Categories", panel_class: "w-[30rem] rounded-2xl p-3") do %>
+            <ul class="grid grid-cols-3 gap-2">
+              <% shop_categories.each do |category| %>
+                <li>
+                  <%= link_to category[:href], class: "group grid gap-2 rounded-xl p-1.5 text-sm outline-none hover:bg-accent focus-visible:ring-2 focus-visible:ring-primary",
+                              data: { "ui--navigation-menu-target": "link" } do %>
+                    <span class="block overflow-hidden rounded-lg">
+                      <%= image_tag category[:image], alt: "", class: "aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none" %>
+                    </span>
+                    <span class="px-1">
+                      <span class="block font-medium"><%= category[:title] %></span>
+                      <span class="block text-muted-foreground"><%= category[:description] %></span>
+                    </span>
+                  <% end %>
+                </li>
+              <% end %>
+            </ul>
+          <% end %>
+          <% nav.with_item(label: "Journal", href: "#") %>
+        <% end %>
+      </div>
+    </div>
+
+    <a href="<%= root_path %>" class="font-heading text-2xl font-semibold tracking-tight text-primary">Daily Goods</a>
+
+    <div class="flex items-center justify-end gap-1">
+      <%= render(UI::Command.new(dialog: true, shortcut: "mod+k", label: "Search products", placeholder: "Search products", empty: "No products match that.")) do |command| %>
+        <% command.with_trigger(variant: :ghost, size: :icon, class: "justify-center rounded-full p-0 text-foreground", aria: { label: "Search products" }) do %>
+          <%= render(UI::Icon.new(name: "search")) %>
+        <% end %>
+        <% command.with_group(heading: "Categories") do |group| %>
+          <% shop_categories.each { |category| group.with_item(label: category[:title], href: category[:href]) } %>
+        <% end %>
+      <% end %>
+
+      <%= render(UI::Button.new(variant: :ghost, size: :icon, class: "hidden rounded-full sm:inline-flex", aria: { label: "Sign in" })) do %>
+        <%= render(UI::Icon.new(name: "user")) %>
+      <% end %>
+
+      <%= render(UI::Sheet.new) do |sheet| %>
+        <% sheet.with_trigger(variant: :ghost, size: :icon, class: "relative rounded-full") do %>
+          <%= render(UI::Icon.new(name: "shopping-cart")) %>
+          <%= render "daily_goods/shared/cart_count" %>
+        <% end %>
+        <% sheet.with_content(side: :right) do |content| %>
+          <% content.with_title { "Your cart" } %>
+          <div id="cart-body" class="flex h-full flex-col"><%= render "daily_goods/carts/body" %></div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</header>

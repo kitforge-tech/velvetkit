@@ -1,7 +1,7 @@
 <%# Site footer: the brand, three columns of links, then the licence and maker. %>
 <% columns = {
      "Docs" => DocsController::PAGES.except("lookbook").map { |page, title| [ title, page == "getting_started" ? docs_path : doc_path(page) ] },
-     "Components" => [ [ "All components", components_path ], [ "Lookbook", "/lookbook" ], [ "Lookbook guide", doc_path("lookbook") ] ],
+     "Components" => [ [ "All components", components_path ], [ "Examples", examples_path ], [ "Lookbook", "/lookbook" ], [ "Lookbook guide", doc_path("lookbook") ] ],
      "Resources" => [ [ "GitHub", ApplicationHelper::GITHUB_URL ], [ "RubyGems", ApplicationHelper::RUBYGEMS_URL ],
                       [ "llms.txt", llms_path ], [ "llms-full.txt", llms_full_path ] ]
    } %>
