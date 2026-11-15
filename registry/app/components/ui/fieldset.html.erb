@@ -1,0 +1,6 @@
+<%= tag.fieldset(**fieldset_attrs) do %>
+  <% if legend? %><%= tag.legend(id: legend_id, class: legend_classes) do %><%= legend_text %><% if @required %><%= tag.span(" *", class: "text-destructive ml-0.5") %><% end %><% end %><% end %>
+  <% if hint.present? %><%= tag.p(hint, id: hint_id, class: "text-xs text-muted-foreground") %><% end %>
+  <%= content %>
+  <% if error_message.present? %><%= tag.p(error_message, id: error_id, class: "text-xs text-destructive") %><% end %>
+<% end %>
