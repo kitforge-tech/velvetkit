@@ -55,4 +55,34 @@ class ReleaseNotesTest < ActiveSupport::TestCase
     assert_equal [ "Icons were missing." ], release.fixes
     assert_empty release.components
   end
+
+  def with_release(heading, *lines)
+    ReleaseNotes.parse(CHANGELOG.sub("## 0.4.1", "## #{heading}\n\n#{lines.join("\n")}\n\n## 0.4.1"))
+  end
+
+  test "the newest minor version's components are new, and Unreleased ones aren't" do
+    added = ReleaseNotes.new_components(ReleaseNotes.parse(CHANGELOG))
+    assert_equal %w[slider skeleton file_field], added.keys
+    assert_equal "0.4.1", added["slider"].version
+  end
+
+  test "a release adding no components leaves them new" do
+    assert_equal %w[slider skeleton file_field], ReleaseNotes.new_components(with_release("0.4.2 — 2026-11-10", "- Fix: a gap.")).keys
+    assert_equal %w[slider skeleton file_field], ReleaseNotes.new_components(with_release("0.5.0 — 2026-11-10", "- `Card` is redesigned.")).keys
+  end
+
+  test "a patch's components join its minor's" do
+    added = ReleaseNotes.new_components(with_release("0.4.2 — 2026-11-10", "New components:", "", "- `Rating`: stars."))
+    assert_equal %w[slider skeleton file_field rating], added.keys
+    assert_equal "0.4.2", added["rating"].version
+  end
+
+  test "a newer minor's components replace them" do
+    assert_equal %w[rating], ReleaseNotes.new_components(with_release("0.5.0.beta — 2026-11-10", "New components:", "", "- `Rating`: stars.")).keys
+  end
+
+  test "a component in two releases is new from the first" do
+    added = ReleaseNotes.new_components(with_release("0.4.2 — 2026-11-10", "New components:", "", "- `Slider`: ranges."))
+    assert_equal "0.4.1", added["slider"].version
+  end
 end

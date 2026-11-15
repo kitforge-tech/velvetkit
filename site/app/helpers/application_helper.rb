@@ -90,11 +90,14 @@ module ApplicationHelper
   # a tint, so it stands out while scanning a long list. The focus ring sits
   # inside the link, so a hovered neighbour can never overlap it, and takes
   # the bar's place rather than doubling it.
-  def nav_link(text, path)
+  # label: something to show after the text, like a component's "New".
+  def nav_link(text, path, label: nil)
     current = current_page?(path)
-    link_to text, path, aria: { current: current ? "page" : nil },
-            class: [ "relative block rounded-md px-3 py-1.5 text-sm transition-colors focus:outline-none focus-visible:bg-accent focus-visible:text-foreground",
-                     current ? "bg-primary/10 font-medium text-primary before:absolute before:inset-y-1.5 before:left-0 before:w-0.5 before:rounded-full before:bg-primary dark:bg-primary/20 dark:text-foreground dark:before:bg-[#c9a3f2]" : "text-muted-foreground hover:bg-accent hover:text-foreground" ]
+    link_to path, aria: { current: current ? "page" : nil },
+            class: [ "relative flex items-center justify-between gap-2 rounded-md px-3 py-1.5 text-sm transition-colors focus:outline-none focus-visible:bg-accent focus-visible:text-foreground",
+                     current ? "bg-primary/10 font-medium text-primary before:absolute before:inset-y-1.5 before:left-0 before:w-0.5 before:rounded-full before:bg-primary dark:bg-primary/20 dark:text-foreground dark:before:bg-[#c9a3f2]" : "text-muted-foreground hover:bg-accent hover:text-foreground" ] do
+      safe_join([ text, label ].compact)
+    end
   end
 
   # Which top-level section the page belongs to, for the header's current link.
