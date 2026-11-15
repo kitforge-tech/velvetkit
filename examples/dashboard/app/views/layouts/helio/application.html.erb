@@ -90,6 +90,8 @@
         <main class="mx-auto w-full max-w-7xl p-4 sm:p-6"><%= yield %></main>
       <% end %>
     <% end %>
+    <%# Answers data-turbo-confirm with the kit's dialog, not the browser's box. %>
+    <%= render(UI::ConfirmDialog.new) %>
     <%= render(UI::Toast::Viewport.new) %>
     <% if (message = flash[:notice] || flash[:alert]) %>
       <%= turbo_stream.append UI::Toast::Viewport::ID, render(UI::Toast.new(variant: flash[:alert] ? :destructive : :success, title: message, duration: 4)) %>

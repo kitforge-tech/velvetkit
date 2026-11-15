@@ -16,6 +16,9 @@
 # partly checked to match, and lets Shift-click check a run of them. Escape
 # or the clear button unchecks them all.
 #
+# An "all" box inside an element with `data-selection-group` chooses only the
+# items in it: a day's photos under that day's heading.
+#
 # The boxes post like any checkbox, so an action is a submit button for the
 # form they belong to (`form:` and `formaction:` on the button, `form:` on the
 # table). A `selection-bar:change` event carries the count and the values, for

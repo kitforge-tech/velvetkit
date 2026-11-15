@@ -6,6 +6,7 @@
   <% if @photos.any? %>
     <%= button_to "Empty bin", selection_path, params: { do: "empty_bin" }, method: :post,
           class: "inline-flex h-9 items-center rounded-full border px-4 text-sm font-medium text-destructive hover:bg-destructive/10",
-          form: { data: { turbo_confirm: "Delete all #{photo_count(@photos.size)} in the bin for good? This can't be undone." } } %>
+          form: { data: { turbo_confirm: "Empty the bin?", confirm_description: "All #{photo_count(@photos.size)} in it are deleted for good, and can't be restored.",
+                         confirm_button: "Empty bin", confirm_variant: "destructive" } } %>
   <% end %>
 <% end %>

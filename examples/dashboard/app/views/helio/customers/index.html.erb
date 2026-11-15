@@ -52,7 +52,8 @@
     <% end %>
     <% bar.with_action do %>
       <%= render(UI::Button.new(variant: :ghost, size: :sm, type: :submit, form: "bulk", name: "do", value: "cancel", class: "gap-1.5 text-destructive hover:text-destructive",
-                                data: { turbo_confirm: "Cancel the chosen customers' subscriptions? They keep access until the end of the month." })) do %>
+                                data: { turbo_confirm: "Cancel these subscriptions?", confirm_description: "The chosen customers keep access until the end of the month, then stop paying.",
+                                        confirm_button: "Cancel subscriptions", confirm_cancel: "Keep them", confirm_variant: "destructive" })) do %>
         <%= render(UI::Icon.new(name: "circle-x", class: "size-4")) %><span class="max-sm:sr-only">Cancel</span>
       <% end %>
     <% end %>

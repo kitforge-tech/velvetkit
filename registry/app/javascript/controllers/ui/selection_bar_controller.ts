@@ -65,10 +65,12 @@ export default class extends Controller<HTMLElement> {
     this.last = box;
   };
 
+  // An "all" box inside a [data-selection-group] (a day of photos) chooses
+  // that group's items; one outside any group chooses every item.
   private changed = (event: Event) => {
     const box = event.target as HTMLElement;
     if (box instanceof HTMLInputElement && box.matches(ALL)) {
-      this.items.forEach((item) => (item.checked = box.checked));
+      this.itemsFor(box).forEach((item) => (item.checked = box.checked));
     }
     this.update();
   };
@@ -87,8 +89,10 @@ export default class extends Controller<HTMLElement> {
     const checked = this.checked;
     const count = checked.length;
     this.list?.querySelectorAll<HTMLInputElement>(ALL).forEach((all) => {
-      all.checked = count > 0 && count === items.length;
-      all.indeterminate = count > 0 && count < items.length;
+      const group = this.itemsFor(all);
+      const chosen = group.filter((box) => box.checked).length;
+      all.checked = chosen > 0 && chosen === group.length;
+      all.indeterminate = chosen > 0 && chosen < group.length;
     });
     this.list?.toggleAttribute('data-selecting', count > 0);
     this.element.hidden = count === 0;
@@ -100,6 +104,12 @@ export default class extends Controller<HTMLElement> {
     if (count === this.lastCount) return;
     this.lastCount = count;
     this.dispatch('change', { prefix: 'selection-bar', detail: { count, values: checked.map((box) => box.value) } });
+  }
+
+  private itemsFor(all: HTMLInputElement): HTMLInputElement[] {
+    const group = all.closest<HTMLElement>('[data-selection-group]');
+    if (!group || !this.list?.contains(group)) return this.items;
+    return Array.from(group.querySelectorAll<HTMLInputElement>(ITEM));
   }
 
   private get items(): HTMLInputElement[] {

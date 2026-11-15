@@ -80,12 +80,14 @@
             <%= render(UI::Avatar.new(size: :sm, color: :primary, alt: "Sam Rivera", class: "ms-1")) { |avatar| avatar.with_fallback { "SR" } } %>
           </div>
         </header>
-        <main id="library-scroll" class="relative min-h-0 flex-1 overflow-y-auto bg-background md:me-2 md:mb-2 md:rounded-2xl md:shadow-xs md:ring-1 md:ring-border/60">
+        <main id="library-scroll" class="relative min-h-0 flex-1 overflow-y-auto bg-background md:me-2 md:mb-2 md:rounded-2xl md:ring-1 md:ring-border/70">
           <%= yield %>
         </main>
       <% end %>
     <% end %>
 
+    <%# Answers data-turbo-confirm with the kit's dialog, not the browser's box. %>
+    <%= render(UI::ConfirmDialog.new) %>
     <%= render(UI::Toast::Viewport.new(position: :bottom_center)) %>
     <%# What the last button did, as a toast. A stream runs as it lands, after a morph too. %>
     <% if (message = flash[:notice] || flash[:alert]) %>

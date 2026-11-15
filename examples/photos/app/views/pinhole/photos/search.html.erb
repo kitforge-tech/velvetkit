@@ -1,5 +1,5 @@
 <% content_for :title, @query.present? ? "“#{@query}”" : "Search" %>
-<%= render "pinhole/shared/library", photos: @photos,
+<%= render "pinhole/shared/library", photos: @photos, crumbs: [ [ "Photos", root_path ] ],
       title: @query.present? ? "Results for “#{@query}”" : "Search your photos",
       sub: (@query.present? ? photo_count(@photos.size) : "Search by what's in a photo, a place or an album."),
       actions: %i[album favourite archive bin],

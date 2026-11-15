@@ -1,34 +1,34 @@
-/* Pinhole's theme: warm paper around the photos, a white panel for them to
-   sit on, and a deep green for what's chosen and current. A theme is only
-   these values; no component changes. */
+/* Pinhole's theme: quiet greys around the photos, a panel for them to sit
+   on, and green for what's chosen and current: deep emerald in light mode,
+   mint in dark. A theme is only these values; no component changes. */
 :root {
   --radius: 0.75rem;
   --background: #ffffff;
-  --foreground: #1c1b19;
+  --foreground: #171917;
   --card: #ffffff;
-  --card-foreground: #1c1b19;
+  --card-foreground: #171917;
   --popover: #ffffff;
-  --popover-foreground: #1c1b19;
-  --primary: #1f6b52;
-  --primary-bolder: #185541;
-  --primary-hovered: #185541;
+  --popover-foreground: #171917;
+  --primary: #0f7a57;
+  --primary-bolder: #0b6347;
+  --primary-hovered: #0b6347;
   --primary-foreground: #ffffff;
-  --secondary: #f2f0eb;
-  --secondary-foreground: #1c1b19;
-  --muted: #f2f0eb;
-  --muted-foreground: #6b675f;
-  --accent: #ebe8e1;
-  --accent-foreground: #1c1b19;
+  --secondary: #f1f3f1;
+  --secondary-foreground: #171917;
+  --muted: #f1f3f1;
+  --muted-foreground: #5f655f;
+  --accent: #e8ebe8;
+  --accent-foreground: #171917;
   --destructive: #c8372d;
-  --border: #e4e0d8;
-  --input: #e4e0d8;
-  --ring: #1f6b52;
-  --sidebar: #f6f4ef;
-  --sidebar-foreground: #1c1b19;
-  --sidebar-primary: #1f6b52;
-  --sidebar-accent: #ebe8e1;
-  --sidebar-accent-foreground: #1c1b19;
-  --sidebar-border: #e4e0d8;
+  --border: #e2e5e2;
+  --input: #e2e5e2;
+  --ring: #0f7a57;
+  --sidebar: #f2f4f2;
+  --sidebar-foreground: #171917;
+  --sidebar-primary: #0f7a57;
+  --sidebar-accent: #e6e9e6;
+  --sidebar-accent-foreground: #171917;
+  --sidebar-border: #e2e5e2;
 }
 
 .dark {

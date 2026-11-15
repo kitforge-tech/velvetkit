@@ -11,6 +11,7 @@
     album:    the album, on an album's page
     intro:    markup above the photos (optional)
     sub:      a line under the heading (optional)
+    crumbs:   [[text, href], …] for the pages above this one (optional)
 %>
 <% album = local_assigns[:album] %>
 <% days = days(photos) %>
@@ -20,13 +21,19 @@
 
 <div id="photo-library" class="group/grid flex">
   <div class="min-w-0 flex-1">
-    <%= render(UI::SelectionBar.new(for: "photo-library", label: "Selected photos", class: "md:rounded-t-2xl")) do |bar| %>
+    <%= render(UI::SelectionBar.new(for: "photo-library", label: "Selected photos", class: "bg-background backdrop-blur-none md:rounded-t-2xl")) do |bar| %>
       <% bar.with_action { render "pinhole/shared/selection_actions", actions:, album: } %>
     <% end %>
 
     <div class="px-3 pb-20 pt-5 sm:px-6">
       <div class="mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
         <div class="min-w-0">
+          <% if (crumbs = local_assigns[:crumbs]).present? %>
+            <%= render(UI::Breadcrumb.new(class: "mb-2")) do |breadcrumb| %>
+              <% crumbs.each { |text, href| breadcrumb.with_item(text:, href:) } %>
+              <% breadcrumb.with_item(text: title, href: request.path, current: true) %>
+            <% end %>
+          <% end %>
           <h1 class="text-2xl font-semibold tracking-tight"><%= title %></h1>
           <% if local_assigns[:sub].present? %><p class="mt-1 text-sm text-muted-foreground"><%= sub %></p><% end %>
         </div>
@@ -49,11 +56,19 @@
 
           <div class="space-y-8">
             <% days.each do |date, day_photos| %>
-              <section aria-labelledby="<%= day_id(date) %>">
-                <h2 id="<%= day_id(date) %>" class="sticky top-0 z-10 -mx-1 mb-1 bg-background/95 px-1 py-2 text-sm font-medium backdrop-blur supports-[backdrop-filter]:bg-background/80">
-                  <%= day_label(date) %>
-                  <% if (place = day_photos.map(&:place).uniq).one? %><span class="ms-2 font-normal text-muted-foreground"><%= place.first.name %></span><% end %>
-                </h2>
+              <%# A day is a group: the box by its heading chooses that day's photos. %>
+              <section aria-labelledby="<%= day_id(date) %>" class="group/day" data-selection-group>
+                <%# On a wide screen the day's box sits in the margin, so the date lines up with the photos. %>
+                <div class="sticky top-0 z-10 -mx-3 mb-1 flex items-center gap-2 bg-background px-3 py-2 sm:-mx-6 sm:px-6">
+                  <span class="flex sm:absolute sm:start-[3px] sm:top-1/2 sm:-translate-y-1/2">
+                    <%= render(UI::SelectionBar.checkbox(:all, label: "Select all photos from #{day_label(date)}",
+                          class: "size-4.5 cursor-pointer rounded-full transition-opacity opacity-0 group-hover/day:opacity-100 group-data-[selecting]/grid:opacity-100 focus-visible:opacity-100 checked:opacity-100 indeterminate:opacity-100 pointer-coarse:opacity-100")) %>
+                  </span>
+                  <h2 id="<%= day_id(date) %>" class="text-sm font-medium">
+                    <%= day_label(date) %>
+                    <% if (place = day_photos.map(&:place).uniq).one? %><span class="ms-2 font-normal text-muted-foreground"><%= place.first.name %></span><% end %>
+                  </h2>
+                </div>
                 <div class="flex flex-wrap gap-1 [--row:7.5rem] after:grow-[999] after:content-[''] sm:[--row:11rem] lg:[--row:13rem]">
                   <% day_photos.each do |photo| %>
                     <%= tag.div class: "group/tile relative overflow-hidden rounded-[3px] bg-muted", style: tile_style(photo) do %>

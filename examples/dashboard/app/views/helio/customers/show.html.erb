@@ -39,7 +39,8 @@
       <%= button_to "Reactivate", customer_path(c), method: :patch, params: { do: "reactivate" }, class: "inline-flex h-9 items-center rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground hover:bg-primary/90" %>
     <% else %>
       <%= button_to customer_path(c), method: :patch, params: { do: "cancel" },
-            form: { data: { turbo_confirm: "Cancel #{c.company}'s subscription? They keep access until the end of the month." } },
+            form: { data: { turbo_confirm: "Cancel #{c.company}'s subscription?", confirm_description: "They keep access until the end of the month, then stop paying. You can reactivate them.",
+                           confirm_button: "Cancel subscription", confirm_cancel: "Keep it", confirm_variant: "destructive" } },
             class: "inline-flex h-9 items-center gap-2 rounded-md border border-destructive/30 px-3 text-sm font-medium text-destructive hover:bg-destructive/10" do %>
         Cancel subscription
       <% end %>

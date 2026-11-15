@@ -10,7 +10,8 @@ New components:
 - `SelectionBar`: "3 selected", a button to clear them and the actions for
   all of them at once, over a `Table` with `selection:` or any list whose
   boxes it can count. It keeps "select all" in step, Shift-click chooses a
-  run, and Escape clears.
+  run, and Escape clears. An "all" box inside a `data-selection-group`
+  chooses just that group, such as a day's photos.
 - `Scrubber`: a rail down the side of a long list for jumping through it by
   date, with years marked, the date under the pointer, dragging like a
   scrollbar, and one tab stop whose arrow keys move between the marks.
