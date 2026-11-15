@@ -42,10 +42,16 @@ module ReleasesHelper
     link_to badge, component_path(name), class: "rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
   end
 
-  # "Upgrading an app: re-run …" as a heading and its text.
-  def release_note_parts(note)
-    note.match?(UPGRADE_NOTE) ? [ "Upgrading an app", note.sub(UPGRADE_NOTE, "").upcase_first ] : [ nil, note ]
+  # A release's "Upgrading an app: …" notes as one list of steps, a sentence
+  # each. The changelog writes them as paragraphs, which read as a wall of
+  # instructions; a sentence ends at a full stop and a space outside code,
+  # so `velvetkit.css` and `h-[calc(100svh-3rem)]` stay whole.
+  def upgrade_steps(notes)
+    notes.grep(UPGRADE_NOTE).flat_map { |note| sentences(note.sub(UPGRADE_NOTE, "").upcase_first) }
   end
+
+  # The notes that aren't upgrade steps, shown as written.
+  def other_notes(notes) = notes.grep_v(UPGRADE_NOTE)
 
   # A span of code. A short word stays on one line rather than breaking at a
   # hyphen (vanilla-calendar-pro); anything longer wraps, inside a word only
@@ -68,6 +74,16 @@ module ReleasesHelper
   end
 
   private
+
+  def sentences(text)
+    text.split(/(`[^`]*`)/).each_with_object([ +"" ]) do |part, list|
+      next list.last << part if part.start_with?("`")
+
+      first, *rest = part.split(/(?<=[.!?])\s+(?=[A-Z`(]|\z)/, -1)
+      list.last << first.to_s
+      rest.each { list << +_1 }
+    end.map(&:strip).reject(&:empty?)
+  end
 
   def component?(name) = ComponentDoc.names.include?(name)
 

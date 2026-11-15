@@ -65,13 +65,20 @@
 
       <%# Not UI::Alert: that's a live region, and a screen reader would
           announce every note on the page as it loads. %>
-      <% release.notes.each do |note| %>
-        <% title, text = release_note_parts(note) %>
-        <aside class="space-y-1 rounded-lg border bg-muted/40 px-4 py-3" aria-label="<%= title || "Note" %> for <%= release.version %>">
-          <% if title %>
-            <p class="flex items-center gap-2 font-medium"><%= render(UI::Icon.new(name: "info", size: :sm)) %><%= title %></p>
-          <% end %>
-          <p class="leading-7"><%= release_text(text) %></p>
+      <% steps = upgrade_steps(release.notes) %>
+      <% if steps.any? %>
+        <aside class="space-y-2 rounded-lg border bg-muted/40 px-4 py-3" aria-label="Upgrading an app for <%= release.version %>">
+          <p class="flex items-center gap-2 font-medium"><%= render(UI::Icon.new(name: "info", size: :sm)) %>Upgrading an app</p>
+          <ul class="list-disc space-y-1.5 pl-5 leading-7 marker:text-muted-foreground">
+            <% steps.each do |step| %>
+              <li><%= release_text(step) %></li>
+            <% end %>
+          </ul>
+        </aside>
+      <% end %>
+      <% other_notes(release.notes).each do |note| %>
+        <aside class="rounded-lg border bg-muted/40 px-4 py-3" aria-label="Note for <%= release.version %>">
+          <p class="leading-7"><%= release_text(note) %></p>
         </aside>
       <% end %>
     </section>

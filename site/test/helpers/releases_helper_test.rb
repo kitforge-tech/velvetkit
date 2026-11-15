@@ -17,9 +17,24 @@ class ReleasesHelperTest < ActionView::TestCase
     assert_includes rendered, "Lightbox"
   end
 
-  test "an upgrade note's lead-in becomes its title" do
-    assert_equal [ "Upgrading an app", "Re-run `velvetkit:add card`." ], release_note_parts("Upgrading an app: re-run `velvetkit:add card`.")
-    assert_equal [ nil, "Something else." ], release_note_parts("Something else.")
+  test "upgrade notes become one list of steps, a sentence each" do
+    notes = [ "Upgrading an app: re-run `velvetkit:add card`. Cards now have 16px of padding; `spacing: 6` gets 24px back.",
+              "Something else.",
+              "Upgrading an app: `RadioGroup` renders through `Fieldset`. Without `legend:` it's as before." ]
+    assert_equal [ "Re-run `velvetkit:add card`.", "Cards now have 16px of padding; `spacing: 6` gets 24px back.",
+                   "`RadioGroup` renders through `Fieldset`.", "Without `legend:` it's as before." ], upgrade_steps(notes)
+    assert_equal [ "Something else." ], other_notes(notes)
+  end
+
+  test "a step doesn't end inside code, a version or a file name" do
+    steps = upgrade_steps([ "Upgrading an app: copy `velvetkit.css. Then this` into Rails 8.1.4.1, then app.js. " \
+                            "Give it a height (`class: \"h-[calc(100svh-3rem)]\"`). Done." ])
+    assert_equal [ "Copy `velvetkit.css. Then this` into Rails 8.1.4.1, then app.js.",
+                   "Give it a height (`class: \"h-[calc(100svh-3rem)]\"`).", "Done." ], steps
+  end
+
+  test "no upgrade notes, no steps" do
+    assert_empty upgrade_steps([ "Something else." ])
   end
 
   test "a pull request number links to it on GitHub" do

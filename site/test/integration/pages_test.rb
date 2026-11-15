@@ -56,6 +56,10 @@ class PagesTest < ActionDispatch::IntegrationTest
     assert_select "ul[aria-label='New components in 0.4.1'] a[href=?]", component_path("money_input")
     assert_select "h2", text: "Unreleased", count: 0
     assert_select "aside[aria-label='Upgrading an app for 0.4.2'] p", text: "Upgrading an app"
+    # Its steps are a list, and a release's notes share one box.
+    assert_select "aside[aria-label='Upgrading an app for 0.4.2'] li", 4
+    assert_select "aside[aria-label='Upgrading an app for 0.4.2'] li", text: /\ARe-run/
+    assert_select "aside[aria-label='Upgrading an app for 0.5.0']", 1
     # Notes are read in place, not announced as the page loads.
     assert_select "main [role=alert], main [aria-live]", count: 0
   end
