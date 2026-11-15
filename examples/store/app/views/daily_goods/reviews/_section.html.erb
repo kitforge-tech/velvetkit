@@ -7,7 +7,7 @@
         <div class="mt-4 flex items-center gap-3">
           <span class="text-4xl font-medium tabular-nums"><%= number_with_precision(DailyGoods::Review.average(reviews), precision: 1) %></span>
           <div class="text-sm">
-            <%= render "daily_goods/reviews/stars", rating: DailyGoods::Review.average(reviews) %>
+            <%= render(UI::Rating.new(value: DailyGoods::Review.average(reviews), size: :sm)) %>
             <p class="text-muted-foreground"><%= pluralize(reviews.size, "review") %></p>
           </div>
         </div>
@@ -39,7 +39,7 @@
         <% reviews.each do |review| %>
           <li class="grid gap-2 border-b pb-8 last:border-b-0">
             <div class="flex items-center justify-between gap-4">
-              <%= render "daily_goods/reviews/stars", rating: review.rating %>
+              <%= render(UI::Rating.new(value: review.rating, size: :sm)) %>
               <time datetime="<%= review.date.iso8601 %>" class="text-sm text-muted-foreground"><%= review.date.strftime("%-d %B %Y") %></time>
             </div>
             <% if review.title.present? %><h3 class="font-medium"><%= review.title %></h3><% end %>

@@ -1,0 +1,6 @@
+<%# A radio for each star: it posts with the form and needs no JavaScript. Arrow keys move between the stars. %>
+<form class="flex max-w-sm flex-col gap-6" action="#" onsubmit="event.preventDefault()">
+  <%= render(UI::Rating.new(name: "review[rating]", legend: "Your rating", hint: "How did the kettle work for you?", required: true, size: :lg)) %>
+  <%= render(UI::Textarea.new(name: "review[body]", label: "Review", rows: 3)) %>
+  <%= render(UI::Button.new(type: :submit, class: "self-start")) { "Post review" } %>
+</form>

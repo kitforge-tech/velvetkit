@@ -1,0 +1,16 @@
+<% if input? %><% stars = capture do %><%= tag.div(**stars_attrs) do %><% 1.upto(max) do |star| %><%= tag.input(type: "radio", id: option_id(star), name: input_name, value: star, checked: chosen == star, required: required?, disabled: disabled?, class: "sr-only", data: { action: "change->ui--rating#reset" }) %><%= tag.label(for: option_id(star), class: star_classes, data: { "ui--rating-target": "star", action: "mouseenter->ui--rating#preview" }) do %><%= render(UI::Icon.new(name: icon, class: "fill-current")) %><span class="sr-only"><%= option_label(star) %></span><% end %><% end %><% end %><% end %><% if fieldset.wrap? %><%= render(fieldset) { stars } %><% else %><%= stars %><% end %><% else %><%= tag.span(**display_attrs) do %>
+  <span role="img" aria-label="<%= image_label %>" class="<%= variant_classes(size: @size) %>">
+    <% fills.each do |fill| %>
+      <% if fill == :half %>
+        <span class="relative inline-flex <%= UI::Rating::OFF %>">
+          <%= render(UI::Icon.new(name: icon, class: "fill-current")) %>
+          <span class="absolute inset-y-0 start-0 flex w-1/2 overflow-hidden <%= UI::Rating::ON %>"><%= render(UI::Icon.new(name: icon, class: "fill-current")) %></span>
+        </span>
+      <% else %>
+        <%= render(UI::Icon.new(name: icon, class: class_names("fill-current", fill == :full ? UI::Rating::ON : UI::Rating::OFF))) %>
+      <% end %>
+    <% end %>
+  </span>
+  <% if show_value? %><span class="font-medium tabular-nums" aria-hidden="true"><%= formatted_score %></span><% end %>
+  <% if count? %><span class="text-muted-foreground"><span aria-hidden="true">(<%= formatted_count %>)</span><span class="sr-only"><%= count_label %></span></span><% end %>
+<% end %><% end %>
