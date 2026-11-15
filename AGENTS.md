@@ -57,7 +57,8 @@ Files for a component named `thing`:
   kit's signature, not a bug, and the docs site keeps it on a clicked link
   across visits (`site/app/javascript/focus_carry.js`). Don't move a
   component to `:focus-visible` or drop its ring without the maintainer's
-  sign-off; Slider and Scrubber are the existing keyboard-only exceptions.
+  sign-off. The few that are keyboard-only (Slider, Scrubber, NavigationMenu
+  and others) are listed in `registry/test/components/ui/base_test.rb`.
 - Any rendered string goes in `registry/config/locales/velvetkit.en.yml`
   under `ui.thing.*`, read with `t("ui.thing.the_key", default: "…")` —
   never hardcoded, so a consumer app can translate it.
