@@ -24,6 +24,42 @@ module Helio
     def paying? = %w[active past_due].include?(status)
 
     def initials = contact.split.map { |part| part[0] }.join
+
+    def to_param = id.to_s
+
+    # The trial's last day. A visitor can extend it from the customer's page.
+    def trial_ends_on(extended_by: 0) = signed_up_on + Helio::Customer::TRIAL_DAYS + extended_by
+
+    # Seats in use: most of them, steady for each customer.
+    def seats_used = [ (seats * (0.55 + (id % 9) * 0.05)).round, 1 ].max
+
+    # A bill on the first of each month it was paying, newest first: the last
+    # failed for an account that's past due.
+    Invoice = Data.define(:number, :date, :amount, :status)
+
+    def invoices
+      months = (0..11).map { |back| (Helio::Customer::TODAY << back).beginning_of_month }
+      paid = months.select { |date| paying_on?(date) }
+      paid.each_with_index.map do |date, index|
+        state = index.zero? && status == "past_due" ? "failed" : "paid"
+        Invoice.new(number: "HL-#{id}-#{date.strftime('%y%m')}", date:, amount: list_price, status: state)
+      end
+    end
+
+    # What's happened to the account, newest first.
+    def events
+      list = [ { date: signed_up_on, title: "Started a trial", detail: "#{plan}, #{seats} seats", icon: "user-plus", status: :complete } ]
+      trial_end = trial_ends_on
+      if paying_on?(trial_end + 1) || (status == "cancelled" && last_active_on > trial_end)
+        list << { date: trial_end, title: "Became a paying customer", detail: "First invoice sent", icon: "badge-check", status: :complete }
+      end
+      list << { date: Helio::Customer::TODAY.beginning_of_month, title: "Payment failed", detail: "Card declined; retrying in 3 days", icon: "credit-card", status: :error } if status == "past_due"
+      list << { date: last_active_on, title: "Cancelled", detail: "Last used the app", icon: "user-minus", status: :error } if status == "cancelled"
+      invoices.select { |invoice| invoice.status == "paid" }.first(3).each do |invoice|
+        list << { date: invoice.date, title: "Paid #{invoice.number}", detail: "$#{invoice.amount.to_fs(:delimited)}", icon: "receipt", status: :complete }
+      end
+      list.sort_by { |event| event[:date] }.reverse
+    end
   end
 
   # Price per seat, per month, in dollars.

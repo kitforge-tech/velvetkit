@@ -1,0 +1,11 @@
+<% content_for :title, "Bin" %>
+<%= render "pinhole/shared/library", photos: @photos, title: "Bin",
+      sub: "Photos in the bin are deleted for good after 60 days.",
+      actions: %i[restore delete],
+      empty: { icon: "trash-2", title: "The bin is empty", description: "Photos you move to the bin wait here for 60 days, so you can change your mind." } do %>
+  <% if @photos.any? %>
+    <%= button_to "Empty bin", selection_path, params: { do: "empty_bin" }, method: :post,
+          class: "inline-flex h-9 items-center rounded-full border px-4 text-sm font-medium text-destructive hover:bg-destructive/10",
+          form: { data: { turbo_confirm: "Delete all #{photo_count(@photos.size)} in the bin for good? This can't be undone." } } %>
+  <% end %>
+<% end %>

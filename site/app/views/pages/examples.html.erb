@@ -1,5 +1,5 @@
 <% content_for :title, "Examples" %>
-<% content_for :description, "Whole pages built with VelvetKit components for Rails, each in its own theme: an online shop and a dashboard, with a sign-in flow on the way." %>
+<% content_for :description, "Whole apps built with VelvetKit components for Rails, each in its own theme: an online shop, a business dashboard and a photo library, with a sign-in flow on the way." %>
 
 <main class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
   <header class="max-w-2xl space-y-3">
@@ -15,9 +15,13 @@
          text: "An online shop: a front page, products that filter and sort without a page reload, a page for each product, a cart in a side sheet, and a soft lilac theme with a serif heading font.",
          components: %w[navigation_menu sheet command slider checkbox switch select toggle_group gallery accordion dialog toast] },
        { key: "dashboard", title: "Helio", path: helio.root_path, image: "examples/dashboard.webp", visit: "Open the dashboard",
-         alt: "The Helio dashboard: a sidebar, four stat cards, a revenue line chart and a donut of revenue by plan",
-         text: "The admin side of a small software company: a collapsible sidebar, stat cards, charts that change with the period, top customers and recent activity, in a calm blue theme with dark mode.",
-         components: %w[sidebar chart card table timeline progress toggle_group command avatar badge theme_toggle sheet] }
+         alt: "The Helio dashboard: a sidebar, a strip of key numbers, and a revenue line chart",
+         text: "The admin side of a small software company: customers to search, filter, sort, choose and act on in bulk, a page for each with its invoices, activity and notes, and an overview whose numbers change with the period. A calm blue theme with dark mode.",
+         components: %w[sidebar table selection_bar pagination chart tabs timeline menu select command toggle_group theme_toggle] },
+       { key: "photos", title: "Pinhole", path: pinhole.root_path, image: "examples/photos.webp", visit: "Open the library",
+         alt: "The Pinhole photo library: a sidebar with a storage meter, a search bar, highlight cards and photos grouped by day",
+         text: "A photo library: highlights that scroll sideways, photos grouped by day in rows that fill the width, a date scrubber, choosing photos to favourite, archive or put in albums, and a viewer with zoom and an info panel. Warm paper and deep green, with dark mode.",
+         components: %w[sidebar gallery carousel scrubber selection_bar checkbox menu dialog progress empty_state toast theme_toggle] }
      ] %>
   <div class="mt-10 grid gap-6">
     <% examples.each do |example| %>

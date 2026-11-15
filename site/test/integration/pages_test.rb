@@ -19,6 +19,8 @@ class PagesTest < ActionDispatch::IntegrationTest
     assert_select "main article a[href=?]", "/examples/store/", text: /Visit the store/
     assert_select "main article h2", text: "Helio"
     assert_select "main article a[href=?]", "/examples/dashboard/", text: /Open the dashboard/
+    assert_select "main article h2", text: "Pinhole"
+    assert_select "main article a[href=?]", "/examples/photos/", text: /Open the library/
     assert_select "main article img[alt]"
     assert_select "dialog a[href=?]", examples_path, text: "Examples"
   end

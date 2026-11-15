@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   get "examples", to: "pages#examples", as: :examples
   mount DailyGoods::Engine, at: "/examples/store", as: :daily_goods
   mount Helio::Engine, at: "/examples/dashboard", as: :helio
+  mount Pinhole::Engine, at: "/examples/photos", as: :pinhole
 
   get "sitemap.xml", to: "discovery#sitemap", as: :sitemap, format: false
   get "robots.txt", to: "discovery#robots", as: :robots, format: false

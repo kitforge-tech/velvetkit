@@ -23,6 +23,7 @@ Bundler.require(*Rails.groups)
 require_relative "../../examples/store/lib/daily_goods"
 # Helio, the example dashboard, mounted at /examples/dashboard, in examples/dashboard.
 require_relative "../../examples/dashboard/lib/helio"
+require_relative "../../examples/photos/lib/pinhole"
 
 module Site
   class Application < Rails::Application

@@ -64,6 +64,22 @@ module Helio
 
     def top_customers(limit = 5) = @customers.select(&:paying?).max_by(limit, &:mrr)
 
+    # What someone should look at today: payments that failed, and trials
+    # ending in the next week, soonest first.
+    def needs_attention(workspace = nil, limit: 6)
+      failed = @customers.select { |customer| customer.status == "past_due" }
+                         .map { |customer| { customer:, reason: "Payment failed", tone: :error, date: today.beginning_of_month } }
+      ending = @customers.select { |customer| customer.status == "trialing" }.filter_map do |customer|
+        ends = workspace ? workspace.trial_ends_on(customer) : customer.trial_ends_on
+        { customer:, reason: "Trial ends #{ends == today ? 'today' : ends.strftime('%-d %b')}", tone: :warning, date: ends } if ends.between?(today, today + 7)
+      end
+      half = limit / 2
+      failed = failed.sort_by { |item| -item[:customer].list_price }
+      ending = ending.sort_by { |item| item[:date] }
+      # Some of each, when there are both.
+      (failed.first([ half, limit - ending.size ].max) + ending).first(limit)
+    end
+
     # The latest goings-on: sign-ups, cancellations and failed payments.
     def activity(limit = 6)
       events = @customers.flat_map do |customer|

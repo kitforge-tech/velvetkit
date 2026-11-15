@@ -1,0 +1,23 @@
+<% content_for :title, "Places" %>
+<div class="px-3 pb-20 pt-5 sm:px-6">
+  <div class="mb-6">
+    <h1 class="text-2xl font-semibold tracking-tight">Places</h1>
+    <p class="mt-1 text-sm text-muted-foreground">Where your photos were taken.</p>
+  </div>
+  <ul class="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 lg:grid-cols-4">
+    <% @places.each do |entry| %>
+      <li>
+        <%= link_to place_path(entry[:place].slug), class: "group/place block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-4 ring-offset-background" do %>
+          <span class="relative block aspect-[4/3] overflow-hidden rounded-xl bg-muted">
+            <%= image_tag entry[:cover].small_path, alt: "", class: "size-full object-cover transition-transform duration-300 group-hover/place:scale-105 motion-reduce:transition-none" %>
+            <span class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" aria-hidden="true"></span>
+            <span class="absolute inset-x-3 bottom-2.5 text-white">
+              <span class="block font-semibold"><%= entry[:place].name %></span>
+              <span class="block text-xs text-white/80"><%= entry[:place].region %> · <%= photo_count(entry[:count]) %></span>
+            </span>
+          </span>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+</div>

@@ -56,6 +56,7 @@ COPY lib /velvetkit/lib
 COPY registry /velvetkit/registry
 COPY examples/store /velvetkit/examples/store
 COPY examples/dashboard /velvetkit/examples/dashboard
+COPY examples/photos /velvetkit/examples/photos
 
 COPY site/Gemfile site/Gemfile.lock ./
 RUN bundle install && \

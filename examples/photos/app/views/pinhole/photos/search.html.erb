@@ -1,0 +1,10 @@
+<% content_for :title, @query.present? ? "“#{@query}”" : "Search" %>
+<%= render "pinhole/shared/library", photos: @photos,
+      title: @query.present? ? "Results for “#{@query}”" : "Search your photos",
+      sub: (@query.present? ? photo_count(@photos.size) : "Search by what's in a photo, a place or an album."),
+      actions: %i[album favourite archive bin],
+      empty: if @query.present?
+               { icon: "search-x", title: "No photos match “#{@query}”", description: "Try a place, like Fernhill, or a thing, like roses or snow." }
+             else
+               { icon: "search", title: "Search for something", description: "Try “sunset”, “Kestrel Peaks” or “pets”." }
+             end %>

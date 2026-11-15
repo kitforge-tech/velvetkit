@@ -1,0 +1,88 @@
+<%#
+  A page of photos: a heading, then the photos by the day they were taken,
+  with a box on each to choose it, the bar of what to do with those chosen,
+  the photo viewer, and the date scrubber down the side.
+
+  Locals:
+    photos:   the photos, newest first
+    title:    the page's heading
+    actions:  the selection bar's buttons (see _selection_actions)
+    empty:    { icon:, title:, description: } for a page with no photos
+    album:    the album, on an album's page
+    intro:    markup above the photos (optional)
+    sub:      a line under the heading (optional)
+%>
+<% album = local_assigns[:album] %>
+<% days = days(photos) %>
+<% index = photos.each_with_index.to_h { |photo, i| [ photo.id, i ] } %>
+
+<%= form_with url: selection_path, id: "selection", class: "hidden", data: { turbo_action: "replace" } do %><% end %>
+
+<div id="photo-library" class="group/grid flex">
+  <div class="min-w-0 flex-1">
+    <%= render(UI::SelectionBar.new(for: "photo-library", label: "Selected photos", class: "md:rounded-t-2xl")) do |bar| %>
+      <% bar.with_action { render "pinhole/shared/selection_actions", actions:, album: } %>
+    <% end %>
+
+    <div class="px-3 pb-20 pt-5 sm:px-6">
+      <div class="mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
+        <div class="min-w-0">
+          <h1 class="text-2xl font-semibold tracking-tight"><%= title %></h1>
+          <% if local_assigns[:sub].present? %><p class="mt-1 text-sm text-muted-foreground"><%= sub %></p><% end %>
+        </div>
+        <%= yield if block_given? %>
+      </div>
+
+      <%= local_assigns[:intro] %>
+
+      <% if photos.empty? %>
+        <%= render(UI::EmptyState.new(icon: empty[:icon], title: empty[:title], description: empty[:description], heading_level: 2, variant: :outline, class: "mt-4")) %>
+      <% else %>
+        <%= render(UI::Gallery.new(strip: false, label: title)) do |gallery| %>
+          <% photos.each do |photo| %>
+            <% gallery.with_image(src: image_path(photo.small_path), zoom_src: image_path(photo.large_path), alt: photo.title) do |image| %>
+              <% image.with_info { render "pinhole/shared/photo_info", photo: } %>
+              <% image.with_action { render "pinhole/shared/favourite_button", photo: } %>
+              <% image.with_action { render "pinhole/shared/viewer_bin_button", photo: } %>
+            <% end %>
+          <% end %>
+
+          <div class="space-y-8">
+            <% days.each do |date, day_photos| %>
+              <section aria-labelledby="<%= day_id(date) %>">
+                <h2 id="<%= day_id(date) %>" class="sticky top-0 z-10 -mx-1 mb-1 bg-background/95 px-1 py-2 text-sm font-medium backdrop-blur supports-[backdrop-filter]:bg-background/80">
+                  <%= day_label(date) %>
+                  <% if (place = day_photos.map(&:place).uniq).one? %><span class="ms-2 font-normal text-muted-foreground"><%= place.first.name %></span><% end %>
+                </h2>
+                <div class="flex flex-wrap gap-1 [--row:7.5rem] after:grow-[999] after:content-[''] sm:[--row:11rem] lg:[--row:13rem]">
+                  <% day_photos.each do |photo| %>
+                    <%= tag.div class: "group/tile relative overflow-hidden rounded-[3px] bg-muted", style: tile_style(photo) do %>
+                      <%= gallery.trigger(index[photo.id], class: "block w-full cursor-pointer", style: "aspect-ratio: #{photo.width} / #{photo.height}") do %>
+                        <%= image_tag photo.small_path, alt: "", loading: (index[photo.id] < 12 ? "eager" : "lazy"), decoding: "async",
+                              class: "size-full object-cover transition-[scale,border-radius] duration-200 group-has-[:checked]/tile:scale-[0.86] group-has-[:checked]/tile:rounded-md motion-reduce:transition-none" %>
+                        <span class="pointer-events-none absolute inset-x-0 top-0 h-14 bg-gradient-to-b from-black/45 to-transparent opacity-0 transition-opacity group-hover/tile:opacity-100 group-data-[selecting]/grid:opacity-100" aria-hidden="true"></span>
+                      <% end %>
+                      <span class="pointer-events-none absolute inset-0 hidden bg-primary/12 group-has-[:checked]/tile:block" aria-hidden="true"></span>
+                      <label class="absolute start-1.5 top-1.5 flex size-7 items-center justify-center opacity-0 transition-opacity group-hover/tile:opacity-100 group-data-[selecting]/grid:opacity-100 has-[:checked]:opacity-100 has-[:focus-visible]:opacity-100">
+                        <%= render(UI::SelectionBar.checkbox(:item, name: "ids[]", value: photo.id, form: "selection", label: "Select #{photo.title}",
+                              class: "size-5 cursor-pointer rounded-full border-2 border-white bg-black/25 shadow-sm checked:border-primary")) %>
+                      </label>
+                      <%= render "pinhole/shared/tile_star", photo: %>
+                    <% end %>
+                  <% end %>
+                </div>
+              </section>
+            <% end %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <% if days.size > 2 %>
+    <%= render(UI::Scrubber.new(label: "Jump to a month", for: "library-scroll",
+                                class: "sticky top-0 hidden h-[calc(100svh-6.75rem)] shrink-0 self-start sm:block")) do |scrubber| %>
+      <% month_marks(days).each { |mark| scrubber.with_mark(**mark) } %>
+    <% end %>
+  <% end %>
+</div>
