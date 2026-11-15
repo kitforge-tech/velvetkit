@@ -77,7 +77,7 @@ class UI::CheckboxTest < ViewComponent::TestCase
   def test_check_overlay_span_present_with_peer_checked_class
     render_inline(UI::Checkbox.new(name: "test"))
     wrapper = page.find(".relative.inline-flex")
-    overlay = wrapper.find("span.pointer-events-none")
+    overlay = wrapper.all("span.pointer-events-none").first
     classes = overlay[:class].split
     assert_includes classes, "peer-checked:opacity-100"
     assert_includes classes, "opacity-0"
@@ -85,9 +85,18 @@ class UI::CheckboxTest < ViewComponent::TestCase
 
   def test_check_icon_inside_overlay
     render_inline(UI::Checkbox.new(name: "test"))
-    overlay = page.find("span.pointer-events-none")
+    overlay = page.all("span.pointer-events-none").first
     icon = overlay.find("svg", visible: :all)
     assert icon.matches_css?("[data-icon='check']")
+  end
+
+  # Script sets `indeterminate` on "select all" when some rows are chosen.
+  def test_a_partly_checked_box_shows_a_dash
+    render_inline(UI::Checkbox.new(name: "test"))
+    assert_includes page.find("input")[:class], "indeterminate:bg-primary"
+    dash = page.all("span.pointer-events-none").last
+    assert_includes dash[:class].split, "peer-indeterminate:opacity-100"
+    assert dash.find("svg", visible: :all).matches_css?("[data-icon='minus']")
   end
 
   def test_user_class_override_via_tailwind_merge

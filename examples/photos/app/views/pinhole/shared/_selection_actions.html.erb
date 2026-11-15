@@ -1,0 +1,37 @@
+<%# The selection bar's buttons, posting the chosen photos with the "selection" form. %>
+<% button = ->(label, short, action, icon, **extra) do %>
+  <%= render(UI::Button.new(variant: :ghost, size: :sm, type: :submit, form: "selection", name: "do", value: action,
+                            class: class_names("gap-1.5 max-sm:px-2", extra[:class]), title: label, aria: { label: label },
+                            data: extra[:confirm] || {})) do %>
+    <%= render(UI::Icon.new(name: icon, class: "size-4")) %><span class="max-sm:sr-only"><%= short %></span>
+  <% end %>
+<% end %>
+<div class="flex items-center gap-0.5">
+  <% if actions.include?(:album) %>
+    <%= render(UI::Menu.new) do |menu| %>
+      <% menu.with_trigger(variant: :ghost, size: :sm, class: "gap-1.5 max-sm:px-2", aria: { label: "Add to album" }, title: "Add to album") do %>
+        <%= render(UI::Icon.new(name: "book-image", class: "size-4")) %><span class="max-sm:sr-only">Add to album</span>
+      <% end %>
+      <% menu.with_content(align: :end) do |content| %>
+        <% content.with_label("Add to album") %>
+        <% library.albums.reject { |a| a.id == album&.id }.each do |a| %>
+          <% content.with_item(a.name, type: :submit, form: "selection", formaction: selection_path(do: "add_to_album", album: a.id)) %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+  <% button.("Add to favourites", "Favourite", "favourite", "star") if actions.include?(:favourite) %>
+  <% button.("Remove from favourites", "Unfavourite", "unfavourite", "star-off") if actions.include?(:unfavourite) %>
+  <% if actions.include?(:remove_from_album) && album %>
+    <%= render(UI::Button.new(variant: :ghost, size: :sm, type: :submit, form: "selection", formaction: selection_path(do: "remove_from_album", album: album.id),
+                              class: "gap-1.5 max-sm:px-2", title: "Remove from album", aria: { label: "Remove from album" })) do %>
+      <%= render(UI::Icon.new(name: "image-minus", class: "size-4")) %><span class="max-sm:sr-only">Remove</span>
+    <% end %>
+  <% end %>
+  <% button.("Archive", "Archive", "archive", "archive") if actions.include?(:archive) %>
+  <% button.("Unarchive", "Unarchive", "unarchive", "archive-restore") if actions.include?(:unarchive) %>
+  <% button.("Restore", "Restore", "restore", "rotate-ccw") if actions.include?(:restore) %>
+  <% button.("Move to bin", "Bin", "bin", "trash-2") if actions.include?(:bin) %>
+  <% button.("Delete forever", "Delete", "delete", "trash-2", class: "text-destructive hover:text-destructive", confirm: { turbo_confirm: "Delete these photos for good?", confirm_description: "They leave the bin now, and can't be restored.",
+                                       confirm_button: "Delete forever", confirm_variant: "destructive" }) if actions.include?(:delete) %>
+</div>

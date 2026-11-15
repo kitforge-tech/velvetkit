@@ -24,6 +24,8 @@
     <%= render "daily_goods/shared/header" %>
     <main><%= yield %></main>
     <%= render "daily_goods/shared/footer" %>
+    <%# Answers data-turbo-confirm with the kit's dialog, not the browser's box. %>
+    <%= render(UI::ConfirmDialog.new) %>
     <%= render(UI::Toast::Viewport.new) %>
   </body>
 </html>

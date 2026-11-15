@@ -1,0 +1,19 @@
+<%# precision: 0 drops the cents, and show_data: false leaves the table to
+    screen readers. The donut stacks over its legend because the card is
+    narrow, whatever the window's width. %>
+<div class="grid max-w-3xl gap-4 sm:grid-cols-2">
+  <%= render(UI::Card.new) do |card| %>
+    <% card.with_header { |header| header.with_title { "Revenue by plan" } } %>
+    <% card.with_content do %>
+      <%= render(UI::Chart.new(type: :donut, label: "Monthly revenue by plan", format: :currency, precision: 0, show_data: false, height: 200,
+                               labels: %w[Starter Team Business], series: [ { name: "Revenue", data: [ 1_284, 6_912, 11_520 ] } ])) %>
+    <% end %>
+  <% end %>
+  <%= render(UI::Card.new) do |card| %>
+    <% card.with_header { |header| header.with_title { "Monthly revenue" } } %>
+    <% card.with_content do %>
+      <%= render(UI::Chart.new(type: :line, label: "Monthly revenue", format: :currency, precision: 0, show_data: false, height: 200,
+                               labels: %w[Jun Jul Aug Sep Oct Nov], series: [ { name: "Revenue", data: [ 14_210, 15_020, 15_880, 16_940, 18_305, 19_716 ] } ])) %>
+    <% end %>
+  <% end %>
+</div>

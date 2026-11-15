@@ -1,0 +1,52 @@
+<%# shape: :pill gives taller links, the current one filled in end to end. A
+    sub-menu opens under its link from the arrow beside it, and starts open
+    when one of its links is the current page. The footer stays at the bottom
+    of the frame, because the wrapper has a height. On a phone the trigger
+    opens the sidebar as a drawer over the page. %>
+<div class="relative h-[600px] overflow-hidden rounded-lg border transform-gpu">
+  <%= render(UI::Sidebar::Wrapper.new(min_height: :none, class: "h-full overflow-y-auto")) do %>
+    <%= render(UI::Sidebar.new(id: "preview-sidebar-pill", collapsible: :icon)) do |sidebar| %>
+      <% sidebar.with_sidebar_header do %>
+        <div class="flex h-10 items-center gap-2 px-2 font-semibold"><%= render(UI::Icon.new(name: "image", size: :sm)) %><span class="group-data-[collapsible=icon]:hidden">Photos</span></div>
+      <% end %>
+      <% sidebar.with_sidebar_content do |content| %>
+        <% content.with_sidebar_group do |group| %>
+          <% group.with_menu do |menu| %>
+            <% menu.with_menu_item do |item| %>
+              <% item.with_menu_button("#", active: true, shape: :pill) do %><%= render(UI::Icon.new(name: "image")) %><span>Photos</span><% end %>
+            <% end %>
+            <% menu.with_menu_item do |item| %>
+              <% item.with_menu_button("#", shape: :pill) do %><%= render(UI::Icon.new(name: "star")) %><span>Favourites</span><% end %>
+            <% end %>
+            <% menu.with_menu_item(open: true) do |item| %>
+              <% item.with_menu_button("#", shape: :pill) do %><%= render(UI::Icon.new(name: "book-open")) %><span>Albums</span><% end %>
+              <% item.with_sub_menu(name: "Albums") do |sub| %>
+                <% %w[Coast\ walk Garden City\ at\ night].each do |album| %>
+                  <% sub.with_item("#") { album } %>
+                <% end %>
+              <% end %>
+            <% end %>
+            <% menu.with_menu_item do |item| %>
+              <% item.with_menu_button("#", shape: :pill) do %><%= render(UI::Icon.new(name: "trash-2")) %><span>Bin</span><% end %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+      <% sidebar.with_sidebar_footer do %>
+        <div class="space-y-2 px-2 pb-2 group-data-[collapsible=icon]:hidden">
+          <%= render(UI::Progress.new(value: 62, label: "Storage")) %>
+          <p class="text-xs text-muted-foreground">62 GB of 100 GB used</p>
+        </div>
+      <% end %>
+    <% end %>
+    <%= render(UI::Sidebar::Inset.new) do %>
+      <header class="flex h-14 shrink-0 items-center gap-2 border-b px-4">
+        <%= render(UI::Sidebar::Trigger.new(sidebar_id: "preview-sidebar-pill")) %>
+        <span class="text-sm font-medium">Photos</span>
+      </header>
+      <div class="grid grid-cols-3 gap-1 p-4 sm:grid-cols-4">
+        <% 16.times do %><div class="aspect-square rounded-sm bg-muted"></div><% end %>
+      </div>
+    <% end %>
+  <% end %>
+</div>

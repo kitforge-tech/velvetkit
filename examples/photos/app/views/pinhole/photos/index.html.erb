@@ -1,0 +1,26 @@
+<% content_for :title, "Photos" %>
+<% intro = capture do %>
+  <% if (highlights = memories).any? %>
+    <section aria-labelledby="memories-heading" class="mb-8">
+      <h2 id="memories-heading" class="sr-only">Memories</h2>
+      <%= render(UI::Carousel.new(label: "Memories", item_class: "w-44 sm:w-60")) do |carousel| %>
+        <% highlights.each do |memory| %>
+          <% carousel.with_item do %>
+            <%= link_to memory[:href], class: "group/memory relative block aspect-[4/5] overflow-hidden rounded-xl bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-offset-background sm:aspect-[3/2]" do %>
+              <%= image_tag memory[:photo].small_path, alt: "", class: "size-full object-cover transition-transform duration-300 group-hover/memory:scale-105 motion-reduce:transition-none" %>
+              <span class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" aria-hidden="true"></span>
+              <span class="absolute inset-x-3 bottom-3 text-white">
+                <span class="block text-base font-semibold leading-tight sm:text-lg"><%= memory[:title] %></span>
+                <span class="block text-xs text-white/80"><%= memory[:detail] %></span>
+              </span>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    </section>
+  <% end %>
+<% end %>
+<%= render "pinhole/shared/library", photos: @photos, title: "Photos", intro:,
+      sub: "#{photo_count(@photos.size)} · #{date_range(@photos)}",
+      actions: %i[album favourite archive bin],
+      empty: { icon: "image", title: "No photos yet", description: "Everything's archived or in the bin. Restore some from there." } %>

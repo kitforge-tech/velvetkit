@@ -20,8 +20,8 @@
                   class: "pointer-events-none invisible absolute left-0 top-0 z-10 min-w-32 rounded-md border bg-popover px-3 py-2 text-xs text-popover-foreground opacity-0 shadow-md transition-[opacity,transform,visibility] duration-150 ease-out data-[shown]:visible data-[shown]:opacity-100 motion-reduce:transition-none" %>
     <% end %>
   <% end %>
-  <details class="group/data text-sm">
-    <%= tag.summary t("ui.chart.show_data", default: "Show the data"), class: "w-fit cursor-pointer rounded-sm text-muted-foreground hover:text-foreground #{UI::Base::FOCUS_RING}" %>
+  <%= tag.send(show_data? ? :details : :div, class: show_data? ? "group/data text-sm" : "sr-only") do %>
+    <% if show_data? %><%= tag.summary t("ui.chart.show_data", default: "Show the data"), class: "w-fit cursor-pointer rounded-sm text-muted-foreground hover:text-foreground #{UI::Base::FOCUS_RING}" %><% end %>
     <div class="mt-2 overflow-x-auto">
       <table class="w-full text-sm tabular-nums">
         <%= tag.caption label, class: "sr-only" %>
@@ -43,5 +43,5 @@
         </tbody>
       </table>
     </div>
-  </details>
+  <% end %>
 <% end %>

@@ -6,8 +6,8 @@ class UI::Checkbox < UI::Base
   variants(
     base: "peer appearance-none shrink-0 border border-input bg-background " \
           "transition-all " \
-          "checked:bg-primary checked:border-primary " \
-          "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1 " \
+          "checked:bg-primary checked:border-primary indeterminate:bg-primary indeterminate:border-primary " \
+          "focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 " \
           "ring-offset-background",
     variants: {
       size: {
@@ -113,14 +113,21 @@ class UI::Checkbox < UI::Base
   def classes
     cn(
       variant_classes(size: @size),
-      { "border-destructive aria-invalid:focus:ring-destructive" => wrapper.error? },
+      { "border-destructive aria-invalid:focus-visible:ring-destructive" => wrapper.error? },
       @user_class
     )
   end
 
   def overlay_classes
     "pointer-events-none absolute inset-0 flex items-center justify-center " \
-    "text-primary-foreground opacity-0 peer-checked:opacity-100 transition-opacity"
+    "text-primary-foreground opacity-0 peer-checked:opacity-100 peer-indeterminate:opacity-0 transition-opacity"
+  end
+
+  # A dash for a box that's partly checked, such as "select all" with some of
+  # the rows chosen. Only script sets that state, as `indeterminate`.
+  def mixed_overlay_classes
+    "pointer-events-none absolute inset-0 flex items-center justify-center " \
+    "text-primary-foreground opacity-0 peer-indeterminate:opacity-100 transition-opacity"
   end
 
   def wrapper_classes

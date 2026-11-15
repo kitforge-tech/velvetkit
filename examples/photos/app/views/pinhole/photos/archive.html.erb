@@ -1,0 +1,5 @@
+<% content_for :title, "Archive" %>
+<%= render "pinhole/shared/library", photos: @photos, title: "Archive",
+      sub: "Archived photos stay out of Photos, albums and search, and keep their place in time.",
+      actions: %i[unarchive bin],
+      empty: { icon: "archive", title: "Nothing archived", description: "Archive photos you want to keep but don't need to see every day." } %>

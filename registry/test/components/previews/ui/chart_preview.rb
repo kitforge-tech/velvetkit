@@ -10,7 +10,9 @@ class UI::ChartPreview < ViewComponent::Preview
   # @param stacked toggle
   # @param series_count number { min: 1, max: 5 }
   # @param format select { choices: [number, currency, percent] }
-  def playground(type: :bar, stacked: false, series_count: 2, format: :number)
+  # @param precision number { min: 0, max: 2 }
+  # @param show_data toggle
+  def playground(type: :bar, stacked: false, series_count: 2, format: :number, precision: nil, show_data: true)
     names = %w[North South East West Online]
     # A pie or donut is one series, a slice per label, five at most.
     circular = %w[pie donut].include?(type.to_s)
@@ -20,6 +22,7 @@ class UI::ChartPreview < ViewComponent::Preview
       { name: name, data: [ 120, 140, 135, 160, 172, 158 ].first(points).map { |v| v - (i * 18) + ((i * 7) % 11) } }
     end
     render(UI::Chart.new(type: type.to_sym, stacked: stacked, format: format.to_sym, label: "Orders by region",
+                         precision: precision.presence&.to_i, show_data: show_data,
                          labels: MONTHS.first(points), series: series, class: "max-w-2xl"))
   end
 
@@ -43,4 +46,7 @@ class UI::ChartPreview < ViewComponent::Preview
 
   # @label Donut, with Its Total
   def donut; render_with_template; end
+
+  # @label Whole Dollars, in a Narrow Card
+  def whole_dollars; render_with_template; end
 end

@@ -1,0 +1,139 @@
+<% content_for :title, @customer.company %>
+<% c = @customer %>
+<%= render(UI::Breadcrumb.new) do |crumbs| %>
+  <% crumbs.with_item(href: customers_path, text: "Customers") %>
+  <% crumbs.with_item(href: customer_path(c), text: c.company, current: true) %>
+<% end %>
+
+<div class="mt-4 flex flex-wrap items-start justify-between gap-4">
+  <div class="flex min-w-0 items-center gap-4">
+    <%= render(UI::Avatar.new(size: :lg, alt: c.contact)) { |avatar| avatar.with_fallback { c.initials } } %>
+    <div class="min-w-0">
+      <div class="flex flex-wrap items-center gap-2">
+        <h1 class="truncate text-2xl font-semibold tracking-tight"><%= c.company %></h1>
+        <%= status_badge(c.status) %>
+      </div>
+      <p class="mt-0.5 truncate text-sm text-muted-foreground"><%= c.contact %> · <%= mail_to c.email, c.email, class: "hover:text-foreground hover:underline" %></p>
+    </div>
+  </div>
+
+  <div class="flex flex-wrap items-center gap-2">
+    <% if c.status == "trialing" %>
+      <%= button_to customer_path(c), method: :patch, params: { do: "extend_trial" }, class: "inline-flex h-9 items-center gap-2 rounded-md border px-3 text-sm font-medium hover:bg-accent" do %>
+        <%= render(UI::Icon.new(name: "calendar-plus", class: "size-4")) %>Extend trial
+      <% end %>
+    <% end %>
+    <%= render(UI::Menu.new) do |menu| %>
+      <% menu.with_trigger(variant: :outline, class: "gap-2") do %><%= render(UI::Icon.new(name: "layers", class: "size-4")) %>Change plan<% end %>
+      <% menu.with_content(align: :end) do |content| %>
+        <% content.with_label("Plan, per seat a month") %>
+        <% Helio::Customer::PLANS.each do |plan, price| %>
+          <% content.with_item(type: :submit, form: "change-plan", name: "plan", value: plan, disabled: plan == c.plan) do %>
+            <span class="flex-1"><%= plan %></span><span class="text-muted-foreground tabular-nums"><%= money(price) %></span>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+    <%= form_with url: customer_path(c), method: :patch, id: "change-plan", class: "hidden" do %><%= hidden_field_tag :do, "plan" %><% end %>
+    <% if c.status == "cancelled" %>
+      <%= button_to "Reactivate", customer_path(c), method: :patch, params: { do: "reactivate" }, class: "inline-flex h-9 items-center rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground hover:bg-primary/90" %>
+    <% else %>
+      <%= button_to customer_path(c), method: :patch, params: { do: "cancel" },
+            form: { data: { turbo_confirm: "Cancel #{c.company}'s subscription?", confirm_description: "They keep access until the end of the month, then stop paying. You can reactivate them.",
+                           confirm_button: "Cancel subscription", confirm_cancel: "Keep it", confirm_variant: "destructive" } },
+            class: "inline-flex h-9 items-center gap-2 rounded-md border border-destructive/30 px-3 text-sm font-medium text-destructive hover:bg-destructive/10" do %>
+        Cancel subscription
+      <% end %>
+    <% end %>
+  </div>
+</div>
+
+<%# The facts, in one row divided by rules rather than a card each. %>
+<dl class="mt-6 grid grid-cols-2 divide-border rounded-lg border sm:grid-cols-3 lg:grid-cols-5 lg:divide-x [&>div]:p-4">
+  <div><dt class="text-xs text-muted-foreground">Monthly revenue</dt><dd class="mt-1 text-xl font-semibold tabular-nums"><%= money(c.mrr) %></dd></div>
+  <div><dt class="text-xs text-muted-foreground">Plan</dt><dd class="mt-1 text-xl font-semibold"><%= c.plan %> <span class="text-sm font-normal text-muted-foreground"><%= money(Helio::Customer::PLANS[c.plan]) %>/seat</span></dd></div>
+  <div><dt class="text-xs text-muted-foreground">Seats</dt><dd class="mt-1 text-xl font-semibold tabular-nums"><%= c.seats_used %> <span class="text-sm font-normal text-muted-foreground">of <%= c.seats %> used</span></dd></div>
+  <div>
+    <dt class="text-xs text-muted-foreground"><%= c.status == "trialing" ? "Trial ends" : "Customer since" %></dt>
+    <dd class="mt-1 text-xl font-semibold"><%= (c.status == "trialing" ? workspace.trial_ends_on(c) : c.signed_up_on).strftime("%-d %b %Y") %></dd>
+  </div>
+  <div><dt class="text-xs text-muted-foreground">Last active</dt><dd class="mt-1 text-xl font-semibold"><%= last_active(c.last_active_on) %></dd></div>
+</dl>
+
+<%= render(UI::Tabs.new(default_value: params[:tab].presence_in(%w[activity invoices notes]) || "activity", class: "mt-8")) do |tabs| %>
+  <% tabs.with_list do |list| %>
+    <% list.with_trigger(value: "activity") { "Activity" } %>
+    <% list.with_trigger(value: "invoices") { "Invoices" } %>
+    <% list.with_trigger(value: "notes") { "Notes#{" (#{@notes.size})" if @notes.any?}" } %>
+  <% end %>
+
+  <% tabs.with_panel(value: "activity") do %>
+    <div class="grid gap-8 pt-2 lg:grid-cols-3">
+      <div class="lg:col-span-2">
+        <h2 class="mb-4 text-sm font-medium">What's happened</h2>
+        <%= render(UI::Timeline.new(label: "#{c.company} activity")) do |timeline| %>
+          <% c.events.each do |event| %>
+            <% timeline.with_item(title: event[:title], description: event[:detail], icon: event[:icon], status: event[:status],
+                                  time: event[:date].to_time, time_label: event[:date].strftime("%-d %b %Y")) %>
+          <% end %>
+        <% end %>
+      </div>
+      <div class="space-y-6">
+        <div>
+          <h2 class="mb-3 text-sm font-medium">Seat use</h2>
+          <%= render(UI::Progress.new(value: c.seats_used, max: c.seats, label: "Seats in use", value_text: "#{c.seats_used} of #{c.seats}", show_value: true)) %>
+          <p class="mt-2 text-xs text-muted-foreground"><%= c.seats - c.seats_used %> unused <%= "seat".pluralize(c.seats - c.seats_used) %>, at <%= money((c.seats - c.seats_used) * Helio::Customer::PLANS[c.plan]) %> a month.</p>
+        </div>
+        <div>
+          <h2 class="mb-3 text-sm font-medium">Details</h2>
+          <dl class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
+            <dt class="text-muted-foreground">Customer ID</dt><dd class="tabular-nums"><%= c.id %></dd>
+            <dt class="text-muted-foreground">Country</dt><dd><%= c.country %></dd>
+            <dt class="text-muted-foreground">Signed up</dt><dd><%= c.signed_up_on.strftime("%-d %B %Y") %></dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <% tabs.with_panel(value: "invoices") do %>
+    <% invoices = c.invoices %>
+    <%= render(UI::Table.new("aria-label": "Invoices for #{c.company}", class: "pt-2")) do |table| %>
+      <% table.with_head do |head| %>
+        <% head.with_column { "Invoice" } %>
+        <% head.with_column { "Date" } %>
+        <% head.with_column { "Status" } %>
+        <% head.with_column(align: :end) { "Amount" } %>
+      <% end %>
+      <% invoices.each do |invoice| %>
+        <% table.with_row do |row| %>
+          <% row.with_cell(class: "font-mono text-xs") { invoice.number } %>
+          <% row.with_cell { invoice.date.strftime("%-d %b %Y") } %>
+          <% row.with_cell { render(UI::Badge.new(variant: invoice.status == "paid" ? :success : :destructive, class: "rounded-full")) { invoice.status.capitalize } } %>
+          <% row.with_cell(align: :end, class: "tabular-nums") { money(invoice.amount) } %>
+        <% end %>
+      <% end %>
+      <% table.with_empty_state { c.status == "trialing" ? "No invoices yet: the first is sent when the trial ends." : "No invoices in the last 12 months." } %>
+    <% end %>
+  <% end %>
+
+  <% tabs.with_panel(value: "notes") do %>
+    <div class="grid max-w-2xl gap-6 pt-2">
+      <%= form_with url: customer_notes_path(c), class: "grid gap-3" do %>
+        <%= render(UI::Textarea.new(name: "text", label: "Add a note", placeholder: "Spoke to #{c.contact.split.first} about…", rows: 3, maxlength: 280, required: true,
+                                    hint: "Only you see notes: this dashboard is an example.")) %>
+        <div><%= render(UI::Button.new(type: :submit, size: :sm)) { "Save note" } %></div>
+      <% end %>
+      <% if @notes.any? %>
+        <ul class="divide-y rounded-lg border">
+          <% @notes.each do |note| %>
+            <li class="p-4">
+              <p class="text-sm leading-relaxed"><%= note[:text] %></p>
+              <p class="mt-1 text-xs text-muted-foreground">Jordan Lee · <%= time_ago_in_words(note[:at]) %> ago</p>
+            </li>
+          <% end %>
+        </ul>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>

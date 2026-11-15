@@ -9,8 +9,8 @@ class UI::Base < ViewComponent::Base
   # includes it in its variant `base:` string. It shows on click as well as on
   # Tab, and animates in. (The docs site keeps it on the clicked link across
   # page visits, so a visit doesn't cut the animation off.)
-  FOCUS_RING = "transition-all focus:outline-none focus:ring-2 focus:ring-primary " \
-               "focus:ring-offset-1 ring-offset-background"
+  FOCUS_RING = "transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary " \
+               "focus-visible:ring-offset-1 ring-offset-background"
 
   class_attribute :variant_config,
                   instance_writer: false,

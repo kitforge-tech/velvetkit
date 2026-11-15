@@ -53,8 +53,8 @@ class Velvetkit::RegistryTest < Minitest::Test
   end
 
   def test_resolve_rejects_unknown_components
-    error = assert_raises(Velvetkit::Error) { registry.resolve(%w[carousel]) }
-    assert_match "carousel", error.message
+    error = assert_raises(Velvetkit::Error) { registry.resolve(%w[lightbox]) }
+    assert_match "lightbox", error.message
   end
 
   def test_a_component_named_only_in_a_comment_is_not_a_dependency

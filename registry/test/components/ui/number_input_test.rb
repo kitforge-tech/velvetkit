@@ -47,7 +47,7 @@ class UI::NumberInputTest < ViewComponent::TestCase
 
   def test_buttons_keep_the_kits_focus_ring
     render_input
-    assert_selector "button.focus\\:ring-2.focus\\:ring-primary.focus\\:z-10", count: 2
+    assert_selector "button.focus-visible\\:ring-2.focus-visible\\:ring-primary.focus\\:z-10", count: 2
     assert_no_selector "button.focus\\:ring-0"
     assert_no_selector "[data-slot='input-group'].overflow-hidden"
   end

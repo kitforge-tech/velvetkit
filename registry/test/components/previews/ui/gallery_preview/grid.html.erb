@@ -1,0 +1,25 @@
+<%# strip: false: the page shows the photos its own way, and each tile opens
+    the overlay at that photo. Info opens a panel of details beside it, and
+    each photo's actions sit in the top bar. %>
+<%= render(UI::Gallery.new(strip: false, label: "Recent photos", class: "max-w-xl")) do |gallery| %>
+  <% photos = UI::GalleryPreview.photos %>
+  <% photos.each_with_index do |(title, src), index| %>
+    <% gallery.with_image(src: src, alt: title) do |image| %>
+      <% image.with_info do %>
+        <h2 class="text-base font-semibold"><%= title %></h2>
+        <dl class="mt-4 grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
+          <dt class="text-muted-foreground">Taken</dt><dd><%= (Date.new(2026, 11, 14) - index * 3).to_fs(:long) %></dd>
+          <dt class="text-muted-foreground">Size</dt><dd>1600 × 1600</dd>
+        </dl>
+      <% end %>
+      <% image.with_action do %>
+        <%= render(UI::Button.new(variant: :ghost, size: :icon, class: UI::Gallery::OVERLAY_BUTTON, aria: { label: "Favourite #{title}", pressed: "false" })) do %><%= render(UI::Icon.new(name: "star", size: :sm)) %><% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+  <div class="grid grid-cols-3 gap-1">
+    <% photos.each_with_index do |(title, src), index| %>
+      <%= gallery.trigger(index, class: "aspect-square rounded-md") do %><%= image_tag src, alt: "", class: "size-full object-cover transition-transform duration-200 group-hover/trigger:scale-105" %><% end %>
+    <% end %>
+  </div>
+<% end %>

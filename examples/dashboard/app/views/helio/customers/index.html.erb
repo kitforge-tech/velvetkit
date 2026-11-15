@@ -1,0 +1,102 @@
+<% content_for :title, "Customers" %>
+<div class="flex flex-wrap items-end justify-between gap-4">
+  <div>
+    <h1 class="text-2xl font-semibold tracking-tight">Customers</h1>
+    <p class="mt-1 text-sm text-muted-foreground">Every company on a Helio plan, with what they pay and how they use it.</p>
+  </div>
+  <%= link_to customers_link(format: :csv), class: "inline-flex h-9 items-center gap-2 rounded-md border px-3 text-sm font-medium hover:bg-accent", download: true do %>
+    <%= render(UI::Icon.new(name: "download", class: "size-4")) %>Export CSV
+  <% end %>
+</div>
+
+<%# The saved views, as links: each is a page of its own, with its count. %>
+<nav aria-label="Views" class="-mx-1 mt-6 flex gap-1 overflow-x-auto border-b px-1">
+  <% Helio::CustomersController::VIEWS.each do |view, label| %>
+    <%= link_to customers_link(view: (view unless view == "all")), "aria-current": ("page" if @view == view),
+          class: "relative -mb-px flex shrink-0 items-center gap-2 border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground aria-[current=page]:border-primary aria-[current=page]:text-foreground" do %>
+      <%= label %><span class="rounded-full bg-muted px-1.5 text-xs tabular-nums text-muted-foreground"><%= @counts[view] %></span>
+    <% end %>
+  <% end %>
+</nav>
+
+<%= form_with url: customers_path, method: :get, class: "mt-4 flex flex-wrap items-center gap-2", data: { auto_submit: true, turbo_action: "replace" } do %>
+  <% %i[view sort dir].each do |key| %><%= hidden_field_tag key, params[key] if params[key].present? %><% end %>
+  <div class="relative w-full sm:w-72">
+    <%= render(UI::Icon.new(name: "search", class: "pointer-events-none absolute start-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground")) %>
+    <%= search_field_tag :q, @query, placeholder: "Search company, contact or email", "aria-label": "Search customers",
+          class: "h-9 w-full rounded-md border border-input bg-background ps-8 pe-3 text-sm outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring" %>
+  </div>
+  <div class="w-40"><%= render(UI::Select.new(name: "plan", selected: @plan || "all", "aria-label": "Plan",
+                                               options: [ [ "All plans", "all" ], *Helio::Customer::PLANS.keys.map { |plan| [ plan, plan ] } ])) %></div>
+  <% if @query.present? || @plan %>
+    <%= link_to "Clear", customers_link(q: nil, plan: nil), class: "rounded-md px-2 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground" %>
+  <% end %>
+  <noscript><%= render(UI::Button.new(type: :submit, variant: :outline, size: :sm)) { "Filter" } %></noscript>
+  <p class="ms-auto text-sm text-muted-foreground tabular-nums" aria-live="polite"><%= pluralize(@total, "customer") %></p>
+<% end %>
+
+<%# The boxes post with this form: the selection bar's buttons submit it. %>
+<%= form_with url: bulk_customers_path, id: "bulk", class: "hidden" do %><% end %>
+
+<div id="customers-list" class="mt-4">
+  <%= render(UI::SelectionBar.new(for: "customers-list", label: "Selected customers", class: "rounded-t-md border border-b-0")) do |bar| %>
+    <% bar.with_action do %>
+      <%= render(UI::Button.new(variant: :ghost, size: :sm, type: :submit, form: "bulk", formaction: customers_path(format: :csv), formmethod: :get, formnovalidate: true, class: "gap-1.5", data: { turbo: false })) do %>
+        <%= render(UI::Icon.new(name: "download", class: "size-4")) %><span class="max-sm:sr-only">Export</span>
+      <% end %>
+    <% end %>
+    <% bar.with_action do %>
+      <%= render(UI::Button.new(variant: :ghost, size: :sm, type: :submit, form: "bulk", name: "do", value: "extend_trial", class: "gap-1.5")) do %>
+        <%= render(UI::Icon.new(name: "calendar-plus", class: "size-4")) %><span class="max-sm:sr-only">Extend trial</span>
+      <% end %>
+    <% end %>
+    <% bar.with_action do %>
+      <%= render(UI::Button.new(variant: :ghost, size: :sm, type: :submit, form: "bulk", name: "do", value: "cancel", class: "gap-1.5 text-destructive hover:text-destructive",
+                                data: { turbo_confirm: "Cancel these subscriptions?", confirm_description: "The chosen customers keep access until the end of the month, then stop paying.",
+                                        confirm_button: "Cancel subscriptions", confirm_cancel: "Keep them", confirm_variant: "destructive" })) do %>
+        <%= render(UI::Icon.new(name: "circle-x", class: "size-4")) %><span class="max-sm:sr-only">Cancel</span>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%= render(UI::Table.new(selection: "ids[]", form: "bulk", "aria-label": "Customers")) do |table| %>
+    <% table.with_head do |head| %>
+      <% head.with_column(sort_href: sort_href("company"), sorted: sorted("company")) { "Customer" } %>
+      <% head.with_column(sort_href: sort_href("plan"), sorted: sorted("plan")) { "Plan" } %>
+      <% head.with_column { "Status" } %>
+      <% head.with_column(sort_href: sort_href("seats"), sorted: sorted("seats"), align: :end, class: "hidden md:table-cell") { "Seats" } %>
+      <% head.with_column(sort_href: sort_href("mrr"), sorted: sorted("mrr"), align: :end) { "MRR" } %>
+      <% head.with_column(sort_href: sort_href("signed_up"), sorted: sorted("signed_up"), class: "hidden lg:table-cell") { "Signed up" } %>
+      <% head.with_column(sort_href: sort_href("last_active"), sorted: sorted("last_active"), class: "hidden xl:table-cell") { "Last active" } %>
+    <% end %>
+    <% @customers.each do |customer| %>
+      <% table.with_row(value: customer.id, label: customer.company) do |row| %>
+        <% row.with_cell(class: "py-2.5") do %>
+          <div class="flex items-center gap-3">
+            <%= render(UI::Avatar.new(size: :md, alt: customer.contact)) { |avatar| avatar.with_fallback { customer.initials } } %>
+            <div class="min-w-0">
+              <%= link_to customer.company, customer_path(customer), class: "block truncate font-medium hover:underline hover:underline-offset-4" %>
+              <p class="truncate text-xs text-muted-foreground"><%= customer.contact %> · <%= customer.email %></p>
+            </div>
+          </div>
+        <% end %>
+        <% row.with_cell { customer.plan } %>
+        <% row.with_cell { status_badge(customer.status) } %>
+        <% row.with_cell(align: :end, class: "hidden tabular-nums md:table-cell") { customer.seats.to_s } %>
+        <% row.with_cell(align: :end, class: "font-medium tabular-nums") { money(customer.mrr) } %>
+        <% row.with_cell(class: "hidden whitespace-nowrap text-muted-foreground lg:table-cell") { customer.signed_up_on.strftime("%-d %b %Y") } %>
+        <% row.with_cell(class: "hidden whitespace-nowrap text-muted-foreground xl:table-cell") { last_active(customer.last_active_on) } %>
+      <% end %>
+    <% end %>
+    <% table.with_empty_state do %>
+      No customers match. <%= link_to "Clear the filters", customers_path(view: (@view unless @view == "all")), class: "font-medium text-primary hover:underline" %>
+    <% end %>
+  <% end %>
+</div>
+
+<div class="mt-4 flex flex-wrap items-center justify-between gap-3">
+  <p class="text-sm text-muted-foreground tabular-nums">
+    <% if @total.positive? %>Showing <%= @pagy.offset + 1 %>–<%= @pagy.offset + @customers.size %> of <%= @total %><% end %>
+  </p>
+  <%= render(UI::Pagination.new(pagy: @pagy, class: "mx-0 w-auto") { |page| customers_link(page: (page if page > 1)) }) %>
+</div>

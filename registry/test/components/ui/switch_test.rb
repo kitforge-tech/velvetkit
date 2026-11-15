@@ -87,12 +87,12 @@ class UI::SwitchTest < ViewComponent::TestCase
   def test_track_span_has_focus_ring_via_peer_focus_visible
     render_inline(UI::Switch.new(name: "notify"))
     track = page.all("span", visible: :all).find { |s|
-      s[:class].to_s.include?("peer-focus:ring-2")
+      s[:class].to_s.include?("peer-focus-visible:ring-2")
     }
-    assert track, "track span with peer-focus:ring-2 should exist"
+    assert track, "track span with peer-focus-visible:ring-2 should exist"
     classes = track[:class].split
-    assert_includes classes, "peer-focus:ring-primary"
-    assert_includes classes, "peer-focus:ring-offset-1"
+    assert_includes classes, "peer-focus-visible:ring-primary"
+    assert_includes classes, "peer-focus-visible:ring-offset-1"
   end
 
   # ── Thumb ────────────────────────────────────────────────────────────────────

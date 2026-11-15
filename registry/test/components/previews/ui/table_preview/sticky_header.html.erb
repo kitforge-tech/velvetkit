@@ -1,0 +1,13 @@
+<%# The rows scroll in their own box, under the header. %>
+<%= render(UI::Table.new(sticky_header: true, max_height: "16rem", class: "max-w-lg")) do |table| %>
+  <% table.with_head do |head| %>
+    <% head.with_column { "Invoice" } %>
+    <% head.with_column(align: :end) { "Amount" } %>
+  <% end %>
+  <% 20.times do |i| %>
+    <% table.with_row do |row| %>
+      <% row.with_cell { "INV-#{1040 + i}" } %>
+      <% row.with_cell(align: :end, class: "tabular-nums") { "$#{(i * 37 % 90 + 10) * 10}.00" } %>
+    <% end %>
+  <% end %>
+<% end %>
