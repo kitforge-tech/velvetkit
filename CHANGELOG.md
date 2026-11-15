@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+## 0.5.1 — 2026-11-15
+
+Changes:
+
+- Fix: the focus ring shows on click again, as well as on Tab. 0.5.0 moved
+  it to `:focus-visible`, so a click on a button, link, tab, menu item,
+  checkbox, radio, switch, sidebar link or gallery button drew no ring. (#95)
+
+Upgrading an app: re-run `velvetkit:add` for `base`, `button`, `link`,
+`badge`, `tabs`, `accordion`, `menu`, `checkbox`, `radio_group`, `switch`,
+`sidebar` and `gallery`.
+
 ## 0.5.0 — 2026-11-15
 
 New components:
