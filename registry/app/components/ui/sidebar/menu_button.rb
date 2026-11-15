@@ -9,7 +9,7 @@
 class UI::Sidebar::MenuButton < UI::Base
   SHAPES = {
     default: "h-8 rounded-md p-2 data-[active=true]:bg-sidebar-primary/10",
-    pill: "h-10 gap-3 rounded-full px-4 data-[active=true]:bg-sidebar-primary/15 group-data-[collapsible=icon]:rounded-md!"
+    pill: "h-10 gap-3 rounded-full px-4 data-[active=true]:bg-sidebar-primary/15 group-data-[collapsible=icon]:rounded-full!"
   }.freeze
 
   def initialize(path, active: false, current: nil, shape: :default, icon: nil, **system_args) # rubocop:disable Lint/UnusedMethodArgument

@@ -39,6 +39,11 @@ Changes:
   or donut sits beside its legend by its own width, not the window's, so it
   fits a narrow card.
 - `Checkbox` shows a dash when it's partly checked (`indeterminate`).
+- Buttons, links, tabs, menu items, checkboxes, radios and switches show
+  their focus ring for the keyboard only (`:focus-visible`), not after a
+  mouse click. Text fields keep theirs on click.
+- Fix: a collapsed `inset` or `floating` sidebar is wide enough for its
+  icons; they were clipped by the panel's padding.
 - Fix: a class given to `Sidebar::Inset` replaces the one it clashes with
   (`bg-transparent` for its background, `shadow-none` for its shadow). Both
   used to land on the element and the inset's own often won.

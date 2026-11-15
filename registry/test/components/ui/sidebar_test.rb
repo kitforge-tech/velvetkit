@@ -110,4 +110,12 @@ class UI::SidebarTest < ViewComponent::TestCase
     refute_includes classes, "bg-background"
     refute_includes classes, "md:peer-data-[variant=inset]:shadow-sm"
   end
+
+  # An inset or floating sidebar pads its panel, so collapsed it's that much wider.
+  def test_a_padded_sidebar_keeps_room_for_its_icons_when_collapsed
+    render_sidebar(variant: :inset, state: :collapsed)
+    assert_includes page.find("aside")[:class], "md:data-[variant=inset]:data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+1rem)]"
+    assert_includes page.find("[data-slot=sidebar-container]")[:class],
+                    "md:group-data-[variant=inset]:group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+1rem)]"
+  end
 end

@@ -175,14 +175,14 @@ class UI::GalleryTest < ViewComponent::TestCase
 
   def test_buttons_keep_the_kits_focus_ring
     render_gallery
-    assert_selector "button[aria-label='Show image 1'].focus\\:ring-primary"
-    assert_selector "button[aria-label='Next image'].focus\\:ring-primary", count: 1, visible: :all
+    assert_selector "button[aria-label='Show image 1'].focus-visible\\:ring-primary"
+    assert_selector "button[aria-label='Next image'].focus-visible\\:ring-primary", count: 1, visible: :all
   end
 
   def test_overlay_buttons_ring_in_white_to_show_on_the_dark_backdrop
     render_gallery
-    assert_selector "dialog button[aria-label='Next image'].focus\\:ring-white", visible: :all
-    assert_selector "dialog button[aria-label='Close'].focus\\:ring-white", visible: :all
+    assert_selector "dialog button[aria-label='Next image'].focus-visible\\:ring-white", visible: :all
+    assert_selector "dialog button[aria-label='Close'].focus-visible\\:ring-white", visible: :all
   end
 
   def test_class_and_html_attributes_pass_through

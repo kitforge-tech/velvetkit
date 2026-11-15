@@ -65,6 +65,9 @@ class UI::Sidebar < UI::Base
     @system_args[:class] = cn(
       "group peer shrink-0 text-sidebar-foreground w-0 md:w-(--sidebar-width) md:transition-[width] md:duration-200 md:ease-linear",
       "md:data-[collapsible=icon]:w-(--sidebar-width-icon) md:data-[collapsible=offcanvas]:w-0 data-[side=right]:order-last",
+      # The floating and inset sidebars pad their panel, so their icons need that much more room.
+      "md:data-[variant=floating]:data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+1rem)]",
+      "md:data-[variant=inset]:data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+1rem)]",
       @system_args[:class]
     )
   end
@@ -88,6 +91,8 @@ class UI::Sidebar < UI::Base
       "group-data-[mobile=open]:visible group-data-[mobile=open]:translate-x-0 motion-reduce:transition-none",
       "md:visible md:sticky md:top-0 md:z-10 md:h-svh md:max-h-full md:w-(--sidebar-width) md:translate-x-0",
       "md:transition-[width,translate] md:group-data-[collapsible=icon]:w-(--sidebar-width-icon)",
+      "md:group-data-[variant=floating]:group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+1rem)]",
+      "md:group-data-[variant=inset]:group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+1rem)]",
       "md:group-data-[collapsible=offcanvas]:-translate-x-full md:group-data-[collapsible=offcanvas]:invisible!",
       "md:group-data-[side=left]:border-e md:group-data-[side=right]:border-s",
       "md:group-data-[variant=floating]:border-0 md:group-data-[variant=inset]:border-0",
