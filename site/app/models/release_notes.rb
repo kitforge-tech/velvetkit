@@ -14,6 +14,9 @@ class ReleaseNotes
   Release = Data.define(:version, :date, :components, :changes, :fixes, :notes) do
     def id = ReleaseNotes.anchor(version)
 
+    # 0.4 for 0.4.1, and for 0.4.0.beta.
+    def minor = Gem::Version.new(version).segments.first(2)
+
     # The components a release added, by class name (`MoneyInput`).
     def component_names = components.flat_map { _1.scan(/`([A-Z]\w*)`/).flatten }.uniq
 
@@ -25,6 +28,17 @@ class ReleaseNotes
   def self.all
     @all = nil if Rails.env.development?
     @all ||= parse(FILE.read).freeze
+  end
+
+  # The components the newest minor version added, by name (money_input),
+  # each with the release that added it: 0.4.0's and 0.4.1's while 0.4.2
+  # adds none, until a 0.5 adds some of its own. So the docs' "New" labels
+  # move with each release's notes, without anyone setting them.
+  def self.new_components(releases = all)
+    adding = releases.select { _1.component_names.any? }
+    adding.select { _1.minor == adding.first.minor }.reverse.each_with_object({}) do |release, added|
+      release.component_names.each { added[_1.underscore] ||= release }
+    end
   end
 
   def self.parse(text)

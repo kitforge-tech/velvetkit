@@ -28,6 +28,23 @@ class PagesTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "the newest minor version's components are labelled new, in the sidebar, the list and their pages" do
+    name, release = ReleaseNotes.new_components.find { |name, _| name != "chart" }
+    old = (ComponentDoc.names - ReleaseNotes.new_components.keys).first
+
+    get component_path(name)
+    assert_select "nav[aria-label=Documentation] a[href=?] span", component_path(name), text: "New"
+    assert_select "nav[aria-label=Documentation] a[href=?] span", component_path(old), count: 0
+    assert_select "h1 ~ a[href=?] span", doc_path("releases", anchor: release.id), text: "New in v#{release.version}"
+
+    get component_path(old)
+    assert_select "h1 ~ a span", text: /\ANew in/, count: 0
+
+    get components_path
+    assert_select "a[href=?][data-filter-text$=' new'] span[title=?]", component_path(name), "Added in v#{release.version}", text: "New"
+    assert_select "a[href=?][data-filter-text$=' new']", component_path(old), count: 0
+  end
+
   test "release notes list every release, with links to the components each added" do
     get doc_path("releases")
     ReleaseNotes.all.each { |release| assert_select "h2##{release.id}", text: release.version }

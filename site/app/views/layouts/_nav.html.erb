@@ -24,12 +24,12 @@
       <% branch.with_trigger { "Forms" } %>
       <%= nav_link DocsController::PAGES["forms"], doc_path("forms") %>
       <% ComponentDoc.forms.each do |component| %>
-        <%= nav_link component.title, component_path(component) %>
+        <%= nav_link component.title, component_path(component), label: (new_label if new_in(component.name)) %>
       <% end %>
     <% end %>
     <%# Chart has a section of its own, above. %>
     <% ComponentDoc.all.reject { _1.form? || _1.name == "chart" }.each do |component| %>
-      <%= nav_link component.title, component_path(component) %>
+      <%= nav_link component.title, component_path(component), label: (new_label if new_in(component.name)) %>
     <% end %>
   </div>
 </nav>
