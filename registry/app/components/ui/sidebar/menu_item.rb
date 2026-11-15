@@ -42,7 +42,7 @@ class UI::Sidebar::MenuItem < UI::Base
       aria: { expanded: sub_menu.open?.to_s, controls: sub_menu_id,
               label: t("ui.sidebar.toggle_sub", name: sub_menu.name, default: "Show the links under %{name}") },
       class: "absolute end-1 top-1 flex size-6 items-center justify-center rounded-md text-sidebar-foreground/70 outline-hidden " \
-             "ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 " \
+             "ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus:ring-2 " \
              "group-data-[collapsible=icon]:hidden group-has-[>[data-shape=pill]]/menu-item:top-2 " \
              "[&[aria-expanded=true]>svg]:rotate-90 [&>svg]:transition-transform motion-reduce:[&>svg]:transition-none" }
   end
