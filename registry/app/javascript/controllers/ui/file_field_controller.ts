@@ -222,7 +222,7 @@ export default class extends Controller<HTMLElement> {
     new DirectUpload(file, this.urlValue, {
       directUploadWillCreateBlobWithXHR: (xhr: XMLHttpRequest) => { state.xhr = xhr; },
       directUploadWillStoreFileWithXHR: watch,
-    }).create((error: Error | null, blob?: { signed_id: string }) => {
+    }).create((error: string | null, blob?: { signed_id: string }) => {
       state.done = true;
       if (!item.isConnected) return;
       if (error || !blob) {

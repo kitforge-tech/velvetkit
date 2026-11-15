@@ -1,0 +1,16 @@
+{
+  // Type-checks the Stimulus controllers copied in from the registry by
+  // bin/sync-kit (`bun run typecheck`). Bun builds TypeScript without checking
+  // it, so this is the only thing that catches a type error.
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "strict": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "noEmit": true
+  },
+  "include": ["app/javascript/**/*.ts"]
+}

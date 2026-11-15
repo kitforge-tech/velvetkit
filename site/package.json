@@ -6,7 +6,8 @@
     "build": "bun build ./app/javascript/application.js ./app/javascript/ag_grid.ts ./app/javascript/chart_js.ts ./app/javascript/vanilla_calendar.ts --outdir ./app/assets/builds --minify",
     "build:css": "bun run build:css:site && bun run build:css:shop",
     "build:css:site": "bunx @tailwindcss/cli -i ./app/assets/stylesheets/application.tailwind.css -o ./app/assets/builds/application.css --minify",
-    "build:css:shop": "bunx @tailwindcss/cli -i ./app/assets/stylesheets/daily_goods.tailwind.css -o ./app/assets/builds/daily_goods.css --minify"
+    "build:css:shop": "bunx @tailwindcss/cli -i ./app/assets/stylesheets/daily_goods.tailwind.css -o ./app/assets/builds/daily_goods.css --minify",
+    "typecheck": "tsc"
   },
   "dependencies": {
     "@floating-ui/dom": "^1.7.4",
@@ -20,5 +21,9 @@
     "tailwindcss": "^4.1.0",
     "tw-animate-css": "^1.4.0",
     "vanilla-calendar-pro": "^3.4.0"
+  },
+  "devDependencies": {
+    "@types/rails__activestorage": "8.0.2",
+    "typescript": "5.9.3"
   }
 }
