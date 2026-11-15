@@ -8,7 +8,7 @@
     "build:css:site": "bunx @tailwindcss/cli -i ./app/assets/stylesheets/application.tailwind.css -o ./app/assets/builds/application.css --minify",
     "build:css:shop": "bunx @tailwindcss/cli -i ./app/assets/stylesheets/daily_goods.tailwind.css -o ./app/assets/builds/daily_goods.css --minify",
     "build:css:dashboard": "bunx @tailwindcss/cli -i ./app/assets/stylesheets/helio.tailwind.css -o ./app/assets/builds/helio.css --minify",
-    "build:css:photos": "bunx @tailwindcss/cli -i ./app/assets/stylesheets/pinhole.tailwind.css -o ./app/assets/builds/pinhole.css --minify"
+    "build:css:photos": "bunx @tailwindcss/cli -i ./app/assets/stylesheets/pinhole.tailwind.css -o ./app/assets/builds/pinhole.css --minify",
     "typecheck": "tsc"
   },
   "dependencies": {
