@@ -41,4 +41,12 @@ class ReleasesHelperTest < ActionView::TestCase
     assert_equal release, new_in(name.to_sym)
     assert_nil new_in((ComponentDoc.names - ReleaseNotes.new_components.keys).first)
   end
+
+  test "code is a tinted span, a short word kept on one line and the rest left to wrap" do
+    render html: release_text("Re-run `velvetkit:add radio_group` for `vanilla-calendar-pro` in `app/javascript/vanilla_calendar.ts`")
+    assert_select "code.bg-muted.font-mono", count: 3
+    assert_select "code.whitespace-nowrap", text: "vanilla-calendar-pro"
+    assert_select "code.break-words", text: "velvetkit:add radio_group"
+    assert_select "code.break-words", text: "app/javascript/vanilla_calendar.ts"
+  end
 end

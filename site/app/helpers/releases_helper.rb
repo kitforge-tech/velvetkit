@@ -3,6 +3,9 @@ module ReleasesHelper
   # The velvet of the sidebar's current link, so the label reads as the
   # site's own in both themes.
   NEW_LABEL = "bg-primary/10 text-primary hover:bg-primary/10 dark:bg-primary/20 dark:text-[#c9a3f2] dark:hover:bg-primary/20"
+  # Code in the notes: a tint and a size a little under the words around it,
+  # so it reads as code without crowding them.
+  CODE = "rounded bg-muted px-1 py-0.5 font-mono text-[0.875em]"
 
   # A version's notes on the releases page. Every page's header links here,
   # so it doesn't read the changelog: a version with no section yet (RubyGems
@@ -44,6 +47,13 @@ module ReleasesHelper
     note.match?(UPGRADE_NOTE) ? [ "Upgrading an app", note.sub(UPGRADE_NOTE, "").upcase_first ] : [ nil, note ]
   end
 
+  # A span of code. A short word stays on one line rather than breaking at a
+  # hyphen (vanilla-calendar-pro); anything longer wraps, inside a word only
+  # if it must, so a phone never scrolls sideways.
+  def release_code(text)
+    tag.code(text, class: [ CODE, text.match?(/\A\S{1,24}\z/) ? "whitespace-nowrap" : "break-words" ])
+  end
+
   # A changelog line as HTML: `code` spans become <code>, a component's class
   # name (`MoneyInput`) links to its page, and "(#80)" to the pull request.
   def release_text(text)
@@ -51,7 +61,7 @@ module ReleasesHelper
     safe_join(parts.each_with_index.map do |part, index|
       next link_pull_requests(part) if index.even?
 
-      code = tag.code(part, class: "font-mono text-sm")
+      code = release_code(part)
       name = part.underscore
       part.match?(/\A[A-Z]\w*\z/) && component?(name) ? link_to(code, component_path(name), class: "text-primary underline-offset-4 hover:underline") : code
     end)
