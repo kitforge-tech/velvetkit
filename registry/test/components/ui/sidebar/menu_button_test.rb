@@ -23,6 +23,15 @@ class UI::Sidebar::MenuButtonTest < ViewComponent::TestCase
     assert_includes classes, "hover:bg-sidebar-accent"
   end
 
+  def test_pill_shape_fills_the_current_page
+    render_inline(UI::Sidebar::MenuButton.new("#", active: true, shape: :pill)) { "Photos" }
+    link = page.find("a", text: "Photos")
+    assert_equal "pill", link[:"data-shape"]
+    assert_includes link[:class], "rounded-full"
+    assert_includes link[:class], "h-10"
+    refute_includes link[:class].split, "bg-accent"
+  end
+
   def test_allows_aria_current
     render_inline(UI::Sidebar::MenuButton.new("#", current: "page")) { "Dashboard" }
     link = page.find("a", text: "Dashboard")

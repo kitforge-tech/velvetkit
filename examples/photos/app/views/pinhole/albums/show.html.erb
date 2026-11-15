@@ -1,0 +1,11 @@
+<% content_for :title, @album.name %>
+<%= render "pinhole/shared/library", photos: @photos, crumbs: [ [ "Albums", albums_path ] ], title: @album.name, album: @album,
+      sub: [ photo_count(@photos.size), date_range(@photos) ].compact.join(" · "),
+      actions: %i[album favourite remove_from_album archive bin],
+      empty: { icon: "book-image", title: "This album is empty", description: "Choose photos in your library, then Add to album." } do %>
+  <%= button_to album_path(@album), method: :delete, form: { data: { turbo_confirm: "Delete “#{@album.name}”?", confirm_description: "Only the album goes: its photos stay in your library.",
+                       confirm_button: "Delete album", confirm_variant: "destructive" } },
+        class: "inline-flex h-9 items-center gap-1.5 rounded-full border px-4 text-sm font-medium hover:bg-accent" do %>
+    <%= render(UI::Icon.new(name: "trash-2", class: "size-4")) %>Delete album
+  <% end %>
+<% end %>

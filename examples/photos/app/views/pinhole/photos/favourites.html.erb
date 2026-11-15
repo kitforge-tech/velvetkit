@@ -1,0 +1,4 @@
+<% content_for :title, "Favourites" %>
+<%= render "pinhole/shared/library", photos: @photos, title: "Favourites", sub: photo_count(@photos.size),
+      actions: %i[album unfavourite archive bin],
+      empty: { icon: "star", title: "No favourites yet", description: "Star a photo in the viewer, or choose some and add them to favourites." } %>

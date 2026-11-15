@@ -1,0 +1,4 @@
+<%= tag.span id: "tile-star-#{photo.id}", hidden: !library.favourite?(photo), aria: { hidden: true },
+             class: "pointer-events-none absolute bottom-1.5 start-1.5 text-white drop-shadow" do %>
+  <%= render(UI::Icon.new(name: "star", class: "size-4 fill-current")) %>
+<% end %>

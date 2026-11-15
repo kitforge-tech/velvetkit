@@ -1,0 +1,42 @@
+<% content_for :title, "Albums" %>
+<div class="px-3 pb-20 pt-5 sm:px-6">
+  <div class="mb-6 flex flex-wrap items-end justify-between gap-3">
+    <div>
+      <h1 class="text-2xl font-semibold tracking-tight">Albums</h1>
+      <p class="mt-1 text-sm text-muted-foreground"><%= pluralize(@albums.size, "album") %></p>
+    </div>
+    <%= render(UI::Dialog.new) do |dialog| %>
+      <% dialog.with_trigger(class: "rounded-full") do %><%= render(UI::Icon.new(name: "plus", class: "size-4")) %>New album<% end %>
+      <% dialog.with_content do |content| %>
+        <% content.with_title { "New album" } %>
+        <% content.with_description { "Then add photos to it: choose some in your library and pick Add to album." } %>
+        <%= form_with url: albums_path, class: "grid gap-4" do %>
+          <%= render(UI::Input.new(name: "name", label: "Name", placeholder: "Weekend away", required: true, maxlength: 60, autocomplete: "off")) %>
+          <div class="flex justify-end"><%= render(UI::Button.new(type: :submit)) { "Create album" } %></div>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <% if @albums.empty? %>
+    <%= render(UI::EmptyState.new(icon: "book-image", title: "No albums", description: "Make one for a trip, a person or a project.", heading_level: 2, variant: :outline)) %>
+  <% else %>
+    <ul class="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+      <% @albums.each do |album| %>
+        <li>
+          <%= link_to album_path(album), class: "group/album block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-4 ring-offset-background" do %>
+            <span class="block aspect-square overflow-hidden rounded-xl bg-muted">
+              <% if album.cover %>
+                <%= image_tag album.cover.small_path, alt: "", class: "size-full object-cover transition-transform duration-300 group-hover/album:scale-105 motion-reduce:transition-none" %>
+              <% else %>
+                <span class="grid size-full place-items-center text-muted-foreground"><%= render(UI::Icon.new(name: "book-image", class: "size-8")) %></span>
+              <% end %>
+            </span>
+            <span class="mt-2 block truncate text-sm font-medium"><%= album.name %></span>
+            <span class="block text-xs text-muted-foreground"><%= photo_count(album.photos.size) %></span>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+</div>

@@ -95,7 +95,7 @@ class UI::GalleryTest < ViewComponent::TestCase
     render_gallery
     assert_selector "dialog .start-4.top-4 button[aria-label='Zoom in']", visible: :all
     assert_selector "dialog .start-4.top-4 button[aria-label='Zoom out']", visible: :all
-    assert_selector "dialog button.end-4.top-4[aria-label='Close']", visible: :all
+    assert_selector "dialog .end-4.top-4 button[aria-label='Close']", visible: :all
     assert_selector "dialog button.start-4.top-1\\/2[aria-label='Previous image']", visible: :all
     assert_selector "dialog button.end-4.top-1\\/2[aria-label='Next image']", visible: :all
   end
@@ -175,18 +175,53 @@ class UI::GalleryTest < ViewComponent::TestCase
 
   def test_buttons_keep_the_kits_focus_ring
     render_gallery
-    assert_selector "button[aria-label='Show image 1'].focus\\:ring-primary"
-    assert_selector "button[aria-label='Next image'].focus\\:ring-primary", count: 1, visible: :all
+    assert_selector "button[aria-label='Show image 1'].focus-visible\\:ring-primary"
+    assert_selector "button[aria-label='Next image'].focus-visible\\:ring-primary", count: 1, visible: :all
   end
 
   def test_overlay_buttons_ring_in_white_to_show_on_the_dark_backdrop
     render_gallery
-    assert_selector "dialog button[aria-label='Next image'].focus\\:ring-white", visible: :all
-    assert_selector "dialog button[aria-label='Close'].focus\\:ring-white", visible: :all
+    assert_selector "dialog button[aria-label='Next image'].focus-visible\\:ring-white", visible: :all
+    assert_selector "dialog button[aria-label='Close'].focus-visible\\:ring-white", visible: :all
   end
 
   def test_class_and_html_attributes_pass_through
     render_gallery(class: "max-w-md", id: "photos", data: { foo: "bar" })
     assert_selector "#photos.max-w-md[data-foo='bar'][data-controller='ui--gallery']"
+  end
+
+  def render_grid
+    render_inline(UI::Gallery.new(strip: false, label: "Photos")) do |gallery|
+      gallery.with_image(src: "/coast.jpg", alt: "Coast", zoom_src: "/coast-big.jpg") do |image|
+        image.with_info { "Taken in May" }
+        image.with_action { "<button>Favourite</button>".html_safe }
+      end
+      gallery.with_image(src: "/garden.jpg", alt: "Garden")
+      gallery.trigger(0, class: "aspect-square") { "<img src='/coast-sm.jpg' alt=''>".html_safe } +
+        gallery.trigger(1) { "<img src='/garden-sm.jpg' alt=''>".html_safe }
+    end
+  end
+
+  def test_without_a_strip_the_page_opens_each_image
+    render_grid
+    assert_no_selector "[data-ui--gallery-target='track']", visible: :all
+    assert_no_selector "button[aria-label='Show image 1']", visible: :all
+    assert_selector "button.aspect-square[aria-label='Open Coast'][aria-haspopup=dialog][data-action='ui--gallery#open'][data-ui--gallery-index-param='0'][data-ui--gallery-target=trigger] img"
+    assert_selector "button[aria-label='Open Garden'][data-ui--gallery-index-param='1']"
+    assert_selector "li[data-ui--gallery-target=slide][data-zoom-src='/coast-big.jpg'][data-alt=Coast]", visible: :all
+    assert_selector "dialog button[aria-label='Next image']", visible: :all
+  end
+
+  def test_info_and_actions_show_in_the_overlay_for_their_image
+    render_grid
+    toggle = page.find("dialog button[aria-label=Info][aria-expanded=false][data-action='ui--gallery#toggleInfo']", visible: :all)
+    panel = page.find("dialog aside##{toggle[:"aria-controls"]}[hidden]", visible: :all)
+    assert_equal "Taken in May", panel.find("[data-ui--gallery-target=perImage][data-index='0']", visible: :all).text(:all)
+    assert_selector "dialog [data-ui--gallery-target=perImage][data-index='0'] button", text: "Favourite", visible: :all
+  end
+
+  def test_no_info_button_when_no_image_has_info
+    render_gallery
+    assert_no_selector "button[aria-label=Info]", visible: :all
   end
 end

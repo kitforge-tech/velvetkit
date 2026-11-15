@@ -1,0 +1,17 @@
+<%# Cards with their title over the photo. The buttons show only while
+    there's more to see that way; on a touch screen the strip swipes. %>
+<%= render(UI::Carousel.new(label: "Highlights", item_class: "w-56 sm:w-64", class: "max-w-3xl")) do |carousel| %>
+  <% [ [ "This week", "4 photos" ], [ "Coast walk", "2025" ], [ "Garden", "Spring" ], [ "City at night", "12 photos" ],
+       [ "One year ago", "November 2025" ], [ "Kitchen", "Recipes" ] ].each_with_index do |(title, detail), index| %>
+    <% carousel.with_item do %>
+      <a href="#" class="relative block aspect-[4/3] overflow-hidden rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
+        <%= image_tag UI::GalleryPreview.photos[index % 5].last, alt: "", class: "size-full object-cover" %>
+        <span class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></span>
+        <span class="absolute inset-x-3 bottom-3 text-white">
+          <span class="block text-lg font-semibold leading-tight"><%= title %></span>
+          <span class="block text-xs text-white/80"><%= detail %></span>
+        </span>
+      </a>
+    <% end %>
+  <% end %>
+<% end %>

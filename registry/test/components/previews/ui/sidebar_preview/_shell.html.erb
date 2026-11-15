@@ -6,7 +6,7 @@
 
     Locals:
       sidebar_id:  id on the <aside>; the trigger points aria-controls at it
-      collapsible: :none or :icon
+      collapsible: :icon, :offcanvas or :none
       state:       :expanded or :collapsed
       groups:      [{ label:, items: [{ icon:, text:, active:, icon_class: }] }]
       brand:       captured markup for the sidebar header (optional)
@@ -14,8 +14,8 @@
       main:        captured markup for the content area
 %>
 <% sidebar_id  = local_assigns.fetch(:sidebar_id, "preview-sidebar") %>
-<% collapsible = local_assigns.fetch(:collapsible, :none) %>
-<% state       = local_assigns.fetch(:state, :expanded) %>
+<% collapsible = local_assigns.fetch(:collapsible, :icon) %>
+<% state       = local_assigns.fetch(:state, nil) %>
 <% groups      = local_assigns.fetch(:groups, []) %>
 <% title       = local_assigns.fetch(:title, "Dashboard") %>
 
@@ -24,7 +24,8 @@
     escaping to the browser viewport. Without it the sidebar renders outside
     the preview box. %>
 <div class="relative h-[600px] overflow-hidden rounded-lg border transform-gpu">
-  <%= render(UI::Sidebar::Wrapper.new(min_height: :full)) do %>
+  <%# A height for the wrapper, so the sidebar fits the frame rather than the window. %>
+  <%= render(UI::Sidebar::Wrapper.new(min_height: :none, class: "h-full overflow-y-auto")) do %>
     <%= render(UI::Sidebar.new(id: sidebar_id, collapsible: collapsible, state: state)) do |sidebar| %>
       <% if local_assigns[:brand].present? %>
         <% sidebar.with_sidebar_header { local_assigns[:brand] } %>

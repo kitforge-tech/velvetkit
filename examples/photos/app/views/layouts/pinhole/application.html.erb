@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title><%= [ yield(:title).presence, "Pinhole · a VelvetKit example" ].compact.join(" · ") %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="Pinhole, an example photo library built with VelvetKit components for Rails: a sidebar, a photo grid by day, a date scrubber, selection and a photo viewer.">
+    <% if request.query_string.present? %><meta name="robots" content="noindex, follow"><% end %>
+    <link rel="canonical" href="<%= ENV.fetch("SITE_URL", request.base_url) + request.path %>">
+    <%# A button that changes the library comes back to the same page, and Turbo
+        morphs it in place, keeping the scroll. %>
+    <meta name="turbo-refresh-method" content="morph">
+    <meta name="turbo-refresh-scroll" content="preserve">
+    <%= csrf_meta_tags %>
+    <link rel="icon" href="data:,">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap">
+    <%= render "layouts/theme_script" %>
+    <%= stylesheet_link_tag "pinhole", "data-turbo-track": "reload" %>
+    <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+    <%= javascript_include_tag "pinhole/library", "data-turbo-track": "reload", type: "module" %>
+  </head>
+  <body class="bg-sidebar text-foreground">
+    <div class="relative z-50 bg-neutral-950 text-white">
+      <div class="flex items-center justify-between gap-4 px-4 py-1.5 text-xs">
+        <p class="truncate">An example photo library built with VelvetKit. The photos are CC0, from Wikimedia Commons; the rest is made up.</p>
+        <a href="<%= main_app.examples_path %>" class="shrink-0 underline underline-offset-4 hover:no-underline">Back to examples</a>
+      </div>
+    </div>
+
+    <%# The wrapper's height keeps the sidebar, storage and all, under the strip above. %>
+    <%= render(UI::Sidebar::Wrapper.new(min_height: :none, class: "h-[calc(100svh-1.75rem)]")) do %>
+      <%= render(UI::Sidebar.new(id: "pinhole-sidebar", collapsible: :icon, variant: :inset)) do |sidebar| %>
+        <% sidebar.with_sidebar_header(class: "h-16 justify-center") do %>
+          <%= link_to root_path, class: "flex items-center gap-2.5 rounded-lg px-2 py-1 group-data-[collapsible=icon]:px-0" do %>
+            <span class="grid size-8 shrink-0 place-items-center rounded-full bg-foreground text-background" aria-hidden="true">
+              <span class="size-2.5 rounded-full bg-background"></span>
+            </span>
+            <span class="text-lg font-semibold tracking-tight group-data-[collapsible=icon]:hidden">Pinhole</span>
+          <% end %>
+        <% end %>
+        <% sidebar.with_sidebar_content do |content| %>
+          <% content.with_sidebar_group do |group| %>
+            <% group.with_menu do |menu| %>
+              <% nav_items.each do |nav| %>
+                <% menu.with_menu_item do |item| %>
+                  <% item.with_menu_button(nav[:href], active: nav_active?(nav[:href]), shape: :pill, title: nav[:text]) do %>
+                    <%= render(UI::Icon.new(name: nav[:icon])) %><span><%= nav[:text] %></span>
+                  <% end %>
+                  <% if nav[:albums] %>
+                    <% item.with_sub_menu(name: "Albums") do |sub| %>
+                      <% library.albums.each do |album| %>
+                        <% sub.with_item(album_path(album), active: current_page?(album_path(album))) { album.name } %>
+                      <% end %>
+                    <% end %>
+                  <% end %>
+                <% end %>
+              <% end %>
+            <% end %>
+          <% end %>
+        <% end %>
+        <% sidebar.with_sidebar_footer(class: "group-data-[collapsible=icon]:hidden") do %>
+          <div class="space-y-2 px-3 pb-3">
+            <%= render(UI::Progress.new(value: library.storage_share, label: "Storage", value_text: storage_text)) %>
+            <p class="text-xs text-muted-foreground"><%= storage_text %></p>
+          </div>
+        <% end %>
+      <% end %>
+
+      <%= render(UI::Sidebar::Inset.new(class: "bg-transparent md:peer-data-[variant=inset]:m-0 md:peer-data-[variant=inset]:rounded-none md:peer-data-[variant=inset]:shadow-none")) do %>
+        <header class="flex h-16 shrink-0 items-center gap-2 px-3 sm:gap-3 md:ps-0">
+          <%= render(UI::Sidebar::Trigger.new(sidebar_id: "pinhole-sidebar", class: "size-9!")) %>
+          <%= form_with url: search_path, method: :get, role: "search", class: "relative max-w-2xl flex-1" do %>
+            <%= label_tag :q, "Search your photos", class: "sr-only" %>
+            <%= render(UI::Icon.new(name: "search", class: "pointer-events-none absolute start-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground")) %>
+            <%= search_field_tag :q, @query, placeholder: "Search “roses”, “Saltmarsh Bay”, “pets”…", autocomplete: "off",
+                  class: "h-11 w-full rounded-full border-0 bg-background ps-11 pe-4 text-sm outline-none ring-1 ring-border/70 placeholder:text-muted-foreground focus:ring-2 focus:ring-ring" %>
+          <% end %>
+          <div class="ms-auto flex items-center gap-1">
+            <%= render(UI::ThemeToggle.new) %>
+            <%= render(UI::Avatar.new(size: :sm, color: :primary, alt: "Sam Rivera", class: "ms-1")) { |avatar| avatar.with_fallback { "SR" } } %>
+          </div>
+        </header>
+        <main id="library-scroll" class="relative min-h-0 flex-1 overflow-y-auto bg-background md:me-2 md:mb-2 md:rounded-2xl md:ring-1 md:ring-border/70">
+          <%= yield %>
+        </main>
+      <% end %>
+    <% end %>
+
+    <%# Answers data-turbo-confirm with the kit's dialog, not the browser's box. %>
+    <%= render(UI::ConfirmDialog.new) %>
+    <%= render(UI::Toast::Viewport.new(position: :bottom_center)) %>
+    <%# What the last button did, as a toast. A stream runs as it lands, after a morph too. %>
+    <% if (message = flash[:notice] || flash[:alert]) %>
+      <%= turbo_stream.append UI::Toast::Viewport::ID, render(UI::Toast.new(variant: flash[:alert] ? :destructive : :default, title: message, duration: 4)) %>
+    <% end %>
+  </body>
+</html>

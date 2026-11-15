@@ -42,4 +42,7 @@ class UI::GalleryPreview < ViewComponent::Preview
 
   # @label One Image
   def single; render_with_template; end
+
+  # @label Opened From a Grid, With Info
+  def grid; render_with_template; end
 end

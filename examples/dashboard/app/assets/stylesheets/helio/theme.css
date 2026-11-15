@@ -1,0 +1,71 @@
+/* Helio's theme: cool greys, a calm blue for the brand, and a chart palette
+   that keeps its five colours apart. A theme is only these values; no
+   component changes. */
+:root {
+  --radius: 0.625rem;
+  --background: #ffffff;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+  --primary: #2453d6;
+  --primary-bolder: #1d43b0;
+  --primary-hovered: #1d43b0;
+  --primary-foreground: #ffffff;
+  --secondary: #f1f4f9;
+  --secondary-foreground: #0f172a;
+  --muted: #f1f4f9;
+  --muted-foreground: #5f6b7d;
+  --accent: #f1f4f9;
+  --accent-foreground: #0f172a;
+  --destructive: #d92d4a;
+  --border: #e3e8ef;
+  --input: #e3e8ef;
+  --ring: #2453d6;
+  --chart-1: #2453d6;
+  --chart-2: #14b8a6;
+  --chart-3: #f59e0b;
+  --chart-4: #e8547a;
+  --chart-5: #8b95a7;
+  --sidebar: #f8fafc;
+  --sidebar-foreground: #0f172a;
+  --sidebar-primary: #2453d6;
+  --sidebar-accent: #eef2f7;
+  --sidebar-accent-foreground: #0f172a;
+  --sidebar-border: #e3e8ef;
+}
+
+.dark {
+  --background: #0b1120;
+  --foreground: #e8edf5;
+  --card: #111a2e;
+  --card-foreground: #e8edf5;
+  --popover: #111a2e;
+  --popover-foreground: #e8edf5;
+  --primary: #6d93ff;
+  --primary-bolder: #93b0ff;
+  --primary-hovered: #93b0ff;
+  --primary-foreground: #0b1120;
+  --secondary: #1a2438;
+  --secondary-foreground: #e8edf5;
+  --muted: #1a2438;
+  --muted-foreground: #94a0b4;
+  --accent: #1a2438;
+  --accent-foreground: #e8edf5;
+  --destructive: #f87191;
+  --border: #233049;
+  --input: #233049;
+  --ring: #6d93ff;
+  --chart-1: #6d93ff;
+  --chart-2: #2dd4bf;
+  --chart-3: #fbbf24;
+  --chart-4: #fb7199;
+  --chart-5: #94a0b4;
+  --sidebar: #0e1626;
+  --sidebar-foreground: #e8edf5;
+  --sidebar-primary: #6d93ff;
+  --sidebar-accent: #1a2438;
+  --sidebar-accent-foreground: #e8edf5;
+  --sidebar-border: #1d2940;
+}

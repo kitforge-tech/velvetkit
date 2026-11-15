@@ -1,0 +1,7 @@
+<%= tag.div(**root_attrs) do %>
+  <%= tag.ul id: track_id, class: track_classes, data: { "ui--carousel-target": "track", action: "scroll->ui--carousel#update" } do %>
+    <% items.each do |item| %><%= tag.li item, class: item_classes %><% end %>
+  <% end %>
+  <%= render(UI::Button.new(**button_attrs(:previous))) do %><%= render(UI::Icon.new(name: "chevron-left", size: :sm, class: "rtl:rotate-180")) %><% end %>
+  <%= render(UI::Button.new(**button_attrs(:next))) do %><%= render(UI::Icon.new(name: "chevron-right", size: :sm, class: "rtl:rotate-180")) %><% end %>
+<% end %>

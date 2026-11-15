@@ -33,10 +33,17 @@ type Rect = { left: number; top: number; width: number; height: number };
 type IndexEvent<E extends Event = Event> = E & { params: { index: number } };
 
 export default class extends Controller<HTMLElement> {
-  static targets = ['track', 'slide', 'thumbnail', 'status', 'dialog', 'viewport', 'zoomImage', 'zoomStatus', 'zoomIn', 'zoomOut', 'lens', 'pane'];
+  static targets = ['track', 'slide', 'trigger', 'thumbnail', 'status', 'dialog', 'viewport', 'zoomImage', 'zoomStatus', 'zoomIn', 'zoomOut', 'lens', 'pane',
+    'perImage', 'infoPanel', 'infoToggle'];
   static values = { position: String, zoomScale: Number };
 
+  declare readonly hasTrackTarget: boolean;
   declare readonly trackTarget: HTMLElement;
+  declare readonly triggerTargets: HTMLElement[];
+  declare readonly perImageTargets: HTMLElement[];
+  declare readonly hasInfoPanelTarget: boolean;
+  declare readonly infoPanelTarget: HTMLElement;
+  declare readonly infoToggleTarget: HTMLElement;
   declare readonly slideTargets: HTMLElement[];
   declare readonly thumbnailTargets: HTMLElement[];
   declare readonly statusTarget: HTMLElement;
@@ -90,6 +97,7 @@ export default class extends Controller<HTMLElement> {
   private goTo(index: number, behavior: ScrollBehavior = this.scrollBehavior) {
     this.heading = index;
     this.setIndex(index);
+    if (!this.hasTrackTarget) return;
     this.trackTarget.scrollTo({ left: this.scrollPosition(this.trackTarget, this.slideTargets[index]), behavior });
   }
 
@@ -133,7 +141,8 @@ export default class extends Controller<HTMLElement> {
     this.index = index;
     this.statusTarget.dataset.ready = 'true';
     this.statusTarget.textContent = this.position(index);
-    this.slideTargets.forEach((_, i) => this.slideButton(i)?.setAttribute('tabindex', i === index ? '0' : '-1'));
+    if (this.hasTrackTarget) this.slideTargets.forEach((_, i) => this.slideButton(i)?.setAttribute('tabindex', i === index ? '0' : '-1'));
+    this.perImageTargets.forEach((element) => (element.hidden = Number(element.dataset.index) !== index));
     this.thumbnailTargets.forEach((thumbnail, i) => {
       if (i === index) thumbnail.setAttribute('aria-current', 'true');
       else thumbnail.removeAttribute('aria-current');
@@ -142,8 +151,32 @@ export default class extends Controller<HTMLElement> {
     if (strip) strip.scrollTo({ left: this.scrollPosition(strip, this.thumbnailTargets[index]), behavior: this.scrollBehavior });
   }
 
-  private slideButton(index: number) {
+  private slideButton(index: number): HTMLElement | null {
+    if (!this.hasTrackTarget) return this.triggerFor(index);
     return this.slideTargets[index].querySelector('button');
+  }
+
+  // With `strip: false` the page's own buttons open the overlay, and the image
+  // in each is where it grows from.
+  private triggerFor(index: number): HTMLElement | null {
+    return this.triggerTargets.find((trigger) => Number(trigger.dataset.uiGalleryIndexParam) === index) ?? null;
+  }
+
+  // Where image `index` is on the page, and the picture drawn there.
+  private origin(index: number): { frame: HTMLElement; image: HTMLImageElement | null } | null {
+    const frame = this.hasTrackTarget ? this.slideTargets[index] : this.triggerFor(index);
+    if (!frame) return null;
+    return { frame, image: frame.querySelector('img') };
+  }
+
+  toggleInfo() {
+    if (!this.hasInfoPanelTarget) return;
+
+    const open = this.infoPanelTarget.hidden;
+    this.infoPanelTarget.hidden = !open;
+    this.infoToggleTarget.setAttribute('aria-expanded', String(open));
+    this.dialogTarget.toggleAttribute('data-info', open);
+    this.layout();
   }
 
   // Where to scroll `box` so `item` sits in its middle. Measured from what's on
@@ -254,11 +287,10 @@ export default class extends Controller<HTMLElement> {
     this.animate(this.dialogTarget, { opacity: [0, 1] }, { ...fade, pseudoElement: '::backdrop' });
     this.overlayButtons.forEach((button) => this.animate(button, { opacity: [0, 1] }, fade));
 
-    const slide = this.slideTargets[this.index];
+    const from = this.origin(this.index);
     const image = this.zoomImageTarget;
-    const origin = slide.querySelector('img');
-    if (origin?.naturalWidth && image.naturalWidth) {
-      this.fly(this.drawnImage(slide, origin), image.getBoundingClientRect(), OPEN_MS);
+    if (from?.image?.naturalWidth && image.naturalWidth) {
+      this.fly(this.drawnImage(from.frame, from.image), image.getBoundingClientRect(), OPEN_MS);
     } else {
       this.animate(image, { opacity: [0, 1] }, fade);
     }
@@ -271,15 +303,14 @@ export default class extends Controller<HTMLElement> {
     if (this.closing) return;
 
     this.goTo(this.index, 'auto');
-    const slide = this.slideTargets[this.index];
+    const to = this.origin(this.index);
     const image = this.zoomImageTarget;
-    const origin = slide.querySelector('img');
     const fade = { duration: CLOSE_MS, easing: 'ease-in', fill: 'forwards' as const };
     const animations = [
       this.animate(this.dialogTarget, { opacity: [1, 0] }, { ...fade, pseudoElement: '::backdrop' }),
       ...this.overlayButtons.map((button) => this.animate(button, { opacity: [1, 0] }, fade)),
-      origin?.naturalWidth && image.naturalWidth
-        ? this.fly(image.getBoundingClientRect(), this.drawnImage(slide, origin), CLOSE_MS, true)
+      to?.image?.naturalWidth && image.naturalWidth && this.onScreen(to.frame)
+        ? this.fly(image.getBoundingClientRect(), this.drawnImage(to.frame, to.image), CLOSE_MS, true)
         : this.animate(image, { opacity: [1, 0] }, fade),
     ].filter((animation): animation is Animation => animation !== null);
 
@@ -306,7 +337,8 @@ export default class extends Controller<HTMLElement> {
   closed() {
     this.cancelClosing();
     this.goTo(this.index, 'auto');
-    this.slideButton(this.index)?.focus({ preventScroll: true });
+    const button = this.slideButton(this.index);
+    button?.focus({ preventScroll: this.hasTrackTarget });
     this.zoomImageTarget.removeAttribute('style');
     this.setScale(MIN_ZOOM);
   }
@@ -324,7 +356,7 @@ export default class extends Controller<HTMLElement> {
     const slide = this.slideTargets[index];
     const image = this.zoomImageTarget;
     const large = slide.dataset.zoomSrc ?? '';
-    const shown = slide.querySelector('img');
+    const shown = this.origin(index)?.image;
     const ready = shown?.complete && shown.naturalWidth > 0 ? shown.currentSrc : '';
 
     if (direction) this.slideOut(direction);
@@ -404,6 +436,12 @@ export default class extends Controller<HTMLElement> {
 
   private get reducedMotion(): boolean {
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+
+  // A grid scrolled on behind the overlay may have left the image out of sight.
+  private onScreen(element: HTMLElement): boolean {
+    const rect = element.getBoundingClientRect();
+    return rect.bottom > 0 && rect.top < window.innerHeight;
   }
 
   private get overlayButtons(): HTMLElement[] {
@@ -530,7 +568,7 @@ export default class extends Controller<HTMLElement> {
     if (event.ctrlKey || event.metaKey || event.altKey) return;
 
     if (this.dialogTarget.open) this.dialogKeydown(event);
-    else if (this.element.contains(event.target as Node)) this.galleryKeydown(event);
+    else if (this.hasTrackTarget && this.element.contains(event.target as Node)) this.galleryKeydown(event);
   }
 
   private galleryKeydown(event: KeyboardEvent) {

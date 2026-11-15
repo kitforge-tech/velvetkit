@@ -31,6 +31,20 @@
 # `aspect:` is :square, :landscape or :portrait, and `fit:` is :contain (the whole
 # photo) or :cover (fills the frame, cropping). A single image gets no thumbnails
 # or arrows.
+#
+# `strip: false` leaves out the large image and thumbnails, for a page that
+# shows the images its own way, such as a grid of photos. Anything made with
+# `gallery.trigger(index)` opens that image in the overlay, and previous and
+# next go through all of them:
+#
+#   <%= render(UI::Gallery.new(strip: false, label: "Photos")) do |gallery| %>
+#     <% @photos.each { |photo| gallery.with_image(src: photo.url, alt: photo.alt) } %>
+#     <div class="grid grid-cols-4 gap-1">
+#       <% @photos.each_with_index do |photo, index| %>
+#         <%= gallery.trigger(index, class: "aspect-square") { image_tag(photo.thumb_url, alt: "") } %>
+#       <% end %>
+#     </div>
+#   <% end %>
 class UI::Gallery < UI::Base
   ASPECTS = { square: "aspect-square", landscape: "aspect-video", portrait: "aspect-[4/5]" }.freeze
   FITS = { contain: "object-contain", cover: "object-cover" }.freeze
@@ -45,12 +59,13 @@ class UI::Gallery < UI::Base
   # Always light on the dark backdrop, whatever the page's theme, ring included.
   # The border keeps them in sight on a dark page, where the backdrop is black too.
   OVERLAY_BUTTON = "rounded-full border border-white/25 bg-black/60 text-white hover:bg-black/80 hover:text-white " \
-                   "focus:ring-white disabled:bg-black/60! disabled:text-white/50!"
+                   "focus-visible:ring-white disabled:bg-black/60! disabled:text-white/50!"
 
   renders_many :images, UI::Gallery::Image
 
-  def initialize(label: nil, aspect: :square, fit: :contain, zoom: :overlay, zoom_scale: 2.5, class: nil, **html_attrs)
+  def initialize(label: nil, aspect: :square, fit: :contain, zoom: :overlay, zoom_scale: 2.5, strip: true, class: nil, **html_attrs)
     @label      = label
+    @strip      = strip
     @aspect     = ASPECTS.key?(aspect.to_sym) ? aspect.to_sym : :square
     @fit        = FITS.key?(fit.to_sym) ? fit.to_sym : :contain
     @zoom       = ZOOMS.include?(zoom.to_sym) ? zoom.to_sym : :overlay
@@ -61,12 +76,36 @@ class UI::Gallery < UI::Base
 
   def render? = images.any?
   def multiple? = images.size > 1
-  def hover_zoom? = @zoom == :hover
+  def strip? = @strip
+  def hover_zoom? = @zoom == :hover && strip?
+  def info? = images.any?(&:info?)
+
+  # A button that opens image `index` in the overlay. Its own image, if it has
+  # one, is where the overlay grows from and shrinks back to.
+  def trigger(index, class: nil, **html_attrs, &block)
+    image = images[index]
+    tag.button(type: "button", **html_attrs,
+               class: cn("group/trigger relative block cursor-zoom-in overflow-hidden focus:outline-none focus-visible:ring-2 " \
+                         "focus-visible:ring-primary focus-visible:ring-offset-2 ring-offset-background",
+                         binding.local_variable_get(:class)),
+               aria: { label: phrase(t("ui.gallery.open", default: "Open %{alt}"), alt: image&.alt), haspopup: "dialog" },
+               data: { action: "ui--gallery#open", "ui--gallery-index-param": index, "ui--gallery-target": "trigger" }) do
+      capture(&block) if block
+    end
+  end
+
+  def info_toggle_attrs
+    { variant: :ghost, size: :icon, class: cn(OVERLAY_BUTTON, "aria-expanded:bg-white aria-expanded:text-black aria-expanded:hover:bg-white/90"),
+      aria: { label: t("ui.gallery.info", default: "Info"), expanded: "false", controls: info_id },
+      data: { action: "ui--gallery#toggleInfo", "ui--gallery-target": "infoToggle" } }
+  end
+
+  def info_id = @info_id ||= "gallery-info-#{SecureRandom.hex(4)}"
 
   def root_attrs
     attrs = @html_attrs.except(:data, :aria)
     attrs[:role] = "group"
-    attrs[:class] = cn("flex w-full min-w-0 flex-col gap-3", @user_class)
+    attrs[:class] = cn(strip? ? "flex w-full min-w-0 flex-col gap-3" : "block min-w-0", @user_class)
     attrs[:aria] = { label: label, roledescription: t("ui.gallery.roledescription", default: "gallery") }
                    .merge(@html_attrs[:aria] || {})
     attrs[:data] = { slot: "gallery", controller: "ui--gallery", zoom: @zoom,
@@ -87,7 +126,7 @@ class UI::Gallery < UI::Base
     # One tab stop for the strip: the image showing. The rest are out of sight.
     { type: "button", tabindex: index.zero? ? 0 : -1,
       class: cn("group/slide relative block size-full rounded-lg transition-all focus:outline-none",
-                "focus:ring-2 focus:ring-inset focus:ring-primary", hover_zoom? ? "cursor-crosshair" : "cursor-zoom-in"),
+                "focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary", hover_zoom? ? "cursor-crosshair" : "cursor-zoom-in"),
       aria: { label: phrase(t("ui.gallery.zoom", default: "Zoom image %{current}: %{alt}"), current: index + 1, alt: image.alt),
               haspopup: "dialog" },
       data: { action: slide_action, "ui--gallery-index-param": index } }
@@ -96,7 +135,7 @@ class UI::Gallery < UI::Base
   # Covers the window with nothing of its own: only the image and its buttons sit
   # on the backdrop.
   def dialog_classes
-    "m-0 size-full max-h-none max-w-none overflow-hidden bg-transparent p-0 outline-none backdrop:bg-black/80"
+    "group/dialog m-0 size-full max-h-none max-w-none overflow-hidden bg-transparent p-0 outline-none backdrop:bg-black/80"
   end
 
   def viewport_classes
@@ -129,7 +168,7 @@ class UI::Gallery < UI::Base
   end
 
   def overlay_nav_attrs(direction)
-    edge = direction == :previous ? "start-4" : "end-4"
+    edge = direction == :previous ? "start-4" : "end-4 sm:group-data-[info]/dialog:end-84"
     { variant: :ghost, size: :icon,
       class: cn(OVERLAY_BUTTON, "absolute top-1/2 z-10 -translate-y-1/2", edge),
       aria: { label: nav_label(direction) }, data: { action: "ui--gallery##{direction}" } }

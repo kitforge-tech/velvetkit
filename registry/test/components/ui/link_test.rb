@@ -43,7 +43,7 @@ class UI::LinkTest < ViewComponent::TestCase
     link = page.find("a", text: "Delete")
     classes = link[:class].split
     assert_includes classes, "bg-destructive"
-    assert_includes classes, "focus:ring-destructive"
+    assert_includes classes, "focus-visible:ring-destructive"
   end
 
   def test_size_sm

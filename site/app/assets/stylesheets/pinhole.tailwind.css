@@ -1,0 +1,12 @@
+/* The example photo library's stylesheet, built beside the site's own: the
+   kit, Pinhole's theme, and only the classes the library uses. */
+@import "tailwindcss";
+@import "../tailwind/velvetkit.css";
+@import "../../../../examples/photos/app/assets/stylesheets/pinhole/theme.css";
+
+@source "../../../../examples/photos/app";
+@source "../../../../registry/app";
+
+body {
+  font-family: "Figtree", ui-sans-serif, system-ui, sans-serif;
+}

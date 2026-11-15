@@ -9,8 +9,10 @@
 align-center: { tabler: align-center, phosphor: text-align-center }
 align-left: { tabler: align-left, phosphor: text-align-left }
 align-right: { tabler: align-right, phosphor: text-align-right }
+arrow-down: { tabler: arrow-down, phosphor: arrow-down }
 arrow-left: { tabler: arrow-left, phosphor: arrow-left }
 arrow-right: { tabler: arrow-right, phosphor: arrow-right }
+arrow-up: { tabler: arrow-up, phosphor: arrow-up }
 badge-check: { tabler: rosette-discount-check, phosphor: seal-check }
 bar-chart-3: { tabler: chart-bar, phosphor: chart-bar }
 bell: { tabler: bell, phosphor: bell }
@@ -43,6 +45,7 @@ graduation-cap: { tabler: school, phosphor: graduation-cap }
 grip-vertical: { tabler: grip-vertical, phosphor: dots-six-vertical }
 home: { tabler: home, phosphor: house }
 inbox: { tabler: inbox, phosphor: tray }
+image: { tabler: photo, phosphor: image }
 info: { tabler: info-circle, phosphor: info }
 italic: { tabler: italic, phosphor: text-italic }
 keyboard: { tabler: keyboard, phosphor: keyboard }
@@ -76,6 +79,7 @@ settings: { tabler: settings, phosphor: gear }
 shield: { tabler: shield, phosphor: shield }
 shield-check: { tabler: shield-check, phosphor: shield-check }
 store: { tabler: building-store, phosphor: storefront }
+star: { tabler: star, phosphor: star }
 sun: { tabler: sun, phosphor: sun }
 sun-moon: { tabler: sun-moon, phosphor: circle-half }
 trash-2: { tabler: trash, phosphor: trash }

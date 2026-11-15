@@ -1,0 +1,12 @@
+/* The example dashboard's stylesheet, built beside the site's own: the kit,
+   Helio's blue theme, and only the classes the dashboard uses. */
+@import "tailwindcss";
+@import "../tailwind/velvetkit.css";
+@import "../../../../examples/dashboard/app/assets/stylesheets/helio/theme.css";
+
+@source "../../../../examples/dashboard/app";
+@source "../../../../registry/app";
+
+body {
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+}

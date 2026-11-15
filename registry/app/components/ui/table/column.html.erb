@@ -1,1 +1,1 @@
-<%= tag.th scope: "col", class: classes, **@html_attrs do %><%= content %><% end %>
+<%= tag.th(**th_attrs) do %><% if sortable? %><%= link_to @sort_href, class: link_classes do %><span><%= content %></span><%= render(UI::Icon.new(name: sort_icon, class: icon_classes)) %><% end %><% else %><%= content %><% end %><% end %>

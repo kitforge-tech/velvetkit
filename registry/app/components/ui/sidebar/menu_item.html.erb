@@ -1,1 +1,1 @@
-<%= tag.li(**@system_args) do %><%= content %><%= menu_button if menu_button %><% end %>
+<%= tag.li(**@system_args) do %><%= content %><%= menu_button if menu_button %><% if sub_menu? %><% links = sub_menu_html %><%= tag.button(**toggle_attrs) do %><%= render(UI::Icon.new(name: "chevron-right", size: :sm, class: "rtl:rotate-180")) %><% end %><%= links %><% end %><% end %>

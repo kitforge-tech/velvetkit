@@ -1,0 +1,5 @@
+<% content_for :title, @place.name %>
+<%= render "pinhole/shared/library", photos: @photos, crumbs: [ [ "Places", places_path ] ], title: @place.name,
+      sub: [ @place.region, photo_count(@photos.size), date_range(@photos) ].compact.join(" · "),
+      actions: %i[album favourite archive bin],
+      empty: { icon: "map-pin", title: "No photos here", description: "The photos from #{@place.name} are archived or in the bin." } %>

@@ -1,0 +1,7 @@
+<% favourite = library.favourite?(photo) %>
+<%= button_to photo_favourite_path(photo.id), method: :patch, form: { id: "fav-#{photo.id}", class: "contents", data: { turbo_stream: true } },
+      class: class_names("inline-flex size-9 items-center justify-center rounded-full border border-white/25 bg-black/60 text-white hover:bg-black/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-white",
+                { "text-amber-300" => favourite }),
+      aria: { label: favourite ? "Remove #{photo.title} from favourites" : "Add #{photo.title} to favourites", pressed: favourite.to_s } do %>
+  <%= render(UI::Icon.new(name: "star", class: class_names("size-4", { "fill-current" => favourite }))) %>
+<% end %>

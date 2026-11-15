@@ -1,1 +1,1 @@
-<%= tag.tr(**html_options) do %><%= cells.map(&:to_s).join.html_safe %><% end %>
+<%= tag.tr(**html_options) do %><% if selection_column? %><td class="w-px ps-3 pe-1 align-middle"><% if selectable? %><%= render(select_box) %><% end %></td><% end %><%= cells.map(&:to_s).join.html_safe %><% end %>

@@ -1,0 +1,23 @@
+<%# The viewer's Info panel for one photo. %>
+<h2 class="text-lg font-semibold leading-snug"><%= photo.title %></h2>
+<dl class="mt-5 space-y-4 text-sm">
+  <div class="flex gap-3">
+    <%= render(UI::Icon.new(name: "calendar", class: "mt-0.5 size-4 shrink-0 text-muted-foreground")) %>
+    <div><dt class="sr-only">Taken</dt><dd><%= photo.taken_at.strftime("%A, %-d %B %Y") %><span class="block text-muted-foreground"><%= photo.taken_at.strftime("%H:%M") %></span></dd></div>
+  </div>
+  <div class="flex gap-3">
+    <%= render(UI::Icon.new(name: "map-pin", class: "mt-0.5 size-4 shrink-0 text-muted-foreground")) %>
+    <div><dt class="sr-only">Place</dt><dd><%= link_to photo.place.name, place_path(photo.place.slug), class: "font-medium underline-offset-4 hover:underline" %><span class="block text-muted-foreground"><%= photo.place.region %></span></dd></div>
+  </div>
+  <div class="flex gap-3">
+    <%= render(UI::Icon.new(name: "aperture", class: "mt-0.5 size-4 shrink-0 text-muted-foreground")) %>
+    <div><dt class="sr-only">Camera</dt><dd><%= photo.exposure %><span class="block text-muted-foreground"><%= photo.megapixels %> MP · <%= photo.width %> × <%= photo.height %> · <%= photo.file_size %></span></dd></div>
+  </div>
+  <% if (albums = library.albums.select { |a| a.photo_ids.include?(photo.id) }).any? %>
+    <div class="flex gap-3">
+      <%= render(UI::Icon.new(name: "book-image", class: "mt-0.5 size-4 shrink-0 text-muted-foreground")) %>
+      <div><dt class="sr-only">Albums</dt><dd class="flex flex-wrap gap-1.5"><% albums.each do |a| %><%= link_to a.name, album_path(a), class: "rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium hover:bg-accent" %><% end %></dd></div>
+    </div>
+  <% end %>
+</dl>
+<p class="mt-6 flex flex-wrap gap-1.5"><% photo.tags.each do |tag| %><%= link_to "##{tag}", search_path(q: tag), class: "text-xs text-muted-foreground hover:text-foreground" %><% end %></p>

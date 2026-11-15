@@ -29,6 +29,10 @@ en:
         this_month: 'This month'
         last_month: 'Last month'
         this_year: 'This year'
+    carousel:
+      roledescription: 'carousel'
+      previous: 'Previous'
+      next: 'Next'
     chart:
       label: 'Chart'
       keyboard: 'Use the arrow keys to read each value.'
@@ -80,8 +84,18 @@ en:
       from: 'Minimum'
       to: 'Maximum'
       range_text: '%{from} – %{to}'
+    selection_bar:
+      label: 'Selection'
+      clear: 'Clear selection'
+      count:
+        one: '%{count} selected'
+        other: '%{count} selected'
     sidebar:
       toggle: 'Toggle sidebar'
+      toggle_sub: 'Show the links under %{name}'
+    table:
+      select_all: 'Select all rows'
+      select_row: 'Select %{label}'
     table_of_contents:
       label: 'On this page'
     navigation_menu:
@@ -154,6 +168,8 @@ en:
       zoom_out: 'Zoom out'
       thumbnail: 'Show image %{current}'
       position: 'Image %{current} of %{total}'
+      open: 'Open %{alt}'
+      info: 'Info'
     file_field:
       browse: 'Click to upload'
       drop: 'or drag and drop'

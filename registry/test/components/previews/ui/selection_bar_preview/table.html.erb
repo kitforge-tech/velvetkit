@@ -1,0 +1,26 @@
+<%# Each row has a box, and the header one chooses them all. The bar above
+    counts them and holds what to do with them; Shift-click chooses a run, and
+    Escape clears. The boxes belong to the "bulk" form, so the buttons post
+    them. %>
+<%= form_tag "#", id: "bulk" %></form>
+<div id="customers" class="max-w-2xl">
+  <%= render(UI::SelectionBar.new(for: "customers", label: "Selected customers", class: "rounded-t-md border")) do |bar| %>
+    <% bar.with_action do %><%= render(UI::Button.new(variant: :ghost, size: :sm, type: :submit, form: "bulk")) { "Export" } %><% end %>
+    <% bar.with_action do %><%= render(UI::Button.new(variant: :ghost, size: :sm, type: :submit, form: "bulk", class: "text-destructive")) { "Cancel plans" } %><% end %>
+  <% end %>
+  <%= render(UI::Table.new(selection: "ids[]", form: "bulk")) do |table| %>
+    <% table.with_head do |head| %>
+      <% head.with_column { "Customer" } %>
+      <% head.with_column { "Plan" } %>
+      <% head.with_column(align: :end) { "Seats" } %>
+    <% end %>
+    <% [ [ 1, "Aditi Rao", "Business", 24 ], [ 2, "Arjun Nair", "Team", 8 ], [ 3, "Chitra Menon", "Starter", 1 ],
+         [ 4, "Dev Patel", "Team", 12 ], [ 5, "Esha Iyer", "Business", 31 ] ].each do |id, name, plan, seats| %>
+      <% table.with_row(value: id, label: name) do |row| %>
+        <% row.with_cell(class: "font-medium") { name } %>
+        <% row.with_cell { plan } %>
+        <% row.with_cell(align: :end, class: "tabular-nums") { seats.to_s } %>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>
