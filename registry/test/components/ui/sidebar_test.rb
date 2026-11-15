@@ -102,4 +102,12 @@ class UI::SidebarTest < ViewComponent::TestCase
     assert_includes classes, "custom-sidebar"
     assert_includes classes, "peer"
   end
+
+  def test_inset_classes_replace_the_ones_they_clash_with
+    render_inline(UI::Sidebar::Inset.new(class: "bg-transparent md:peer-data-[variant=inset]:shadow-none")) { "Main" }
+    classes = page.find("main")[:class].split
+    assert_includes classes, "bg-transparent"
+    refute_includes classes, "bg-background"
+    refute_includes classes, "md:peer-data-[variant=inset]:shadow-sm"
+  end
 end

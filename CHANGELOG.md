@@ -39,6 +39,9 @@ Changes:
   or donut sits beside its legend by its own width, not the window's, so it
   fits a narrow card.
 - `Checkbox` shows a dash when it's partly checked (`indeterminate`).
+- Fix: a class given to `Sidebar::Inset` replaces the one it clashes with
+  (`bg-transparent` for its background, `shadow-none` for its shadow). Both
+  used to land on the element and the inset's own often won.
 
 Upgrading an app: re-run `velvetkit:add` for `sidebar`, `table`, `gallery`,
 `chart` and `checkbox`. A sidebar that passed `collapsible: :icon` to start

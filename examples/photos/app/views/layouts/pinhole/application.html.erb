@@ -66,14 +66,14 @@
         <% end %>
       <% end %>
 
-      <%= render(UI::Sidebar::Inset.new(class: "bg-transparent md:peer-data-[variant=inset]:m-0 md:peer-data-[variant=inset]:shadow-none")) do %>
+      <%= render(UI::Sidebar::Inset.new(class: "bg-transparent md:peer-data-[variant=inset]:m-0 md:peer-data-[variant=inset]:rounded-none md:peer-data-[variant=inset]:shadow-none")) do %>
         <header class="flex h-16 shrink-0 items-center gap-2 px-3 sm:gap-3 md:ps-0">
           <%= render(UI::Sidebar::Trigger.new(sidebar_id: "pinhole-sidebar", class: "size-9!")) %>
           <%= form_with url: search_path, method: :get, role: "search", class: "relative max-w-2xl flex-1" do %>
             <%= label_tag :q, "Search your photos", class: "sr-only" %>
             <%= render(UI::Icon.new(name: "search", class: "pointer-events-none absolute start-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground")) %>
             <%= search_field_tag :q, @query, placeholder: "Search “roses”, “Saltmarsh Bay”, “pets”…", autocomplete: "off",
-                  class: "h-11 w-full rounded-full border-0 bg-background ps-11 pe-4 text-sm shadow-xs outline-none ring-1 ring-border placeholder:text-muted-foreground focus:ring-2 focus:ring-ring md:bg-muted/70 md:shadow-none md:ring-0 md:focus:bg-background md:focus:ring-2" %>
+                  class: "h-11 w-full rounded-full border-0 bg-background ps-11 pe-4 text-sm outline-none ring-1 ring-border/70 placeholder:text-muted-foreground focus:ring-2 focus:ring-ring" %>
           <% end %>
           <div class="ms-auto flex items-center gap-1">
             <%= render(UI::ThemeToggle.new) %>
