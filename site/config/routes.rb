@@ -12,16 +12,16 @@ Rails.application.routes.draw do
   get "llms.txt", to: "llms#index", as: :llms, format: false
   get "llms-full.txt", to: "llms#full", as: :llms_full, format: false
 
-  get "docs", to: "docs#show", as: :docs, defaults: { page: "getting_started" }
-  get "docs/charts", to: "charts#show", as: :charts, defaults: { page: "overview" }
+  get "docs", to: "docs#show", as: :docs, defaults: { page: "getting_started" }, constraints: { format: /html|md/ }
+  get "docs/charts", to: "charts#show", as: :charts, defaults: { page: "overview" }, constraints: { format: /html|md/ }
   get "docs/charts/:page", to: "charts#show", as: :chart_doc,
-                           constraints: { page: Regexp.union(ChartsController::PAGES.keys.excluding("overview")) }
+                           constraints: { page: Regexp.union(ChartsController::PAGES.keys.excluding("overview")), format: /html|md/ }
   get "docs/components", to: "components#index", as: :components
   get "docs/components/:id", to: "components#show", as: :component, constraints: { format: /html|md/ }
   post "docs/forms/sign_in", to: "form_demos#sign_in", as: :form_demo_sign_in
   post "docs/forms/invitation", to: "form_demos#invitation", as: :form_demo_invitation
   post "docs/stepper/signup", to: "stepper_demos#create", as: :stepper_demo
-  get "docs/:page", to: "docs#show", as: :doc, constraints: { page: Regexp.union(DocsController::PAGES.keys) }
+  get "docs/:page", to: "docs#show", as: :doc, constraints: { page: Regexp.union(DocsController::PAGES.keys), format: /html|md/ }
 
   get "demo/rows", to: "demo_rows#index", as: :demo_rows, defaults: { format: :json }
   get "demo/customers", to: "demo_options#index", as: :demo_customers, defaults: { format: :json }

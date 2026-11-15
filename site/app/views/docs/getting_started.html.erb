@@ -32,7 +32,7 @@
 
   <ol class="relative space-y-12 border-l pl-8">
     <li class="relative space-y-4">
-      <span class="absolute -left-[2.85rem] grid size-7 place-items-center rounded-full border bg-background text-xs font-semibold">1</span>
+      <span aria-hidden="true" class="absolute -left-[2.85rem] grid size-7 place-items-center rounded-full border bg-background text-xs font-semibold">1</span>
       <h2 id="gem" class="text-xl font-semibold">Add the gem</h2>
       <p class="text-muted-foreground">VelvetKit only runs generators. Nothing loads from it in production, so it goes in the development group.</p>
       <%= code_block(%(gem "velvetkit", group: :development), label: "Gemfile") %>
@@ -40,7 +40,7 @@
     </li>
 
     <li class="relative space-y-4">
-      <span class="absolute -left-[2.85rem] grid size-7 place-items-center rounded-full border bg-background text-xs font-semibold">2</span>
+      <span aria-hidden="true" class="absolute -left-[2.85rem] grid size-7 place-items-center rounded-full border bg-background text-xs font-semibold">2</span>
       <h2 id="install" class="text-xl font-semibold">Install</h2>
       <p class="text-muted-foreground">Choose the module your components will live under. <code class="font-mono text-sm">UI</code> is the default. You can't easily change it later, so <%= link_to "read about namespacing", doc_path("namespacing"), class: "text-primary underline-offset-4 hover:underline" %> if you're unsure.</p>
       <%= code_block("bin/rails generate velvetkit:install --namespace=UI") %>
@@ -69,7 +69,7 @@
     </li>
 
     <li class="relative space-y-4">
-      <span class="absolute -left-[2.85rem] grid size-7 place-items-center rounded-full border bg-background text-xs font-semibold">3</span>
+      <span aria-hidden="true" class="absolute -left-[2.85rem] grid size-7 place-items-center rounded-full border bg-background text-xs font-semibold">3</span>
       <h2 id="add" class="text-xl font-semibold">Add components</h2>
       <p class="text-muted-foreground">Name the components you want. Each one brings the components it renders, so a dialog also brings the button and icon it uses.</p>
       <%= code_block("bin/rails generate velvetkit:add dialog date_picker") %>
@@ -77,7 +77,7 @@
     </li>
 
     <li class="relative space-y-4">
-      <span class="absolute -left-[2.85rem] grid size-7 place-items-center rounded-full border bg-background text-xs font-semibold">4</span>
+      <span aria-hidden="true" class="absolute -left-[2.85rem] grid size-7 place-items-center rounded-full border bg-background text-xs font-semibold">4</span>
       <h2 id="use" class="text-xl font-semibold">Render it</h2>
       <%= code_block(snippet("dialog.html.erb"), label: "app/views/settings/show.html.erb") %>
       <div class="flex items-center gap-4 rounded-lg border border-dashed p-6">
@@ -88,7 +88,7 @@
             <% content.with_description { "This cannot be undone." } %>
           <% end %>
         <% end %>
-        <span class="text-sm text-muted-foreground">← that's the real thing. Try it.</span>
+        <span class="text-sm text-muted-foreground" data-markdown="skip">← that's the real thing. Try it.</span>
       </div>
     </li>
   </ol>

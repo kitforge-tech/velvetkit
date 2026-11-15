@@ -18,14 +18,14 @@
     <% end %>
     <% tabs.with_panel(value: "preview", class: "pt-3") do %>
       <%# Rendered by our own partial and re-serialised, not user input. %>
-      <div data-outline-skip class="rounded-xl border bg-background p-4 sm:p-6"><%= chart.to_html.html_safe %></div>
+      <div data-outline-skip data-markdown="skip" class="rounded-xl border bg-background p-4 sm:p-6"><%= chart.to_html.html_safe %></div>
     <% end %>
     <% tabs.with_panel(value: "code", class: "pt-3") do %>
       <%= code_block(file.read, label: "app/views/reports/_#{File.basename(example)}.html.erb") %>
     <% end %>
     <% if table %>
       <% tabs.with_panel(value: "data", class: "pt-3") do %>
-        <div data-outline-skip class="overflow-x-auto rounded-xl border bg-background px-4 py-2 sm:px-6"><%= table.to_html.html_safe %></div>
+        <div data-outline-skip data-markdown="skip" class="overflow-x-auto rounded-xl border bg-background px-4 py-2 sm:px-6"><%= table.to_html.html_safe %></div>
       <% end %>
     <% end %>
   <% end %>

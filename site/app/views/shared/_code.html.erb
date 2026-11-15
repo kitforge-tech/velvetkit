@@ -5,7 +5,7 @@
     </div>
   <% end %>
   <div class="relative">
-    <pre class="<%= wrap ? "whitespace-pre-wrap" : "overflow-x-auto" %> p-4 pr-14 text-[13px] leading-relaxed"><code class="vk-code" data-clipboard-target="source"><%= html %></code></pre>
+    <pre class="<%= wrap ? "whitespace-pre-wrap" : "overflow-x-auto" %> p-4 pr-14 text-[13px] leading-relaxed"><code class="vk-code" data-clipboard-target="source" data-language="<%= local_assigns[:language] %>"><%= html %></code></pre>
     <%# Centred on the first line of code (p-4 + half a 21px line). %>
     <div class="absolute top-3 right-2">
       <span hidden role="tooltip" data-clipboard-target="label"

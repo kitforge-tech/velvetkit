@@ -41,6 +41,15 @@ class ReleaseNotes
     end
   end
 
+  # The released notes as Markdown, as CHANGELOG.md writes them (Unreleased
+  # left out, like the page), for agents and "Copy as Markdown". `limit:`
+  # keeps the newest few.
+  def self.markdown(limit: nil, text: FILE.read)
+    sections = text.split(/^(?=## )/).select { HEADING.match?(_1.lines.first.to_s.strip) }
+    sections = sections.first(limit) if limit
+    sections.map(&:strip).join("\n\n")
+  end
+
   def self.parse(text)
     text.split(/^(?=## )/).filter_map { |section| release(section) }
   end
