@@ -3,9 +3,10 @@ module ReleasesHelper
   # The velvet of the sidebar's current link, so the label reads as the
   # site's own in both themes.
   NEW_LABEL = "bg-primary/10 text-primary hover:bg-primary/10 dark:bg-primary/20 dark:text-[#c9a3f2] dark:hover:bg-primary/20"
-  # Code in the notes: a tint and a size a little under the words around it,
-  # so it reads as code without crowding them.
-  CODE = "rounded bg-muted px-1 py-0.5 font-mono text-[0.875em]"
+  # Code in the notes: the page's own font on a tint, rather than monospace,
+  # so a line reads as one sentence and the tint alone marks what's code.
+  # font-sans because a <code> element is monospace by default.
+  CODE = "rounded bg-muted px-1 py-0.5 font-sans"
 
   # A version's notes on the releases page. Every page's header links here,
   # so it doesn't read the changelog: a version with no section yet (RubyGems
