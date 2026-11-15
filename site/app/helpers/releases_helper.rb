@@ -1,5 +1,8 @@
 module ReleasesHelper
   UPGRADE_NOTE = /\AUpgrading an app: /
+  # The velvet of the sidebar's current link, so the label reads as the
+  # site's own in both themes.
+  NEW_LABEL = "bg-primary/10 text-primary hover:bg-primary/10 dark:bg-primary/20 dark:text-[#c9a3f2] dark:hover:bg-primary/20"
 
   # A version's notes on the releases page. Every page's header links here,
   # so it doesn't read the changelog: a version with no section yet (RubyGems
@@ -13,6 +16,16 @@ module ReleasesHelper
             class: class_names("rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring", html[:class]) do
       render(UI::Badge.new(variant: :outline, class: "hover:bg-accent")) { "v#{version}" }
     end
+  end
+
+  # The release that added a component, while it's one the newest minor
+  # version added; nil otherwise. Worked out once a request, as the sidebar
+  # asks it of every component.
+  def new_in(name) = (@new_components ||= ReleaseNotes.new_components)[name.to_s]
+
+  # "New", beside a component's name.
+  def new_label(text = "New", size: :sm, **html)
+    render(UI::Badge.new(variant: :secondary, size: size, class: NEW_LABEL, **html)) { text }
   end
 
   # A component a release added, as a chip: a link while the kit still has

@@ -34,4 +34,11 @@ class ReleasesHelperTest < ActionView::TestCase
     assert_select "code", text: "url:"
     assert_select "a code", count: 1
   end
+
+  test "a component is new while the newest minor version added it" do
+    name, release = ReleaseNotes.new_components.first
+    assert_equal release, new_in(name)
+    assert_equal release, new_in(name.to_sym)
+    assert_nil new_in((ComponentDoc.names - ReleaseNotes.new_components.keys).first)
+  end
 end
