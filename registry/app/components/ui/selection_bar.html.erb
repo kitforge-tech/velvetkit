@@ -1,0 +1,7 @@
+<%= tag.div(**root_attrs) do %>
+  <%= render(UI::Button.new(**clear_attrs)) do %><%= render(UI::Icon.new(name: "x", size: :sm)) %><% end %>
+  <%= tag.p class: "min-w-0 flex-1 truncate text-sm font-medium tabular-nums", aria: { live: "polite" }, data: { "ui--selection-bar-target": "count" } %>
+  <% if actions? %>
+    <div class="flex shrink-0 items-center gap-1"><% actions.each do |action| %><%= action %><% end %></div>
+  <% end %>
+<% end %>

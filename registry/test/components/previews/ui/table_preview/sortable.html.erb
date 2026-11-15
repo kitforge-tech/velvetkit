@@ -1,0 +1,20 @@
+<%# Sorting is the server's job: each header links to the list sorted by it,
+    and says which way it's sorted now. Here it's sorted by seats, most first;
+    in an app, `sort` and `dir` come from params. %>
+<% sort, dir = "seats", "desc" %>
+<% rows = [ [ "Aditi Rao", 24 ], [ "Arjun Nair", 8 ], [ "Chitra Menon", 1 ], [ "Dev Patel", 12 ] ] %>
+<% rows = rows.sort_by { |name, seats| sort == "customer" ? name : seats } %>
+<% rows.reverse! if dir == "desc" %>
+<% link = ->(column) { "?sort=#{column}&dir=#{sort == column && dir == 'asc' ? 'desc' : 'asc'}" } %>
+<%= render(UI::Table.new(class: "max-w-lg")) do |table| %>
+  <% table.with_head do |head| %>
+    <% head.with_column(sort_href: link.("customer"), sorted: (dir if sort == "customer")) { "Customer" } %>
+    <% head.with_column(sort_href: link.("seats"), sorted: (dir if sort == "seats"), align: :end) { "Seats" } %>
+  <% end %>
+  <% rows.each do |name, seats| %>
+    <% table.with_row do |row| %>
+      <% row.with_cell { name } %>
+      <% row.with_cell(align: :end, class: "tabular-nums") { seats.to_s } %>
+    <% end %>
+  <% end %>
+<% end %>

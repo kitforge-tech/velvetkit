@@ -42,6 +42,8 @@ components:
     description: A button that submits a one-off form, like Rails' button_to.
   card:
     description: A surface for one thing, with a header and action, body, footer and optional image.
+  carousel:
+    description: A row of cards that swipes and scrolls sideways, with buttons that show while there's more to see.
   chart:
     description: Line and bar charts, with a legend, tooltips and the numbers as a table, on Chart.js.
   checkbox:
@@ -67,7 +69,7 @@ components:
   form_field:
     description: A label, hint and error message wired to any form control.
   gallery:
-    description: A product's photos, with thumbnails, swiping, and a full-screen view to zoom in.
+    description: Photos with thumbnails, swiping, and a full-screen view to zoom in, opened from the page's own grid too.
   icon:
     description: An SVG icon from your chosen icon library, drawn inline on the server.
   image:
@@ -105,14 +107,18 @@ components:
     description: The browser's own select, styled closed; best for phones' system pickers.
   scan_input:
     description: A field for a barcode or QR scanner, submitting each code as it's scanned and keeping focus.
+  scrubber:
+    description: A rail down the side of a long list for jumping through it by date, by dragging or from the keyboard.
   select:
     description: A styled dropdown with keyboard navigation and type-ahead, posting like a native select.
+  selection_bar:
+    description: The count of rows or items chosen, a button to clear them and the actions for all of them at once.
   session_tabs:
     description: Browser-style tabs the user opens, renames, duplicates, reorders and closes.
   sheet:
     description: A panel that slides in from an edge of the screen.
   sidebar:
-    description: A collapsible application sidebar with groups and menus.
+    description: An app's sidebar with groups, links that open sub-menus, and a drawer on phones, collapsing to icons.
   skeleton:
     description: A pulsing placeholder shown in a piece of content's shape while it loads.
   slider:
@@ -124,7 +130,7 @@ components:
   switch:
     description: An on/off toggle.
   table:
-    description: A styled table with header, rows and caption.
+    description: A styled table with a caption, headers that sort, and rows to select.
   table_of_contents:
     description: An "On this page" list that follows the reader's scroll.
   tabs:

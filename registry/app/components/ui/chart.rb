@@ -15,7 +15,8 @@
 # Its legend gives each part's value and share, and a donut shows the total in
 # its middle. `format:` is :number, :currency or :percent (values from 0 to
 # 100), and the values are written in the app's locale: currency uses Rails'
-# own format for it, or `unit:` ("₹"). `nil` leaves a gap.
+# own format for it, or `unit:` ("₹"). `precision:` sets the decimals (0 for
+# whole dollars). `nil` leaves a gap.
 #
 # Each series takes the next of five colours, `--chart-1` to `--chart-5`, which
 # change with the theme. A series keeps its colour by its place in the list, so
@@ -26,6 +27,10 @@
 # Two or more series get a legend, and a line ends with its last value. Hover,
 # or focus the chart and use the arrow keys, for the values at each point; the
 # numbers are also in a table under "Show the data", for screen readers too.
+# `show_data: false` leaves the table to screen readers alone.
+#
+# A pie sits beside its legend when the chart is wide enough, measured by its
+# own width rather than the window's, so it fits a narrow card.
 # Chart.js loads when the first chart on a page appears, and each chart draws
 # when it scrolls into view: bars grow from the baseline and a line draws
 # itself from left to right, unless the system asks for reduced motion.
@@ -40,14 +45,16 @@ class UI::Chart < UI::Base
 
   Series = Struct.new(:name, :data, :color, keyword_init: true)
 
-  def initialize(labels:, series:, type: :line, label: nil, stacked: false, format: :number, unit: nil, height: 288,
-                 class: nil, **html_attrs)
+  def initialize(labels:, series:, type: :line, label: nil, stacked: false, format: :number, unit: nil, precision: nil,
+                 show_data: true, height: 288, class: nil, **html_attrs)
     @labels     = labels.map(&:to_s)
     @type       = TYPES.include?(type.to_sym) ? type.to_sym : :line
     @label      = label
     @stacked    = stacked && @type == :bar
     @format     = FORMATS.include?(format.to_sym) ? format.to_sym : :number
     @unit       = unit
+    @precision  = precision
+    @show_data  = show_data
     @height     = height
     @user_class = binding.local_variable_get(:class)
     @html_attrs = html_attrs
@@ -58,6 +65,7 @@ class UI::Chart < UI::Base
   attr_reader :labels, :series
 
   def legend? = circular? || @series.size > 1
+  def show_data? = @show_data
   def line? = @type == :line
   def circular? = CIRCULAR.include?(@type)
   def swatch_classes(entry) = cn(SWATCHES[entry.color], line? ? "h-0.5 w-3.5 rounded-full" : "size-2.5 rounded-sm")
@@ -76,7 +84,7 @@ class UI::Chart < UI::Base
 
   def legend_classes
     if circular?
-      "flex flex-col gap-2 text-sm sm:w-64 sm:shrink-0"
+      "flex flex-col gap-2 text-sm @md:w-64 @md:shrink-0"
     else
       "flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground"
     end
@@ -84,12 +92,12 @@ class UI::Chart < UI::Base
 
   # A pie sits beside its legend once there's room; the others keep it above.
   def body_classes
-    circular? ? "flex flex-col-reverse gap-4 sm:flex-row sm:items-center sm:gap-8" : "contents"
+    circular? ? "flex flex-col-reverse gap-4 @md:flex-row @md:items-center @md:gap-8" : "contents"
   end
 
   def root_attrs
     attrs = @html_attrs.except(:data)
-    attrs[:class] = cn("flex w-full min-w-0 flex-col gap-3", @user_class)
+    attrs[:class] = cn("@container flex w-full min-w-0 flex-col gap-3", @user_class)
     attrs[:data] = { slot: "chart", type: @type, controller: "ui--chart",
                      "ui--chart-config-value": config.to_json,
                      # Propshaft digests the filename, so the URL has to come from Ruby.
@@ -106,7 +114,7 @@ class UI::Chart < UI::Base
   end
 
   def frame_style = "height: #{@height.to_i}px"
-  def frame_classes = cn("relative w-full", { "sm:flex-1" => circular? })
+  def frame_classes = cn("relative w-full", { "@md:flex-1" => circular? })
 
   def label = @label || t("ui.chart.label", default: "Chart")
 
@@ -114,9 +122,9 @@ class UI::Chart < UI::Base
     return t("ui.chart.missing", default: "—") if value.nil?
 
     case @format
-    when :currency then ActiveSupport::NumberHelper.number_to_currency(value, **{ unit: @unit }.compact)
-    when :percent then ActiveSupport::NumberHelper.number_to_percentage(value, precision: 1, strip_insignificant_zeros: true)
-    else ActiveSupport::NumberHelper.number_to_delimited(value)
+    when :currency then ActiveSupport::NumberHelper.number_to_currency(value, **{ unit: @unit, precision: @precision }.compact)
+    when :percent then ActiveSupport::NumberHelper.number_to_percentage(value, precision: @precision || 1, strip_insignificant_zeros: @precision.nil?)
+    else ActiveSupport::NumberHelper.number_to_delimited(@precision ? value.to_f.round(@precision) : value)
     end
   end
 

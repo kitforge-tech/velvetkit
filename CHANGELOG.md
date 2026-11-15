@@ -2,10 +2,58 @@
 
 ## Unreleased
 
-- Docs: a second example, Helio, a dashboard you can use at
-  /examples/dashboard: a sidebar that collapses to icons, stat cards and
-  charts that change with the period, top customers and recent activity, in
-  its own blue theme with dark mode.
+New components:
+
+- `Carousel`: a row of cards that swipes and scrolls sideways, each stopping
+  at the edge, with previous and next buttons that show only while there's
+  more to see that way.
+- `SelectionBar`: "3 selected", a button to clear them and the actions for
+  all of them at once, over a `Table` with `selection:` or any list whose
+  boxes it can count. It keeps "select all" in step, Shift-click chooses a
+  run, and Escape clears.
+- `Scrubber`: a rail down the side of a long list for jumping through it by
+  date, with years marked, the date under the pointer, dragging like a
+  scrollbar, and one tab stop whose arrow keys move between the marks.
+
+Changes:
+
+- `Sidebar` is a drawer on phones, opened by the same trigger, with a
+  backdrop, Escape, and focus moved in and back. It sticks to the top and
+  fits the wrapper's height, so a bar above the app no longer pushes its
+  footer out of sight. Menu items take a sub-menu (`with_sub_menu`), opened
+  from an arrow beside the link and open when one of its links is the
+  current page, and `with_menu_button` takes `shape: :pill`. `collapsible:`
+  now says what the trigger does (:icon, :offcanvas or :none) and `state:`
+  whether it starts collapsed; left out, it's what the reader last chose,
+  kept in a cookie so the page is drawn that way from the start.
+- `Table`: headers sort with `sort_href:` and `sorted:` (and say so to
+  screen readers), `selection:` adds a checkbox to each row and one for
+  all, and `sticky_header: true` with `max_height:` keeps the header in sight.
+- `Gallery`: `strip: false` leaves the page to show the images its own
+  way, such as a grid of photos, and `gallery.trigger(index)` opens any of
+  them in the overlay. In the overlay, `image.with_info` shows in a panel
+  beside the image and `image.with_action` adds a button to the top bar.
+- `Chart`: `precision:` sets the decimals (0 for whole dollars), and
+  `show_data: false` leaves the table of numbers to screen readers. A pie
+  or donut sits beside its legend by its own width, not the window's, so it
+  fits a narrow card.
+- `Checkbox` shows a dash when it's partly checked (`indeterminate`).
+
+Upgrading an app: re-run `velvetkit:add` for `sidebar`, `table`, `gallery`,
+`chart` and `checkbox`. A sidebar that passed `collapsible: :icon` to start
+collapsed now passes `state: :collapsed`; `collapsible: :none` now means it
+can't collapse. The choice is kept in a cookie, not `localStorage`. The
+sidebar is no longer `position: fixed`, so a `transform` added to keep it
+inside a box can go; give the wrapper a height instead
+(`class: "h-[calc(100svh-3rem)]"`). Phones get the drawer, so a sheet that
+stood in for it can go too.
+
+- Docs: two more examples. Helio, a dashboard at /examples/dashboard, is the
+  admin side of a software company: customers to search, filter, sort,
+  choose and act on in bulk, a page for each with its invoices, activity
+  and notes, and an overview whose numbers change with the period. Pinhole,
+  a photo library at /examples/photos, has highlights, photos by day, a date
+  scrubber, albums, an archive and a bin, and a viewer with an info panel.
 
 - Docs: an Examples page, linked from the header, shows apps built with
   VelvetKit. The first, Daily Goods, is a shop you can use at

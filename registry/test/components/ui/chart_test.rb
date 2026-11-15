@@ -96,6 +96,26 @@ class UI::ChartTest < ViewComponent::TestCase
     assert_selector "td", text: "41.5%", visible: :all
   end
 
+  def test_precision_sets_the_decimals
+    render_chart(format: :currency, precision: 0)
+    assert_equal [ "$1,200", "$1,501", "$900" ], config["series"].first["text"]
+    render_chart(precision: 1, series: [ { name: "Load", data: [ 1234.56, 2, 3 ] } ])
+    assert_selector "td", text: "1,234.6", visible: :all
+  end
+
+  def test_show_data_false_keeps_the_table_for_screen_readers
+    render_chart(show_data: false)
+    assert_no_selector "details", visible: :all
+    assert_no_selector "summary", visible: :all
+    assert_selector "div.sr-only table td", text: "1,200", visible: :all
+  end
+
+  def test_a_pie_sits_beside_its_legend_by_its_own_width
+    render_chart(type: :donut, series: [ { name: "Plan", data: [ 1, 2, 3 ] } ])
+    assert_includes page.find("[data-slot='chart']")[:class], "@container"
+    assert_selector "div.\\@md\\:flex-row"
+  end
+
   def test_missing_values_leave_a_gap
     render_chart(series: [ { name: "Sales", data: [ 1, nil, 3 ] } ])
     assert_nil config["series"].first["data"][1]

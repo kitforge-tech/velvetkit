@@ -1,0 +1,16 @@
+<%# Any list can be chosen from: give its boxes data-selection="item". Here
+    each box shows on hover, and stays once anything is chosen. %>
+<div id="photo-grid" class="group/photos grid max-w-xl grid-cols-3 gap-1 pb-20">
+  <% UI::GalleryPreview.photos.cycle.first(9).each_with_index do |(title, src), index| %>
+    <label class="group/photo relative block aspect-square cursor-pointer overflow-hidden rounded-md has-[:checked]:ring-4 has-[:checked]:ring-primary has-[:checked]:ring-inset">
+      <img src="<%= src %>" alt="" class="size-full object-cover transition-transform group-has-[:checked]/photo:scale-90">
+      <span class="absolute start-2 top-2 opacity-0 transition-opacity group-hover/photo:opacity-100 group-data-[selecting]/photos:opacity-100 has-[:checked]:opacity-100 has-[:focus-visible]:opacity-100">
+        <%= render(UI::SelectionBar.checkbox(:item, name: "photos[]", value: index, label: "Select #{title} #{index + 1}")) %>
+      </span>
+    </label>
+  <% end %>
+</div>
+<%= render(UI::SelectionBar.new(for: "photo-grid", placement: :floating, label: "Selected photos", class: "absolute")) do |bar| %>
+  <% bar.with_action do %><%= render(UI::Button.new(variant: :ghost, size: :sm, class: "rounded-full")) { "Add to album" } %><% end %>
+  <% bar.with_action do %><%= render(UI::Button.new(variant: :ghost, size: :sm, class: "rounded-full")) { "Delete" } %><% end %>
+<% end %>

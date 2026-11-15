@@ -1,0 +1,24 @@
+<%# The list scrolls in its own box here, so the scrubber names it with
+    `for:`; on a page that scrolls, leave `for:` out. Each month's heading is
+    a mark, years are labelled, and a busy month takes more of the rail. %>
+<% months = (0...18).map { |i| Date.new(2026, 11, 1) << i } %>
+<div class="relative flex h-[32rem] max-w-2xl overflow-hidden rounded-lg border">
+  <div id="scrubber-demo-list" class="min-w-0 flex-1 overflow-y-auto">
+    <div class="space-y-6 p-4">
+      <% months.each_with_index do |month, i| %>
+        <section>
+          <h3 id="month-<%= month.strftime('%Y-%m') %>" class="sticky top-0 bg-background/95 py-1 text-sm font-medium"><%= month.strftime("%B %Y") %></h3>
+          <div class="grid grid-cols-6 gap-1">
+            <% ((i * 7) % 11 + 3).times do |n| %><div class="aspect-square rounded-sm bg-muted"></div><% end %>
+          </div>
+        </section>
+      <% end %>
+    </div>
+  </div>
+  <%= render(UI::Scrubber.new(label: "Jump to a month", for: "scrubber-demo-list", class: "shrink-0")) do |scrubber| %>
+    <% months.each do |month| %>
+      <% scrubber.with_mark(href: "#month-#{month.strftime('%Y-%m')}", label: month.strftime("%B %Y"),
+                            major: (month.year.to_s if month == months.find { |m| m.year == month.year })) %>
+    <% end %>
+  <% end %>
+</div>

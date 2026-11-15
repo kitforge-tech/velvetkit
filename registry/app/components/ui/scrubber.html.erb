@@ -1,0 +1,18 @@
+<%= tag.nav(**root_attrs) do %>
+  <%= tag.div class: "absolute inset-y-3 inset-x-0 cursor-ns-resize",
+              data: { "ui--scrubber-target": "rail",
+                      action: "pointerdown->ui--scrubber#grab pointermove->ui--scrubber#point pointerup->ui--scrubber#release " \
+                              "pointercancel->ui--scrubber#release pointerleave->ui--scrubber#leave" } do %>
+    <ol>
+      <% marks.each_with_index do |mark, index| %>
+        <li><%= tag.a(**mark_attrs(mark, index)) do %><% if mark.major %><%= mark.major %><% else %><span class="size-1 rounded-full bg-muted-foreground/40"></span><% end %><% end %></li>
+      <% end %>
+    </ol>
+    <%= tag.div aria: { hidden: true }, data: { "ui--scrubber-target": "thumb" },
+                class: "pointer-events-none absolute end-0 top-0 h-0.5 w-7 -translate-y-1/2 rounded-full bg-primary invisible group-data-[ready]/scrubber:visible" %>
+    <%= tag.div aria: { hidden: true }, data: { "ui--scrubber-target": "tip" },
+                class: "pointer-events-none absolute end-full top-0 me-1 -translate-y-1/2 whitespace-nowrap rounded-md border bg-popover px-2 py-1 " \
+                       "text-xs font-medium text-popover-foreground shadow-md invisible opacity-0 transition-opacity duration-100 " \
+                       "data-[shown]:visible data-[shown]:opacity-100 motion-reduce:transition-none" %>
+  <% end %>
+<% end %>

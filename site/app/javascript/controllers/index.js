@@ -114,3 +114,12 @@ application.register("ui--money-input", UI__MoneyInputController)
 
 import UI__ScanInputController from "./ui/scan_input_controller"
 application.register("ui--scan-input", UI__ScanInputController)
+
+import UI__CarouselController from "./ui/carousel_controller"
+application.register("ui--carousel", UI__CarouselController)
+
+import UI__ScrubberController from "./ui/scrubber_controller"
+application.register("ui--scrubber", UI__ScrubberController)
+
+import UI__SelectionBarController from "./ui/selection_bar_controller"
+application.register("ui--selection-bar", UI__SelectionBarController)

@@ -12,9 +12,9 @@ class ReleasesHelperTest < ActionView::TestCase
   end
 
   test "a component the kit no longer has is a chip without a link" do
-    render html: release_component_chip("Carousel")
+    render html: release_component_chip("Lightbox")
     assert_select "a", count: 0
-    assert_includes rendered, "Carousel"
+    assert_includes rendered, "Lightbox"
   end
 
   test "an upgrade note's lead-in becomes its title" do
