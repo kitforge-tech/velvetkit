@@ -81,8 +81,11 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      # The series, not site/.ruby-version's patch: runner images only carry
+      # the latest patch of each series, as for the jobs above.
       - uses: ruby/setup-ruby@v1
         with:
+          ruby-version: "3.4"
           working-directory: site
           bundler-cache: true
 
