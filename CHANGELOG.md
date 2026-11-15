@@ -2,22 +2,28 @@
 
 ## Unreleased
 
+## 0.5.0 — 2026-11-15
+
 New components:
 
 - `Carousel`: a row of cards that swipes and scrolls sideways, each stopping
   at the edge, with previous and next buttons that show only while there's
   more to see that way.
 - `SelectionBar`: "3 selected", a button to clear them and the actions for
-  all of them at once, over a `Table` with `selection:` or any list whose
+  all of them at once, over a table with `selection:` or any list whose
   boxes it can count. It keeps "select all" in step, Shift-click chooses a
   run, and Escape clears. An "all" box inside a `data-selection-group`
   chooses just that group, such as a day's photos.
 - `Scrubber`: a rail down the side of a long list for jumping through it by
   date, with years marked, the date under the pointer, dragging like a
   scrollbar, and one tab stop whose arrow keys move between the marks.
+- `Fieldset`: a group of controls under one legend, with a hint and an error
+  message for the group.
 
 Changes:
 
+- `RadioGroup` and `ToggleGroup` take `legend:`, `hint:` and `error:`,
+  through the new `Fieldset`. (#87)
 - `Sidebar` is a drawer on phones, opened by the same trigger, with a
   backdrop, Escape, and focus moved in and back. It sticks to the top and
   fits the wrapper's height, so a bar above the app no longer pushes its
@@ -42,11 +48,26 @@ Changes:
 - Buttons, links, tabs, menu items, checkboxes, radios and switches show
   their focus ring for the keyboard only (`:focus-visible`), not after a
   mouse click. Text fields keep theirs on click.
+- Docs: two more examples. Helio, a dashboard at /examples/dashboard, is the
+  admin side of a software company: customers to search, filter, sort,
+  choose and act on in bulk, a page for each with its invoices, activity
+  and notes, and an overview whose numbers change with the period. Pinhole,
+  a photo library at /examples/photos, has highlights, photos by day, a date
+  scrubber, albums, an archive and a bin, and a viewer with an info panel.
+- Docs: an Examples page, linked from the header, shows apps built with
+  VelvetKit. The first, Daily Goods, is a shop you can use at
+  /examples/store: a front page with categories, reviews and a newsletter
+  signup, filters (price, rating, colour, features) and sorting, a cart, and
+  a page for each product with photos, details and reviews, all without a
+  page reload. A sign-in flow is on the way.
 - Fix: a collapsed `inset` or `floating` sidebar is wide enough for its
   icons; they were clipped by the panel's padding.
 - Fix: a class given to `Sidebar::Inset` replaces the one it clashes with
   (`bg-transparent` for its background, `shadow-none` for its shadow). Both
   used to land on the element and the inset's own often won.
+- Fix: `Select` puts `aria-label` and `aria-labelledby` on its visible button.
+  They went on the hidden native select, which left the dropdown with no name
+  for screen readers. (#80)
 
 Upgrading an app: re-run `velvetkit:add` for `sidebar`, `table`, `gallery`,
 `chart` and `checkbox`. A sidebar that passed `collapsible: :icon` to start
@@ -56,24 +77,6 @@ sidebar is no longer `position: fixed`, so a `transform` added to keep it
 inside a box can go; give the wrapper a height instead
 (`class: "h-[calc(100svh-3rem)]"`). Phones get the drawer, so a sheet that
 stood in for it can go too.
-
-- Docs: two more examples. Helio, a dashboard at /examples/dashboard, is the
-  admin side of a software company: customers to search, filter, sort,
-  choose and act on in bulk, a page for each with its invoices, activity
-  and notes, and an overview whose numbers change with the period. Pinhole,
-  a photo library at /examples/photos, has highlights, photos by day, a date
-  scrubber, albums, an archive and a bin, and a viewer with an info panel.
-
-- Docs: an Examples page, linked from the header, shows apps built with
-  VelvetKit. The first, Daily Goods, is a shop you can use at
-  /examples/store: a front page with categories, reviews and a newsletter
-  signup, filters (price, rating, colour, features) and sorting, a cart, and
-  a page for each product with photos, details and reviews, all without a
-  page reload. A sign-in flow is on the way.
-
-- Fix: `Select` puts `aria-label` and `aria-labelledby` on its visible button.
-  They went on the hidden native select, which left the dropdown with no name
-  for screen readers. (#80)
 
 Upgrading an app: `RadioGroup` and `ToggleGroup` now render through the new
 `Fieldset`, so re-run `velvetkit:add radio_group toggle_group` to get it with
