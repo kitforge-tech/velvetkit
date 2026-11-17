@@ -103,25 +103,27 @@ class UI::RatingTest < ViewComponent::TestCase
 
   # --- Chosen -----------------------------------------------------------------
 
-  def test_a_name_makes_it_a_radio_for_each_star
+  def test_a_name_makes_it_a_radio_for_each_half_star
     render_inline(UI::Rating.new(name: "review[rating]", id: "rate"))
     assert_selector "div#rate[role='radiogroup'][aria-label='Rating'][data-controller='ui--rating']"
-    assert_equal %w[1 2 3 4 5], page.all("input[type='radio'][name='review[rating]']", visible: :all).map(&:value)
+    expected = %w[0.5 1 1.5 2 2.5 3 3.5 4 4.5 5]
+    actual = page.all("input[type='radio'][name='review[rating]']", visible: :all).map(&:value)
+    assert_equal expected, actual
     assert_selector "label[for='rate-3'][data-ui--rating-target='star'] span.sr-only", text: "3 out of 5"
     assert_no_selector "[role='img']"
   end
 
-  def test_the_value_checks_its_star
-    render_inline(UI::Rating.new(name: "rating", value: 3))
-    assert_equal [ "3" ], page.all("input[checked]", visible: :all).map(&:value)
+  def test_a_half_star_value_checks_its_option
+    render_inline(UI::Rating.new(name: "rating", value: 0.5))
+    assert_equal [ "0.5" ], page.all("input[checked]", visible: :all).map(&:value)
   end
 
-  def test_a_fractional_value_checks_the_nearest_star
+  def test_a_fractional_value_checks_the_nearest_half_star
     render_inline(UI::Rating.new(name: "rating", value: 3.6))
-    assert_equal [ "4" ], page.all("input[checked]", visible: :all).map(&:value)
+    assert_equal [ "3.5" ], page.all("input[checked]", visible: :all).map(&:value)
   end
 
-  def test_each_star_is_lit_by_css_up_to_the_checked_one
+  def test_each_half_star_is_lit_by_css_up_to_the_checked_one
     render_inline(UI::Rating.new(name: "rating"))
     classes = page.find("label", match: :first)[:class].split
     assert_includes classes, "[input:checked+&]:text-amber-500"
@@ -129,16 +131,18 @@ class UI::RatingTest < ViewComponent::TestCase
     assert_includes classes, "data-[lit=true]:!text-amber-500"
   end
 
-  def test_radios_sit_before_their_stars
+  def test_each_radio_sits_before_its_half_star
     render_inline(UI::Rating.new(name: "rating", max: 3))
-    assert_equal %w[input label input label input label], page.all("[role='radiogroup'] > *", visible: :all).map(&:tag_name)
+    expected = Array.new(6) { %w[input label] }.flatten
+    actual = page.all("[role='radiogroup'] > *", visible: :all).map(&:tag_name)
+    assert_equal expected, actual
   end
 
   def test_hover_and_change_wiring
     render_inline(UI::Rating.new(name: "rating"))
     assert_selector "[data-action='mouseleave->ui--rating#reset']"
-    assert_selector "label[data-action='mouseenter->ui--rating#preview']", count: 5
-    assert_selector "input[data-action='change->ui--rating#reset']", count: 5, visible: :all
+    assert_selector "label[data-action='mouseenter->ui--rating#preview']", count: 10
+    assert_selector "input[data-action='change->ui--rating#reset']", count: 10, visible: :all
   end
 
   def test_label_names_the_field
@@ -148,8 +152,8 @@ class UI::RatingTest < ViewComponent::TestCase
 
   def test_required_and_disabled
     render_inline(UI::Rating.new(name: "rating", required: true, disabled: true))
-    assert_selector "input[required][disabled]", count: 5, visible: :all
-    assert_selector "label.cursor-not-allowed.opacity-50", count: 5
+    assert_selector "input[required][disabled]", count: 10, visible: :all
+    assert_selector "label.cursor-not-allowed.opacity-50", count: 10
   end
 
   def test_a_legend_renders_through_fieldset

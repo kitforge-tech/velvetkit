@@ -11,9 +11,9 @@ require "securerandom"
 #   <%= render(UI::Rating.new(value: 4.5, count: 128, show_value: true)) %>
 #
 # Given a `name:` (or `form:` and `field:`), it's a field: a radio for each
-# star, so it posts with the form, resets with it and needs no JavaScript.
-# Arrow keys move between the stars, and the stars up to the chosen one fill
-# as it changes. With JavaScript, hovering a star previews the score it gives.
+# half-star, so it posts in 0.5-point steps, resets with the form and needs no
+# JavaScript. Arrow keys move between the half-star values. With JavaScript,
+# hovering either half previews the score it gives.
 #
 #   <%= render(UI::Rating.new(name: "review[rating]", legend: "Your rating", required: true)) %>
 #
@@ -47,6 +47,8 @@ class UI::Rating < UI::Base
          "[input:checked+&]:text-amber-500 [&:has(~input:checked)]:text-amber-500 " \
          "data-[lit=true]:!text-amber-500 data-[lit=false]:!text-muted-foreground/30 " \
          "[input:focus-visible+&]:outline-2 [input:focus-visible+&]:outline-offset-2 [input:focus-visible+&]:outline-ring"
+  STAR_HALF_SIZE = { sm: "h-4 w-2", default: "h-5 w-2.5", lg: "h-6 w-3" }.freeze
+  STAR_GAP = { sm: "me-0.5", default: "me-0.5", lg: "me-1" }.freeze
 
   def initialize(value: nil, max: 5, size: :default, icon: "star",
                  show_value: false, count: nil,
@@ -111,11 +113,16 @@ class UI::Rating < UI::Base
 
   # --- Chosen -----------------------------------------------------------------
 
-  def chosen = score&.round
+  # Twice the selected score, so a half-star radio is an integer step.
+  def chosen_steps = score && (score * 2).round
 
   def group_id = @group_id ||= @html_attrs[:id] || "ui-rating-#{SecureRandom.hex(4)}"
-  def option_id(star) = "#{group_id}-#{star}"
-  def option_label(star) = t("ui.rating.option", count: star, max: @max, default: "%{count} out of %{max}")
+  def option_id(value) = "#{group_id}-#{value}"
+  def option_value(step)
+    whole, half = step.divmod(2)
+    half.zero? ? whole : "#{whole}.5"
+  end
+  def option_label(value) = t("ui.rating.option", count: value, max: @max, default: "%{count} out of %{max}")
   def required? = @required
   def disabled? = @disabled
 
@@ -141,10 +148,15 @@ class UI::Rating < UI::Base
     attrs[:role] = "radiogroup" unless wrapped
     attrs[:aria] = group_aria unless wrapped
     attrs[:id] = group_id
-    attrs[:class] = cn(variant_classes(size: @size), "w-fit", @user_class)
+    attrs[:class] = cn(variant_classes(size: @size), "w-fit gap-0", @user_class)
     attrs[:data] = { controller: "ui--rating", action: "mouseleave->ui--rating#reset" }.merge(@html_attrs[:data] || {})
     attrs
   end
 
-  def star_classes = cn(STAR, { "cursor-not-allowed opacity-50" => @disabled })
+  def star_classes(step)
+    cn(STAR, STAR_HALF_SIZE.fetch(@size), (STAR_GAP.fetch(@size) if step.even?),
+       { "cursor-not-allowed opacity-50" => @disabled })
+  end
+
+  def star_icon_classes(step) = cn("absolute inset-y-0 flex", step.odd? ? "start-0" : "-start-full")
 end
