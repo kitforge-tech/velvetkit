@@ -105,6 +105,8 @@ components:
     description: A bar showing how far along a task is, or that it's still going.
   radio_group:
     description: A set of radio buttons.
+  rating:
+    description: A score in stars, shown to the half star with its count, or chosen with a radio for each star.
   native_select:
     description: The browser's own select, styled closed; best for phones' system pickers.
   scan_input:

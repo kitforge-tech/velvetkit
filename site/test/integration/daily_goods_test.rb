@@ -67,7 +67,7 @@ class DailyGoodsTest < ActionDispatch::IntegrationTest
     assert_select "[data-slot=gallery] img", minimum: 2
     assert_select "#cart-repair-serum button", /Add to cart/
     assert_select "#reviews li", 3
-    assert_select "#reviews [role=img][aria-label='4.7 out of 5 stars']"
+    assert_select "#reviews [role=img][aria-label='Rated 4.7 out of 5']"
     assert_select "#related-heading + div article", 4
     assert_select "#related-heading + div article h3", minimum: 1
 

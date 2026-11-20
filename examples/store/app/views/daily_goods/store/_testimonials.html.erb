@@ -5,7 +5,7 @@
     <div>
       <h2 id="testimonials-heading" class="text-2xl font-medium sm:text-3xl">Loved by our customers</h2>
       <p class="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
-        <%= render "daily_goods/reviews/stars", rating: DailyGoods::Review.average(DailyGoods::Review::ALL) %>
+        <%= render(UI::Rating.new(value: DailyGoods::Review.average(DailyGoods::Review::ALL), size: :sm)) %>
         <%= number_with_precision(DailyGoods::Review.average(DailyGoods::Review::ALL), precision: 1) %> from <%= pluralize(DailyGoods::Review::ALL.size, "review") %>
       </p>
     </div>
@@ -14,7 +14,7 @@
     <% picks.each do |review| %>
       <% product = DailyGoods::Product.find(review.product) %>
       <li class="flex flex-col gap-4 rounded-3xl bg-neutral-100 p-6 dark:bg-card">
-        <%= render "daily_goods/reviews/stars", rating: review.rating %>
+        <%= render(UI::Rating.new(value: review.rating, size: :sm)) %>
         <blockquote class="flex-1">
           <p class="font-heading text-xl leading-snug">“<%= review.title %>”</p>
           <p class="mt-2 leading-relaxed text-muted-foreground"><%= review.body %></p>

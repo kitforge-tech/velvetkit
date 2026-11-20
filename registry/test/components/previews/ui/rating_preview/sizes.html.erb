@@ -1,0 +1,6 @@
+<div class="flex flex-col gap-4">
+  <%= render(UI::Rating.new(value: 4.5, size: :sm, show_value: true, count: 89)) %>
+  <%= render(UI::Rating.new(value: 4.5, show_value: true, count: 89)) %>
+  <%= render(UI::Rating.new(value: 4.5, size: :lg, class: "text-base", show_value: true, count: 89)) %>
+  <%= render(UI::Rating.new(name: "size_lg", value: 4, size: :lg, label: "Large rating")) %>
+</div>
