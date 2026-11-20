@@ -1,0 +1,1 @@
+<%= render(UI::Sidebar.new(id: "app-sidebar", state: :collapsed)) do |sidebar| %>

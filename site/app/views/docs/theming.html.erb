@@ -10,7 +10,8 @@
     <p class="text-lg text-muted-foreground">Components never name a colour. They use tokens such as <code class="font-mono text-base">bg-primary</code> and <code class="font-mono text-base">rounded-md</code>, so to retheme you change the token values, not the components.</p>
   </header>
 
-  <section class="space-y-4" data-controller="theme-playground">
+  <%# The playground is for trying, so its Markdown leaves it out. %>
+  <section class="space-y-4" data-controller="theme-playground" data-markdown="skip">
     <div class="flex items-center gap-3">
       <h2 id="playground" class="text-2xl font-semibold tracking-tight">Make it yours</h2>
       <%= render(UI::Badge.new(variant: :secondary)) { "Live" } %>
@@ -66,14 +67,14 @@
   <section class="space-y-4">
     <h2 id="tokens" class="text-2xl font-semibold tracking-tight">The colour tokens</h2>
     <p class="text-muted-foreground">They're defined in <code class="font-mono text-sm">app/assets/tailwind/velvetkit.css</code>, once for light and once under <code class="font-mono text-sm">.dark</code>. Switch the theme at the top of the page to see both sets.</p>
-    <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+    <ul class="grid grid-cols-2 gap-3 sm:grid-cols-3" aria-label="Colour tokens">
       <% %w[background foreground primary primary-foreground secondary muted muted-foreground accent destructive border input card popover sidebar].each do |token| %>
-        <div class="flex items-center gap-3 rounded-lg border p-2.5">
+        <li class="flex items-center gap-3 rounded-lg border p-2.5">
           <span class="size-9 shrink-0 rounded-md border shadow-inner" style="background: var(--<%= token %>)"></span>
           <code class="truncate font-mono text-xs">--<%= token %></code>
-        </div>
+        </li>
       <% end %>
-    </div>
+    </ul>
   </section>
 
   <section class="space-y-4">

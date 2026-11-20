@@ -52,6 +52,13 @@ Files for a component named `thing`:
   (tailwind-merge) — look at a sibling component close to what you're
   building (`alert.rb`/`banner.rb` for a simple one, `sheet/content.rb` for a
   side-variant one) rather than inventing a new shape.
+- Focus rings use `UI::Base::FOCUS_RING`, on `:focus` rather than
+  `:focus-visible`: the ring shows on click as well as on Tab. That's the
+  kit's signature, not a bug, and the docs site keeps it on a clicked link
+  across visits (`site/app/javascript/focus_carry.js`). Don't move a
+  component to `:focus-visible` or drop its ring without the maintainer's
+  sign-off. The few that are keyboard-only (Slider, Scrubber, NavigationMenu
+  and others) are listed in `registry/test/components/ui/base_test.rb`.
 - Any rendered string goes in `registry/config/locales/velvetkit.en.yml`
   under `ui.thing.*`, read with `t("ui.thing.the_key", default: "…")` —
   never hardcoded, so a consumer app can translate it.

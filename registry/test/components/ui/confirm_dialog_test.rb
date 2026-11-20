@@ -49,6 +49,9 @@ class UI::ConfirmDialogTest < ViewComponent::TestCase
   def test_labels_come_from_i18n
     # Built from the dotted scope so the namespaced run stores it under its own scope.
     labels = "ui.confirm_dialog".split(".").reverse.inject({ confirm: "OK", cancel: "Never mind" }) { |h, k| { k => h } }
+    # Load the locale files first: I18n loads them on its first lookup, which
+    # would put the kit's own labels back over these when this test runs first.
+    I18n.backend.eager_load!
     I18n.backend.store_translations(:en, labels)
     render_inline(UI::ConfirmDialog.new)
     assert_equal "OK", dialog["data-ui--confirm-dialog-confirm-label-value"]
