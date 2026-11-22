@@ -33,6 +33,8 @@ en:
       roledescription: 'carousel'
       previous: 'Previous'
       next: 'Next'
+      dots: 'Choose a slide'
+      dot: 'Go to slide %{number}'
     chart:
       label: 'Chart'
       keyboard: 'Use the arrow keys to read each value.'
