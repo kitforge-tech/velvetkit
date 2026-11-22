@@ -38,14 +38,14 @@ class UI::Rating < UI::Base
 
   # A filled star's colour, and an empty one's.
   ON  = "text-amber-500"
-  OFF = "text-muted-foreground/30"
+  OFF = "text-muted-foreground/20"
 
   # A field's star: lit when its own radio or a later one is checked, so the
   # stars up to the chosen one fill without JavaScript. While the pointer is
   # over the stars, the controller marks each one lit or not, which wins.
-  STAR = "relative cursor-pointer rounded-sm transition-colors text-muted-foreground/30 " \
+  STAR = "relative cursor-pointer rounded-sm transition-colors text-muted-foreground/20 " \
          "[input:checked+&]:text-amber-500 [&:has(~input:checked)]:text-amber-500 " \
-         "data-[lit=true]:!text-amber-500 data-[lit=false]:!text-muted-foreground/30 " \
+         "data-[lit=true]:!text-amber-500 data-[lit=false]:!text-muted-foreground/20 " \
          "[input:focus-visible+&]:outline-2 [input:focus-visible+&]:outline-offset-2 [input:focus-visible+&]:outline-ring"
   STAR_HALF_SIZE = { sm: "h-4 w-2", default: "h-5 w-2.5", lg: "h-6 w-3" }.freeze
   STAR_GAP = { sm: "me-0.5", default: "me-0.5", lg: "me-1" }.freeze

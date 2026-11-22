@@ -30,7 +30,7 @@ class UI::RatingTest < ViewComponent::TestCase
     assert_selector "[role='img'] > svg.text-amber-500", count: 3
     assert_selector "[role='img'] > span.relative", count: 1
     assert_selector "[role='img'] > span.relative > span.w-1\\/2.overflow-hidden svg"
-    assert_selector "[role='img'] > svg.text-muted-foreground\\/30", count: 1
+    assert_selector "[role='img'] > svg.text-muted-foreground\\/20", count: 1
   end
 
   def test_rounds_to_whole_stars_when_closer
@@ -42,7 +42,7 @@ class UI::RatingTest < ViewComponent::TestCase
 
   def test_no_score_is_five_empty_stars
     render_inline(UI::Rating.new)
-    assert_selector "[role='img'][aria-label='Rated 0 out of 5'] > svg.text-muted-foreground\\/30", count: 5
+    assert_selector "[role='img'][aria-label='Rated 0 out of 5'] > svg.text-muted-foreground\\/20", count: 5
   end
 
   def test_a_score_out_of_range_is_held_to_it
