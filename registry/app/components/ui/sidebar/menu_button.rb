@@ -33,7 +33,7 @@ class UI::Sidebar::MenuButton < UI::Base
 
     @system_args[:class] = cn(
       "peer/menu-button flex w-full items-center gap-2 overflow-hidden text-left text-sm outline-hidden ring-sidebar-ring " \
-      "transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 " \
+      "transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus:ring-2 " \
       "active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 " \
       "group-has-data-[sidebar=menu-action]/menu-item:pe-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 " \
       "data-[active=true]:font-semibold data-[active=true]:text-sidebar-primary data-[active=true]:[&>svg]:stroke-current " \

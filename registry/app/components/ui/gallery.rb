@@ -59,7 +59,7 @@ class UI::Gallery < UI::Base
   # Always light on the dark backdrop, whatever the page's theme, ring included.
   # The border keeps them in sight on a dark page, where the backdrop is black too.
   OVERLAY_BUTTON = "rounded-full border border-white/25 bg-black/60 text-white hover:bg-black/80 hover:text-white " \
-                   "focus-visible:ring-white disabled:bg-black/60! disabled:text-white/50!"
+                   "focus:ring-white disabled:bg-black/60! disabled:text-white/50!"
 
   renders_many :images, UI::Gallery::Image
 
@@ -85,8 +85,8 @@ class UI::Gallery < UI::Base
   def trigger(index, class: nil, **html_attrs, &block)
     image = images[index]
     tag.button(type: "button", **html_attrs,
-               class: cn("group/trigger relative block cursor-zoom-in overflow-hidden focus:outline-none focus-visible:ring-2 " \
-                         "focus-visible:ring-primary focus-visible:ring-offset-2 ring-offset-background",
+               class: cn("group/trigger relative block cursor-zoom-in overflow-hidden focus:outline-none focus:ring-2 " \
+                         "focus:ring-primary focus:ring-offset-2 ring-offset-background",
                          binding.local_variable_get(:class)),
                aria: { label: phrase(t("ui.gallery.open", default: "Open %{alt}"), alt: image&.alt), haspopup: "dialog" },
                data: { action: "ui--gallery#open", "ui--gallery-index-param": index, "ui--gallery-target": "trigger" }) do
@@ -126,7 +126,7 @@ class UI::Gallery < UI::Base
     # One tab stop for the strip: the image showing. The rest are out of sight.
     { type: "button", tabindex: index.zero? ? 0 : -1,
       class: cn("group/slide relative block size-full rounded-lg transition-all focus:outline-none",
-                "focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary", hover_zoom? ? "cursor-crosshair" : "cursor-zoom-in"),
+                "focus:ring-2 focus:ring-inset focus:ring-primary", hover_zoom? ? "cursor-crosshair" : "cursor-zoom-in"),
       aria: { label: phrase(t("ui.gallery.zoom", default: "Zoom image %{current}: %{alt}"), current: index + 1, alt: image.alt),
               haspopup: "dialog" },
       data: { action: slide_action, "ui--gallery-index-param": index } }

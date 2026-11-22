@@ -24,7 +24,13 @@ class ChartsController < ApplicationController
   # list rather than from the request.
   def show
     @chart_page = PAGES.keys.find { |page| page == params[:page] } or raise ActionController::RoutingError, "Not Found"
-    render @chart_page
+    respond_to do |format|
+      format.html { render @chart_page }
+      format.md do
+        html = render_to_string(@chart_page, layout: false, formats: [ :html ])
+        render plain: PageMarkdown.from_html(html, base_url: request.base_url), content_type: "text/markdown"
+      end
+    end
   end
 
   def self.path_for(page, routes = Rails.application.routes.url_helpers)

@@ -39,6 +39,16 @@ class ReleaseNotesTest < ActiveSupport::TestCase
     assert_equal "v0-4-1", releases.first.id
   end
 
+  test "as Markdown: the releases as written, without Unreleased" do
+    markdown = ReleaseNotes.markdown(text: CHANGELOG)
+    assert markdown.start_with?("## 0.4.1 — 2026-11-09\n\nNew components:")
+    assert_includes markdown, "## 0.2.2 — 2026-11-02"
+    refute_includes markdown, "Unreleased"
+    refute_includes markdown, "Rating"
+    assert_equal "## 0.4.1", ReleaseNotes.markdown(limit: 1, text: CHANGELOG).lines.first.strip[0, 8]
+    refute_includes ReleaseNotes.markdown(limit: 1, text: CHANGELOG), "0.2.2"
+  end
+
   test "sorts lines into new components, changes, fixes and notes" do
     release = ReleaseNotes.parse(CHANGELOG).first
     assert_equal [ "`Slider`: a handle to drag for a value, or two for a range.", "`Skeleton` and `FileField`." ], release.components

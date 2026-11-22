@@ -56,8 +56,32 @@ class PagesTest < ActionDispatch::IntegrationTest
     assert_select "ul[aria-label='New components in 0.4.1'] a[href=?]", component_path("money_input")
     assert_select "h2", text: "Unreleased", count: 0
     assert_select "aside[aria-label='Upgrading an app for 0.4.2'] p", text: "Upgrading an app"
+    # Its steps are a list, and a release's notes share one box.
+    assert_select "aside[aria-label='Upgrading an app for 0.4.2'] li", 4
+    assert_select "aside[aria-label='Upgrading an app for 0.4.2'] li", text: /\ARe-run/
+    assert_select "aside[aria-label='Upgrading an app for 0.5.0']", 1
     # Notes are read in place, not announced as the page loads.
     assert_select "main [role=alert], main [aria-live]", count: 0
+  end
+
+  test "the upgrading guide takes an app from 0.4 to 0.5, linked from the release notes" do
+    get doc_path("upgrading")
+    assert_select "h2#from-0-4", text: "From 0.4 to 0.5"
+    assert_select "pre", text: /UI::Sidebar\.new\(id: "app-sidebar", collapsible: :icon\)/
+    assert_select "pre", text: /UI::Sidebar\.new\(id: "app-sidebar", state: :collapsed\)/
+
+    # Every component a 0.5 release says to add again is in the one command.
+    command = css_select("pre").map(&:text).find { _1.include?("velvetkit:add") }
+    ReleaseNotes.all.select { _1.minor == [ 0, 5 ] }.flat_map(&:notes).grep(/\AUpgrading an app:/).each do |note|
+      # "re-run `velvetkit:add` for `a`, `b` and `c`." or "re-run `velvetkit:add a b`".
+      sentence = note[/velvetkit:add.*?(?:\.\s|\.\z)/m].to_s
+      names = sentence.scan(/`([a-z_]+)`/).flatten + sentence[/\Avelvetkit:add ([a-z_ ]+)`/, 1].to_s.split
+      assert names.any?, "No components found in: #{note}"
+      names.each { |name| assert_includes command.split, name, "#{name} is missing from the guide's velvetkit:add" }
+    end
+
+    get doc_path("releases")
+    assert_select "header a[href=?]", doc_path("upgrading")
   end
 
   test "the version badge in the header and footer opens its release notes" do

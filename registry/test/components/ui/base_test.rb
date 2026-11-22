@@ -95,4 +95,31 @@ class UI::BaseTest < ViewComponent::TestCase
     btn = page.find("button")
     refute_includes btn[:class], "border-2"
   end
+
+  # The ring on click is VelvetKit's signature (AGENTS.md, "Focus rings"):
+  # 0.5.0 moved it to :focus-visible by mistake and 0.5.1 put it back. If this
+  # fails, don't rewrite it to match; ask the maintainer first.
+  def test_the_focus_ring_shows_on_click
+    assert_includes UI::Base::FOCUS_RING, "focus:ring-2"
+    assert_includes UI::Base::FOCUS_RING, "focus:ring-primary"
+    refute_match(/focus-visible:ring/, UI::Base::FOCUS_RING)
+  end
+
+  # Components whose ring is keyboard-only, each a deliberate choice made
+  # before 0.5. A new one needs the maintainer's sign-off, then a place here.
+  KEYBOARD_ONLY_RINGS = %w[
+    input_group/addon navigation_menu/item navigation_menu/link scrubber
+    session_tabs/tab slider stepper/step
+  ].freeze
+
+  def test_no_other_component_has_a_keyboard_only_ring
+    # Beside base.rb, wherever the kit is (the namespaced run renames ui/).
+    root = File.dirname(Object.const_source_location(UI::Base.name).first)
+    keyboard_only = Dir.glob("**/*.{rb,html.erb}", base: root).select do |file|
+      File.read(File.join(root, file)).match?(/focus-visible:ring/)
+    end.map { _1.sub(/\.(rb|html\.erb)\z/, "") }.uniq.sort
+
+    assert_equal KEYBOARD_ONLY_RINGS.sort, keyboard_only,
+                 "The focus ring shows on click as well as on Tab (AGENTS.md). Ask the maintainer before using :focus-visible."
+  end
 end

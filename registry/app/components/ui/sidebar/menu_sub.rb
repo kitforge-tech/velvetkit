@@ -50,7 +50,7 @@ class UI::Sidebar::MenuSub < UI::Base
     link_to(item.path, aria: { current: ("page" if item.active) },
                        data: { active: item.active.to_s },
                        class: "flex h-7 min-w-0 items-center gap-2 rounded-md px-2 text-sm text-sidebar-foreground/80 outline-hidden " \
-                              "ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 " \
+                              "ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus:ring-2 " \
                               "data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground " \
                               "[&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0") do
       capture(&item.content)

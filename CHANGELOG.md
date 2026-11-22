@@ -2,6 +2,25 @@
 
 ## Unreleased
 
+## 0.5.1 — 2026-11-15
+
+Changes:
+
+- Fix: the focus ring shows on click again, as well as on Tab. 0.5.0 moved
+  it to `:focus-visible`, so a click on a button, link, tab, menu item,
+  checkbox, radio, switch, sidebar link or gallery button drew no ring. (#95)
+- Docs: an Upgrading guide at /docs/upgrading takes an app from 0.4 to 0.5
+  in one place: one `velvetkit:add` for every changed component, and the
+  sidebar's `collapsible:` and `state:` with before and after code. (#98)
+- Docs: every guide and chart page is also Markdown, at the same address
+  with `.md`, and llms.txt links them. The upgrading guide and the release
+  notes can be copied as Markdown or opened in Claude or ChatGPT, and
+  llms-full.txt ends with both. (#100)
+
+Upgrading an app: re-run `velvetkit:add` for `base`, `button`, `link`,
+`badge`, `tabs`, `accordion`, `menu`, `checkbox`, `radio_group`, `switch`,
+`sidebar` and `gallery`.
+
 ## 0.5.0 — 2026-11-15
 
 New components:

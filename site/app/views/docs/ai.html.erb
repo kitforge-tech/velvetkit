@@ -12,7 +12,8 @@
     <p class="text-lg text-muted-foreground">Most UI is written by an agent now. VelvetKit gives it the context to use your components correctly, so it doesn't invent new ones.</p>
   </header>
 
-  <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+  <%# Links to the sections below, so the Markdown leaves them out. %>
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-3" data-markdown="skip">
     <% [
          [ "bot", "Your agent installs it", "One prompt sets the kit up and teaches the agent where to read.", "#install" ],
          [ "folder-git-2", "A reference in your repo", "docs/velvetkit.md: what's installed, in your namespace.", "#in-your-repo" ],
@@ -80,8 +81,8 @@
       <% [
            [ "file-text", "llms.txt", llms_path, "An index of the docs and components, in the llmstxt.org format." ],
            [ "files", "llms-full.txt", llms_full_path, "Setup, rules and every component with examples, in one file." ],
-           [ "file-code", "Any component as Markdown", component_path("dialog", format: :md), "Add .md to a component's address, like /docs/components/dialog.md." ],
-           [ "clipboard-copy", "Copy for AI", component_path("dialog"), "On every component page: copy its Markdown, or open it in Claude or ChatGPT." ]
+           [ "file-code", "Any page as Markdown", component_path("dialog", format: :md), "Add .md to a docs page's address, like /docs/components/dialog.md or /docs/upgrading.md." ],
+           [ "clipboard-copy", "Copy for AI", component_path("dialog"), "On every component page, the upgrading guide and the release notes: copy the Markdown, or open it in Claude or ChatGPT." ]
          ].each do |icon, title, path, text| %>
         <%= link_to path, class: "group flex gap-3 rounded-lg border p-4 transition-colors hover:border-primary/50" do %>
           <%= render(UI::Icon.new(name: icon, size: :sm, class: "mt-0.5 text-primary dark:text-fuchsia-300")) %>

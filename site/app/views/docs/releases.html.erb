@@ -8,7 +8,9 @@
       <% bc.with_item(href: doc_path("releases"), text: "Release notes", current: true) %>
     <% end %>
     <h1 class="text-4xl font-bold tracking-tight">Release notes</h1>
-    <p class="text-lg text-muted-foreground">What each version of VelvetKit added, changed and fixed, newest first. Components are copied into your app, so updating the gem changes nothing on its own: re-run <code class="font-mono text-base">velvetkit:add</code> for a component to pick up its changes.</p>
+    <p class="text-lg text-muted-foreground">What each version of VelvetKit added, changed and fixed, newest first. Components are copied into your app, so updating the gem changes nothing on its own: re-run <%= release_code("velvetkit:add") %> for a component to pick up its changes. Moving up a minor version? <%= link_to "Upgrading", doc_path("upgrading"), class: "text-primary underline-offset-4 hover:underline" %> has every step in one place.</p>
+    <%= render "shared/ask_ai", markdown: @markdown, markdown_path: doc_path("releases", format: :md), markdown_url: doc_url("releases", format: :md),
+                                topic: "Release notes", prompt: DocsController::ASK_AI["releases"] %>
   </header>
 
   <% releases.each_with_index do |release, index| %>
@@ -32,7 +34,7 @@
             <% end %>
           </ul>
           <% if release.descriptions.any? %>
-            <ul class="list-disc space-y-2 pl-5 text-sm">
+            <ul class="list-disc space-y-2 pl-5 leading-7">
               <% release.descriptions.each do |line| %>
                 <li><%= release_text(line) %></li>
               <% end %>
@@ -44,7 +46,7 @@
       <% if release.changes.any? %>
         <div class="space-y-3">
           <h3 class="font-semibold">Changes</h3>
-          <ul class="list-disc space-y-2 pl-5 text-sm">
+          <ul class="list-disc space-y-2 pl-5 leading-7">
             <% release.changes.each do |line| %>
               <li><%= release_text(line) %></li>
             <% end %>
@@ -55,7 +57,7 @@
       <% if release.fixes.any? %>
         <div class="space-y-3">
           <h3 class="font-semibold">Fixes</h3>
-          <ul class="list-disc space-y-2 pl-5 text-sm">
+          <ul class="list-disc space-y-2 pl-5 leading-7">
             <% release.fixes.each do |line| %>
               <li><%= release_text(line) %></li>
             <% end %>
@@ -65,13 +67,20 @@
 
       <%# Not UI::Alert: that's a live region, and a screen reader would
           announce every note on the page as it loads. %>
-      <% release.notes.each do |note| %>
-        <% title, text = release_note_parts(note) %>
-        <aside class="space-y-1 rounded-lg border bg-muted/40 px-4 py-3 text-sm" aria-label="<%= title || "Note" %> for <%= release.version %>">
-          <% if title %>
-            <p class="flex items-center gap-2 font-medium"><%= render(UI::Icon.new(name: "info", size: :sm)) %><%= title %></p>
-          <% end %>
-          <p class="text-muted-foreground"><%= release_text(text) %></p>
+      <% steps = upgrade_steps(release.notes) %>
+      <% if steps.any? %>
+        <aside class="space-y-2 rounded-lg border bg-muted/40 px-4 py-3" aria-label="Upgrading an app for <%= release.version %>">
+          <p class="flex items-center gap-2 font-medium"><%= render(UI::Icon.new(name: "info", size: :sm)) %>Upgrading an app</p>
+          <ul class="list-disc space-y-1.5 pl-5 leading-7 marker:text-muted-foreground">
+            <% steps.each do |step| %>
+              <li><%= release_text(step) %></li>
+            <% end %>
+          </ul>
+        </aside>
+      <% end %>
+      <% other_notes(release.notes).each do |note| %>
+        <aside class="rounded-lg border bg-muted/40 px-4 py-3" aria-label="Note for <%= release.version %>">
+          <p class="leading-7"><%= release_text(note) %></p>
         </aside>
       <% end %>
     </section>

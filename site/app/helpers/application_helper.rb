@@ -41,8 +41,9 @@ module ApplicationHelper
   # the label nor the code says what it is.
   def code_block(source, label: nil, wrap: false, language: nil)
     source = source.strip
-    html = highlight(source, language || language_for(source, label, wrap))
-    render "shared/code", html: html, label: label, wrap: wrap, track: copy_event(source)
+    language ||= language_for(source, label, wrap)
+    html = highlight(source, language)
+    render "shared/code", html: html, label: label, wrap: wrap, track: copy_event(source), language: language
   end
 
   # Prose stays plain. Otherwise the label's file name decides, then the
@@ -78,8 +79,8 @@ module ApplicationHelper
   end
 
   # Links that open an AI chat already asking about a page.
-  def ask_ai_links(markdown_url, topic)
-    prompt = "Read #{markdown_url} and help me use #{topic} from VelvetKit in my Rails app."
+  def ask_ai_links(markdown_url, topic, prompt: nil)
+    prompt = "Read #{markdown_url} and #{prompt || "help me use #{topic} from VelvetKit in my Rails app"}."
     {
       "Claude" => "https://claude.ai/new?q=#{ERB::Util.url_encode(prompt)}",
       "ChatGPT" => "https://chatgpt.com/?q=#{ERB::Util.url_encode(prompt)}"
