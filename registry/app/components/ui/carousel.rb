@@ -76,14 +76,24 @@ class UI::Carousel < UI::Base
   # A dot for each card; the controller hides those past the last place the
   # strip can stop, as they'd all scroll to the end. The dot is small, so its
   # ::after reaches across the gap and a finger's height to be easy to tap.
+  #
+  # How lit a dot is follows the scroll, the way the dots under a phone's home
+  # screen do: the controller sets `--fill` from 0 to 1 as its card comes into
+  # place, and the dot widens into a pill as its colour fills in. So there's
+  # no transition on either, which would trail behind a finger.
+  #
+  # A dot draws no focus ring: the lit dot already shows which card is in
+  # view, and a ring round a dot this small swamps it.
   def dot_attrs(index)
     { type: "button", hidden: true,
-      class: cn(FOCUS_RING, "relative size-2 shrink-0 cursor-pointer rounded-full bg-foreground/20 hover:bg-foreground/40",
-                "after:absolute after:-inset-x-1 after:-inset-y-2",
-                "aria-[current=true]:w-6 aria-[current=true]:bg-primary"),
+      class: cn("relative h-2 w-[calc(0.5rem+1rem*var(--fill,0))] shrink-0 outline-none",
+                "cursor-pointer rounded-full bg-foreground/20 hover:bg-foreground/40",
+                "after:absolute after:-inset-x-1 after:-inset-y-2"),
       aria: { label: t("ui.carousel.dot", number: index + 1, default: "Go to slide %{number}"), controls: track_id },
       data: { action: "ui--carousel#go", "ui--carousel-target": "dot", "ui--carousel-index-param": index } }
   end
+
+  DOT_FILL = "absolute inset-0 rounded-full bg-primary opacity-[var(--fill,0)]"
 
   def track_id = @track_id ||= "carousel-#{SecureRandom.hex(4)}"
 end

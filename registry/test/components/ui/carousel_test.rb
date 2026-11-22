@@ -46,12 +46,23 @@ class UI::CarouselTest < ViewComponent::TestCase
     assert dots.all? { _1[:"aria-controls"] == track && _1[:"data-action"] == "ui--carousel#go" }
   end
 
-  def test_a_dot_has_the_kits_focus_ring_and_lights_when_current
+  # The dots draw no focus ring: the lit dot shows which card is in view.
+  def test_a_dot_draws_no_focus_ring
     render_carousel(dots: true)
     classes = page.first("[data-ui--carousel-target=dot]", visible: :all)[:class].split
-    assert_includes classes, "focus:ring-2"
-    assert_includes classes, "aria-[current=true]:bg-primary"
-    assert_includes classes, "aria-[current=true]:w-6"
+    refute classes.any? { _1.include?("focus") || _1.include?("ring") }
+    assert_includes classes, "outline-none"
+  end
+
+  # The controller sets --fill as the strip scrolls; the dot widens and fills
+  # with it, with no transition to trail behind the scroll.
+  def test_a_dot_widens_and_fills_with_the_scroll
+    render_carousel(dots: true)
+    dot = page.first("[data-ui--carousel-target=dot]", visible: :all)
+    classes = dot[:class].split
+    assert_includes classes, "w-[calc(0.5rem+1rem*var(--fill,0))]"
+    refute classes.any? { _1.start_with?("transition") }
+    assert_includes dot.find("span[aria-hidden=true]", visible: :all)[:class].split, "opacity-[var(--fill,0)]"
   end
 
   # The dots sit under the strip, so the buttons centre on the strip alone.

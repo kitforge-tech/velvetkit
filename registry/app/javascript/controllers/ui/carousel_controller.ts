@@ -81,20 +81,33 @@ export default class extends Controller<HTMLElement> {
   }
 
   // A dot for each place the strip can stop, and none when it can't scroll.
-  // The lit one is the stop nearest where it's scrolled to.
+  // Between two stops, the one it's leaving empties as the one it's nearing
+  // fills, in step with the scroll, so the pill slides with a finger rather
+  // than jumping halfway. The current one is the fuller of the two.
   private light(scrolled: number) {
     const stops = this.stops();
-    const shown = this.dotTargets.map((_, index) => index === 0 || stops[index] - stops[index - 1] > EDGE);
-    const scrolls = shown.filter(Boolean).length > 1;
-    let lit = 0;
-    stops.forEach((stop, index) => {
-      if (shown[index] && Math.abs(stop - scrolled) < Math.abs(stops[lit] - scrolled)) lit = index;
-    });
+    const shown = this.dotTargets.flatMap((_, index) =>
+      index === 0 || stops[index] - stops[index - 1] > EDGE ? [index] : [],
+    );
+    const fills = this.dotTargets.map(() => 0);
+    const after = shown.findIndex((index) => stops[index] > scrolled);
+    if (after <= 0) {
+      fills[shown[after === 0 ? 0 : shown.length - 1]] = 1;
+    } else {
+      const from = shown[after - 1];
+      const to = shown[after];
+      const progress = (scrolled - stops[from]) / (stops[to] - stops[from]);
+      fills[from] = 1 - progress;
+      fills[to] = progress;
+    }
+    const lit = fills.indexOf(Math.max(...fills));
+    const scrolls = shown.length > 1;
 
     this.dotTargets.forEach((dot, index) => {
-      const hidden = !scrolls || !shown[index];
+      const hidden = !scrolls || !shown.includes(index);
       if (hidden && scrolls && document.activeElement === dot) this.dotTargets[lit].focus();
       dot.hidden = hidden;
+      dot.style.setProperty('--fill', fills[index].toFixed(3));
       if (index === lit) dot.setAttribute('aria-current', 'true');
       else dot.removeAttribute('aria-current');
     });

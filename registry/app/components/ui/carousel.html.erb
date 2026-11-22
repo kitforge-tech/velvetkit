@@ -7,6 +7,6 @@
     <%= render(UI::Button.new(**button_attrs(:next))) do %><%= render(UI::Icon.new(name: "chevron-right", size: :sm, class: "rtl:rotate-180")) %><% end %>
   </div>
   <% if dots? %>
-    <%= tag.div(**dots_attrs) do %><% items.each_index do |index| %><%= tag.button(**dot_attrs(index)) %><% end %><% end %>
+    <%= tag.div(**dots_attrs) do %><% items.each_index do |index| %><%= tag.button(**dot_attrs(index)) do %><span aria-hidden="true" class="<%= UI::Carousel::DOT_FILL %>"></span><% end %><% end %><% end %>
   <% end %>
 <% end %>
