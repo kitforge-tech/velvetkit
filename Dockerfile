@@ -22,7 +22,7 @@
 # The container listens on port 80 (Thruster in front of Puma) and answers
 # GET /up when healthy.
 
-ARG RUBY_VERSION=3.4.5
+ARG RUBY_VERSION=3.4.13
 FROM docker.io/library/ruby:$RUBY_VERSION-slim AS base
 
 WORKDIR /velvetkit/site
