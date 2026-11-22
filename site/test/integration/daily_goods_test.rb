@@ -88,7 +88,7 @@ class DailyGoodsTest < ActionDispatch::IntegrationTest
     post "/examples/store/products/night-balm/reviews", params: { review: { rating: "", author: "", body: "ok" } }, headers: turbo
     assert_response :unprocessable_entity
     assert_match %(target="review-form"), response.body
-    assert_match "Choose from one to five stars.", response.body
+    assert_match "Choose a rating from half a star to five stars.", response.body
     assert_match "at least 10 characters", response.body
 
     post "/examples/store/products/night-balm/reviews", params: { review: { rating: "4", author: "Alex", body: "Soaks in overnight." } }, headers: turbo

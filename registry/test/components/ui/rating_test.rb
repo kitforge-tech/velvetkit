@@ -131,6 +131,15 @@ class UI::RatingTest < ViewComponent::TestCase
     assert_includes classes, "data-[lit=true]:!text-amber-500"
   end
 
+  # The kit's ring shows on click as well as on Tab (AGENTS.md, "Focus rings").
+  def test_the_focused_half_star_gets_the_focus_ring_on_click
+    render_inline(UI::Rating.new(name: "rating"))
+    classes = page.find("label", match: :first)[:class].split
+    assert_includes classes, "[input:focus+&]:ring-2"
+    assert_includes classes, "[input:focus+&]:ring-primary"
+    refute classes.any? { _1.include?("focus-visible") }
+  end
+
   def test_each_radio_sits_before_its_half_star
     render_inline(UI::Rating.new(name: "rating", max: 3))
     expected = Array.new(6) { %w[input label] }.flatten
