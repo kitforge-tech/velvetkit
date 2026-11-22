@@ -36,17 +36,19 @@ class UI::Rating < UI::Base
     defaults: { size: :default }
   )
 
-  # A filled star's colour, and an empty one's.
+  # A filled star's colour, and an empty one's. The empty grey is a solid
+  # token, not a see-through one: the icon's fill and stroke overlap, and a
+  # see-through colour doubles where they do, outlining every empty star.
   ON  = "text-amber-500"
-  OFF = "text-muted-foreground/20"
+  OFF = "text-border dark:text-muted"
 
   # A field's star: lit when its own radio or a later one is checked, so the
   # stars up to the chosen one fill without JavaScript. While the pointer is
   # over the stars, the controller marks each one lit or not, which wins. The
   # ring is UI::Base::FOCUS_RING, on the star whose hidden radio has focus.
-  STAR = "relative cursor-pointer rounded-sm transition-all text-muted-foreground/20 " \
+  STAR = "relative cursor-pointer rounded-sm transition-all text-border dark:text-muted " \
          "[input:checked+&]:text-amber-500 [&:has(~input:checked)]:text-amber-500 " \
-         "data-[lit=true]:!text-amber-500 data-[lit=false]:!text-muted-foreground/20 " \
+         "data-[lit=true]:!text-amber-500 data-[lit=false]:!text-border dark:data-[lit=false]:!text-muted " \
          "[input:focus+&]:ring-2 [input:focus+&]:ring-primary [input:focus+&]:ring-offset-1 ring-offset-background"
   STAR_HALF_SIZE = { sm: "h-4 w-2", default: "h-5 w-2.5", lg: "h-6 w-3" }.freeze
   STAR_GAP = { sm: "me-0.5", default: "me-0.5", lg: "me-1" }.freeze
