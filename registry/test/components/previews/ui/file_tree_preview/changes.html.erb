@@ -2,12 +2,12 @@
 <%= render(UI::FileTree.new(label: "Changed files", class: "max-w-xs")) do |tree| %>
   <% tree.with_folder(name: "app", open: true) do |app| %>
     <% app.with_folder(name: "controllers", open: true) do |controllers| %>
-      <% controllers.with_file(name: "orders_controller.rb", href: "#") do %><span class="text-amber-600 dark:text-amber-400">M</span><% end %>
+      <% controllers.with_file(name: "orders_controller.rb", value: "app/controllers/orders_controller.rb") do %><span class="text-amber-600 dark:text-amber-400">M</span><% end %>
     <% end %>
     <% app.with_folder(name: "models", open: true) do |models| %>
-      <% models.with_file(name: "order.rb", href: "#") do %><span class="text-amber-600 dark:text-amber-400">M</span><% end %>
-      <% models.with_file(name: "refund.rb", href: "#", active: true) do %><span class="text-emerald-600 dark:text-emerald-400">A</span><% end %>
+      <% models.with_file(name: "order.rb", value: "app/models/order.rb") do %><span class="text-amber-600 dark:text-amber-400">M</span><% end %>
+      <% models.with_file(name: "refund.rb", value: "app/models/refund.rb", active: true) do %><span class="text-emerald-600 dark:text-emerald-400">A</span><% end %>
     <% end %>
   <% end %>
-  <% tree.with_file(name: "legacy_export.rb", href: "#") do %><span class="text-destructive">D</span><% end %>
+  <% tree.with_file(name: "legacy_export.rb", value: "legacy_export.rb") do %><span class="text-destructive">D</span><% end %>
 <% end %>
