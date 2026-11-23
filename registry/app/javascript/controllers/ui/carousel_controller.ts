@@ -4,17 +4,17 @@ import { Controller } from '@hotwired/stimulus';
 //
 // The strip scrolls by itself (scroll-snap); this only moves it a page at a
 // time from the buttons, and shows each button while there's more that way.
-// With dots, it shows one for each place the strip can stop, lights the one
-// in view, and scrolls to a dot's card.
+// With indicators, it shows one for each place the strip can stop, lights the
+// one in view, and scrolls to an indicator's card.
 const EDGE = 2;
 
 export default class extends Controller<HTMLElement> {
-  static targets = ['track', 'previous', 'next', 'dot'];
+  static targets = ['track', 'previous', 'next', 'indicator'];
 
   declare readonly trackTarget: HTMLElement;
   declare readonly previousTarget: HTMLButtonElement;
   declare readonly nextTarget: HTMLButtonElement;
-  declare readonly dotTargets: HTMLButtonElement[];
+  declare readonly indicatorTargets: HTMLButtonElement[];
 
   private frame?: number;
   private observer?: ResizeObserver;
@@ -54,7 +54,7 @@ export default class extends Controller<HTMLElement> {
       const scrolled = Math.abs(track.scrollLeft);
       this.show(this.previousTarget, this.nextTarget, scrolled > EDGE);
       this.show(this.nextTarget, this.previousTarget, scrolled + track.clientWidth < track.scrollWidth - EDGE);
-      if (this.dotTargets.length) this.light(scrolled);
+      if (this.indicatorTargets.length) this.light(scrolled);
     });
   }
 
@@ -80,16 +80,16 @@ export default class extends Controller<HTMLElement> {
     return starts.map((start) => Math.min(Math.max(start - starts[0], 0), end));
   }
 
-  // A dot for each place the strip can stop, and none when it can't scroll.
+  // An indicator for each place the strip can stop, and none when it can't scroll.
   // Between two stops, the one it's leaving empties as the one it's nearing
   // fills, in step with the scroll, so the pill slides with a finger rather
   // than jumping halfway. The current one is the fuller of the two.
   private light(scrolled: number) {
     const stops = this.stops();
-    const shown = this.dotTargets.flatMap((_, index) =>
+    const shown = this.indicatorTargets.flatMap((_, index) =>
       index === 0 || stops[index] - stops[index - 1] > EDGE ? [index] : [],
     );
-    const fills = this.dotTargets.map(() => 0);
+    const fills = this.indicatorTargets.map(() => 0);
     const after = shown.findIndex((index) => stops[index] > scrolled);
     if (after <= 0) {
       fills[shown[after === 0 ? 0 : shown.length - 1]] = 1;
@@ -103,13 +103,13 @@ export default class extends Controller<HTMLElement> {
     const lit = fills.indexOf(Math.max(...fills));
     const scrolls = shown.length > 1;
 
-    this.dotTargets.forEach((dot, index) => {
+    this.indicatorTargets.forEach((indicator, index) => {
       const hidden = !scrolls || !shown.includes(index);
-      if (hidden && scrolls && document.activeElement === dot) this.dotTargets[lit].focus();
-      dot.hidden = hidden;
-      dot.style.setProperty('--fill', fills[index].toFixed(3));
-      if (index === lit) dot.setAttribute('aria-current', 'true');
-      else dot.removeAttribute('aria-current');
+      if (hidden && scrolls && document.activeElement === indicator) this.indicatorTargets[lit].focus();
+      indicator.hidden = hidden;
+      indicator.style.setProperty('--fill', fills[index].toFixed(3));
+      if (index === lit) indicator.setAttribute('aria-current', 'true');
+      else indicator.removeAttribute('aria-current');
     });
   }
 

@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+Upgrading an app:
+
+- `Carousel`: `dots:` is now `indicators:`, and its locale keys
+  `ui.carousel.dots` and `ui.carousel.dot` are now `ui.carousel.indicators`
+  and `ui.carousel.indicator`. Re-run `velvetkit:add carousel` and rename the
+  keys in any translations you've added. `dots: true` still works.
+
 ## 0.6.0 — 2026-11-23
 
 New components:
