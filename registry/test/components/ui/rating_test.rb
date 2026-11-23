@@ -188,19 +188,22 @@ class UI::RatingTest < ViewComponent::TestCase
 
   def test_a_field_shows_its_score_beside_the_stars
     render_inline(UI::Rating.new(name: "rating", value: 3.5, show_value: true))
-    score = page.find("output[aria-hidden='true']", text: "3.5 out of 5")
+    score = page.find("output[aria-hidden='true']", text: "3.5/5")
     assert_selector "[data-ui--rating-score-value='#{score[:id]}']"
+    assert_selector "label[data-value='4'][data-score='4/5']"
+    assert_selector "label[data-value='4.5'][data-score='4.5/5']"
   end
 
   def test_a_field_with_no_score_shows_zero
     render_inline(UI::Rating.new(name: "rating", show_value: true))
-    assert_selector "output", text: "0 out of 5"
+    assert_selector "output", text: "0/5"
   end
 
   def test_a_field_shows_no_score_by_default
     render_inline(UI::Rating.new(name: "rating"))
     assert_no_selector "output"
     assert_no_selector "[data-ui--rating-score-value]"
+    assert_no_selector "label[data-score]"
   end
 
   def test_thanks_show_once_chosen

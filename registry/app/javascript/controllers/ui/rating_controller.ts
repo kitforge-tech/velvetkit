@@ -59,10 +59,10 @@ export default class extends Controller<HTMLElement> {
 
     this.showAnswered(true);
 
-    // The chosen star's label says its score, "4 out of 5". Its value, not its
-    // text, which is what the form's reset goes back to.
+    // The chosen star carries its score, "4.5/5". Its value, not its text,
+    // which is what the form's reset goes back to.
     const score = this.scoreValue && (document.getElementById(this.scoreValue) as HTMLOutputElement | null);
-    if (score) score.value = input.labels?.[0]?.textContent?.trim() ?? '';
+    if (score) score.value = input.labels?.[0]?.dataset.score ?? '';
   }
 
   // The form's reset puts the radios back; this puts back the rest.

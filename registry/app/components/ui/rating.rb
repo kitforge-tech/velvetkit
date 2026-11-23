@@ -20,7 +20,7 @@ require "securerandom"
 # With JavaScript, choosing a score clears the field's error, as it's been
 # answered. `thanks: true` then shows "Thank you for your rating" (or the
 # string given) in its place. Resetting the form brings the error back.
-# `show_value: true` prints the score beside the stars, "4 out of 5", and keeps
+# `show_value: true` prints the score beside the stars, "4.5/5", and keeps
 # it to the one chosen; it goes back to where it started with the form.
 #
 #   <%= render(UI::Rating.new(form: f, field: :rating, legend: true, thanks: true)) %>
@@ -149,8 +149,13 @@ class UI::Rating < UI::Base
   def thanks_text = @thanks.is_a?(String) ? @thanks : t("ui.rating.thanks", default: "Thank you for your rating")
   def thanks_id = "#{group_id}-thanks"
 
-  # The score as the stars' own labels say it, beside a field's stars.
-  def score_label = option_label(formatted_score)
+  # "4.5/5", beside a field's stars; each star carries its own, for the
+  # controller to show once it's chosen.
+  def score_label = score_text(score || 0)
+  def score_text(value)
+    t("ui.rating.score", value: ActiveSupport::NumberHelper.number_to_rounded(value, precision: 1, strip_insignificant_zeros: true),
+                         max: @max, default: "%{value}/%{max}")
+  end
   def score_id = "#{group_id}-score"
 
   # The legend shows only when given: a bound field that's never been named

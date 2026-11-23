@@ -87,6 +87,7 @@ en:
       label: 'Rated %{value} out of %{max}'
       option: '%{count} out of %{max}'
       thanks: 'Thank you for your rating'
+      score: '%{value}/%{max}'
       count:
         one: '%{count} rating'
         other: '%{count} ratings'
