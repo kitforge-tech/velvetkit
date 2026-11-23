@@ -1,9 +1,14 @@
-<%# Dimensions land on the <img> itself, not on a wrapper. %>
-<div class="flex flex-wrap items-end gap-6">
+<%# Dimensions land on the <img> itself, not on a wrapper; the height follows the image's own ratio. %>
+<div class="flex flex-wrap items-end gap-8">
   <% ["48px", "96px", "160px"].each do |w| %>
     <div class="flex flex-col items-center gap-2">
-      <%= render(UI::Image.new(src: "/icon.png", rounded: :md, width: w)) %>
-      <span class="text-xs text-muted-foreground">width: <%= w %></span>
+      <%= render(UI::Image.new(src: UI::ImagePreview.photo, alt: "Mountains at sunset", rounded: :md, width: w)) %>
+      <div class="flex items-center text-muted-foreground" style="width: <%= w %>" aria-hidden="true">
+        <span class="h-2 border-l border-current"></span>
+        <span class="flex-1 border-t border-current"></span>
+        <span class="h-2 border-r border-current"></span>
+      </div>
+      <span class="text-xs text-muted-foreground"><%= w %></span>
     </div>
   <% end %>
 </div>
