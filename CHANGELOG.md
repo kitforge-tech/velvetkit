@@ -2,13 +2,6 @@
 
 ## Unreleased
 
-Upgrading an app:
-
-- `Carousel`: `dots:` is now `indicators:`, and its locale keys
-  `ui.carousel.dots` and `ui.carousel.dot` are now `ui.carousel.indicators`
-  and `ui.carousel.indicator`. Re-run `velvetkit:add carousel` and rename the
-  keys in any translations you've added. `dots: true` still works.
-
 ## 0.6.0 — 2026-11-23
 
 New components:
@@ -16,13 +9,16 @@ New components:
 - `FileTree`: folders and files in a tree that opens and closes, with arrow
   keys to move through it.
 - `Rating`: a score in stars, shown to the half star with its count, or chosen
-  with a radio for each star.
+  with a radio for each star. A star grows under the pointer and pops when
+  chosen with the arrow keys; `show_value: true` shows the chosen score
+  beside a field, as "4/5", and `thanks: true` swaps the field's error for
+  "Thank you for your rating" once a score is chosen.
 
 Changes:
 
-- `Carousel`: slider dots, with `dots: true`. There's a dot for each place
-  the strip stops, the lit one follows the scroll as you swipe, and tapping
-  a dot scrolls to its card. They're off by default. (#102)
+- `Carousel`: indicators, with `indicators: true`: a dot for each place the
+  strip stops, the lit one following the scroll as you swipe, and a tap on
+  one scrolling to its card. They're off by default. (#102)
 - Docs: the Image page's Radii and Sizing examples draw a photo that fills
   its frame, so each radius and each width reads differently, and Radii adds
   `xs`. (#105)
