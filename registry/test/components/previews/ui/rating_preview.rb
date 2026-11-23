@@ -25,7 +25,4 @@ class UI::RatingPreview < ViewComponent::Preview
 
   # @label Errors from the Model
   def model_errors; render_with_template; end
-
-  # @label Another Icon or Scale
-  def other_icons; render_with_template; end
 end

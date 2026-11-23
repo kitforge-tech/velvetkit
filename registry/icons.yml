@@ -43,7 +43,6 @@ git-branch: { tabler: git-branch, phosphor: git-branch }
 globe: { tabler: world, phosphor: globe }
 graduation-cap: { tabler: school, phosphor: graduation-cap }
 grip-vertical: { tabler: grip-vertical, phosphor: dots-six-vertical }
-heart: { tabler: heart, phosphor: heart }
 home: { tabler: home, phosphor: house }
 inbox: { tabler: inbox, phosphor: tray }
 image: { tabler: photo, phosphor: image }
