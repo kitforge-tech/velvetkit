@@ -2,6 +2,26 @@
 
 ## Unreleased
 
+## 0.6.0 — 2026-11-23
+
+New components:
+
+- `FileTree`: folders and files in a tree that opens and closes, with arrow
+  keys to move through it.
+- `Rating`: a score in stars, shown to the half star with its count, or chosen
+  with a radio for each star.
+
+Changes:
+
+- `Carousel`: slider dots, with `dots: true`. There's a dot for each place
+  the strip stops, the lit one follows the scroll as you swipe, and tapping
+  a dot scrolls to its card. They're off by default. (#102)
+- Docs: the Image page's Radii and Sizing examples draw a photo that fills
+  its frame, so each radius and each width reads differently, and Radii adds
+  `xs`. (#105)
+- Docs site: runs on Ruby 3.4.13, with `net-ssh` and `puma` updated, to clear
+  security advisories. (#103)
+
 ## 0.5.1 — 2026-11-15
 
 Changes:
