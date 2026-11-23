@@ -5,24 +5,34 @@
     <div>
       <h2 id="testimonials-heading" class="text-2xl font-medium sm:text-3xl">Loved by our customers</h2>
       <p class="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
-        <%= render "daily_goods/reviews/stars", rating: DailyGoods::Review.average(DailyGoods::Review::ALL) %>
+        <%= render(UI::Rating.new(value: DailyGoods::Review.average(DailyGoods::Review::ALL), size: :sm)) %>
         <%= number_with_precision(DailyGoods::Review.average(DailyGoods::Review::ALL), precision: 1) %> from <%= pluralize(DailyGoods::Review::ALL.size, "review") %>
       </p>
     </div>
   </div>
-  <ul class="mt-6 grid gap-4 md:grid-cols-3">
+  <ul class="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
     <% picks.each do |review| %>
       <% product = DailyGoods::Product.find(review.product) %>
-      <li class="flex flex-col gap-4 rounded-3xl bg-neutral-100 p-6 dark:bg-card">
-        <%= render "daily_goods/reviews/stars", rating: review.rating %>
+      <% initials = review.author.to_s.split.map(&:first).join.first(2).upcase.presence || "?" %>
+      <li class="flex flex-col gap-5 rounded-3xl border bg-background p-5 sm:p-6">
+        <%= render(UI::Rating.new(value: review.rating, size: :sm)) %>
         <blockquote class="flex-1">
-          <p class="font-heading text-xl leading-snug">“<%= review.title %>”</p>
-          <p class="mt-2 leading-relaxed text-muted-foreground"><%= review.body %></p>
+          <p class="font-heading text-lg leading-snug sm:text-xl">“<%= review.title %>”</p>
+          <p class="mt-3 text-sm leading-relaxed text-muted-foreground"><%= review.body %></p>
         </blockquote>
-        <div class="flex items-center justify-between gap-3 border-t border-foreground/10 pt-4">
-          <p class="text-sm font-medium"><%= review.author %><span class="font-normal text-muted-foreground"> · Verified buyer</span></p>
-          <%= link_to product_path(product), class: "flex items-center gap-2 text-sm hover:underline hover:underline-offset-4" do %>
-            <%= image_tag product.image, alt: "", loading: "lazy", class: "size-8 rounded-lg object-cover" %><%= product.name %>
+        <div class="flex flex-wrap items-center justify-between gap-3 border-t pt-4">
+          <div class="flex min-w-0 items-center gap-3">
+            <%= render(UI::Avatar.new(size: :default, class: "border border-border/70")) do |avatar| %>
+              <% avatar.with_fallback { initials } %>
+            <% end %>
+            <div class="min-w-0">
+              <p class="truncate text-sm font-medium"><%= review.author %></p>
+              <time datetime="<%= review.date.iso8601 %>" class="text-xs text-muted-foreground"><%= review.date.strftime("%-d %B %Y") %></time>
+            </div>
+          </div>
+          <%= link_to product_path(product), class: "flex max-w-full shrink-0 items-center gap-2 rounded-full bg-neutral-100 py-1 pe-3 ps-1 text-xs font-medium hover:bg-neutral-200 dark:bg-card dark:hover:bg-accent" do %>
+            <%= image_tag product.image, alt: "", loading: "lazy", class: "size-8 rounded-full object-cover" %>
+            <span class="truncate"><%= product.name %></span>
           <% end %>
         </div>
       </li>

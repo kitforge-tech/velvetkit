@@ -25,7 +25,7 @@
 
       <div class="mt-3 flex items-center gap-2 text-sm">
         <% if @reviews.any? %>
-          <%= render "daily_goods/reviews/stars", rating: DailyGoods::Review.average(@reviews) %>
+          <%= render(UI::Rating.new(value: DailyGoods::Review.average(@reviews), size: :sm)) %>
           <a href="#reviews" class="text-muted-foreground underline-offset-4 hover:text-foreground hover:underline">
             <%= number_with_precision(DailyGoods::Review.average(@reviews), precision: 1) %> · <%= pluralize(@reviews.size, "review") %>
           </a>

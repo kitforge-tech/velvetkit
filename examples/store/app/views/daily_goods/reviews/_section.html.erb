@@ -2,49 +2,61 @@
 <section id="reviews" class="mt-20 scroll-mt-24 border-t pt-12" aria-labelledby="reviews-heading">
   <div class="grid gap-10 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-16">
     <div class="lg:sticky lg:top-24 lg:self-start">
-      <h2 id="reviews-heading" class="text-2xl font-medium sm:text-3xl">Reviews</h2>
-      <% if reviews.any? %>
-        <div class="mt-4 flex items-center gap-3">
-          <span class="text-4xl font-medium tabular-nums"><%= number_with_precision(DailyGoods::Review.average(reviews), precision: 1) %></span>
-          <div class="text-sm">
-            <%= render "daily_goods/reviews/stars", rating: DailyGoods::Review.average(reviews) %>
-            <p class="text-muted-foreground"><%= pluralize(reviews.size, "review") %></p>
-          </div>
-        </div>
-        <div class="mt-6 grid gap-2">
-          <% 5.downto(1) do |stars| %>
-            <% count = reviews.count { |review| review.rating == stars } %>
-            <div class="grid grid-cols-[3.5rem_1fr_1.5rem] items-center gap-3 text-sm">
-              <span class="text-muted-foreground"><%= pluralize(stars, "star") %></span>
-              <%= render(UI::Progress.new(value: count, max: reviews.size, size: :sm, aria: { label: "#{pluralize(count, "review")} with #{pluralize(stars, "star")}" },
-                                          class: "[&_[data-slot=progress-indicator]]:bg-amber-500")) %>
-              <span class="text-right tabular-nums text-muted-foreground"><%= count %></span>
+      <div class="rounded-3xl bg-neutral-100 p-5 sm:p-6 dark:bg-card">
+        <h2 id="reviews-heading" class="text-2xl font-medium sm:text-3xl">Reviews</h2>
+        <% if reviews.any? %>
+          <div class="mt-5 flex items-center gap-4">
+            <span class="text-5xl font-medium tabular-nums tracking-tight"><%= number_with_precision(DailyGoods::Review.average(reviews), precision: 1) %></span>
+            <div class="grid gap-1.5 text-sm">
+              <%= render(UI::Rating.new(value: DailyGoods::Review.average(reviews), size: :sm)) %>
+              <p class="text-muted-foreground"><%= pluralize(reviews.size, "review") %></p>
             </div>
-          <% end %>
-        </div>
-      <% end %>
-
-      <%= render(UI::Dialog.new) do |dialog| %>
-        <% dialog.with_trigger(variant: :outline, class: "mt-6 rounded-full") { "Write a review" } %>
-        <% dialog.with_content do |content| %>
-          <% content.with_title { "Review #{product.name}" } %>
-          <% content.with_description { "Your review shows on this page for you only: this shop is an example." } %>
-          <%= render "daily_goods/reviews/form", product: product, draft: {}, errors: {} %>
+          </div>
+          <div class="mt-6 grid gap-2">
+            <% 10.downto(1) do |half_steps| %>
+              <% stars = half_steps / 2.0 %>
+              <% stars_label = stars == stars.to_i ? pluralize(stars.to_i, "star") : "#{stars} stars" %>
+              <% count = reviews.count { |review| (review.rating.to_f * 2).round == half_steps } %>
+              <div class="grid grid-cols-[4.5rem_1fr_1.5rem] items-center gap-3 text-sm">
+                <span class="text-muted-foreground"><%= stars_label %></span>
+                <%= render(UI::Progress.new(value: count, max: reviews.size, size: :sm, aria: { label: "#{pluralize(count, "review")} with #{stars_label}" },
+                                            class: "[&_[data-slot=progress-indicator]]:bg-amber-500")) %>
+                <span class="text-right tabular-nums text-muted-foreground"><%= count %></span>
+              </div>
+            <% end %>
+          </div>
         <% end %>
-      <% end %>
+
+        <%= render(UI::Dialog.new) do |dialog| %>
+          <% dialog.with_trigger(variant: :outline, class: "mt-6 w-full rounded-full") { "Write a review" } %>
+          <% dialog.with_content do |content| %>
+            <% content.with_title { "Review #{product.name}" } %>
+            <% content.with_description { "Your review shows on this page for you only: this shop is an example." } %>
+            <%= render "daily_goods/reviews/form", product: product, draft: {}, errors: {} %>
+          <% end %>
+        <% end %>
+      </div>
     </div>
 
     <% if reviews.any? %>
-      <ul class="grid gap-8">
+      <ul class="grid content-start gap-4">
         <% reviews.each do |review| %>
-          <li class="grid gap-2 border-b pb-8 last:border-b-0">
+          <% initials = review.author.to_s.split.map(&:first).join.first(2).upcase.presence || "?" %>
+          <li class="rounded-2xl border bg-background p-5 sm:p-6">
             <div class="flex items-center justify-between gap-4">
-              <%= render "daily_goods/reviews/stars", rating: review.rating %>
-              <time datetime="<%= review.date.iso8601 %>" class="text-sm text-muted-foreground"><%= review.date.strftime("%-d %B %Y") %></time>
+              <div class="flex min-w-0 items-center gap-3">
+                <%= render(UI::Avatar.new(size: :default, class: "border border-border/70")) do |avatar| %>
+                  <% avatar.with_fallback { initials } %>
+                <% end %>
+                <div class="min-w-0">
+                  <p class="truncate text-sm font-medium"><%= review.author %></p>
+                  <time datetime="<%= review.date.iso8601 %>" class="text-xs text-muted-foreground"><%= review.date.strftime("%-d %B %Y") %></time>
+                </div>
+              </div>
+              <%= render(UI::Rating.new(value: review.rating, size: :sm)) %>
             </div>
-            <% if review.title.present? %><h3 class="font-medium"><%= review.title %></h3><% end %>
-            <p class="leading-relaxed text-muted-foreground"><%= review.body %></p>
-            <p class="text-sm font-medium"><%= review.author %></p>
+            <% if review.title.present? %><h3 class="mt-5 font-medium"><%= review.title %></h3><% end %>
+            <p class="mt-2 text-sm leading-relaxed text-muted-foreground"><%= review.body %></p>
           </li>
         <% end %>
       </ul>

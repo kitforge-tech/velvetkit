@@ -26,7 +26,11 @@ module DailyGoods
 
     def draft
       review = params.fetch(:review, {})
-      { rating: Integer(review[:rating].to_s, exception: false),
+      rating = Float(review[:rating].to_s, exception: false)
+      rating = nil unless rating&.finite?
+      rating = rating.to_i if rating && rating == rating.to_i
+
+      { rating: rating,
         author: review[:author].to_s.strip.first(40),
         title: review[:title].to_s.strip.first(80),
         body: review[:body].to_s.strip.first(500) }
@@ -34,7 +38,10 @@ module DailyGoods
 
     def errors_for(draft)
       errors = {}
-      errors[:rating] = "Choose from one to five stars." unless (1..5).cover?(draft[:rating])
+      rating = draft[:rating]
+      valid_rating = rating.is_a?(Numeric) && rating.finite? && (0.5..5).cover?(rating) &&
+        (rating * 2) == (rating * 2).round
+      errors[:rating] = "Choose a rating from half a star to five stars." unless valid_rating
       errors[:author] = "Add a name, or just your initials." if draft[:author].blank?
       errors[:body] = "Say a little about it: at least 10 characters." if draft[:body].length < 10
       errors

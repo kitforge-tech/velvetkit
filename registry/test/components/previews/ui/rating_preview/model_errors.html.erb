@@ -1,0 +1,10 @@
+<%# In an app, @review comes back from a failed save. Bound, the field shows its errors on its own. %>
+<% review = Struct.new(:rating, :delivery) do
+     include ActiveModel::Validations
+     def self.model_name = ActiveModel::Name.new(self, nil, "Review")
+     validates :rating, presence: true
+   end.new(nil, 4).tap(&:validate) %>
+<%= form_with(model: review, url: "#", class: "flex max-w-sm flex-col gap-6") do |f| %>
+  <%= render(UI::Rating.new(form: f, field: :rating, legend: true, required: true)) %>
+  <%= render(UI::Rating.new(form: f, field: :delivery, legend: "Delivery", hint: "Was it on time and well packed?")) %>
+<% end %>
