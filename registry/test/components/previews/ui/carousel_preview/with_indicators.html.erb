@@ -1,0 +1,10 @@
+<%# One photo at a time, with an indicator for each. The indicators are the way
+    through on a phone, where the buttons don't show; turn them on with
+    `indicators: true`. %>
+<%= render(UI::Carousel.new(label: "Featured", item_class: "basis-full", indicators: true, class: "max-w-2xl")) do |carousel| %>
+  <% UI::GalleryPreview.photos.each do |title, src| %>
+    <% carousel.with_item do %>
+      <%= image_tag src, alt: title, class: "aspect-[16/9] w-full rounded-xl object-cover" %>
+    <% end %>
+  <% end %>
+<% end %>
