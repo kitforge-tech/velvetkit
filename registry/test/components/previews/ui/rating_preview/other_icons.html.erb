@@ -1,6 +1,0 @@
-<%# `icon:` draws any icon from the library, and `max:` sets how many. %>
-<div class="flex flex-col gap-4">
-  <%= render(UI::Rating.new(value: 3, icon: "heart", show_value: true)) %>
-  <%= render(UI::Rating.new(value: 7.5, max: 10, show_value: true, count: 54)) %>
-  <%= render(UI::Rating.new(name: "favourite", value: 2, max: 3, icon: "heart", label: "How much you liked it")) %>
-</div>

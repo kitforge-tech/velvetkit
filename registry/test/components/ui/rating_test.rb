@@ -83,8 +83,8 @@ class UI::RatingTest < ViewComponent::TestCase
   end
 
   def test_another_icon
-    render_inline(UI::Rating.new(value: 2, icon: "heart"))
-    assert_selector "svg[data-icon='heart']", count: 5
+    render_inline(UI::Rating.new(value: 2, icon: "circle-check"))
+    assert_selector "svg[data-icon='circle-check']", count: 5
   end
 
   def test_sizes
@@ -131,11 +131,24 @@ class UI::RatingTest < ViewComponent::TestCase
     assert_includes classes, "data-[lit=true]:!text-amber-500"
   end
 
-  # The stars draw no focus ring: the chosen score shows where the field is.
-  def test_a_half_star_draws_no_focus_ring
+  # No box ring round a half-star, which would cut across the icon: the
+  # focused star's outline traces the icon instead.
+  def test_a_half_star_draws_no_box_ring_but_an_outline_when_focused
     render_inline(UI::Rating.new(name: "rating"))
     classes = page.find("label", match: :first)[:class].split
-    refute classes.any? { _1.include?("focus") || _1.include?("ring") }
+    refute classes.any? { _1.include?("focus:") || _1.match?(/(^|:)ring/) }
+    assert classes.any? { _1.start_with?("data-[focused=true]:[&_svg]:[filter:drop-shadow(") }
+  end
+
+  # Both halves of a hovered star grow from its middle, so it grows as one.
+  def test_a_hovered_star_grows_from_its_middle
+    render_inline(UI::Rating.new(name: "rating"))
+    start_half, end_half = page.all("label", minimum: 2).first(2).map { _1[:class].split }
+    assert_includes start_half, "motion-safe:data-[hovered=true]:scale-125"
+    assert_includes start_half, "origin-right"
+    assert_includes start_half, "rtl:origin-left"
+    assert_includes end_half, "origin-left"
+    assert_includes end_half, "rtl:origin-right"
   end
 
   def test_each_radio_sits_before_its_half_star
@@ -145,11 +158,11 @@ class UI::RatingTest < ViewComponent::TestCase
     assert_equal expected, actual
   end
 
-  def test_hover_and_change_wiring
+  def test_hover_focus_and_change_wiring
     render_inline(UI::Rating.new(name: "rating"))
-    assert_selector "[data-action='mouseleave->ui--rating#reset']"
+    assert_selector "[data-action='mouseleave->ui--rating#reset focusin->ui--rating#focus focusout->ui--rating#blur reset@document->ui--rating#formReset']"
     assert_selector "label[data-action='mouseenter->ui--rating#preview']", count: 10
-    assert_selector "input[data-action='change->ui--rating#reset']", count: 10, visible: :all
+    assert_selector "input[data-action='change->ui--rating#choose']", count: 10, visible: :all
   end
 
   def test_label_names_the_field
@@ -161,6 +174,35 @@ class UI::RatingTest < ViewComponent::TestCase
     render_inline(UI::Rating.new(name: "rating", required: true, disabled: true))
     assert_selector "input[required][disabled]", count: 10, visible: :all
     assert_selector "label.cursor-not-allowed.opacity-50", count: 10
+  end
+
+  # Choosing clears the error with JavaScript, so it needs the error's id.
+  def test_the_error_to_clear_once_chosen
+    render_inline(UI::Rating.new(name: "rating", legend: "Delivery", error: "Pick a score"))
+    error_id = page.find("fieldset p", text: "Pick a score")[:id]
+    assert_selector "[data-controller='ui--rating'][data-ui--rating-error-value='#{error_id}']"
+  end
+
+  def test_no_error_to_clear
+    render_inline(UI::Rating.new(name: "rating", legend: "Delivery"))
+    assert_no_selector "[data-ui--rating-error-value]"
+  end
+
+  def test_thanks_show_once_chosen
+    render_inline(UI::Rating.new(name: "rating", legend: "Delivery", thanks: true))
+    thanks = page.find("p[role='status'][hidden].text-emerald-600", text: "Thank you for your rating", visible: :all)
+    assert_selector "[data-ui--rating-thanks-value='#{thanks[:id]}']"
+  end
+
+  def test_thanks_in_your_words
+    render_inline(UI::Rating.new(name: "rating", thanks: "Thanks, noted!"))
+    assert_selector "p[role='status']", text: "Thanks, noted!", visible: :all
+  end
+
+  def test_no_thanks_by_default
+    render_inline(UI::Rating.new(name: "rating"))
+    assert_no_selector "p[role='status']", visible: :all
+    assert_no_selector "[data-ui--rating-thanks-value]"
   end
 
   def test_a_legend_renders_through_fieldset

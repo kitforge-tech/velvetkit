@@ -17,12 +17,18 @@ require "securerandom"
 #
 #   <%= render(UI::Rating.new(name: "review[rating]", legend: "Your rating", required: true)) %>
 #
+# With JavaScript, choosing a score clears the field's error, as it's been
+# answered. `thanks: true` then shows "Thank you for your rating" (or the
+# string given) in its place. Resetting the form brings the error back.
+#
+#   <%= render(UI::Rating.new(form: f, field: :rating, legend: true, thanks: true)) %>
+#
 # As with RadioGroup, a `legend:` (and a `hint:` or `error:`) renders it
 # through UI::Fieldset, which names the group and shows the model's errors when
 # it's bound to a form; `legend: true` uses the attribute's name. Without a
 # legend, `label:` is the field's hidden name ("Rating" if not given).
 #
-# `icon:` draws another icon from the library, such as "heart".
+# `icon:` draws another icon from the library.
 class UI::Rating < UI::Base
   variants(
     base: "inline-flex shrink-0 items-center",
@@ -44,18 +50,29 @@ class UI::Rating < UI::Base
 
   # A field's star: lit when its own radio or a later one is checked, so the
   # stars up to the chosen one fill without JavaScript. While the pointer is
-  # over the stars, the controller marks each one lit or not, which wins. A
-  # star draws no focus ring: each is half a star wide, so a ring round one
-  # cuts across the icon, and the lit stars already show the chosen score.
-  STAR = "relative cursor-pointer transition-colors text-border dark:text-muted " \
+  # over the stars, the controller marks each one lit or not, which wins.
+  #
+  # A box ring round a star would cut across the icon, as each label is half a
+  # star wide, so the focused star is outlined instead: while one of its radios
+  # has focus, the controller marks both its halves `data-focused`, and a thin
+  # primary drop-shadow traces the icon's own edge.
+  #
+  # The star under the pointer grows, both halves marked `data-hovered` by the
+  # controller, and choosing it brings it back to size; choosing one from the
+  # keyboard pops it instead. Each half scales from the star's middle
+  # (STAR_ORIGIN), so the two move as one star.
+  STAR = "relative cursor-pointer transition-[color,scale] text-border dark:text-muted " \
          "[input:checked+&]:text-amber-500 [&:has(~input:checked)]:text-amber-500 " \
-         "data-[lit=true]:!text-amber-500 data-[lit=false]:!text-border dark:data-[lit=false]:!text-muted"
+         "data-[lit=true]:!text-amber-500 data-[lit=false]:!text-border dark:data-[lit=false]:!text-muted " \
+         "data-[focused=true]:[&_svg]:[filter:drop-shadow(0_0_0.5px_var(--color-primary))_drop-shadow(0_0_0.5px_var(--color-primary))] " \
+         "data-[hovered=true]:z-10 motion-safe:data-[hovered=true]:scale-125"
   STAR_HALF_SIZE = { sm: "h-4 w-2", default: "h-5 w-2.5", lg: "h-6 w-3" }.freeze
   STAR_GAP = { sm: "me-0.5", default: "me-0.5", lg: "me-1" }.freeze
+  STAR_ORIGIN = { start: "origin-right rtl:origin-left", end: "origin-left rtl:origin-right" }.freeze
 
   def initialize(value: nil, max: 5, size: :default, icon: "star",
                  show_value: false, count: nil,
-                 name: nil, form: nil, field: nil, required: false, disabled: false,
+                 name: nil, form: nil, field: nil, required: false, disabled: false, thanks: false,
                  label: nil, legend: nil, hint: nil, error: nil,
                  class: nil, **html_attrs)
     @value      = value
@@ -69,6 +86,7 @@ class UI::Rating < UI::Base
     @field      = field
     @required   = required
     @disabled   = disabled
+    @thanks     = thanks
     @label      = label
     @legend     = legend
     @hint       = hint
@@ -129,6 +147,10 @@ class UI::Rating < UI::Base
   def required? = @required
   def disabled? = @disabled
 
+  def thanks? = @thanks.present?
+  def thanks_text = @thanks.is_a?(String) ? @thanks : t("ui.rating.thanks", default: "Thank you for your rating")
+  def thanks_id = "#{group_id}-thanks"
+
   # The legend shows only when given: a bound field that's never been named
   # doesn't grow one when it has an error.
   def fieldset
@@ -152,12 +174,18 @@ class UI::Rating < UI::Base
     attrs[:aria] = group_aria unless wrapped
     attrs[:id] = group_id
     attrs[:class] = cn(variant_classes(size: @size), "w-fit gap-0", @user_class)
-    attrs[:data] = { controller: "ui--rating", action: "mouseleave->ui--rating#reset" }.merge(@html_attrs[:data] || {})
+    attrs[:data] = { controller: "ui--rating",
+                     action: "mouseleave->ui--rating#reset focusin->ui--rating#focus focusout->ui--rating#blur " \
+                             "reset@document->ui--rating#formReset",
+                     "ui--rating-error-value": (fieldset.error_id if fieldset.error_message.present?),
+                     "ui--rating-thanks-value": (thanks_id if thanks?) }
+                   .compact.merge(@html_attrs[:data] || {})
     attrs
   end
 
   def star_classes(step)
     cn(STAR, STAR_HALF_SIZE.fetch(@size), (STAR_GAP.fetch(@size) if step.even?),
+       STAR_ORIGIN.fetch(step.odd? ? :start : :end),
        { "cursor-not-allowed opacity-50" => @disabled })
   end
 
