@@ -137,10 +137,16 @@ class UI::FileTreeTest < ViewComponent::TestCase
 
   def test_guides_draw_a_line_down_open_folders
     render_project
-    assert_selector "ul[role='group'].border-s", count: 2, visible: :all
+    assert_selector "ul[role='group'].before\\:bg-border", count: 2, visible: :all
     render_project(guides: false)
-    assert_no_selector "ul[role='group'].border-s", visible: :all
+    assert_no_selector "ul[role='group'].before\\:bg-border", visible: :all
     assert_selector "ul[role='group'].ps-5\\.5", count: 2, visible: :all
+  end
+
+  def test_a_guide_starts_below_its_folders_focus_ring
+    render_project
+    assert_selector "[data-slot='file-tree-folder'].peer\\/row + ul.peer-focus\\/row\\:before\\:top-1\\.5",
+                    count: 2, visible: :all
   end
 
   def test_builds_from_data

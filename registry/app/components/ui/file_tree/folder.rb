@@ -8,6 +8,14 @@
 # current file is in view; true or false decides. `icon:` swaps the folder
 # icon for another.
 class UI::FileTree::Folder < UI::Base
+  # The guide is a line of its own and not a border, so that while the folder
+  # has focus it can start lower down, past the ring, rather than run into it.
+  # It sits inside the padding, where the overflow the animation clips to
+  # can't cut it in half.
+  GUIDE = "relative ms-[calc(1rem-0.5px)] ps-[calc(0.375rem+0.5px)] " \
+          "before:absolute before:inset-y-0 before:start-0 before:w-px before:bg-border " \
+          "before:transition-[top] peer-focus/row:before:top-1.5"
+
   renders_many :items, types: {
     folder: { renders: UI::FileTree::Folder, as: :folder },
     file:   { renders: UI::FileTree::FileItem, as: :file }
@@ -51,7 +59,7 @@ class UI::FileTree::Folder < UI::Base
     attrs = @html_attrs.except(:data, :aria, :id)
     attrs[:role]     = "treeitem"
     attrs[:tabindex] = @tabbable ? 0 : -1
-    attrs[:class]    = cn(UI::FileTree::ROW, @user_class)
+    attrs[:class]    = cn(UI::FileTree::ROW, "peer/row", @user_class)
     attrs[:aria]     = { expanded: open?.to_s, level: @level, owns: group_id }.merge(@html_attrs[:aria] || {})
     attrs[:data]     = { slot: "file-tree-folder", name: @name, "ui--file-tree-target": "item" }
                          .merge(@html_attrs[:data] || {})
@@ -63,7 +71,6 @@ class UI::FileTree::Folder < UI::Base
   # row is its margin, not the group's padding: padding would hold the group
   # open at that height until the closing animation ended, then let it drop.
   def group_classes
-    cn("flex flex-col [&>li:first-child]:mt-1.5", UI::FileTree::GAP,
-       @guides ? "ms-[calc(1rem-0.5px)] border-s border-border ps-[calc(0.375rem-0.5px)]" : "ps-5.5")
+    cn("flex flex-col [&>li:first-child]:mt-1.5", UI::FileTree::GAP, @guides ? GUIDE : "ps-5.5")
   end
 end
