@@ -20,6 +20,8 @@ require "securerandom"
 # With JavaScript, choosing a score clears the field's error, as it's been
 # answered. `thanks: true` then shows "Thank you for your rating" (or the
 # string given) in its place. Resetting the form brings the error back.
+# `show_value: true` prints the score beside the stars, "4 out of 5", and keeps
+# it to the one chosen; it goes back to where it started with the form.
 #
 #   <%= render(UI::Rating.new(form: f, field: :rating, legend: true, thanks: true)) %>
 #
@@ -147,6 +149,10 @@ class UI::Rating < UI::Base
   def thanks_text = @thanks.is_a?(String) ? @thanks : t("ui.rating.thanks", default: "Thank you for your rating")
   def thanks_id = "#{group_id}-thanks"
 
+  # The score as the stars' own labels say it, beside a field's stars.
+  def score_label = option_label(formatted_score)
+  def score_id = "#{group_id}-score"
+
   # The legend shows only when given: a bound field that's never been named
   # doesn't grow one when it has an error.
   def fieldset
@@ -173,13 +179,14 @@ class UI::Rating < UI::Base
     attrs[:data] = { controller: "ui--rating",
                      action: "mouseleave->ui--rating#reset reset@document->ui--rating#formReset",
                      "ui--rating-error-value": (fieldset.error_id if fieldset.error_message.present?),
-                     "ui--rating-thanks-value": (thanks_id if thanks?) }
+                     "ui--rating-thanks-value": (thanks_id if thanks?),
+                     "ui--rating-score-value": (score_id if show_value?) }
                    .compact.merge(@html_attrs[:data] || {})
     attrs
   end
 
   def star_classes(step)
-    cn(STAR, STAR_HALF_SIZE.fetch(@size), (STAR_GAP.fetch(@size) if step.even?),
+    cn(STAR, STAR_HALF_SIZE.fetch(@size), (STAR_GAP.fetch(@size) if step.even? && step < @max * 2),
        STAR_ORIGIN.fetch(step.odd? ? :start : :end),
        { "cursor-not-allowed opacity-50" => @disabled })
   end

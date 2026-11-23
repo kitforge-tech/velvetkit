@@ -7,15 +7,17 @@ import { Controller } from '@hotwired/stimulus';
 // and grows the star it's in; leaving the stars, or choosing one, hands them
 // back. It also gives the choice some feedback: a chosen star settles back to
 // size, or pops when chosen from the keyboard. Choosing also clears the field's error, if it has one, and
-// shows its thanks, if it has those; resetting the form brings them back as
-// they were.
+// shows its thanks, if it has those, and writes the score beside the stars, if
+// it's shown; resetting the form brings them back as they were (the score is an
+// <output>, which the form resets itself).
 export default class extends Controller<HTMLElement> {
   static targets = ['star'];
-  static values = { error: String, thanks: String };
+  static values = { error: String, thanks: String, score: String };
 
   declare readonly starTargets: HTMLLabelElement[];
   declare readonly errorValue: string;
   declare readonly thanksValue: string;
+  declare readonly scoreValue: string;
 
   // The star just chosen under the pointer, kept at its size until the
   // pointer moves to another.
@@ -56,6 +58,11 @@ export default class extends Controller<HTMLElement> {
     }
 
     this.showAnswered(true);
+
+    // The chosen star's label says its score, "4 out of 5". Its value, not its
+    // text, which is what the form's reset goes back to.
+    const score = this.scoreValue && (document.getElementById(this.scoreValue) as HTMLOutputElement | null);
+    if (score) score.value = input.labels?.[0]?.textContent?.trim() ?? '';
   }
 
   // The form's reset puts the radios back; this puts back the rest.

@@ -9,7 +9,7 @@
    end.new(nil, 4).tap(&:validate) %>
 <%= form_with(model: review, url: "#", class: "flex max-w-sm flex-col gap-6") do |f| %>
   <div class="flex items-center gap-2 [&_fieldset>p]:w-0 [&_fieldset>p]:whitespace-nowrap">
-    <%= render(UI::Rating.new(form: f, field: :rating, legend: true, required: true, thanks: true)) %>
+    <%= render(UI::Rating.new(form: f, field: :rating, legend: true, required: true, thanks: true, show_value: true)) %>
     <button type="reset" title="Start again" aria-label="Start again"
             class="rounded-sm text-muted-foreground transition-colors hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-primary">
       <%# Not one of the kit's controls, so only the icon: a ring only from the keyboard. %>
