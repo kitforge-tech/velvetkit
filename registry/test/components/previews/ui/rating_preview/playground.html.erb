@@ -1,0 +1,5 @@
+<% if field %>
+  <%= render(UI::Rating.new(name: "rating", value: value, max: max, size: size, disabled: disabled, legend: "Your rating")) %>
+<% else %>
+  <%= render(UI::Rating.new(value: value, max: max, size: size, show_value: show_value, count: count)) %>
+<% end %>

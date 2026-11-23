@@ -80,6 +80,13 @@ en:
     progress:
       label: 'Progress'
       value_text: '%{percent}%'
+    rating:
+      name: 'Rating'
+      label: 'Rated %{value} out of %{max}'
+      option: '%{count} out of %{max}'
+      count:
+        one: '%{count} rating'
+        other: '%{count} ratings'
     slider:
       from: 'Minimum'
       to: 'Maximum'

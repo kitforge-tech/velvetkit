@@ -1,0 +1,8 @@
+<%# Shown to the nearest half star. A screen reader hears one image, "Rated 4.5 out of 5", and the count. %>
+<div class="flex flex-col gap-3">
+  <%= render(UI::Rating.new(value: 5, show_value: true, count: 2_481)) %>
+  <%= render(UI::Rating.new(value: 4.5, show_value: true, count: 312)) %>
+  <%= render(UI::Rating.new(value: 3.7, show_value: true, count: 46)) %>
+  <%= render(UI::Rating.new(value: 2, show_value: true, count: 1)) %>
+  <%= render(UI::Rating.new(value: nil, show_value: true, count: 0)) %>
+</div>

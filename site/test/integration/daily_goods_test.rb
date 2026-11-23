@@ -67,7 +67,7 @@ class DailyGoodsTest < ActionDispatch::IntegrationTest
     assert_select "[data-slot=gallery] img", minimum: 2
     assert_select "#cart-repair-serum button", /Add to cart/
     assert_select "#reviews li", 3
-    assert_select "#reviews [role=img][aria-label='4.7 out of 5 stars']"
+    assert_select "#reviews [role=img][aria-label='Rated 4.7 out of 5']"
     assert_select "#related-heading + div article", 4
     assert_select "#related-heading + div article h3", minimum: 1
 
@@ -88,7 +88,7 @@ class DailyGoodsTest < ActionDispatch::IntegrationTest
     post "/examples/store/products/night-balm/reviews", params: { review: { rating: "", author: "", body: "ok" } }, headers: turbo
     assert_response :unprocessable_entity
     assert_match %(target="review-form"), response.body
-    assert_match "Choose from one to five stars.", response.body
+    assert_match "Choose a rating from half a star to five stars.", response.body
     assert_match "at least 10 characters", response.body
 
     post "/examples/store/products/night-balm/reviews", params: { review: { rating: "4", author: "Alex", body: "Soaks in overnight." } }, headers: turbo

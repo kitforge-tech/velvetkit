@@ -123,3 +123,6 @@ application.register("ui--scrubber", UI__ScrubberController)
 
 import UI__SelectionBarController from "./ui/selection_bar_controller"
 application.register("ui--selection-bar", UI__SelectionBarController)
+
+import UI__RatingController from "./ui/rating_controller"
+application.register("ui--rating", UI__RatingController)
