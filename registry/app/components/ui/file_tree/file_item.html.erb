@@ -1,0 +1,9 @@
+<%= tag.li(role: "none") do %>
+  <%= content_tag(tag_name, **row_attrs) do %>
+    <%# Where a folder has its chevron, so file and folder icons line up. %>
+    <%= tag.span class: "size-4 shrink-0", aria: { hidden: true } %>
+    <%= render(UI::Icon.new(name: icon, size: :sm, class: "shrink-0 text-muted-foreground group-aria-selected/row:text-primary", aria: { hidden: true })) %>
+    <%= tag.span name, class: "min-w-0 flex-1 truncate" %>
+    <% if content? %><%= tag.span content, class: "shrink-0 text-xs font-normal text-muted-foreground" %><% end %>
+  <% end %>
+<% end %>

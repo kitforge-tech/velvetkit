@@ -68,6 +68,8 @@ components:
     description: A group of controls under one legend, with a hint and an error message for the group.
   file_field:
     description: A drag-and-drop file picker with previews, and direct upload to storage, standalone or with a form builder.
+  file_tree:
+    description: Folders and files in a tree that opens and closes, with arrow keys to move through it.
   form_field:
     description: A label, hint and error message wired to any form control.
   gallery:

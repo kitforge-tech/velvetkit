@@ -1,0 +1,9 @@
+<% rows = capture do %><% items.each do |item| %><%= item %><% end %><% end %>
+<%= tag.li(role: "none") do %>
+  <%= tag.span(**row_attrs) do %>
+    <%= render(UI::Icon.new(name: "chevron-right", size: :sm, class: "shrink-0 text-muted-foreground transition-transform duration-350 ease-[cubic-bezier(0.32,0.72,0,1)] group-aria-expanded/row:rotate-90 motion-reduce:transition-none", aria: { hidden: true })) %>
+    <%= render(UI::Icon.new(name: icon, size: :sm, class: "shrink-0 text-primary/80 dark:text-primary", aria: { hidden: true })) %>
+    <%= tag.span name, class: "min-w-0 flex-1 truncate" %>
+  <% end %>
+  <%= tag.ul(rows, id: group_id, role: "group", hidden: !open?, data: { slot: "file-tree-group", state: open? ? "open" : "closed" }, class: group_classes) %>
+<% end %>

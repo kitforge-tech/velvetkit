@@ -1,0 +1,10 @@
+<%= render(UI::FileTree.new(label: "Project files", guides: false, class: "max-w-xs")) do |tree| %>
+  <% tree.with_folder(name: "app", open: true) do |app| %>
+    <% app.with_folder(name: "views", open: true) do |views| %>
+      <% views.with_file(name: "index.html.erb", href: "#") %>
+      <% views.with_file(name: "show.html.erb", href: "#", active: true) %>
+    <% end %>
+    <% app.with_file(name: "application.rb", href: "#") %>
+  <% end %>
+  <% tree.with_file(name: "Gemfile", href: "#") %>
+<% end %>
