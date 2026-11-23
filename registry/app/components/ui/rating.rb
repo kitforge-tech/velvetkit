@@ -50,12 +50,9 @@ class UI::Rating < UI::Base
 
   # A field's star: lit when its own radio or a later one is checked, so the
   # stars up to the chosen one fill without JavaScript. While the pointer is
-  # over the stars, the controller marks each one lit or not, which wins.
-  #
-  # A box ring round a star would cut across the icon, as each label is half a
-  # star wide, so the focused star is outlined instead: while one of its radios
-  # has focus, the controller marks both its halves `data-focused`, and a thin
-  # primary drop-shadow traces the icon's own edge.
+  # over the stars, the controller marks each one lit or not, which wins. A
+  # star draws no focus ring: each is half a star wide, so a ring round one
+  # cuts across the icon, and the lit stars already show the chosen score.
   #
   # The star under the pointer grows, both halves marked `data-hovered` by the
   # controller, and choosing it brings it back to size; choosing one from the
@@ -64,7 +61,6 @@ class UI::Rating < UI::Base
   STAR = "relative cursor-pointer transition-[color,scale] text-border dark:text-muted " \
          "[input:checked+&]:text-amber-500 [&:has(~input:checked)]:text-amber-500 " \
          "data-[lit=true]:!text-amber-500 data-[lit=false]:!text-border dark:data-[lit=false]:!text-muted " \
-         "data-[focused=true]:[&_svg]:[filter:drop-shadow(0_0_0.5px_var(--color-primary))_drop-shadow(0_0_0.5px_var(--color-primary))] " \
          "data-[hovered=true]:z-10 motion-safe:data-[hovered=true]:scale-125"
   STAR_HALF_SIZE = { sm: "h-4 w-2", default: "h-5 w-2.5", lg: "h-6 w-3" }.freeze
   STAR_GAP = { sm: "me-0.5", default: "me-0.5", lg: "me-1" }.freeze
@@ -175,8 +171,7 @@ class UI::Rating < UI::Base
     attrs[:id] = group_id
     attrs[:class] = cn(variant_classes(size: @size), "w-fit gap-0", @user_class)
     attrs[:data] = { controller: "ui--rating",
-                     action: "mouseleave->ui--rating#reset focusin->ui--rating#focus focusout->ui--rating#blur " \
-                             "reset@document->ui--rating#formReset",
+                     action: "mouseleave->ui--rating#reset reset@document->ui--rating#formReset",
                      "ui--rating-error-value": (fieldset.error_id if fieldset.error_message.present?),
                      "ui--rating-thanks-value": (thanks_id if thanks?) }
                    .compact.merge(@html_attrs[:data] || {})

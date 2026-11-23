@@ -5,9 +5,8 @@ import { Controller } from '@hotwired/stimulus';
 // Each half-star is the label of a radio, and CSS fills the stars up to the
 // checked one. Over a half-star, this lights that half and the ones before it,
 // and grows the star it's in; leaving the stars, or choosing one, hands them
-// back. It also gives the choice some feedback: the focused radio's star is
-// outlined, and a chosen star settles back to size, or pops when chosen from
-// the keyboard. Choosing also clears the field's error, if it has one, and
+// back. It also gives the choice some feedback: a chosen star settles back to
+// size, or pops when chosen from the keyboard. Choosing also clears the field's error, if it has one, and
 // shows its thanks, if it has those; resetting the form brings them back as
 // they were.
 export default class extends Controller<HTMLElement> {
@@ -33,12 +32,12 @@ export default class extends Controller<HTMLElement> {
 
     const whole = Math.ceil(value);
     if (whole !== this.settled) this.settled = null;
-    this.mark('hovered', this.settled === null ? this.halvesOf(whole) : []);
+    this.hover(this.settled === null ? this.halvesOf(whole) : []);
   }
 
   reset() {
     for (const star of this.starTargets) delete star.dataset.lit;
-    this.mark('hovered', []);
+    this.hover([]);
     this.settled = null;
   }
 
@@ -48,10 +47,9 @@ export default class extends Controller<HTMLElement> {
     const halves = this.halvesOf(whole);
 
     for (const star of this.starTargets) delete star.dataset.lit;
-    if (document.activeElement === input) this.mark('focused', halves);
 
     if (halves.some((half) => half.dataset.hovered)) {
-      this.mark('hovered', []);
+      this.hover([]);
       this.settled = whole;
     } else {
       this.pop(halves);
@@ -60,21 +58,11 @@ export default class extends Controller<HTMLElement> {
     this.showAnswered(true);
   }
 
-  // Arrow keys move focus along with the choice, so this follows them too.
-  focus(event: FocusEvent) {
-    this.mark('focused', this.halvesOf(Math.ceil(Number((event.target as HTMLInputElement).value))));
-  }
-
-  blur(event: FocusEvent) {
-    if (!this.element.contains(event.relatedTarget as Node | null)) this.mark('focused', []);
-  }
-
   // The form's reset puts the radios back; this puts back the rest.
   formReset(event: Event) {
     if (!(event.target as Node).contains(this.element)) return;
 
     this.reset();
-    this.mark('focused', []);
     this.showAnswered(false);
   }
 
@@ -102,10 +90,10 @@ export default class extends Controller<HTMLElement> {
     return this.starTargets.filter((each) => Math.ceil(Number(each.dataset.value)) === whole);
   }
 
-  private mark(key: 'focused' | 'hovered', halves: HTMLLabelElement[]) {
+  private hover(halves: HTMLLabelElement[]) {
     for (const star of this.starTargets) {
-      if (halves.includes(star)) star.dataset[key] = 'true';
-      else delete star.dataset[key];
+      if (halves.includes(star)) star.dataset.hovered = 'true';
+      else delete star.dataset.hovered;
     }
   }
 

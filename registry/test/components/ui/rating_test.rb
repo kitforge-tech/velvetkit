@@ -131,13 +131,11 @@ class UI::RatingTest < ViewComponent::TestCase
     assert_includes classes, "data-[lit=true]:!text-amber-500"
   end
 
-  # No box ring round a half-star, which would cut across the icon: the
-  # focused star's outline traces the icon instead.
-  def test_a_half_star_draws_no_box_ring_but_an_outline_when_focused
+  # The stars draw no focus ring: the chosen score shows where the field is.
+  def test_a_half_star_draws_no_focus_ring
     render_inline(UI::Rating.new(name: "rating"))
     classes = page.find("label", match: :first)[:class].split
-    refute classes.any? { _1.include?("focus:") || _1.match?(/(^|:)ring/) }
-    assert classes.any? { _1.start_with?("data-[focused=true]:[&_svg]:[filter:drop-shadow(") }
+    refute classes.any? { _1.include?("focus") || _1.include?("ring") || _1.include?("drop-shadow") }
   end
 
   # Both halves of a hovered star grow from its middle, so it grows as one.
@@ -158,9 +156,9 @@ class UI::RatingTest < ViewComponent::TestCase
     assert_equal expected, actual
   end
 
-  def test_hover_focus_and_change_wiring
+  def test_hover_reset_and_change_wiring
     render_inline(UI::Rating.new(name: "rating"))
-    assert_selector "[data-action='mouseleave->ui--rating#reset focusin->ui--rating#focus focusout->ui--rating#blur reset@document->ui--rating#formReset']"
+    assert_selector "[data-action='mouseleave->ui--rating#reset reset@document->ui--rating#formReset']"
     assert_selector "label[data-action='mouseenter->ui--rating#preview']", count: 10
     assert_selector "input[data-action='change->ui--rating#choose']", count: 10, visible: :all
   end
