@@ -1,0 +1,25 @@
+<div id="file-tree-picking-demo" class="grid max-w-2xl gap-4 sm:grid-cols-[14rem_1fr]">
+  <%= render(UI::FileTree.new(label: "Source")) do |tree| %>
+    <% tree.with_folder(name: "src") do |src| %>
+      <% src.with_folder(name: "lib") do |lib| %>
+        <% lib.with_file(name: "format.ts", value: "src/lib/format.ts") %>
+        <% lib.with_file(name: "money.ts", value: "src/lib/money.ts") %>
+      <% end %>
+      <% src.with_file(name: "index.ts", value: "src/index.ts", active: true) %>
+    <% end %>
+    <% tree.with_file(name: "package.json", value: "package.json") %>
+    <% tree.with_file(name: "tsconfig.json", value: "tsconfig.json") %>
+  <% end %>
+  <div class="rounded-lg border bg-muted/40 p-4 font-mono text-sm">
+    <p class="text-muted-foreground">Selected</p>
+    <p data-demo="path" class="mt-1 text-foreground">src/index.ts</p>
+  </div>
+</div>
+<script>
+  (() => {
+    const root = document.getElementById("file-tree-picking-demo");
+    root.addEventListener("ui--file-tree:select", (event) => {
+      root.querySelector('[data-demo="path"]').textContent = event.detail.value;
+    });
+  })();
+</script>

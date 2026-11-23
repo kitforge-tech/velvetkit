@@ -1,0 +1,14 @@
+<%# A hash with `children:` is a folder; any other is a file. %>
+<%= render(UI::FileTree.new(label: "Documents", class: "max-w-xs", items: [
+  { name: "Contracts", children: [
+    { name: "2025", children: [
+      { name: "Acme MSA.pdf", value: "contracts/2025/acme-msa.pdf" },
+      { name: "Globex NDA.pdf", value: "contracts/2025/globex-nda.pdf" }
+    ] },
+    { name: "2026", children: [
+      { name: "Initech SOW.pdf", value: "contracts/2026/initech-sow.pdf", active: true }
+    ] }
+  ] },
+  { name: "Invoices", children: [] },
+  { name: "Brand guide.pdf", value: "brand-guide.pdf", icon: "file-text" }
+])) %>

@@ -179,6 +179,8 @@ en:
       position: 'Image %{current} of %{total}'
       open: 'Open %{alt}'
       info: 'Info'
+    file_tree:
+      label: 'Files'
     file_field:
       browse: 'Click to upload'
       drop: 'or drag and drop'

@@ -126,3 +126,6 @@ application.register("ui--selection-bar", UI__SelectionBarController)
 
 import UI__RatingController from "./ui/rating_controller"
 application.register("ui--rating", UI__RatingController)
+
+import UI__FileTreeController from "./ui/file_tree_controller"
+application.register("ui--file-tree", UI__FileTreeController)
