@@ -129,3 +129,6 @@ application.register("ui--rating", UI__RatingController)
 
 import UI__FileTreeController from "./ui/file_tree_controller"
 application.register("ui--file-tree", UI__FileTreeController)
+
+import UI__ProgressSliderController from "./ui/progress_slider_controller"
+application.register("ui--progress-slider", UI__ProgressSliderController)

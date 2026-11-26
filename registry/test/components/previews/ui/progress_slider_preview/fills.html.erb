@@ -1,0 +1,7 @@
+<%# The default fade turns from grey to the brand colour as it fills; brand is that colour all the way. %>
+<div class="grid max-w-sm gap-12">
+  <% [ 15, 55, 85, 100 ].each do |value| %>
+    <%= render(UI::ProgressSlider.new(name: "fade_#{value}", value: value, label: "Fade at #{value}%", value_text: "%{value}%")) %>
+  <% end %>
+  <%= render(UI::ProgressSlider.new(name: "brand", value: 55, fill: :brand, label: "Brand at 55%", value_text: "%{value}%")) %>
+</div>

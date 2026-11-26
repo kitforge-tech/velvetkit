@@ -1,4 +1,4 @@
-// UX checks with real input (mouse, keyboard, clipboard) in headless Chrome:
+// UX checks with real input (mouse, keyboard, touch, clipboard) in headless Chrome:
 // the focus ring and copy feedback. Run with bin/ux-check against a running
 // site; each check is about what a person sees, not what the markup says.
 //   bin/ux-check                      (site on localhost:3000)
@@ -284,6 +284,184 @@ ws.onopen = async () => {
       await key("Escape", "Escape", 0, 27);
       await sleep(300);
     }
+
+    // 15. Progress slider on a phone, with real touches: a swipe that starts
+    //     on the bar still scrolls, a sideways drag squeezes the bar and springs
+    //     it back, a tap jumps, a second finger is ignored, and the bubble
+    //     neither hangs off the page nor stays up after a tap.
+    await send("Emulation.setDeviceMetricsOverride", { width: 375, height: 740, deviceScaleFactor: 2, mobile: true });
+    await send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 });
+    await send("Page.navigate", { url: `${BASE}/lookbook/preview/ui/progress_slider/sizes_and_states` });
+    await sleep(2500);
+    // Room to scroll, so a vertical swipe has somewhere to go.
+    await run(`document.body.style.paddingBottom = '150vh'; 1`);
+    const slider = (i) => `document.querySelectorAll('[data-slot=progress-slider]')[${i}]`;
+    const bar = (i) => run(`(() => { const r = ${slider(i)}.querySelector('[data-ui--progress-slider-target=track]').getBoundingClientRect(); return { x: r.left, y: r.top + r.height / 2, w: r.width, h: r.height }; })()`);
+    const state = (i) => run(`(() => { const s = ${slider(i)}; const b = s.querySelector('[data-slot=progress-slider-bar]');
+      return { value: s.querySelector('input').value, squeeze: +(new DOMMatrix(getComputedStyle(b).transform).d).toFixed(2),
+               held: 'dragging' in s.dataset, bubble: +getComputedStyle(s.querySelector('[data-slot=progress-slider-bubble]')).opacity }; })()`);
+    const touch = (type, points) => send("Input.dispatchTouchEvent", { type, touchPoints: points.map(([x, y], id) => ({ x, y, id })) });
+    // Listens once per slider; each call starts the record afresh.
+    const watchEvents = (i) => run(`(() => { const input = ${slider(i)}.querySelector('input'); window.__slid = [];
+      if (!input.dataset.watched) for (const t of ['input', 'change']) input.addEventListener(t, () => window.__slid.push(t + ':' + input.value));
+      input.dataset.watched = 'yes'; 1; })()`);
+    const events = () => run(`window.__slid.join(' ')`);
+
+    let b = await bar(1);
+    await watchEvents(1);
+    const start = (await state(1)).value;
+    let wobble = 1, flash = 0;
+    await touch("touchStart", [[b.x + b.w * 0.9, b.y]]);
+    for (let i = 1; i <= 8; i++) {
+      await touch("touchMove", [[b.x + b.w * 0.9, b.y - i * 25]]);
+      const now = await state(1);
+      wobble = Math.min(wobble, now.squeeze);
+      flash = Math.max(flash, now.bubble);
+      await sleep(16);
+    }
+    await touch("touchEnd", []);
+    await sleep(300);
+    let s = await state(1);
+    const scrolled = await run(`Math.round(scrollY)`);
+    check("progress slider: a swipe up from the bar scrolls and leaves the value", s.value === start && !s.held && scrolled > 0 && (await events()) === "", `value ${start} → ${s.value}, scrolled ${scrolled}px, events '${await events()}'`);
+    check("progress slider: scrolling through the bar doesn't squeeze it or show the bubble", wobble === 1 && flash === 0, `squeezed to ${wobble}, bubble up to ${flash}`);
+    await run(`scrollTo(0, 0); 1`);
+    await sleep(300);
+
+    b = await bar(1);
+    await watchEvents(1);
+    await touch("touchStart", [[b.x + b.w * 0.5, b.y]]);
+    for (let i = 1; i <= 6; i++) { await touch("touchMove", [[b.x + b.w * (0.5 + i * 0.05), b.y + 1]]); await sleep(16); }
+    await sleep(250);
+    const held = await state(1);
+    await touch("touchEnd", []);
+    await sleep(80);
+    const springing = await state(1);
+    await sleep(600);
+    s = await state(1);
+    check("progress slider: a sideways drag squeezes the bar while held", held.held && held.squeeze <= 0.65 && held.value === "80", JSON.stringify(held));
+    check("progress slider: let go, it springs back and commits", !s.held && springing.squeeze < 1 && s.squeeze === 1 && (await events()).endsWith("change:80"), `${springing.squeeze} at 80ms, ${s.squeeze} settled; ${await events()}`);
+    check("progress slider: no bubble left up after a touch drag", s.bubble === 0, `opacity ${s.bubble}`);
+
+    // Dragging, the finger wanders down off the bar: the page stays put.
+    await sleep(1500);
+    await run(`scrollTo(0, 0); 1`);
+    await sleep(100);
+    b = await bar(1);
+    await touch("touchStart", [[b.x + b.w * 0.5, b.y]]);
+    await touch("touchMove", [[b.x + b.w * 0.6, b.y]]);
+    for (let i = 1; i <= 6; i++) await touch("touchMove", [[b.x + b.w * 0.7, b.y + i * 30]]);
+    const wandered = { ...(await state(1)), scrolled: await run(`scrollY`) };
+    await touch("touchEnd", []);
+    await sleep(300);
+    check("progress slider: the page doesn't scroll under a drag", wandered.held && wandered.value === "70" && wandered.scrolled === 0, JSON.stringify(wandered));
+
+    await watchEvents(1);
+    await touch("touchStart", [[b.x + b.w * 0.2, b.y]]);
+    await touch("touchEnd", []);
+    await sleep(60);
+    const tapped = await state(1);
+    check("progress slider: a tap squeezes the bar for a moment", tapped.held && tapped.squeeze < 1, JSON.stringify(tapped));
+    await sleep(400);
+    s = await state(1);
+    check("progress slider: a tap jumps and commits, then the bubble goes", s.value === "20" && (await events()) === "input:20 change:20" && s.bubble === 0, `${await events()}, bubble ${s.bubble}`);
+
+    // A point left out of the list is a finger lifted; touchEnd lifts them all.
+    await watchEvents(1);
+    await touch("touchStart", [[b.x + b.w * 0.5, b.y]]);
+    await touch("touchMove", [[b.x + b.w * 0.55, b.y]]);
+    await touch("touchStart", [[b.x + b.w * 0.55, b.y], [b.x + b.w * 0.05, b.y]]);
+    await touch("touchMove", [[b.x + b.w * 0.6, b.y], [b.x + b.w * 0.1, b.y]]);
+    await touch("touchMove", [[b.x + b.w * 0.6, b.y]]);
+    await sleep(50);
+    const second = await state(1);
+    await touch("touchMove", [[b.x + b.w * 0.65, b.y]]);
+    await touch("touchEnd", []);
+    await sleep(300);
+    s = await state(1);
+    check("progress slider: a second finger doesn't take over", second.held && second.value === "60" && s.value === "65" && (await events()) === "input:55 input:60 input:65 change:65", `${second.value} → ${s.value}; ${await events()}`);
+
+    // The small bar is 24px; on a touch screen it takes touches 10px above
+    // and below, for a 44px target.
+    b = await bar(0);
+    await touch("touchStart", [[b.x + b.w * 0.75, b.y + b.h / 2 + 8]]);
+    await touch("touchEnd", []);
+    await sleep(300);
+    check("progress slider: the small bar takes a tap just below it", (await state(0)).value === "75", (await state(0)).value);
+
+    let overflow = 0;
+    for (const x of [-200, 600]) {
+      b = await bar(1);
+      await touch("touchStart", [[b.x + b.w / 2, b.y]]);
+      for (let i = 1; i <= 6; i++) await touch("touchMove", [[b.x + b.w / 2 + ((x - b.w / 2) * i) / 6, b.y]]);
+      await sleep(300);
+      overflow = Math.max(overflow, await run(`(() => { const r = ${slider(1)}.querySelector('[data-slot=progress-slider-bubble]').getBoundingClientRect(); return Math.max(0, -r.left, r.right - innerWidth, document.documentElement.scrollWidth - innerWidth); })()`));
+      await touch("touchEnd", []);
+      await sleep(200);
+    }
+    check("progress slider: dragged to either end, the bubble stays on screen", overflow === 0, `${overflow}px over`);
+
+    // Pulled past the end it stretches and thins; let go, it shivers back:
+    // narrower than it rests for a moment, then settled.
+    await run(`scrollTo(0, 0); 1`);
+    await sleep(300);
+    b = await bar(1);
+    const width = () => run(`${slider(1)}.querySelector('[data-slot=progress-slider-bar]').getBoundingClientRect().width`);
+    await touch("touchStart", [[b.x + b.w * 0.5, b.y]]);
+    for (let i = 1; i <= 8; i++) { await touch("touchMove", [[b.x + b.w * 0.5 + i * 60, b.y]]); await sleep(16); }
+    await sleep(250);
+    const pulled = await width();
+    await touch("touchEnd", []);
+    let narrowest = pulled;
+    for (let k = 0; k < 14; k++) { await sleep(40); narrowest = Math.min(narrowest, await width()); }
+    await sleep(300);
+    const rest = await width();
+    check("progress slider: pulled past the end it stretches, and shivers back", pulled > b.w * 1.04 && narrowest < rest - 1 && Math.abs(rest - b.w) < 0.5,
+          `${b.w.toFixed(1)} → ${pulled.toFixed(1)} → ${narrowest.toFixed(1)} → ${rest.toFixed(1)}`);
+
+    // :fade is grey shading until the top, where the brand shading fades in.
+    const brandShade = (i) => run(`+getComputedStyle(${slider(i)}.querySelectorAll('[data-slot=progress-slider-shade]')[1]).opacity`);
+    const atTop = await brandShade(1);
+    await run(`(() => { const i = ${slider(1)}.querySelector('input'); i.value = '90'; i.dispatchEvent(new Event('input', { bubbles: true })); 1; })()`);
+    await sleep(400);
+    const below = await brandShade(1);
+    check("progress slider: the fade turns to the brand colour only at the top", atTop === 1 && below === 0, `at the top ${atTop}, at 90 ${below}`);
+
+    await send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-reduced-motion", value: "reduce" }] });
+    b = await bar(1);
+    await touch("touchStart", [[b.x + b.w * 0.3, b.y]]);
+    for (let i = 1; i <= 4; i++) { await touch("touchMove", [[b.x + b.w * (0.3 + i * 0.1), b.y]]); await sleep(16); }
+    await sleep(100);
+    const still = await run(`(() => { const s = ${slider(1)}; const t = getComputedStyle(s.querySelector('[data-slot=progress-slider-bubble]')).transform;
+      return { squeeze: getComputedStyle(s.querySelector('[data-slot=progress-slider-bar]')).transform, bubble: t, tilt: s.style.getPropertyValue('--tilt') }; })()`);
+    await touch("touchEnd", []);
+    check("progress slider: with reduced motion it neither squeezes nor leans", still.squeeze === "none" && still.bubble === "none" && still.tilt === "", JSON.stringify(still));
+    await send("Emulation.setEmulatedMedia", { features: [] });
+
+    // In Windows' high contrast the bar is outlined and the fill is the
+    // highlight colour, rather than both turning into the page.
+    await send("Emulation.setEmulatedMedia", { features: [{ name: "forced-colors", value: "active" }] });
+    await sleep(200);
+    const forced = await run(`(() => { const s = ${slider(1)}; const bar = getComputedStyle(s.querySelector('[data-slot=progress-slider-bar]'));
+      const fill = getComputedStyle(s.querySelector('[data-slot=progress-slider-fill]')); const page = getComputedStyle(document.body).backgroundColor;
+      return { border: bar.borderTopWidth, fill: fill.backgroundColor, page }; })()`);
+    check("progress slider: it can be seen in forced colours", forced.border === "1px" && forced.fill !== forced.page && !forced.fill.endsWith(", 0)"), JSON.stringify(forced));
+    await send("Emulation.setEmulatedMedia", { features: [] });
+
+    // A page restored from Turbo's cache in the middle of a drag isn't held.
+    await run(`(() => { const s = ${slider(1)}; const copy = s.cloneNode(true); copy.dataset.dragging = ''; copy.style.setProperty('--tilt', '9deg'); s.replaceWith(copy); 1; })()`);
+    await sleep(600);
+    s = await state(1);
+    check("progress slider: a page restored mid-drag isn't left squeezed", !s.held && s.squeeze === 1, JSON.stringify(s));
+
+    // Every %{value} in value_text is filled in, as on the server.
+    await run(`(() => { const s = ${slider(1)}; s.setAttribute('data-ui--progress-slider-format-value', '%{value} of %{value}'); const i = s.querySelector('input');
+      i.value = '7'; i.dispatchEvent(new Event('input', { bubbles: true })); 1; })()`);
+    const twice = await run(`${slider(1)}.querySelector('[data-slot=progress-slider-bubble]').textContent`);
+    check("progress slider: value_text can say the value twice", twice === "7 of 7", twice);
+
+    await send("Emulation.setTouchEmulationEnabled", { enabled: false });
+    await send("Emulation.setDeviceMetricsOverride", { width: 1400, height: 820, deviceScaleFactor: 1, mobile: false });
 
     // Analytics: what gets reported, against a stand-in for the tracker.
     const stub = `window.__events = []; window.umami = { track: (n, d) => window.__events.push([n, d ?? null]) }; 1`;

@@ -1,0 +1,7 @@
+<div class="grid max-w-sm gap-12">
+  <%= render(UI::ProgressSlider.new(name: "effort", min: 0, max: 4, value: 1, label: "Reasoning effort",
+                                    marks: { 0 => "Low", 1 => "Medium", 2 => "High", 3 => "Extra high", 4 => "Max" })) %>
+  <%= render(UI::ProgressSlider.new(name: "digest", min: 0, max: 4, value: 2, label: "Email me about comments",
+                                    marks: { 0 => "Never", 1 => "Monthly", 2 => "Weekly", 3 => "Daily", 4 => "Right away" },
+                                    hint: "You can change this for each project.")) %>
+</div>

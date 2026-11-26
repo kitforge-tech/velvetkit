@@ -1,0 +1,29 @@
+<%# frozen_string_literal: true %>
+<%= tag.div(**root_attrs) do %>
+  <% if label_text %><%= tag.label(label_text, for: input_attrs[:id], class: "block text-sm font-medium leading-none") %><% end %>
+  <%= render(wrapper) do %>
+    <%= tag.div(**track_attrs) do %>
+      <%= render_input %>
+      <%= tag.div(class: bar_class, data: { slot: "progress-slider-bar" }) do %>
+        <%= tag.div(class: fill_class, data: { slot: "progress-slider-fill" }) do %>
+          <% shades.each do |shade| %><%= tag.span(class: shade, data: { slot: "progress-slider-shade" }) %><% end %>
+          <%= tag.span(class: UI::ProgressSlider::HANDLE, "aria-hidden": "true", data: { slot: "progress-slider-handle" }) %>
+        <% end %>
+        <%# Over the fill, so they read on the grey, the brand colour and the track alike. %>
+        <% ticks.each do |at| %><%= tag.span(class: "absolute top-1/2 h-1/3 w-px -translate-y-1/2 rounded-full bg-foreground/20 forced-colors:bg-[CanvasText]", style: tick_style(at), "aria-hidden": "true") %><% end %>
+      <% end %>
+      <% if bubble? %>
+        <%= tag.span(output_text, class: UI::ProgressSlider::BUBBLE, style: bubble_style, "aria-hidden": "true",
+                                  data: { slot: "progress-slider-bubble", "ui--progress-slider-target": "bubble" }) %>
+      <% end %>
+    <% end %>
+    <% if show_value? %>
+      <%# The value rolls: the old one slides out as the new one slides in. It
+          lets touches through to the bar's taller touch target above it. %>
+      <%= tag.div(class: "pointer-events-none relative h-5 overflow-hidden text-center text-sm tabular-nums text-muted-foreground",
+                  "aria-hidden": "true") do %>
+        <%= tag.output(output_text, class: "block truncate", data: { "ui--progress-slider-target": "output" }) %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

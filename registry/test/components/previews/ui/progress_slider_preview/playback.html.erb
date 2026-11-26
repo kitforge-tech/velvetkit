@@ -1,0 +1,6 @@
+<%# Seconds into a four-minute track; the caption and bubble say m:ss. %>
+<div class="max-w-md">
+  <%= render(UI::ProgressSlider.new(name: "position", min: 0, max: 240, value: 83, step: 1, size: :sm,
+                                    label: "Playback position", ticks: false, show_value: false,
+                                    marks: (0..240).to_h { |s| [ s, format("%d:%02d", s / 60, s % 60) ] })) %>
+</div>

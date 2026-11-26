@@ -105,6 +105,8 @@ components:
     description: Floating content anchored to a trigger.
   progress:
     description: A bar showing how far along a task is, or that it's still going.
+  progress_slider:
+    description: A thick bar to drag for a value that squeezes thinner while held and springs back when let go, with the value in a bubble that leans with the drag.
   radio_group:
     description: A set of radio buttons.
   rating:

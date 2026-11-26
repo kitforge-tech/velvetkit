@@ -1,0 +1,9 @@
+<div class="grid max-w-sm gap-12">
+  <%= render(UI::ProgressSlider.new(name: "small", value: 30, size: :sm, label: "Small", value_text: "%{value}%")) %>
+  <%= render(UI::ProgressSlider.new(name: "default", value: 50, label: "Default", value_text: "%{value}%")) %>
+  <%= render(UI::ProgressSlider.new(name: "large", value: 70, size: :lg, label: "Large", value_text: "%{value}%")) %>
+  <%= render(UI::ProgressSlider.new(name: "ticked", max: 10, value: 4, label: "Ticks at each step", show_value: false)) %>
+  <%= render(UI::ProgressSlider.new(name: "disabled", value: 40, label: "Disabled", disabled: true, value_text: "%{value}%")) %>
+  <%= render(UI::ProgressSlider.new(name: "error", value: 95, label: "Volume", value_text: "%{value}%",
+                                    error: "That's louder than your speakers go.")) %>
+</div>
